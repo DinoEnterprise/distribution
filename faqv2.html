@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bulan Chat AI</title>
+<title>Bulan Chat AI - Dynotic Music FAQ</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
@@ -102,7 +102,7 @@ header .actions #notif{
 .chat-container::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.3);border-radius:3px;}
 .chat-container::-webkit-scrollbar-track{background:transparent;}
 
-/* Bubble Percakapan */
+/* Bubble */
 .chat-bubble{
   max-width:70%;
   padding:10px 14px;
@@ -114,8 +114,6 @@ header .actions #notif{
   align-items:flex-end;
   line-height:1.4rem;
   animation: fadeIn 0.3s ease;
-  opacity:1;
-  transform:scale(1);
 }
 .bulan{
   background:rgba(255,255,255,0.15);
@@ -132,21 +130,21 @@ header .actions #notif{
   justify-content:flex-end;
 }
 
-/* Bubble awal dengan transisi */
+/* Animasi */
 .bubble-in{
   opacity:0;
   transform: scale(0.9);
   animation: bubbleFadeIn 0.6s forwards;
 }
-
 @keyframes bubbleFadeIn{
-  to {
-    opacity:1;
-    transform:scale(1);
-  }
+  to {opacity:1; transform:scale(1);}
+}
+@keyframes fadeIn{
+  from {opacity:0; transform:translateY(5px);}
+  to {opacity:1; transform:translateY(0);}
 }
 
-/* Kolom pertanyaan bawah (glossy) */
+/* Area pertanyaan bawah */
 #questionArea{
   position:fixed;
   bottom:0;
@@ -163,8 +161,6 @@ header .actions #notif{
   border-radius:15px 15px 0 0;
   overflow-x:auto;
 }
-
-/* Slider pertanyaan */
 #questionSlider{
   display:flex;
   gap:10px;
@@ -186,11 +182,6 @@ header .actions #notif{
 .questionItem:active{
   background:rgba(255,255,255,0.4);
   transform: scale(0.98);
-}
-
-@keyframes fadeIn{
-  from {opacity:0; transform:translateY(5px);}
-  to {opacity:1; transform:translateY(0);}
 }
 </style>
 </head>
@@ -215,11 +206,18 @@ header .actions #notif{
 <!-- Kolom pertanyaan bawah -->
 <div id="questionArea">
   <div id="questionSlider">
-    <div class="questionItem">Apa itu OAC?</div>
-    <div class="questionItem">Berapa royalti bersih?</div>
-    <div class="questionItem">Bagaimana cara submit lagu?</div>
-    <div class="questionItem">Apa itu SOPI?</div>
-    <div class="questionItem">Berapa lama proses review?</div>
+    <div class="questionItem">Apa itu Dynotic Music?</div>
+    <div class="questionItem">Layanan apa yang ditawarkan?</div>
+    <div class="questionItem">Berapa biayanya?</div>
+    <div class="questionItem">Bagaimana cara membuat rilisan?</div>
+    <div class="questionItem">Bagaimana cara kerja YouTube Content ID?</div>
+    <div class="questionItem">Berapa pembagian keuntungannya?</div>
+    <div class="questionItem">Apa itu YouTube Music?</div>
+    <div class="questionItem">Mengapa lagu muncul di channel berbeda?</div>
+    <div class="questionItem">Bisakah menghapus metadata rilisan?</div>
+    <div class="questionItem">Berapa lama proses persetujuan?</div>
+    <div class="questionItem">Kapan musik tayang di platform?</div>
+    <div class="questionItem">Kapan pembayaran diterima?</div>
   </div>
 </div>
 
@@ -232,12 +230,20 @@ function notAvailable(feature){
 }
 
 const chatContainer = document.getElementById('chatContainer');
+
 const messages = {
-  "Apa itu OAC?":"OAC adalah Official Artist Channel di YouTube, yang memberikan akses khusus untuk artis.",
-  "Berapa royalti bersih?":"Royalti bersih adalah jumlah yang kamu dapat setelah potongan distribusi dan pajak.",
-  "Bagaimana cara submit lagu?":"Kamu bisa submit lagu melalui form request atau dashboard distribusi.",
-  "Apa itu SOPI?":"SOPI adalah sistem pertanyaan otomatis yang membantu kamu mengetahui info distribusi.",
-  "Berapa lama proses review?":"Proses review biasanya memakan waktu 24-72 jam."
+  "Apa itu Dynotic Music?": "Dynotic Music adalah label musik independen yang membantu musisi mendistribusikan, memonetisasi, dan mempromosikan karya mereka secara global.",
+  "Layanan apa yang ditawarkan?": "Dynotic Music menyediakan layanan distribusi musik digital ke berbagai platform seperti Spotify, Apple Music, YouTube Music, Deezer, dan lainnya.",
+  "Berapa biayanya?": "Bergabung dengan Dynotic Music gratis dan terbuka untuk semua orang di seluruh dunia tanpa biaya pendaftaran atau batasan wilayah.",
+  "Bagaimana cara membuat rilisan?": "Untuk merilis musik, cukup buka menu 'Release' dan ikuti langkah-langkah pengunggahan.",
+  "Bagaimana cara kerja YouTube Content ID?": "Dynotic Music akan mendaftarkan lagu Anda ke sistem YouTube Content ID. Sistem ini mendeteksi jika lagu Anda digunakan di video lain, mengklaimnya, dan mengumpulkan pendapatan iklan untuk Anda.",
+  "Berapa pembagian keuntungannya?": "Pembagian hasil Dynotic Music adalah 80% untuk artis dan 20% untuk Dynotic Music. Untuk rilisan 'Cover to Master', pembagian adalah 65% untuk artis dan 35% untuk label.",
+  "Apa itu YouTube Music?": "YouTube Music adalah platform streaming dari YouTube. Lagu Anda akan muncul sebagai video otomatis dengan cover art dan audio, serta tetap menghasilkan pendapatan dari iklan.",
+  "Mengapa lagu muncul di channel berbeda?": "YouTube Music dapat menampilkan lagu di kanal 'Various Artists – Topic', '[Nama Artis] – Topic', atau di saluran pribadi Anda jika sudah terhubung.",
+  "Bisakah menghapus metadata rilisan?": "Ya, Anda dapat meminta penghapusan atau pembaruan metadata melalui tim Dynotic Music.",
+  "Berapa lama proses persetujuan?": "Proses persetujuan biasanya memakan waktu sekitar 1 minggu. Jawab email konfirmasi dengan lengkap agar proses lebih cepat.",
+  "Kapan musik tayang di platform?": "Setelah disetujui, rilisan dikirim ke toko musik dalam 2–7 hari kerja tergantung platform. Disarankan atur tanggal rilis 1–3 minggu ke depan agar semua serentak.",
+  "Kapan pembayaran diterima?": "Laporan pembayaran tersedia sekitar tanggal 25 setiap bulan dan pendapatan akan dikirim sesuai jadwal pembayaran."
 };
 
 function addBubble(message,type,withTransition=false){
@@ -251,12 +257,12 @@ function addBubble(message,type,withTransition=false){
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// Bubble awal dengan transisi
+// Pesan awal
 window.addEventListener('DOMContentLoaded', ()=>{
-  addBubble("Halo! Ada yang bisa aku bantu?", 'bulan', true);
+  addBubble("Halo! Aku Bulan, asisten AI Dynotic Music. Mau tahu info apa hari ini?", 'bulan', true);
 });
 
-// Pilih pertanyaan
+// Klik pertanyaan
 document.querySelectorAll('.questionItem').forEach(item=>{
   item.addEventListener('click',()=>{
     const question = item.innerText;
