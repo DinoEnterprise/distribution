@@ -69,10 +69,14 @@ header {
   justify-content: center;
   align-items: start;
   padding-left: 25px;
-  transition: right 0.35s cubic-bezier(0.77, 0, 0.175, 1);
+  transition: right 0.35s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.3s ease;
+  opacity: 0;
   z-index: 99;
 }
-.dropdown.show { right: 0; }
+.dropdown.show {
+  right: 0;
+  opacity: 1;
+}
 
 .dropdown a {
   display: block;
@@ -170,7 +174,7 @@ footer {
   <a href="/submit/">Release</a>
   <a href="/maintenance/">Catalog</a>
   <a href="/maintenance/">Promotion</a>
-  <<a href="/oac.html">OAC</a>
+  <a href="/oac.html">OAC</a>
   <a href="/maintenance/">FAQ</a>
 </nav>
 
