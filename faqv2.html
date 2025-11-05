@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulan Chat AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
+body, html{
+  height:100%;
+  width:100%;
+  background:linear-gradient(160deg,#3b0764,#6d28d9,#7e22ce);
+  display:flex;
+  flex-direction:column;
+  color:#f5f3ff;
+}
+
+/* Header Profil */
+header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 15px;
+  background:rgba(0,0,0,0.25);
+  backdrop-filter:blur(10px);
+  border-radius:0 0 15px 15px;
+  z-index:10;
+}
+header img{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid #fff;
+}
+header .info{
+  flex:1;
+  margin-left:10px;
+}
+header .info .name{
+  font-weight:600;
+  font-size:1rem;
+  color:#fff;
+  text-shadow: 0 0 8px #fff, 0 0 12px #fff;
+}
+header .info .status{
+  font-size:0.8rem;
+  color:#fff;
+  text-shadow: 0 0 6px #fff;
+}
+header .actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  position:relative;
+}
+header .actions .icon-btn{
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  padding:5px;
+  position:relative;
+}
+header .actions .icon-btn img{
+  width:28px;
+  height:28px;
+  filter: drop-shadow(0 0 6px #fff);
+}
+header .actions #notif{
+  position:absolute;
+  top:110%;
+  left:35%;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,0.7);
+  padding:3px 6px;
+  border-radius:6px;
+  font-size:0.65rem;
+  display:none;
+  white-space:nowrap;
+  z-index:20;
+}
+
+/* Chat Container */
+.chat-container{
+  flex:1;
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(5px);
+  padding:15px;
+  margin:10px;
+  border-radius:15px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  position:relative;
+  border:1px solid rgba(255,255,255,0.2);
+  padding-bottom:180px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.chat-container::-webkit-scrollbar{width:6px;}
+.chat-container::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.3);border-radius:3px;}
+.chat-container::-webkit-scrollbar-track{background:transparent;}
+
+/* Bubble Percakapan */
+.chat-bubble{
+  max-width:70%;
+  padding:10px 14px;
+  border-radius:20px;
+  font-size:0.95rem;
+  word-wrap:break-word;
+  display:flex;
+  gap:8px;
+  align-items:flex-end;
+  line-height:1.4rem;
+  animation: fadeIn 0.3s ease;
+  opacity:1;
+  transform:scale(1);
+}
+.bulan{
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(5px);
+  color:#fff;
+  border-top-left-radius:0;
+  justify-content:flex-start;
+}
+.user{
+  background:#2563eb;
+  color:#fff;
+  align-self:flex-end;
+  border-top-right-radius:0;
+  justify-content:flex-end;
+}
+
+/* Bubble awal dengan transisi */
+.bubble-in{
+  opacity:0;
+  transform: scale(0.9);
+  animation: bubbleFadeIn 0.6s forwards;
+}
+
+@keyframes bubbleFadeIn{
+  to {
+    opacity:1;
+    transform:scale(1);
+  }
+}
+
+/* Kolom pertanyaan bawah (glossy) */
+#questionArea{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(15px) saturate(180%);
+  border-top:1px solid rgba(255,255,255,0.3);
+  padding:12px 10px;
+  box-shadow: 0 -4px 20px rgba(255,255,255,0.15), 0 -2px 8px rgba(0,0,0,0.2);
+  display:flex;
+  gap:10px;
+  z-index:10;
+  border-radius:15px 15px 0 0;
+  overflow-x:auto;
+}
+
+/* Slider pertanyaan */
+#questionSlider{
+  display:flex;
+  gap:10px;
+}
+.questionItem{
+  flex:0 0 auto;
+  background:rgba(255,255,255,0.15);
+  padding:8px 14px;
+  border-radius:14px;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:all 0.3s;
+  backdrop-filter: blur(10px);
+}
+.questionItem:hover{
+  background:rgba(255,255,255,0.3);
+  transform: scale(1.05);
+}
+.questionItem:active{
+  background:rgba(255,255,255,0.4);
+  transform: scale(0.98);
+}
+
+@keyframes fadeIn{
+  from {opacity:0; transform:translateY(5px);}
+  to {opacity:1; transform:translateY(0);}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="https://i.imgur.com/nQNpS3C.gif" alt="Bulan Avatar">
+  <div class="info">
+    <div class="name">Bulan (Asisten AI)</div>
+    <div class="status">Online</div>
+  </div>
+  <div class="actions">
+    <div id="notif">Belum Tersedia</div>
+    <button class="icon-btn" onclick="notAvailable('Telepon')">
+      <img src="https://i.imgur.com/ew5pIFP.png" alt="Telepon">
+    </button>
+  </div>
+</header>
+
+<div class="chat-container" id="chatContainer"></div>
+
+<!-- Kolom pertanyaan bawah -->
+<div id="questionArea">
+  <div id="questionSlider">
+    <div class="questionItem">Apa itu OAC?</div>
+    <div class="questionItem">Berapa royalti bersih?</div>
+    <div class="questionItem">Bagaimana cara submit lagu?</div>
+    <div class="questionItem">Apa itu SOPI?</div>
+    <div class="questionItem">Berapa lama proses review?</div>
+  </div>
+</div>
+
+<script>
+function notAvailable(feature){
+  const notif = document.getElementById('notif');
+  notif.style.display='block';
+  notif.innerText = 'Belum Tersedia';
+  setTimeout(()=>{notif.style.display='none';},2000);
+}
+
+const chatContainer = document.getElementById('chatContainer');
+const messages = {
+  "Apa itu OAC?":"OAC adalah Official Artist Channel di YouTube, yang memberikan akses khusus untuk artis.",
+  "Berapa royalti bersih?":"Royalti bersih adalah jumlah yang kamu dapat setelah potongan distribusi dan pajak.",
+  "Bagaimana cara submit lagu?":"Kamu bisa submit lagu melalui form request atau dashboard distribusi.",
+  "Apa itu SOPI?":"SOPI adalah sistem pertanyaan otomatis yang membantu kamu mengetahui info distribusi.",
+  "Berapa lama proses review?":"Proses review biasanya memakan waktu 24-72 jam."
+};
+
+function addBubble(message,type,withTransition=false){
+  const bubble = document.createElement('div');
+  bubble.classList.add('chat-bubble',type);
+  if(withTransition) bubble.classList.add('bubble-in');
+  const span = document.createElement('span');
+  span.innerText=message;
+  bubble.appendChild(span);
+  chatContainer.appendChild(bubble);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// Bubble awal dengan transisi
+window.addEventListener('DOMContentLoaded', ()=>{
+  addBubble("Halo! Ada yang bisa aku bantu?", 'bulan', true);
+});
+
+// Pilih pertanyaan
+document.querySelectorAll('.questionItem').forEach(item=>{
+  item.addEventListener('click',()=>{
+    const question = item.innerText;
+    addBubble(question,'user');
+    setTimeout(()=>{
+      addBubble(messages[question],'bulan');
+    },500);
+  });
+});
+</script>
+</body>
+</html>
