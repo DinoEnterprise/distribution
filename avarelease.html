@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Halo dari Bulan</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
+html,body{
+  height:100%;
+  width:100%;
+  background:linear-gradient(160deg,#3b0764,#6d28d9,#7e22ce);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  color:#f5f3ff;
+  overflow:hidden;
+  text-align:center;
+}
+.avatar-container{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+}
+.avatar-container img{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  border:3px solid #fff;
+  box-shadow:0 5px 15px rgba(0,0,0,0.3);
+  object-fit:cover;
+  opacity:0;
+  transform:translateY(20px);
+  transition: all 0.4s ease-out;
+}
+.avatar-container img.show{
+  opacity:1;
+  transform:translateY(0);
+}
+.name-tag{
+  font-weight:600;
+  font-size:1rem;
+  color:#fff;
+  text-shadow:0 0 5px rgba(0,0,0,0.3);
+  opacity:0;
+  transform:translateY(10px);
+  transition: all 0.4s ease-out;
+}
+.name-tag.show{
+  opacity:1;
+  transform:translateY(0);
+}
+.chat-bubble{
+  background:rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  color:#fff;
+  padding:14px 20px;
+  border-radius:20px;
+  max-width:90%;
+  width:340px;
+  font-size:1rem;
+  box-shadow:0 5px 10px rgba(0,0,0,0.2);
+  text-align:center;
+  position:relative;
+  opacity:0;
+  transition: opacity 0.3s ease-in-out;
+  overflow-y:auto;
+}
+.chat-bubble.show{opacity:1;}
+#chatText{display:block;word-wrap: break-word;}
+#continueBtn{
+  margin-top:25px;
+  padding:10px 24px;
+  font-size:1rem;
+  font-weight:600;
+  color:#fff;
+  background:rgba(255,255,255,0.2);
+  border:1px solid rgba(255,255,255,0.3);
+  border-radius:14px;
+  cursor:pointer;
+  box-shadow:0 0 10px rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  transform: scale(0);
+  opacity:0;
+  transition: all 0.3s ease-out;
+}
+#continueBtn.show{
+  transform: scale(1);
+  opacity:1;
+  animation: pulseClick 1.2s infinite;
+}
+#continueBtn:hover{
+  background:rgba(255,255,255,0.35);
+  transform: scale(1.15);
+}
+@keyframes pulseClick{0%,100% {transform: scale(1);}50% {transform: scale(1.08);}}
+.fadeOut{opacity:0 !important;transition: opacity 0.5s ease-out;}
+#pullRefresh{
+  position:absolute;
+  top:10px;
+  width:40px;
+  height:40px;
+  border:4px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation: spin 1s linear infinite;
+  display:none;
+  z-index:999;
+}
+@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<div id="pullRefresh"></div>
+
+<div class="avatar-container">
+  <img src="https://i.imgur.com/nQNpS3C.gif" alt="Avatar Bulan" id="avatarImg">
+  <div class="name-tag" id="nameTag">Bulan</div>
+  <div class="chat-bubble" id="chatBubble">
+    <span id="chatText"></span>
+  </div>
+  <button id="continueBtn">Lanjut</button>
+</div>
+
+<script>
+const avatar = document.getElementById("avatarImg");
+const nameTag = document.getElementById("nameTag");
+const chatBubble = document.getElementById("chatBubble");
+const chatText = document.getElementById("chatText");
+const continueBtn = document.getElementById("continueBtn");
+const pull = document.getElementById("pullRefresh");
+
+// 50 template kalimat random
+const messages = [
+"Hei, kamu pasti capek banget ya. Semoga ada waktu buat santai dulu. Sekarang ayo cek lagu kamu!",
+"Gimana hari-hari kamu? Semoga semua lancar. Yuk, sekarang waktunya cek lagu kamu!",
+"Aku penasaran, ada hal seru apa aja? Nikmatin dulu momen kecilnya. Sekarang kita lihat lagu kamu!",
+"Kamu sudah berjuang banyak, jangan lupa tarik napas sebentar. Saatnya cek lagu kamu sekarang!",
+"Gimana perasaanmu hari ini? Semoga nyaman dan tenang. Sekarang ayo cek lagu kamu!",
+"Capek banget ya? Gapapa, istirahat dulu. Sekarang waktunya cek lagu kamu!",
+"Hei, jangan terlalu keras sama diri sendiri. Kamu tetap luar biasa. Yuk, cek lagu kamu sekarang!",
+"Aku harap kamu bisa senyum sebentar. Sekarang waktunya cek lagu kamu!",
+"Kamu selalu bikin suasana nyaman. Ayo sekarang waktunya cek lagu kamu!",
+"Ada hal kecil yang bikin senang? Sekarang waktunya cek lagu kamu!",
+"Hei, nikmatin dulu momen santai. Saatnya cek lagu kamu sekarang!",
+"Jangan lupa makan dan minum cukup. Sekarang ayo cek lagu kamu!",
+"Kamu hebat loh, walau lelah tetap semangat. Saatnya cek lagu kamu sekarang!",
+"Aku penasaran cerita kamu hari ini. Yuk, sekarang waktunya cek lagu kamu!",
+"Kamu selalu berhasil bikin orang lain nyaman. Sekarang ayo cek lagu kamu!",
+"Aku senang bisa ngobrol sama kamu. Sekarang waktunya cek lagu kamu!",
+"Hei, semoga hatimu tenang sekarang. Saatnya cek lagu kamu sekarang!",
+"Kamu punya energi positif yang bikin nyaman. Sekarang ayo cek lagu kamu!",
+"Jangan khawatir kalau ada yang belum selesai. Sekarang waktunya cek lagu kamu!",
+"Aku harap kamu bisa santai sebentar. Saatnya cek lagu kamu sekarang!",
+"Kamu bikin semua lebih ringan. Yuk, sekarang waktunya cek lagu kamu!",
+"Hei, semoga kamu nemuin hal kecil yang bikin bahagia. Saatnya cek lagu kamu sekarang!",
+"Aku penasaran kamu lagi ngapain. Sekarang ayo cek lagu kamu!",
+"Kamu hebat banget loh, jangan lupa bangga sama diri sendiri. Saatnya cek lagu kamu sekarang!",
+"Hei, tarik napas dulu sebentar. Sekarang waktunya cek lagu kamu!",
+"Kamu selalu bikin orang lain senang. Yuk, sekarang waktunya cek lagu kamu!",
+"Aku senang bisa melihat caramu tersenyum. Saatnya cek lagu kamu!",
+"Hei, jangan terlalu capek, santai dulu. Sekarang waktunya cek lagu kamu!",
+"Kamu selalu bisa bikin hati tenang. Saatnya cek lagu kamu sekarang!",
+"Aku penasaran dengan cerita kamu. Yuk, sekarang waktunya cek lagu kamu!",
+"Kamu bikin semuanya terasa lebih menyenangkan. Saatnya cek lagu kamu sekarang!",
+"Hei, nikmatin dulu momen santai. Sekarang ayo cek lagu kamu!",
+"Aku harap kamu bisa senyum sebentar. Saatnya cek lagu kamu sekarang!",
+"Kamu punya aura positif yang bikin nyaman. Yuk, sekarang waktunya cek lagu kamu!",
+"Hei, jangan lupa minum air ya. Sekarang ayo cek lagu kamu!",
+"Aku senang bisa ngobrol sama kamu sebentar. Saatnya cek lagu kamu!",
+"Kamu hebat dan pantas senyum. Yuk, sekarang waktunya cek lagu kamu!",
+"Hei, kalau capek jangan dipaksa. Sekarang ayo cek lagu kamu!",
+"Aku harap semua nyaman sekarang. Saatnya cek lagu kamu sekarang!",
+"Kamu selalu berhasil bikin orang lain senang. Yuk, sekarang waktunya cek lagu kamu!",
+"Hei, santai dulu sebentar. Sekarang ayo cek lagu kamu!",
+"Aku penasaran kamu lagi ngapain. Saatnya cek lagu kamu!",
+"Kamu punya cara bikin semua orang nyaman. Yuk, sekarang waktunya cek lagu kamu!",
+"Hei, jangan terlalu keras sama diri sendiri. Saatnya cek lagu kamu sekarang!",
+"Aku harap kamu bisa nikmatin momen kecil. Yuk, sekarang waktunya cek lagu kamu!",
+"Kamu bikin semua terasa lebih ringan. Saatnya cek lagu kamu sekarang!",
+"Hei, semoga hatimu senang. Yuk, sekarang waktunya cek lagu kamu!",
+"Aku senang bisa ngobrol sebentar. Saatnya cek lagu kamu!",
+"Kamu hebat dan pantas bahagia. Yuk, sekarang waktunya cek lagu kamu!",
+"Hei, tarik napas sebentar dan santai. Saatnya cek lagu kamu sekarang!",
+"Jangan lupa tersenyum sebentar. Sekarang ayo cek lagu kamu!"
+];
+
+function typeWriter(text,i=0){
+  if(i<text.length){
+    chatText.innerHTML += text.charAt(i);
+    setTimeout(()=>typeWriter(text,i+1),30);
+  }else{
+    continueBtn.classList.add("show");
+  }
+}
+
+function initPage(){
+  avatar.classList.remove("fadeOut");
+  nameTag.classList.remove("fadeOut");
+  chatBubble.classList.remove("fadeOut");
+  continueBtn.classList.remove("fadeOut");
+  avatar.classList.add("show");
+  nameTag.classList.add("show");
+  chatBubble.classList.add("show");
+  chatText.innerHTML = "";
+  typeWriter(messages[Math.floor(Math.random()*messages.length)]);
+}
+
+window.addEventListener("load", initPage);
+window.addEventListener("pageshow", e=>{ if(e.persisted){ initPage(); } });
+
+continueBtn.addEventListener("click", ()=>{
+  avatar.classList.add("fadeOut");
+  nameTag.classList.add("fadeOut");
+  chatBubble.classList.add("fadeOut");
+  continueBtn.classList.add("fadeOut");
+  setTimeout(()=> window.location.href="artislabs.html",500);
+});
+
+// Pull-to-refresh
+let startY=0,isPull=false;
+document.addEventListener("touchstart", e=>{startY=e.touches[0].clientY;});
+document.addEventListener("touchmove", e=>{
+  let diff=e.touches[0].clientY-startY;
+  if(diff>50){pull.style.display="block";isPull=true;}
+});
+document.addEventListener("touchend", e=>{
+  if(isPull){location.reload();}
+  pull.style.display="none";
+  isPull=false;
+});
+</script>
+
+</body>
+</html>
