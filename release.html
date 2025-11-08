@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dynotic Music</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Dynotic Music - Release</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 * {
@@ -13,71 +13,89 @@
   font-family: "Outfit", sans-serif;
 }
 
-html, body {
+body {
   width: 100%;
   min-height: 100vh;
-  background-color: #4c1d95;
-  background: linear-gradient(160deg, #4c1d95, #7e22ce, #a78bfa);
-  background-size: 400% 400%;
-  animation: aurora 10s ease-in-out infinite;
-  color: #f5f3ff;
+  background: radial-gradient(circle at 20% 30%, rgba(130,60,255,0.08), transparent 65%),
+              radial-gradient(circle at 80% 70%, rgba(150,70,255,0.06), transparent 70%),
+              #000;
+  background-size: cover;
+  background-attachment: fixed;
+  color: #fff;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   text-align: center;
-}
-
-@keyframes aurora {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  padding-top: 80px;
 }
 
 h1 {
   font-size: clamp(2rem, 6vw, 3.5rem);
   font-weight: 700;
-  background: linear-gradient(90deg, #fff, #ddd6fe);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 50px;
-  text-shadow: 0 0 15px rgba(255,255,255,0.15);
+  margin-bottom: 40px;
 }
 
 .menu {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
   width: 90%;
-  max-width: 320px;
+  max-width: 360px;
+  transition: all 0.3s ease;
 }
 
 .menu a {
-  background: rgba(255,255,255,0.08);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.15);
-  padding: 14px 0;
-  border-radius: 14px;
+  display: block;
+  padding: 16px 0;
+  font-size: 1.2rem;
   font-weight: 600;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #fff;
   text-decoration: none;
-  letter-spacing: 0.5px;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
 }
 
 .menu a:hover {
   background: rgba(255,255,255,0.15);
-  transform: translateY(-3px);
-  box-shadow: 0 0 12px rgba(255,255,255,0.1);
+  transform: translateY(-2px);
 }
 
 footer {
   margin-top: 50px;
   font-size: 0.85rem;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255,255,255,0.7);
 }
 
-#refreshIndicator {
-  display: none;
+/* 🌟 Pakai query yang lebih universal untuk Chrome */
+@media screen and (min-width: 900px) {
+  h1 {
+    font-size: 3.8rem;
+    margin-bottom: 70px;
+  }
+
+  .menu {
+    width: 75%;
+    max-width: 900px;
+    gap: 28px;
+  }
+
+  .menu a {
+    font-size: 1.5rem;
+    padding: 22px 0;
+    border-radius: 22px;
+  }
+
+  .menu a:hover {
+    background: rgba(255,255,255,0.25);
+    transform: scale(1.03);
+  }
+
+  footer {
+    margin-top: 70px;
+    font-size: 1rem;
+  }
 }
 </style>
 </head>
@@ -88,11 +106,11 @@ footer {
 <div class="menu">
   <a href="https://forms.gle/5H44jyz3U7Mx2Zuv9">Original</a>
   <a href="https://forms.gle/4XhYADJMsWSdH42z9">Cover to Master</a>
-  <a href="avarelease.html">Status</a>
+  <a href="releasestatus.html">Status</a>
   <a href="index.html">Home</a>
 </div>
 
-<footer>© 2025 Dynotic ID</footer>
+<footer>© 2025 <span style="color:#a855f7;font-weight:700;">Dynotic ID</span></footer>
 
 </body>
 </html>
