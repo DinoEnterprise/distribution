@@ -28,7 +28,7 @@ html, body{
   background-position: center;
   background-attachment: fixed;
   overflow-x:hidden;
-  padding-top:70px; 
+  padding-top:70px;  
 }
 
 /* ANIMASI MASUK */
@@ -211,7 +211,7 @@ const nextBtn = document.getElementById('nextBtn');
 
 async function loadData(){
   try{
-    const response = await fetch('rph.json'); 
+    const response = await fetch('rph.json');   
     const rawData = await response.json();
     transactions = rawData.map((item) => ({
       no: item["No"] || "-",
@@ -219,7 +219,7 @@ async function loadData(){
       singer: item["Singer"] || "-",
       composer: item["Composer"] || "-",
       youtube: item["Youtube link (if Any)"] || "-"
-    })).reverse();
+    })); // Hapus reverse()
     filteredTransactions = [...transactions];
     renderTransactions();
   }catch(err){ console.error("Gagal load rph.json", err);}
@@ -233,12 +233,13 @@ function renderTransactions(){
   noResult.style.display = pageItems.length===0?'block':'none';
   pageItems.forEach((t,i)=>{
     const tr=document.createElement('tr');
+    const youtubeDisplay = t.youtube === "-" ? "-" : `<a href="${t.youtube}" target="_blank" style="color:#8a2be2;">Link</a>`;
     tr.innerHTML = `
       <td>${t.no}</td>
       <td>${t.title}</td>
       <td>${t.singer}</td>
       <td>${t.composer}</td>
-      <td><a href="${t.youtube}" target="_blank" style="color:#8a2be2;">Link</a></td>
+      <td>${youtubeDisplay}</td>
     `;
     tr.style.opacity = '0';
     tr.style.animation = `fadeSlideUp 0.5s ease ${(i*0.05)}s forwards`;
@@ -266,7 +267,7 @@ function triggerPageAnimation(){
   const fadeEls = [header, filterWrapper, tableWrapper, pagination];
   fadeEls.forEach((el, idx)=>{
     el.style.animation = 'none';
-    void el.offsetHeight; 
+    void el.offsetHeight;   
     el.style.animation = `fadeSlideUp 0.8s ease ${idx*0.2}s forwards`;
   });
 }
