@@ -26,6 +26,7 @@ header {
   transform: translateY(-30px);
   opacity:0;
   transition: transform 0.6s ease, opacity 0.6s ease;
+  will-change: transform, opacity;
 }
 header.show { transform: translateY(0); opacity:1; }
 header h1 { font-size:1.2rem; font-weight:600; color:#fff; }
@@ -130,13 +131,13 @@ header h1 { font-size:1.2rem; font-weight:600; color:#fff; }
   <a href="index.html">G2B Production</a>
   <a href="index.html">Mahar Pustaka Nusantara</a>
   <a href="index.html">Nagaswara Official</a>
+  <a href="index.html">RPH Musik</a>
   <a href="index.html">Sani Musik Indonesia</a>
 </nav>
 
 <div class="main" id="mainContent">
   <div class="section-title">Katalog & Royalti</div>
   <div class="grid">
-    <!-- Semua card tetap lengkap -->
     <div class="card">
       <h3>Nagaswara Official</h3>
       <p><span class="label">Publishing:</span> <span class="value">35%</span></p>
@@ -193,20 +194,23 @@ header h1 { font-size:1.2rem; font-weight:600; color:#fff; }
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // Animasi halaman masuk
   document.body.style.opacity = '1';
+
   const header = document.getElementById('header');
   const mainContent = document.getElementById('mainContent');
-  header.classList.add('show');
-  mainContent.classList.add('show');
 
-  // Animasi card masuk bertahap
-  const cards = document.querySelectorAll('.card');
-  cards.forEach((card, index) => {
-    setTimeout(() => {
-      card.classList.add('show');
-    }, 150 * index); // delay tiap card 150ms
-  });
+  // Delay sedikit supaya header animasi terlihat
+  setTimeout(() => {
+    header.classList.add('show');
+    mainContent.classList.add('show');
+
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+      setTimeout(() => {
+        card.classList.add('show');
+      }, 150 * index);
+    });
+  }, 100);
 
   const menuIcon = document.getElementById('menuIcon');
   const dropdownMenu = document.getElementById('dropdownMenu');
@@ -224,7 +228,6 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.classList.remove('show');
   });
 
-  // Klik link dropdown → teks jadi ungu
   const links = document.querySelectorAll('.dropdown a');
   links.forEach(link => {
     link.addEventListener('click', () => {
