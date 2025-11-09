@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sani Musik Indonesia- Dynotic</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Outfit",sans-serif;
+}
+html, body{
+  min-height:100vh;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  color:#f5f3ff;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(130,60,255,0.08), transparent 65%),
+    radial-gradient(circle at 80% 70%, rgba(150,70,255,0.06), transparent 70%),
+    #000;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  overflow-x:hidden;
+  padding-top:70px;  
+}
+
+/* ANIMASI MASUK */
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* HEADER FIXED */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  background:#0d0d0d;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+  padding:12px 5%;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:clamp(1.8rem,4vw,2.5rem);
+  font-weight:700;
+  opacity:0;
+}
+
+/* SEARCH BOX */
+.filter-wrapper{
+  width:95%;
+  max-width:1200px;
+  display:flex;
+  justify-content:flex-start;
+  margin:10px auto;
+  margin-top:10px;
+  opacity:0;
+}
+.filter-box input{
+  padding:10px 14px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.05);
+  color:#fff;
+  font-size:1rem;
+  outline:none;
+}
+
+/* TABLE WRAPPER */
+.table-wrapper{
+  width:95%;
+  max-width:1200px;
+  margin:20px auto 0;
+  display:flex;
+  flex-direction:column;
+  opacity:0;
+}
+
+.table-scroll{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:600px;
+}
+th,td{
+  padding:14px 10px;
+  border:1px solid rgba(255,255,255,0.8);
+  text-align:center;
+  background: rgba(0,0,0,0.2);
+  color:#fff;
+}
+th{
+  background: rgba(0,0,0,0.4);
+  font-weight:700;
+}
+tr:hover td{
+  background: rgba(255,255,255,0.05);
+}
+
+/* NO RESULT */
+.no-result{
+  text-align:center;
+  margin-top:15px;
+  color:#f0a;
+  display:none;
+}
+
+/* PAGINATION */
+.pagination{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin-top:10px;
+  flex-wrap:wrap;
+  opacity:0;
+}
+.pagination button{
+  cursor:pointer;
+  padding:8px 18px;
+  border-radius:12px;
+  background: rgba(255,255,255,0.1);
+  color:#fff;
+  font-weight:600;
+  border:1px solid rgba(255,255,255,0.25);
+  transition: all 0.25s ease;
+}
+.pagination button:hover{
+  background: rgba(255,255,255,0.3);
+  transform: scale(1.05);
+}
+.pagination button:disabled{
+  opacity:0.4;
+  cursor:not-allowed;
+  background: rgba(255,255,255,0.05);
+}
+
+/* MOBILE */
+@media (max-width:992px){
+  th,td{ font-size:0.9rem; padding:10px 6px;}
+  .filter-box input{ font-size:0.9rem; padding:8px 10px;}
+  .pagination button{ padding:6px 12px; font-size:0.85rem;}
+}
+@media (max-width:576px){
+  th,td{ font-size:0.8rem; padding:8px 4px;}
+}
+</style>
+</head>
+<body>
+
+<header id="header">Sani Musik Indonesia</header>
+
+<div class="filter-wrapper" id="filterWrapper">
+  <div class="filter-box">
+    <input type="text" id="searchInput" placeholder="Cari Title, Singer, Composer...">
+  </div>
+</div>
+
+<div class="table-wrapper" id="tableWrapper">
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Title</th>
+          <th>Singer</th>
+          <th>Composer</th>
+          <th>YouTube</th>
+        </tr>
+      </thead>
+      <tbody id="transactionList"></tbody>
+    </table>
+  </div>
+
+  <p class="no-result" id="noResult">Data tidak ditemukan.</p>
+
+  <div class="pagination" id="pagination">
+    <button id="prevBtn">Previous</button>
+    <button id="nextBtn">Next</button>
+  </div>
+</div>
+
+<script>
+const itemsPerPage = 50; // tampil 50 lagu per halaman
+let currentPage = 1;
+let transactions = [];
+let filteredTransactions = [];
+
+const transactionList = document.getElementById('transactionList');
+const searchInput = document.getElementById('searchInput');
+const noResult = document.getElementById('noResult');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const header = document.getElementById('header');
+const filterWrapper = document.getElementById('filterWrapper');
+const tableWrapper = document.getElementById('tableWrapper');
+const pagination = document.getElementById('pagination');
+
+async function loadData(){
+  try{
+    const response = await fetch('smi.json');   
+    const rawData = await response.json();
+    transactions = rawData.map((item) => ({
+      no: item["No"] || "-",
+      title: item["Title"] || "-",
+      singer: item["Singer"] || "-",
+      composer: item["Composer"] || "-",
+      youtube: item["Youtube link (if Any)"] || "-"
+    }));
+    filteredTransactions = [...transactions];
+    renderTransactions();
+  }catch(err){ console.error("Gagal load smi.json", err);}
+}
+
+function renderTransactions(){
+  transactionList.innerHTML = '';
+  const start = (currentPage-1)*itemsPerPage;
+  const end = start + itemsPerPage;
+  const pageItems = filteredTransactions.slice(start,end);
+
+  noResult.style.display = pageItems.length===0 ? 'block' : 'none';
+
+  pageItems.forEach((t,i)=>{
+    const tr=document.createElement('tr');
+    const youtubeDisplay = t.youtube === "-" ? "-" : `<a href="${t.youtube}" target="_blank" style="color:#8a2be2;">Link</a>`;
+    tr.innerHTML = `
+      <td>${t.no}</td>
+      <td>${t.title}</td>
+      <td>${t.singer}</td>
+      <td>${t.composer}</td>
+      <td>${youtubeDisplay}</td>
+    `;
+    // Animasi fade-slide-up tiap baris
+    tr.style.opacity = '0';
+    tr.style.transform = 'translateY(20px)';
+    tr.style.animation = `fadeSlideUp 0.5s ease ${(i*0.03)}s forwards`;
+    transactionList.appendChild(tr);
+  });
+
+  // Pagination
+  prevBtn.disabled = currentPage===1;
+  nextBtn.disabled = currentPage>=Math.ceil(filteredTransactions.length/itemsPerPage);
+
+  // Animasi tombol pagination fade-in
+  [prevBtn, nextBtn].forEach(btn => {
+    btn.style.opacity = '0';
+    btn.style.transform = 'translateY(10px)';
+    btn.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    setTimeout(() => {
+      btn.style.opacity = '1';
+      btn.style.transform = 'translateY(0)';
+    }, 50);
+  });
+}
+
+searchInput.addEventListener('input',()=>{
+  const query = searchInput.value.toLowerCase();
+  filteredTransactions = transactions.filter(t=>{
+    return t.title.toLowerCase().includes(query) ||
+           t.singer.toLowerCase().includes(query) ||
+           t.composer.toLowerCase().includes(query);
+  });
+  currentPage=1;
+  renderTransactions();
+});
+
+prevBtn.addEventListener('click',()=>{ if(currentPage>1){currentPage--;renderTransactions();} });
+nextBtn.addEventListener('click',()=>{ if(currentPage<Math.ceil(filteredTransactions.length/itemsPerPage)){currentPage++;renderTransactions();} });
+
+function triggerPageAnimation(){
+  const fadeEls = [header, filterWrapper, tableWrapper, pagination];
+  fadeEls.forEach((el, idx)=>{
+    el.style.animation = 'none';
+    void el.offsetHeight;   
+    el.style.animation = `fadeSlideUp 0.8s ease ${idx*0.2}s forwards`;
+  });
+}
+
+window.addEventListener('pageshow', triggerPageAnimation);
+
+loadData();
+</script>
+</body>
+</html>
