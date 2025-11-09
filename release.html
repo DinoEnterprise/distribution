@@ -31,6 +31,18 @@ html, body{
   padding-top:70px; 
 }
 
+/* ANIMASI MASUK */
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* HEADER FIXED */
 header{
   position:fixed;
@@ -46,6 +58,7 @@ header{
   justify-content:center;
   font-size:clamp(1.8rem,4vw,2.5rem);
   font-weight:700;
+  opacity:0;
 }
 
 /* Filter + Create New */
@@ -57,6 +70,7 @@ header{
   align-items:center;
   margin:10px auto;
   margin-top:10px;
+  opacity:0;
 }
 .filter-box{
   display:flex;
@@ -76,12 +90,13 @@ header{
 .filter-box select option{
   color:#000;
 }
+
 /* Tombol Create New Ungu */
 .create-btn{
   padding:10px 24px; 
   border-radius:12px;
   border:none; 
-  background: #8a2be2; /* ungu */
+  background: #8a2be2;
   color:#fff; 
   font-weight:600;
   cursor:pointer;
@@ -93,7 +108,7 @@ header{
   justify-content:center;
 }
 .create-btn:hover{
-  background: #a14ff0; /* lebih terang saat hover */
+  background: #a14ff0;
 }
 
 /* TABLE WRAPPER */
@@ -103,6 +118,7 @@ header{
   margin:0 auto;
   display:flex;
   flex-direction:column;
+  opacity:0;
 }
 
 .table-scroll{
@@ -144,6 +160,7 @@ tr:hover td{
   gap:12px;
   margin-top:10px;
   flex-wrap:wrap;
+  opacity:0;
 }
 .pagination button{
   cursor:pointer;
@@ -187,9 +204,9 @@ footer{
 </head>
 <body>
 
-<header>Release Status</header>
+<header id="header">Release Status</header>
 
-<div class="filter-wrapper">
+<div class="filter-wrapper" id="filterWrapper">
   <div class="filter-box">
     <input type="text" id="searchInput" placeholder="Cari ID, Nama Artis, Judul Lagu...">
     <select id="statusFilter">
@@ -202,7 +219,7 @@ footer{
   <a href="https://forms.gle/VUkLnhRPdSLF9ufm6" target="_blank" class="create-btn">Create New</a>
 </div>
 
-<div class="table-wrapper">
+<div class="table-wrapper" id="tableWrapper">
   <div class="table-scroll">
     <table>
       <thead>
@@ -219,16 +236,13 @@ footer{
 
   <p class="no-result" id="noResult">Data tidak ditemukan.</p>
 
-  <div class="pagination">
+  <div class="pagination" id="pagination">
     <button id="prevBtn">Previous</button>
     <button id="nextBtn">Next</button>
   </div>
 </div>
 
-
-
 <script>
-// Table logic
 const itemsPerPage = 10;
 let currentPage = 1;
 let transactions = [];
@@ -262,7 +276,7 @@ function renderTransactions(){
   const end = start + itemsPerPage;
   const pageItems = filteredTransactions.slice(start,end);
   noResult.style.display = pageItems.length===0?'block':'none';
-  pageItems.forEach(t=>{
+  pageItems.forEach((t,i)=>{
     const tr=document.createElement('tr');
     tr.innerHTML = `
       <td>${t.id}</td>
@@ -270,6 +284,8 @@ function renderTransactions(){
       <td>${t.song}</td>
       <td>${t.status}</td>
     `;
+    tr.style.opacity = '0';
+    tr.style.animation = `fadeSlideUp 0.5s ease ${(i*0.05)}s forwards`;
     transactionList.appendChild(tr);
   });
   prevBtn.disabled = currentPage===1;
@@ -294,6 +310,18 @@ searchInput.addEventListener('input',()=>{ applyFilters(); });
 statusFilter.addEventListener('change',()=>{ applyFilters(); });
 prevBtn.addEventListener('click',()=>{ if(currentPage>1){currentPage--;renderTransactions();} });
 nextBtn.addEventListener('click',()=>{ if(currentPage<Math.ceil(filteredTransactions.length/itemsPerPage)){currentPage++;renderTransactions();} });
+
+/* 🔄 Jalankan animasi setiap kali halaman dibuka kembali (termasuk setelah back) */
+function triggerPageAnimation(){
+  const fadeEls = [header, filterWrapper, tableWrapper, pagination];
+  fadeEls.forEach((el, idx)=>{
+    el.style.animation = 'none';
+    void el.offsetHeight; // reset
+    el.style.animation = `fadeSlideUp 0.8s ease ${idx*0.2}s forwards`;
+  });
+}
+
+window.addEventListener('pageshow', triggerPageAnimation);
 
 loadData();
 </script>
