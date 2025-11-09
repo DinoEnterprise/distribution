@@ -218,11 +218,11 @@ async function loadData(){
     const response = await fetch('smi.json');   
     const rawData = await response.json();
     transactions = rawData.map((item) => ({
-      no: item["No"] || "-",
+      no: item["N0"] || "-",
       title: item["Title"] || "-",
       singer: item["Singer"] || "-",
       composer: item["Composer"] || "-",
-      youtube: item["Youtube link (if Any)"] || "-"
+      youtube: item["Youtube link (if Any) "] || "-"
     }));
     filteredTransactions = [...transactions];
     renderTransactions();
