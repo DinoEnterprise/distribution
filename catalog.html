@@ -82,11 +82,7 @@ header h1 { font-size:1.2rem; font-weight:600; color:#fff; }
   border-radius:5px;
   transition: color 0.3s ease, padding-left 0.3s ease;
 }
-
-/* Saat link diklik, beri class active */
 .dropdown a.active { color:#a855f7; }
-
-/* Hover tetap terlihat */
 .dropdown a:hover { background: rgba(168,85,247,0.2); padding-left:10px; }
 
 /* Main Content */
@@ -100,9 +96,10 @@ header h1 { font-size:1.2rem; font-weight:600; color:#fff; }
   background: rgba(255,255,255,0.05);
   border:1px solid rgba(255,255,255,0.15);
   border-radius:18px; padding:25px;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.6s ease, transform 0.6s ease;
+  opacity:0; transform: translateY(20px);
 }
-.card:hover { transform:translateY(-6px); box-shadow:0 10px 25px rgba(168,85,247,0.25); }
+.card.show { opacity:1; transform: translateY(0); }
 .card h3 { font-size:1.2rem; font-weight:600; margin-bottom:12px; color:#fff; }
 .card p { font-size:1rem; margin-bottom:8px; line-height:1.4; }
 .card p span.label { color:#fff; font-weight:500; }
@@ -132,15 +129,14 @@ header h1 { font-size:1.2rem; font-weight:600; color:#fff; }
   <a href="index.html">BW Record</a>
   <a href="index.html">G2B Production</a>
   <a href="index.html">Mahar Pustaka Nusantara</a>
-    <a href="index.html">Nagaswara Official</a>
-  <a href="index.html">RPH Musik</a>
+  <a href="index.html">Nagaswara Official</a>
   <a href="index.html">Sani Musik Indonesia</a>
 </nav>
 
 <div class="main" id="mainContent">
   <div class="section-title">Katalog & Royalti</div>
   <div class="grid">
-    <!-- semua card tetap lengkap -->
+    <!-- Semua card tetap lengkap -->
     <div class="card">
       <h3>Nagaswara Official</h3>
       <p><span class="label">Publishing:</span> <span class="value">35%</span></p>
@@ -199,8 +195,18 @@ header h1 { font-size:1.2rem; font-weight:600; color:#fff; }
 document.addEventListener('DOMContentLoaded', () => {
   // Animasi halaman masuk
   document.body.style.opacity = '1';
-  document.getElementById('header').classList.add('show');
-  document.getElementById('mainContent').classList.add('show');
+  const header = document.getElementById('header');
+  const mainContent = document.getElementById('mainContent');
+  header.classList.add('show');
+  mainContent.classList.add('show');
+
+  // Animasi card masuk bertahap
+  const cards = document.querySelectorAll('.card');
+  cards.forEach((card, index) => {
+    setTimeout(() => {
+      card.classList.add('show');
+    }, 150 * index); // delay tiap card 150ms
+  });
 
   const menuIcon = document.getElementById('menuIcon');
   const dropdownMenu = document.getElementById('dropdownMenu');
