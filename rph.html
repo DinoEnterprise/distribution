@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RPH Musik- Dynotic</title>
+<title>Nagaswaa Official - Dynotic</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *{
@@ -165,7 +165,7 @@ tr:hover td{
 </head>
 <body>
 
-<header id="header">RPH Musik</header>
+<header id="header">Nagaswara Oficial</header>
 
 <div class="filter-wrapper" id="filterWrapper">
   <div class="filter-box">
@@ -198,7 +198,7 @@ tr:hover td{
 </div>
 
 <script>
-const itemsPerPage = 10;
+const itemsPerPage = 50; // tampil 50 lagu per halaman
 let currentPage = 1;
 let transactions = [];
 let filteredTransactions = [];
@@ -208,6 +208,10 @@ const searchInput = document.getElementById('searchInput');
 const noResult = document.getElementById('noResult');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
+const header = document.getElementById('header');
+const filterWrapper = document.getElementById('filterWrapper');
+const tableWrapper = document.getElementById('tableWrapper');
+const pagination = document.getElementById('pagination');
 
 async function loadData(){
   try{
@@ -219,7 +223,7 @@ async function loadData(){
       singer: item["Singer"] || "-",
       composer: item["Composer"] || "-",
       youtube: item["Youtube link (if Any)"] || "-"
-    })); // Hapus reverse()
+    }));
     filteredTransactions = [...transactions];
     renderTransactions();
   }catch(err){ console.error("Gagal load rph.json", err);}
@@ -230,7 +234,9 @@ function renderTransactions(){
   const start = (currentPage-1)*itemsPerPage;
   const end = start + itemsPerPage;
   const pageItems = filteredTransactions.slice(start,end);
-  noResult.style.display = pageItems.length===0?'block':'none';
+
+  noResult.style.display = pageItems.length===0 ? 'block' : 'none';
+
   pageItems.forEach((t,i)=>{
     const tr=document.createElement('tr');
     const youtubeDisplay = t.youtube === "-" ? "-" : `<a href="${t.youtube}" target="_blank" style="color:#8a2be2;">Link</a>`;
@@ -241,12 +247,27 @@ function renderTransactions(){
       <td>${t.composer}</td>
       <td>${youtubeDisplay}</td>
     `;
+    // Animasi fade-slide-up tiap baris
     tr.style.opacity = '0';
-    tr.style.animation = `fadeSlideUp 0.5s ease ${(i*0.05)}s forwards`;
+    tr.style.transform = 'translateY(20px)';
+    tr.style.animation = `fadeSlideUp 0.5s ease ${(i*0.03)}s forwards`;
     transactionList.appendChild(tr);
   });
+
+  // Pagination
   prevBtn.disabled = currentPage===1;
   nextBtn.disabled = currentPage>=Math.ceil(filteredTransactions.length/itemsPerPage);
+
+  // Animasi tombol pagination fade-in
+  [prevBtn, nextBtn].forEach(btn => {
+    btn.style.opacity = '0';
+    btn.style.transform = 'translateY(10px)';
+    btn.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    setTimeout(() => {
+      btn.style.opacity = '1';
+      btn.style.transform = 'translateY(0)';
+    }, 50);
+  });
 }
 
 searchInput.addEventListener('input',()=>{
