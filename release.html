@@ -265,7 +265,7 @@ async function loadData(){
       artist: item["Nama Artis"]?.trim() || "-",
       song: item["Judul Lagu"]?.trim() || "-",
       status: item["Status "]?.trim() || "-"
-    })).reverse();
+    })).reverse(); // tetap reverse
 
     filteredTransactions = [...transactions];
     renderTransactions();
@@ -318,7 +318,7 @@ function renderTransactions(){
 
 function applyFilters(){
   const query = searchInput.value.toLowerCase();
-  const statusVal = statusFilter.value;
+  const statusVal = statusFilter.value.toLowerCase();
 
   filteredTransactions = transactions.filter(t => {
     const matchesSearch =
@@ -326,7 +326,9 @@ function applyFilters(){
       t.artist.toLowerCase().includes(query) ||
       t.song.toLowerCase().includes(query);
 
-    const matchesStatus = statusVal ? t.status.toLowerCase() === statusVal.toLowerCase() : true;
+    // ✅ filter status tidak mengubah urutan, hanya menyaring
+    const matchesStatus =
+      statusVal ? t.status.toLowerCase().includes(statusVal) : true;
 
     return matchesSearch && matchesStatus;
   });
