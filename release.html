@@ -274,6 +274,14 @@ async function loadData(){
   }
 }
 
+function getStatusColor(status){
+  const s = status.toLowerCase();
+  if(s.includes("approve")) return "#00ff7f"; 
+  if(s.includes("pending")) return "orange";  
+  if(s.includes("gagal") || s.includes("reject")) return "red"; 
+  return "#fff";
+}
+
 function renderTransactions(){
   transactionList.innerHTML = '';
   const start = (currentPage - 1) * itemsPerPage;
@@ -288,7 +296,16 @@ function renderTransactions(){
       <td>${t.id}</td>
       <td>${t.artist}</td>
       <td>${t.song}</td>
-      <td>${t.status}</td>
+      <td>
+        <span style="
+          color:${getStatusColor(t.status)};
+          text-shadow: 0 0 6px ${getStatusColor(t.status)}, 0 0 12px ${getStatusColor(t.status)};
+        ">•</span>
+        <span style="
+          color:#ffffff;
+          text-shadow: 0 0 6px #ffffffaa, 0 0 12px #ffffff55;
+        ">${t.status}</span>
+      </td>
     `;
     tr.style.opacity = '0';
     tr.style.animation = `fadeSlideUp 0.5s ease ${i * 0.05}s forwards`;
@@ -333,7 +350,7 @@ nextBtn.addEventListener('click', () => {
   }
 });
 
-/* Animasi masuk saat kembali */
+/* Animasi masuk */
 function triggerPageAnimation(){
   const fadeEls = [header, filterWrapper, tableWrapper, pagination];
   fadeEls.forEach((el, idx)=>{
