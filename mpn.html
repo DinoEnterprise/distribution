@@ -220,7 +220,7 @@ async function loadData(){
     transactions = rawData.map((item) => ({
       no: item["No"] || "-",
       title: item["Title"] || "-",
-      singer: item["Singer"] || "-",
+      singer: item["Singer "] || "-",
       composer: item["Composer"] || "-",
       youtube: item["Youtube link (if Any)"] || "-"
     }));
