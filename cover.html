@@ -1,10 +1,11 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cover to Master - Status</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+<!DOCTYPE html>  
+<html lang="id">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>Cover to Master - Status</title>  
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">  
+
 <style>
 * {
   margin:0;
@@ -60,7 +61,7 @@ header {
   font-weight:700;
 }
 
-/* MENU BUTTON (animated) */
+/* MENU BUTTON */
 .menu-btn {
   position:absolute;
   right:5%;
@@ -151,9 +152,7 @@ header {
   font-size:1rem;
   outline:none;
 }
-.filter-box select option {
-  color:#000;
-}
+.filter-box select option { color:#000; }
 
 /* TABLE */
 .table-wrapper {
@@ -182,6 +181,23 @@ th {
 }
 tr:hover td {
   background:rgba(255,255,255,0.05);
+}
+
+/* STATUS COLORS + GLOW */
+.status-approve {
+  color: #4dff4d;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(77, 255, 77, 0.9);
+}
+.status-rejected {
+  color: #ff4d4d;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(255, 77, 77, 0.9);
+}
+.status-pending {
+  color: #ffae42;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(255, 174, 66, 0.9);
 }
 
 /* NO RESULT */
@@ -238,8 +254,8 @@ footer {
   th,td{font-size:0.8rem;padding:8px 4px;}
 }
 </style>
-</head>
 
+</head>
 <body>
 
 <header class="fade-in" style="animation-delay:0.1s;">
@@ -323,7 +339,7 @@ const nextBtn = document.getElementById('nextBtn');
 
 async function loadData(){
   try{
-    const response = await fetch('artis2.json');
+    const response = await fetch('artis.json');
     const rawData = await response.json();
 
     transactions = rawData.map(item => ({
@@ -338,7 +354,16 @@ async function loadData(){
     renderTransactions();
 
   }catch(err){
-    console.error("Gagal load artis2.json", err);
+    console.error("Gagal load artis.json", err);
+  }
+}
+
+function getStatusClass(status){
+  switch(status){
+    case "Approve": return "status-approve";
+    case "Rejected": return "status-rejected";
+    case "Pending": return "status-pending";
+    default: return "";
   }
 }
 
@@ -359,7 +384,7 @@ function renderTransactions(){
       <td>${t.artist}</td>
       <td>${t.song}</td>
       <td>${t.publisher}</td>
-      <td>${t.status}</td>
+      <td class="${getStatusClass(t.status)}">${t.status}</td>
     `;
 
     transactionList.appendChild(tr);
