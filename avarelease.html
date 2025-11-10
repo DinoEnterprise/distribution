@@ -123,7 +123,7 @@ html,body{
   <div class="chat-bubble" id="chatBubble">
     <span id="chatText"></span>
   </div>
-  <button id="continueBtn">Lanjut</button>
+  <button id="continueBtn">Kembali</button>
 </div>
 
 <script>
@@ -136,57 +136,7 @@ const pull = document.getElementById("pullRefresh");
 
 // 50 template kalimat random
 const messages = [
-"Hei, kamu pasti capek banget ya. Semoga ada waktu buat santai dulu. Sekarang ayo cek lagu kamu!",
-"Gimana hari-hari kamu? Semoga semua lancar. Yuk, sekarang waktunya cek lagu kamu!",
-"Aku penasaran, ada hal seru apa aja? Nikmatin dulu momen kecilnya. Sekarang kita lihat lagu kamu!",
-"Kamu sudah berjuang banyak, jangan lupa tarik napas sebentar. Saatnya cek lagu kamu sekarang!",
-"Gimana perasaanmu hari ini? Semoga nyaman dan tenang. Sekarang ayo cek lagu kamu!",
-"Capek banget ya? Gapapa, istirahat dulu. Sekarang waktunya cek lagu kamu!",
-"Hei, jangan terlalu keras sama diri sendiri. Kamu tetap luar biasa. Yuk, cek lagu kamu sekarang!",
-"Aku harap kamu bisa senyum sebentar. Sekarang waktunya cek lagu kamu!",
-"Kamu selalu bikin suasana nyaman. Ayo sekarang waktunya cek lagu kamu!",
-"Ada hal kecil yang bikin senang? Sekarang waktunya cek lagu kamu!",
-"Hei, nikmatin dulu momen santai. Saatnya cek lagu kamu sekarang!",
-"Jangan lupa makan dan minum cukup. Sekarang ayo cek lagu kamu!",
-"Kamu hebat loh, walau lelah tetap semangat. Saatnya cek lagu kamu sekarang!",
-"Aku penasaran cerita kamu hari ini. Yuk, sekarang waktunya cek lagu kamu!",
-"Kamu selalu berhasil bikin orang lain nyaman. Sekarang ayo cek lagu kamu!",
-"Aku senang bisa ngobrol sama kamu. Sekarang waktunya cek lagu kamu!",
-"Hei, semoga hatimu tenang sekarang. Saatnya cek lagu kamu sekarang!",
-"Kamu punya energi positif yang bikin nyaman. Sekarang ayo cek lagu kamu!",
-"Jangan khawatir kalau ada yang belum selesai. Sekarang waktunya cek lagu kamu!",
-"Aku harap kamu bisa santai sebentar. Saatnya cek lagu kamu sekarang!",
-"Kamu bikin semua lebih ringan. Yuk, sekarang waktunya cek lagu kamu!",
-"Hei, semoga kamu nemuin hal kecil yang bikin bahagia. Saatnya cek lagu kamu sekarang!",
-"Aku penasaran kamu lagi ngapain. Sekarang ayo cek lagu kamu!",
-"Kamu hebat banget loh, jangan lupa bangga sama diri sendiri. Saatnya cek lagu kamu sekarang!",
-"Hei, tarik napas dulu sebentar. Sekarang waktunya cek lagu kamu!",
-"Kamu selalu bikin orang lain senang. Yuk, sekarang waktunya cek lagu kamu!",
-"Aku senang bisa melihat caramu tersenyum. Saatnya cek lagu kamu!",
-"Hei, jangan terlalu capek, santai dulu. Sekarang waktunya cek lagu kamu!",
-"Kamu selalu bisa bikin hati tenang. Saatnya cek lagu kamu sekarang!",
-"Aku penasaran dengan cerita kamu. Yuk, sekarang waktunya cek lagu kamu!",
-"Kamu bikin semuanya terasa lebih menyenangkan. Saatnya cek lagu kamu sekarang!",
-"Hei, nikmatin dulu momen santai. Sekarang ayo cek lagu kamu!",
-"Aku harap kamu bisa senyum sebentar. Saatnya cek lagu kamu sekarang!",
-"Kamu punya aura positif yang bikin nyaman. Yuk, sekarang waktunya cek lagu kamu!",
-"Hei, jangan lupa minum air ya. Sekarang ayo cek lagu kamu!",
-"Aku senang bisa ngobrol sama kamu sebentar. Saatnya cek lagu kamu!",
-"Kamu hebat dan pantas senyum. Yuk, sekarang waktunya cek lagu kamu!",
-"Hei, kalau capek jangan dipaksa. Sekarang ayo cek lagu kamu!",
-"Aku harap semua nyaman sekarang. Saatnya cek lagu kamu sekarang!",
-"Kamu selalu berhasil bikin orang lain senang. Yuk, sekarang waktunya cek lagu kamu!",
-"Hei, santai dulu sebentar. Sekarang ayo cek lagu kamu!",
-"Aku penasaran kamu lagi ngapain. Saatnya cek lagu kamu!",
-"Kamu punya cara bikin semua orang nyaman. Yuk, sekarang waktunya cek lagu kamu!",
-"Hei, jangan terlalu keras sama diri sendiri. Saatnya cek lagu kamu sekarang!",
-"Aku harap kamu bisa nikmatin momen kecil. Yuk, sekarang waktunya cek lagu kamu!",
-"Kamu bikin semua terasa lebih ringan. Saatnya cek lagu kamu sekarang!",
-"Hei, semoga hatimu senang. Yuk, sekarang waktunya cek lagu kamu!",
-"Aku senang bisa ngobrol sebentar. Saatnya cek lagu kamu!",
-"Kamu hebat dan pantas bahagia. Yuk, sekarang waktunya cek lagu kamu!",
-"Hei, tarik napas sebentar dan santai. Saatnya cek lagu kamu sekarang!",
-"Jangan lupa tersenyum sebentar. Sekarang ayo cek lagu kamu!"
+"Halo, maaf ya. Untuk saat ini kami belum membuka pendaftaran member/artis baru",
 ];
 
 function typeWriter(text,i=0){
@@ -218,7 +168,7 @@ continueBtn.addEventListener("click", ()=>{
   nameTag.classList.add("fadeOut");
   chatBubble.classList.add("fadeOut");
   continueBtn.classList.add("fadeOut");
-  setTimeout(()=> window.location.href="releasestatus.html",500);
+  setTimeout(()=> window.location.href="index.html",500);
 });
 
 // Pull-to-refresh
