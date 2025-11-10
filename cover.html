@@ -239,6 +239,7 @@ footer {
 }
 </style>
 </head>
+
 <body>
 
 <header class="fade-in" style="animation-delay:0.1s;">
@@ -250,7 +251,6 @@ footer {
   </div>
 </header>
 
-<!-- MENU DROPDOWN -->
 <div class="menu" id="menu">
   <a href="https://forms.gle/FLYtEe2vX3ExkRMn6" target="_blank">Buat Rilis Baru</a>
   <a href="catalog.html">Katalog</a>
@@ -262,8 +262,8 @@ footer {
     <input type="text" id="searchInput" placeholder="Cari ID, Nama Artis, Lagu...">
     <select id="statusFilter">
       <option value="">Semua Status</option>
-      <option value="Sukses">Sukses</option>
       <option value="Pending">Pending</option>
+      <option value="Approve">Approve</option>
       <option value="Rejected">Rejected</option>
     </select>
   </div>
@@ -278,6 +278,7 @@ footer {
           <th>Nama Artis</th>
           <th>Lagu</th>
           <th>Publisher</th>
+          <th>Status</th>
         </tr>
       </thead>
       <tbody id="transactionList"></tbody>
@@ -295,7 +296,6 @@ footer {
 <footer class="fade-in" style="animation-delay:0.4s;">© 2025 Dynotic Distribution</footer>
 
 <script>
-// MENU ANIMASI
 const menuBtn = document.getElementById('menuBtn');
 const menu = document.getElementById('menu');
 menuBtn.addEventListener('click',()=>{
@@ -309,7 +309,6 @@ document.addEventListener('click',(e)=>{
   }
 });
 
-// TABLE LOGIC
 const itemsPerPage = 10;
 let currentPage = 1;
 let transactions = [];
@@ -324,17 +323,23 @@ const nextBtn = document.getElementById('nextBtn');
 
 async function loadData(){
   try{
-    const response = await fetch('artis.json');
+    const response = await fetch('artis2.json');
     const rawData = await response.json();
-    transactions = rawData.map(item=>({
-      id:item["__EMPTY"]||"-",
-      artist:item["__EMPTY_1"]||"-",
-      song:item["__EMPTY_2"]||"-",
-      publisher:item["__EMPTY_3"]||"-"
+
+    transactions = rawData.map(item => ({
+      id: item["ID"] || "-",
+      artist: item["Nama Artis"] || "-",
+      song: item["Judul Lagu"] || "-",
+      publisher: item["Publisher"] || "-",
+      status: item["Status"] || item["Status "] || "-"
     })).reverse();
+
     filteredTransactions = [...transactions];
     renderTransactions();
-  }catch(err){console.error("Gagal load artis.json",err);}
+
+  }catch(err){
+    console.error("Gagal load artis2.json", err);
+  }
 }
 
 function renderTransactions(){
@@ -344,17 +349,19 @@ function renderTransactions(){
   const pageItems=filteredTransactions.slice(start,end);
   noResult.style.display=pageItems.length===0?'block':'none';
 
-  // Animasi staggered tiap baris
   pageItems.forEach((t,i)=>{
     const tr=document.createElement('tr');
     tr.classList.add('fade-in');
     tr.style.animationDelay = (0.35 + i*0.05)+'s';
-    tr.innerHTML=`
+
+    tr.innerHTML = `
       <td>${t.id}</td>
       <td>${t.artist}</td>
       <td>${t.song}</td>
       <td>${t.publisher}</td>
+      <td>${t.status}</td>
     `;
+
     transactionList.appendChild(tr);
   });
 
@@ -365,21 +372,39 @@ function renderTransactions(){
 function applyFilters(){
   const query=searchInput.value.toLowerCase();
   const statusVal=statusFilter.value;
+
   filteredTransactions=transactions.filter(t=>{
-    const matchesSearch=t.id.toString().includes(query)||
-                        t.artist.toLowerCase().includes(query)||
-                        t.song.toLowerCase().includes(query);
-    const matchesStatus=statusVal?t.publisher===statusVal:true;
-    return matchesSearch&&matchesStatus;
+    const matchesSearch =
+      t.id.toLowerCase().includes(query) ||
+      t.artist.toLowerCase().includes(query) ||
+      t.song.toLowerCase().includes(query) ||
+      t.publisher.toLowerCase().includes(query);
+
+    const matchesStatus = statusVal ? t.status === statusVal : true;
+
+    return matchesSearch && matchesStatus;
   });
+
   currentPage=1;
   renderTransactions();
 }
 
-searchInput.addEventListener('input',()=>{applyFilters();});
-statusFilter.addEventListener('change',()=>{applyFilters();});
-prevBtn.addEventListener('click',()=>{if(currentPage>1){currentPage--;renderTransactions();}});
-nextBtn.addEventListener('click',()=>{if(currentPage<Math.ceil(filteredTransactions.length/itemsPerPage)){currentPage++;renderTransactions();}});
+searchInput.addEventListener('input',applyFilters);
+statusFilter.addEventListener('change',applyFilters);
+
+prevBtn.addEventListener('click',()=>{
+  if(currentPage>1){
+    currentPage--;
+    renderTransactions();
+  }
+});
+
+nextBtn.addEventListener('click',()=>{
+  if(currentPage<Math.ceil(filteredTransactions.length/itemsPerPage)){
+    currentPage++;
+    renderTransactions();
+  }
+});
 
 loadData();
 </script>
