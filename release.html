@@ -211,7 +211,7 @@ footer{
     <input type="text" id="searchInput" placeholder="Cari ID, Nama Artis, Judul Lagu...">
     <select id="statusFilter">
       <option value="">Semua Status</option>
-      <option value="Sukses">Sukses</option>
+      <option value="Approve">Approve</option>
       <option value="Pending">Pending</option>
       <option value="Gagal">Gagal</option>
     </select>
@@ -259,25 +259,31 @@ async function loadData(){
   try{
     const response = await fetch('artis.json');
     const rawData = await response.json();
-    transactions = rawData.map(item=>({
-      id: item["__EMPTY"] || "-",
-      artist: item["__EMPTY_1"] || "-",
-      song: item["__EMPTY_2"] || "-",
-      status: item["__EMPTY_3"] || "-"
+
+    transactions = rawData.map(item => ({
+      id: item["ID"]?.trim() || "-",
+      artist: item["Nama Artis"]?.trim() || "-",
+      song: item["Judul Lagu"]?.trim() || "-",
+      status: item["Status "]?.trim() || "-"
     })).reverse();
+
     filteredTransactions = [...transactions];
     renderTransactions();
-  }catch(err){ console.error("Gagal load artis.json", err);}
+  }catch(err){
+    console.error("Gagal load artis.json", err);
+  }
 }
 
 function renderTransactions(){
   transactionList.innerHTML = '';
-  const start = (currentPage-1)*itemsPerPage;
+  const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
-  const pageItems = filteredTransactions.slice(start,end);
-  noResult.style.display = pageItems.length===0?'block':'none';
-  pageItems.forEach((t,i)=>{
-    const tr=document.createElement('tr');
+  const pageItems = filteredTransactions.slice(start, end);
+
+  noResult.style.display = pageItems.length === 0 ? 'block' : 'none';
+
+  pageItems.forEach((t, i) => {
+    const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${t.id}</td>
       <td>${t.artist}</td>
@@ -285,39 +291,55 @@ function renderTransactions(){
       <td>${t.status}</td>
     `;
     tr.style.opacity = '0';
-    tr.style.animation = `fadeSlideUp 0.5s ease ${(i*0.05)}s forwards`;
+    tr.style.animation = `fadeSlideUp 0.5s ease ${i * 0.05}s forwards`;
     transactionList.appendChild(tr);
   });
-  prevBtn.disabled = currentPage===1;
-  nextBtn.disabled = currentPage>=Math.ceil(filteredTransactions.length/itemsPerPage);
+
+  prevBtn.disabled = currentPage === 1;
+  nextBtn.disabled = currentPage >= Math.ceil(filteredTransactions.length / itemsPerPage);
 }
 
 function applyFilters(){
   const query = searchInput.value.toLowerCase();
   const statusVal = statusFilter.value;
-  filteredTransactions = transactions.filter(t=>{
-    const matchesSearch = t.id.toString().includes(query) ||
-                          t.artist.toLowerCase().includes(query) ||
-                          t.song.toLowerCase().includes(query);
-    const matchesStatus = statusVal ? t.status===statusVal : true;
+
+  filteredTransactions = transactions.filter(t => {
+    const matchesSearch =
+      t.id.toLowerCase().includes(query) ||
+      t.artist.toLowerCase().includes(query) ||
+      t.song.toLowerCase().includes(query);
+
+    const matchesStatus = statusVal ? t.status.toLowerCase() === statusVal.toLowerCase() : true;
+
     return matchesSearch && matchesStatus;
   });
-  currentPage=1;
+
+  currentPage = 1;
   renderTransactions();
 }
 
-searchInput.addEventListener('input',()=>{ applyFilters(); });
-statusFilter.addEventListener('change',()=>{ applyFilters(); });
-prevBtn.addEventListener('click',()=>{ if(currentPage>1){currentPage--;renderTransactions();} });
-nextBtn.addEventListener('click',()=>{ if(currentPage<Math.ceil(filteredTransactions.length/itemsPerPage)){currentPage++;renderTransactions();} });
+searchInput.addEventListener('input', applyFilters);
+statusFilter.addEventListener('change', applyFilters);
+prevBtn.addEventListener('click', () => {
+  if (currentPage > 1) {
+    currentPage--;
+    renderTransactions();
+  }
+});
+nextBtn.addEventListener('click', () => {
+  if (currentPage < Math.ceil(filteredTransactions.length / itemsPerPage)) {
+    currentPage++;
+    renderTransactions();
+  }
+});
 
-/* 🔄 Jalankan animasi setiap kali halaman dibuka kembali (termasuk setelah back) */
+/* Animasi masuk saat kembali */
 function triggerPageAnimation(){
   const fadeEls = [header, filterWrapper, tableWrapper, pagination];
   fadeEls.forEach((el, idx)=>{
     el.style.animation = 'none';
-    void el.offsetHeight; // reset
-    el.style.animation = `fadeSlideUp 0.8s ease ${idx*0.2}s forwards`;
+    void el.offsetHeight;
+    el.style.animation = `fadeSlideUp 0.8s ease ${idx * 0.2}s forwards`;
   });
 }
 
@@ -325,5 +347,6 @@ window.addEventListener('pageshow', triggerPageAnimation);
 
 loadData();
 </script>
+
 </body>
 </html>
