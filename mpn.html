@@ -198,7 +198,7 @@ tr:hover td{
 </div>
 
 <script>
-const itemsPerPage = 50; // tampil 50 lagu per halaman
+const itemsPerPage = 50;
 let currentPage = 1;
 let transactions = [];
 let filteredTransactions = [];
@@ -217,25 +217,30 @@ async function loadData(){
   try{
     const response = await fetch('mpn.json');   
     const rawData = await response.json();
+
     transactions = rawData.map((item) => ({
       no: item["No"] || "-",
       title: item["Title"] || "-",
-      singer: item["Singer "] || "-",
+      singer: item["Singer "] || item["Singer "] || "-", // aman
       composer: item["Composer"] || "-",
       youtube: item["Youtube link (if Any)"] || "-"
     }));
+
     filteredTransactions = [...transactions];
     renderTransactions();
-  }catch(err){ console.error("Gagal load mpn.json", err);}
+  }catch(err){
+    console.error("Gagal load mpn.json", err);
+  }
 }
 
 function renderTransactions(){
   transactionList.innerHTML = '';
+
   const start = (currentPage-1)*itemsPerPage;
   const end = start + itemsPerPage;
   const pageItems = filteredTransactions.slice(start,end);
 
-  noResult.style.display = pageItems.length===0 ? 'block' : 'none';
+  noResult.style.display = pageItems.length === 0 ? 'block' : 'none';
 
   pageItems.forEach((t,i)=>{
     const tr=document.createElement('tr');
@@ -247,18 +252,15 @@ function renderTransactions(){
       <td>${t.composer}</td>
       <td>${youtubeDisplay}</td>
     `;
-    // Animasi fade-slide-up tiap baris
     tr.style.opacity = '0';
     tr.style.transform = 'translateY(20px)';
     tr.style.animation = `fadeSlideUp 0.5s ease ${(i*0.03)}s forwards`;
     transactionList.appendChild(tr);
   });
 
-  // Pagination
   prevBtn.disabled = currentPage===1;
   nextBtn.disabled = currentPage>=Math.ceil(filteredTransactions.length/itemsPerPage);
 
-  // Animasi tombol pagination fade-in
   [prevBtn, nextBtn].forEach(btn => {
     btn.style.opacity = '0';
     btn.style.transform = 'translateY(10px)';
@@ -272,23 +274,36 @@ function renderTransactions(){
 
 searchInput.addEventListener('input',()=>{
   const query = searchInput.value.toLowerCase();
+
   filteredTransactions = transactions.filter(t=>{
-    return t.title.toLowerCase().includes(query) ||
-           t.singer.toLowerCase().includes(query) ||
-           t.composer.toLowerCase().includes(query);
+    return String(t.title).toLowerCase().includes(query) ||
+           String(t.singer).toLowerCase().includes(query) ||
+           String(t.composer).toLowerCase().includes(query);
   });
+
   currentPage=1;
   renderTransactions();
 });
 
-prevBtn.addEventListener('click',()=>{ if(currentPage>1){currentPage--;renderTransactions();} });
-nextBtn.addEventListener('click',()=>{ if(currentPage<Math.ceil(filteredTransactions.length/itemsPerPage)){currentPage++;renderTransactions();} });
+prevBtn.addEventListener('click',()=>{ 
+  if(currentPage>1){
+    currentPage--;
+    renderTransactions();
+  }
+});
+
+nextBtn.addEventListener('click',()=>{ 
+  if(currentPage<Math.ceil(filteredTransactions.length/itemsPerPage)){
+    currentPage++;
+    renderTransactions();
+  }
+});
 
 function triggerPageAnimation(){
   const fadeEls = [header, filterWrapper, tableWrapper, pagination];
   fadeEls.forEach((el, idx)=>{
     el.style.animation = 'none';
-    void el.offsetHeight;   
+    void el.offsetHeight;
     el.style.animation = `fadeSlideUp 0.8s ease ${idx*0.2}s forwards`;
   });
 }
