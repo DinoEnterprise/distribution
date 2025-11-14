@@ -89,12 +89,19 @@
     "Judul Lagu": "Coba Coba (Remix)",
     "Publisher": "Sani Musik Indonesia ",
     "Status ": "Approve"
-    },
+  },
   {
     "ID": "EZ10",
     "Nama Artis": "EL ZANVIR ",
     "Judul Lagu": "Jangan Salah Pasangan (Remix)",
     "Publisher": "BW Record",
+    "Status ": "Pending"
+  },
+  {
+    "ID": "H711",
+    "Nama Artis": "HAMX7TEEN",
+    "Judul Lagu": "Aisiteru (Remix)",
+    "Publisher": "Nagaswara",
     "Status ": "Pending"
   }
 ]
