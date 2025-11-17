@@ -95,12 +95,19 @@
     "Nama Artis": "EL ZANVIR ",
     "Judul Lagu": "Jangan Salah Pasangan (Remix)",
     "Publisher": "BW Record",
-    "Status ": "Pending"
+    "Status ": "Approve"
   },
   {
     "ID": "H711",
     "Nama Artis": "HAMX7TEEN",
     "Judul Lagu": "Aisiteru (Remix)",
+    "Publisher": "Nagaswara",
+    "Status ": "Pending"
+  },
+  {
+    "ID": "II12",
+    "Nama Artis": "Itsme Ilham",
+    "Judul Lagu": "Pemberi Harapan Palsu (Remix)",
     "Publisher": "Nagaswara",
     "Status ": "Pending"
   }
