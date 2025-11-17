@@ -3,292 +3,299 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dynotic Music Distribution</title>
+<title>Sani Musik Indonesia- Dynotic</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family:"Outfit", sans-serif; }
-html, body {
-  height:100%;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Outfit",sans-serif;
+}
+html, body{
   min-height:100vh;
-  scroll-behavior:smooth;
-  background: radial-gradient(circle at 20% 30%, rgba(130,60,255,0.08), transparent 65%),
-              radial-gradient(circle at 80% 70%, rgba(150,70,255,0.06), transparent 70%),
-              #000;
-  background-size:cover;
-  background-repeat:no-repeat;
-  background-position:center;
-  background-attachment:fixed;
-  overflow-x:hidden;
-}
-
-/* ===== ANIMASI MASUK ===== */
-.fade-in {
-  opacity:0;
-  transform:translateY(25px);
-  animation:fadeSlideIn 1s ease forwards;
-}
-@keyframes fadeSlideIn {
-  0% { opacity:0; transform:translateY(25px); }
-  100% { opacity:1; transform:translateY(0); }
-}
-
-/* HEADER */
-header {
   width:100%;
-  position:fixed;
-  top:0; left:0;
-  z-index:100;
   display:flex;
-  justify-content:space-between;
+  flex-direction:column;
   align-items:center;
-  padding:12px 6%;
+  color:#f5f3ff;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(130,60,255,0.08), transparent 65%),
+    radial-gradient(circle at 80% 70%, rgba(150,70,255,0.06), transparent 70%),
+    #000;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  overflow-x:hidden;
+  padding-top:70px;  
+}
+
+/* ANIMASI MASUK */
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* HEADER FIXED */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
   background:#0d0d0d;
   border-bottom:1px solid rgba(255,255,255,0.1);
-  animation:fadeDown 0.8s ease forwards;
-}
-@keyframes fadeDown {
-  0% { opacity:0; transform:translateY(-20px); }
-  100% { opacity:1; transform:translateY(0); }
-}
-.logo { height:60px; cursor:pointer; }
-.menu-icon {
-  font-size:1.8rem;
-  cursor:pointer;
-  user-select:none;
-  transition:transform 0.3s ease, color 0.3s ease;
-  color:#fff;
-  text-shadow:0 0 6px rgba(255,255,255,0.25);
-}
-.menu-icon.active { transform:rotate(90deg); }
-
-/* DROPDOWN */
-.dropdown {
-  position:fixed;
-  top:0; right:-280px;
-  height:100vh; width:260px;
-  background:#000;
-  border-left:1px solid rgba(255,255,255,0.15);
-  box-shadow:-4px 0 25px rgba(0,0,0,0.5);
-  display:flex; flex-direction:column;
-  justify-content:flex-start;
-  padding:100px 0 0 25px;
-  transition:right 0.35s cubic-bezier(0.77,0,0.175,1), opacity 0.3s ease;
-  opacity:0; z-index:99;
-}
-.dropdown.show { right:0; opacity:1; }
-.dropdown a, .dropdown button {
-  text-decoration:none;
-  color:#fff;
-  font-size:1rem;
-  font-weight:500;
-  margin:8px 0;
-  padding:10px 0;
-  width:100%;
-  border:none;
-  background:transparent;
-  text-align:left;
-  border-bottom:1px solid rgba(255,255,255,0.08);
-  transition:all 0.25s ease;
-  cursor:pointer;
+  padding:12px 5%;
+  z-index:100;
   display:flex;
   align-items:center;
-  gap:6px;
+  justify-content:center;
+  font-size:clamp(1.8rem,4vw,2.5rem);
+  font-weight:700;
+  opacity:0;
 }
-.dropdown a:hover, .dropdown button:hover { color:#c084fc; padding-left:8px; }
-.dropdown button span.arrow { font-size:0.9rem; opacity:0.8; transition:transform 0.3s ease; margin-top:1px; }
-.dropdown button.active span.arrow { transform:rotate(180deg); }
-.submenu { display:none; flex-direction:column; margin-left:10px; border-left:1px solid rgba(255,255,255,0.1); padding-left:10px; max-height:300px; overflow-y:auto; }
-.submenu.show { display:flex; }
-.submenu a { border-bottom:none; padding:8px 0; color:#fff; }
-.submenu a:hover { color:#c084fc; padding-left:6px; }
 
-/* HERO */
-.hero {
-  min-height:calc(100vh - 80px);
-  display:flex; flex-direction:column;
-  justify-content:center; align-items:center;
-  text-align:center; padding:0 10%;
+/* SEARCH BOX */
+.filter-wrapper{
+  width:95%;
+  max-width:1200px;
+  display:flex;
+  justify-content:flex-start;
+  margin:10px auto;
+  margin-top:10px;
+  opacity:0;
 }
-.hero h2 {
-  font-size:clamp(1rem,3.5vw,1.6rem);
-  font-weight:500; color:#fff;
-  line-height:1.6;
-  max-width:850px;
-  text-shadow:0 0 8px rgba(0,0,0,0.3);
-}
-.highlight { color:#a855f7; font-weight:600; }
-
-/* REGISTER BUTTON (LINK) */
-.register-btn {
-  margin-top:15px;
-  padding:14px 40px;
-  border-radius:16px;
-  font-size:1.3rem;
-  font-weight:600;
-  color:#fff;
+.filter-box input{
+  padding:10px 14px;
+  border-radius:10px;
   border:1px solid rgba(255,255,255,0.25);
-  background:rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.05);
+  color:#fff;
+  font-size:1rem;
+  outline:none;
+}
+
+/* TABLE WRAPPER */
+.table-wrapper{
+  width:95%;
+  max-width:1200px;
+  margin:20px auto 0;
+  display:flex;
+  flex-direction:column;
+  opacity:0;
+}
+
+.table-scroll{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:600px;
+}
+th,td{
+  padding:14px 10px;
+  border:1px solid rgba(255,255,255,0.8);
+  text-align:center;
+  background: rgba(0,0,0,0.2);
+  color:#fff;
+}
+th{
+  background: rgba(0,0,0,0.4);
+  font-weight:700;
+}
+tr:hover td{
+  background: rgba(255,255,255,0.05);
+}
+
+/* NO RESULT */
+.no-result{
+  text-align:center;
+  margin-top:15px;
+  color:#f0a;
+  display:none;
+}
+
+/* PAGINATION */
+.pagination{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin-top:10px;
+  flex-wrap:wrap;
+  opacity:0;
+}
+.pagination button{
   cursor:pointer;
-  transition:all 0.3s ease;
-  text-shadow:0 0 6px #fff;
-  display:inline-block;
-  text-decoration:none;
+  padding:8px 18px;
+  border-radius:12px;
+  background: rgba(255,255,255,0.1);
+  color:#fff;
+  font-weight:600;
+  border:1px solid rgba(255,255,255,0.25);
+  transition: all 0.25s ease;
 }
-.register-btn:hover { text-shadow:0 0 14px #fff,0 0 20px #a855f7; background:rgba(255,255,255,0.15); transform:translateY(-2px); }
-
-/* HERO DIVIDER */
-.hero-divider { width:80px; height:2px; background:#fff; margin:25px auto 35px auto; border-radius:1px; }
-
-/* SERVICES */
-.services-intro-left, .services-intro-center, .services, .footer-right, footer {
-  opacity:0; transform:translateY(40px);
-  animation:fadeSlideIn 1s ease forwards;
+.pagination button:hover{
+  background: rgba(255,255,255,0.3);
+  transform: scale(1.05);
 }
-.services-intro-left { animation-delay:0.6s; }
-.services-intro-center { animation-delay:0.8s; }
-.services { animation-delay:1s; }
-.footer-right { animation-delay:1.2s; }
-footer { animation-delay:1.4s; }
+.pagination button:disabled{
+  opacity:0.4;
+  cursor:not-allowed;
+  background: rgba(255,255,255,0.05);
+}
 
-.services-intro-left { text-align:left; padding:0 10%; margin-bottom:50px; color:#fff; }
-.services-intro-left h3 { font-size:1.5rem; margin-bottom:10px; font-weight:600; }
-.services-intro-left h3 .rotating { color:#a855f7; font-weight:700; }
-.services-intro-left p { font-size:1rem; line-height:1.7; max-width:600px; color:rgba(255,255,255,0.6); margin-bottom:10px; }
-
-.services-intro-center { text-align:center; padding:0 10%; margin-bottom:40px; color:#fff; }
-.services-intro-center h3 { font-size:1.5rem; margin-bottom:10px; font-weight:600; }
-.services-intro-center p { font-size:1rem; line-height:1.7; max-width:700px; color:rgba(255,255,255,0.6); margin:0 auto 25px auto; }
-
-.services { display:flex; flex-wrap:wrap; justify-content:center; gap:20px; padding:20px 10% 50px; }
-.service-card { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:20px; flex:1 1 220px; max-width:280px; text-align:left; transition:transform 0.3s ease, box-shadow 0.3s ease; }
-.service-card:hover { transform:translateY(-4px); box-shadow:0 8px 25px rgba(168,85,247,0.3); }
-.service-card h3 { color:#fff; margin-bottom:10px; }
-.service-card p { font-size:0.95rem; color:rgba(255,255,255,0.75); line-height:1.5; }
-
-/* FOOTER */
-.footer-right { display:flex; gap:50px; color:#fff; font-size:0.85rem; flex-wrap:wrap; justify-content:flex-end; margin-top:40px; padding-right:5%; }
-.footer-right .footer-column { display:flex; flex-direction:column; gap:4px; }
-.footer-right .footer-column strong { color:#fff; font-weight:700; margin-bottom:4px; }
-.footer-right .footer-column span { color:rgba(255,255,255,0.7); }
-
-footer { text-align:center; padding:25px 10px 20px; font-size:0.9rem; color:rgba(255,255,255,0.7); }
-
-/* RESPONSIVE */
-@media(max-width:768px){
-  .hero { padding-top:120px; }
-  .hero h2 { font-size:1.2rem; line-height:1.5; }
-  .register-btn { padding:10px 20px; font-size:1rem; }
-  .services-intro-left, .services-intro-center { padding:0 5%; }
-  .services { padding:40px 5%; gap:15px; }
-  .footer-right { justify-content:center; padding-right:0; gap:30px; }
+/* MOBILE */
+@media (max-width:992px){
+  th,td{ font-size:0.9rem; padding:10px 6px;}
+  .filter-box input{ font-size:0.9rem; padding:8px 10px;}
+  .pagination button{ padding:6px 12px; font-size:0.85rem;}
+}
+@media (max-width:576px){
+  th,td{ font-size:0.8rem; padding:8px 4px;}
 }
 </style>
 </head>
 <body>
-<header>
-  <img src="https://i.imgur.com/soBvNvP.png" alt="Dynotic Logo" class="logo fade-in" style="animation-delay:0.2s;">
-  <div class="menu-icon" id="menuIcon">☰</div>
-</header>
 
-<nav class="dropdown" id="dropdownMenu">
-  <a href="maintenance">Home</a>
-  
-  <button class="has-sub" id="serviceToggle">Layanan Kami <span class="arrow">^</span></button>
-  <div class="submenu" id="serviceSub">
-    <a href="release">Distribusi</a>
-    <a href="cover">Cover To Master</a>
-    <a href="https://www.toneden.io/">Promosi</a>
-    <a href="oac">OAC</a>
+<header id="header">Sani Musik Indonesia</header>
+
+<div class="filter-wrapper" id="filterWrapper">
+  <div class="filter-box">
+    <input type="text" id="searchInput" placeholder="Cari Title, Singer, Composer...">
   </div>
-  
-  <button class="has-sub" id="aboutToggle">Tentang <span class="arrow">^</span></button>
-  <div class="submenu" id="aboutSub">
-    <a href="maintenance">About Us</a>
-    <a href="maintenance">Platform DSP</a>
+</div>
+
+<div class="table-wrapper" id="tableWrapper">
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Title</th>
+          <th>Singer</th>
+          <th>Composer</th>
+          <th>YouTube</th>
+        </tr>
+      </thead>
+      <tbody id="transactionList"></tbody>
+    </table>
   </div>
-  
-  <button class="has-sub" id="helpToggle">Bantuan <span class="arrow">^</span></button>
-  <div class="submenu" id="helpSub">
-    <a href="FAQ.html">FAQ</a>
-    <a href="maintenance">Panduan</a>
+
+  <p class="no-result" id="noResult">Data tidak ditemukan.</p>
+
+  <div class="pagination" id="pagination">
+    <button id="prevBtn">Previous</button>
+    <button id="nextBtn">Next</button>
   </div>
-  
-  <a href="maintenance">Contact</a>
-</nav>
-
-<div class="hero fade-in" style="animation-delay:0.3s;">
-  <h2><b><span class="highlight">Distribusi Musik Digital</span></b><br>
-  Rilis musik Anda ke Spotify, Apple Music, JOOX, TikTok, Amazon Music, Deezer, dan ratusan platform global lainnya dengan cepat, mudah, dan <b>GRATIS</b>.</h2>
-
-  <!-- REGISTER BUTTON UPDATED -->
-  <a href="avarelease.html" class="register-btn fade-in" style="animation-delay:0.5s;">Register</a>
-
-  <div class="hero-divider fade-in" style="animation-delay:0.7s;"></div>
 </div>
-
-<div class="services-intro-left">
-  <h3>Yang Kami Tawarkan <span class="rotating">Distribusi</span></h3>
-  <p>Di Dynotic Music, kami memahami kebutuhan unik para seniman, kreator, dan label independen di industri musik digital masa kini...</p>
-</div>
-
-<div class="services-intro-center">
-  <h3>Layanan Kami</h3>
-  <p>Fitur dan Layanan kami memadukan wawasan industri dengan perangkat digital canggih...</p>
-</div>
-
-<div class="services">
-  <div class="service-card"><h3>Distributor Musik</h3><p>Distribusikan musik Anda ke 250 platform digital DSP...</p></div>
-  <div class="service-card"><h3>Cover To Master (CTM)</h3><p>Izin untuk menggunakan asset lagu...</p></div>
-  <div class="service-card"><h3>Perlindungan Hak Cipta</h3><p>Pertahankan kepemilikan penuh 100%...</p></div>
-  <div class="service-card"><h3>Dan Layanan Lainnya</h3><p>Promosi Media Sosial Dynotic Music, Smartlink Musik, dan OAC.</p></div>
-</div>
-
-<div class="footer-right">
-  <div class="footer-column"><strong>Service</strong><span>Music Distribution</span></div>
-  <div class="footer-column"><strong>Company</strong><span>About</span><span>Contact</span></div>
-  <div class="footer-column"><strong>Support</strong><span>Help Center</span></div>
-</div>
-
-<footer>© 2025 <span class="highlight">Dynotic ID</span></footer>
 
 <script>
-const menuIcon=document.getElementById('menuIcon');
-const dropdownMenu=document.getElementById('dropdownMenu');
-menuIcon.addEventListener('click',()=>{
-  menuIcon.classList.toggle('active');
-  dropdownMenu.classList.toggle('show');
-});
-document.addEventListener('click',e=>{
-  if(!menuIcon.contains(e.target)&&!dropdownMenu.contains(e.target)){
-    dropdownMenu.classList.remove('show');
-    menuIcon.classList.remove('active');
-  }
-});
-function setupSubmenu(toggleId,submenuId){
-  const toggle=document.getElementById(toggleId);
-  const submenu=document.getElementById(submenuId);
-  toggle.addEventListener('click',(e)=>{
-    e.stopPropagation();
-    submenu.classList.toggle('show');
-    toggle.classList.toggle('active');
+const itemsPerPage = 50; // tampil 50 lagu per halaman
+let currentPage = 1;
+let transactions = [];
+let filteredTransactions = [];
+
+const transactionList = document.getElementById('transactionList');
+const searchInput = document.getElementById('searchInput');
+const noResult = document.getElementById('noResult');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const header = document.getElementById('header');
+const filterWrapper = document.getElementById('filterWrapper');
+const tableWrapper = document.getElementById('tableWrapper');
+const pagination = document.getElementById('pagination');
+
+async function loadData(){
+  try{
+    const response = await fetch('mahar.json');   
+    const rawData = await response.json();
+    transactions = rawData.map((item) => ({
+      no: item["N0"] || "-",
+      title: item["Title"] || "-",
+      singer: item["Singer"] || "-",
+      composer: item["Composer"] || "-",
+      youtube: item["Youtube link (if Any) "] || "-"
+    }));
+    filteredTransactions = [...transactions];
+    renderTransactions();
+  }catch(err){ console.error("Gagal load mahar.json", err);}
+}
+
+function renderTransactions(){
+  transactionList.innerHTML = '';
+  const start = (currentPage-1)*itemsPerPage;
+  const end = start + itemsPerPage;
+  const pageItems = filteredTransactions.slice(start,end);
+
+  noResult.style.display = pageItems.length===0 ? 'block' : 'none';
+
+  pageItems.forEach((t,i)=>{
+    const tr=document.createElement('tr');
+    const youtubeDisplay = t.youtube === "-" ? "-" : `<a href="${t.youtube}" target="_blank" style="color:#8a2be2;">Link</a>`;
+    tr.innerHTML = `
+      <td>${t.no}</td>
+      <td>${t.title}</td>
+      <td>${t.singer}</td>
+      <td>${t.composer}</td>
+      <td>${youtubeDisplay}</td>
+    `;
+    // Animasi fade-slide-up tiap baris
+    tr.style.opacity = '0';
+    tr.style.transform = 'translateY(20px)';
+    tr.style.animation = `fadeSlideUp 0.5s ease ${(i*0.03)}s forwards`;
+    transactionList.appendChild(tr);
+  });
+
+  // Pagination
+  prevBtn.disabled = currentPage===1;
+  nextBtn.disabled = currentPage>=Math.ceil(filteredTransactions.length/itemsPerPage);
+
+  // Animasi tombol pagination fade-in
+  [prevBtn, nextBtn].forEach(btn => {
+    btn.style.opacity = '0';
+    btn.style.transform = 'translateY(10px)';
+    btn.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    setTimeout(() => {
+      btn.style.opacity = '1';
+      btn.style.transform = 'translateY(0)';
+    }, 50);
   });
 }
-setupSubmenu('serviceToggle','serviceSub');
-setupSubmenu('aboutToggle','aboutSub');
-setupSubmenu('helpToggle','helpSub');
 
-// Rotating text
-const rotatingService=document.querySelector('.services-intro-left .rotating');
-const services=['Distribusi','Cover To Master','OAC','Promotion'];
-let index=0;
-setInterval(()=>{
-  rotatingService.style.opacity=0;
-  setTimeout(()=>{
-    index=(index+1)%services.length;
-    rotatingService.textContent=services[index];
-    rotatingService.style.opacity=1;
-  },500);
-},2500);
+searchInput.addEventListener('input',()=>{
+  const query = searchInput.value.toLowerCase();
+  filteredTransactions = transactions.filter(t=>{
+    return t.title.toLowerCase().includes(query) ||
+           t.singer.toLowerCase().includes(query) ||
+           t.composer.toLowerCase().includes(query);
+  });
+  currentPage=1;
+  renderTransactions();
+});
+
+prevBtn.addEventListener('click',()=>{ if(currentPage>1){currentPage--;renderTransactions();} });
+nextBtn.addEventListener('click',()=>{ if(currentPage<Math.ceil(filteredTransactions.length/itemsPerPage)){currentPage++;renderTransactions();} });
+
+function triggerPageAnimation(){
+  const fadeEls = [header, filterWrapper, tableWrapper, pagination];
+  fadeEls.forEach((el, idx)=>{
+    el.style.animation = 'none';
+    void el.offsetHeight;   
+    el.style.animation = `fadeSlideUp 0.8s ease ${idx*0.2}s forwards`;
+  });
+}
+
+window.addEventListener('pageshow', triggerPageAnimation);
+
+loadData();
 </script>
 </body>
 </html>
