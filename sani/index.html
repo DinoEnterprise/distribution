@@ -215,7 +215,7 @@ const pagination = document.getElementById('pagination');
 
 async function loadData(){
   try{
-    const response = await fetch('mahar.json');   
+    const response = await fetch('sani.json');   
     const rawData = await response.json();
     transactions = rawData.map((item) => ({
       no: item["N0"] || "-",
@@ -226,7 +226,7 @@ async function loadData(){
     }));
     filteredTransactions = [...transactions];
     renderTransactions();
-  }catch(err){ console.error("Gagal load mahar.json", err);}
+  }catch(err){ console.error("Gagal load sani.json", err);}
 }
 
 function renderTransactions(){
