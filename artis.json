@@ -216,9 +216,15 @@
     "Status ": "Pending"
     },
   {
-    "ID": "EZ20",
+    "ID": "RU21",
+    "Nama Artis": "riruu,heyDarryl",
+    "Judul Lagu": "i love you",
+    "Status ": "Approve"
+    },
+  {
+    "ID": "EZ22",
     "Nama Artis": "EL ZANVIR",
-    "Judul Lagu": "Ada Pokemon",
-    "Status ": "Pending"
+    "Judul Lagu": "GELENG GELENG",
+    "Status ": "Approve"
   }
 ]
