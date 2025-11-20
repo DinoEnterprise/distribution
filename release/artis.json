@@ -15,13 +15,13 @@
     "ID": "IS01",
     "Nama Artis": "ILHAM RMX SG",
     "Judul Lagu": "DROP INDOBOUNCE ",
-    "Status ": "Pending"
+    "Status ": "Rejected"
   },
   {
     "ID": "IS01",
     "Nama Artis": "ILHAM RMX SG",
     "Judul Lagu": "BBHC GASS POLL ",
-    "Status ": "Pending"
+    "Status ": "Approve"
   },
   {
     "ID": "IF02",
@@ -45,7 +45,7 @@
     "ID": "GP03",
     "Nama Artis": "gfrxP.",
     "Judul Lagu": "Shympony Night ",
-    "Status ": "Pending"
+    "Status ": "Rejected"
   },
   {
     "ID": "HD05",
@@ -123,25 +123,31 @@
     "ID": "DG15",
     "Nama Artis": "Darna Gvnby ",
     "Judul Lagu": "Asleep In A Dream",
-    "Status ": "Pending"
+    "Status ": "Rejected"
   },
   {
     "ID": "ZF16",
     "Nama Artis": "Zan Fvnky Rmx ",
     "Judul Lagu": "PUSING PUSING KECE KALE",
-    "Status ": "Rejected"
+    "Status ": "Approve"
   },
   {
     "ID": "ZF16",
     "Nama Artis": "Zan Fvnky Rmx ",
     "Judul Lagu": "AISYAH MAIMUNAH",
-    "Status ": "Rejected"
+    "Status ": "Approve"
   },
   {
     "ID": "ZF16",
     "Nama Artis": "Zan Fvnky Rmx ",
     "Judul Lagu": "Akimilakuo Kimpo",
-    "Status ": "Rejected"
+    "Status ": "Approve"
+    },
+  {
+    "ID": "ZF16",
+    "Nama Artis": "Zan Fvnky Rmx ",
+    "Judul Lagu": "Abang Pilih Yang Mana",
+    "Status ": "Pending"
   },
   {
     "ID": "ZF16",
@@ -159,13 +165,13 @@
     "ID": "ZF16",
     "Nama Artis": "Zan Fvnky Rmx ",
     "Judul Lagu": "AKIMILAKUO X SIGMA",
-    "Status ": "Pending"
+    "Status ": "Rejected"
   },
   {
     "ID": "ZF16",
     "Nama Artis": "Zan Fvnky Rmx ",
     "Judul Lagu": "PONG PONG",
-    "Status ": "Pending"
+    "Status ": ""Rejected
   },
   {
     "ID": "ZV17",
@@ -183,7 +189,7 @@
     "ID": "FC18",
     "Nama Artis": "Fany Carsello ",
     "Judul Lagu": "Mexican Trumpet ",
-    "Status ": "Pending"
+    "Status ": "Approve"
   },
   {
     "ID": "FC18",
@@ -226,5 +232,59 @@
     "Nama Artis": "EL ZANVIR",
     "Judul Lagu": "GELENG GELENG",
     "Status ": "Approve"
+  },
+  {
+    "ID": "FC23",
+    "Nama Artis": "Fany Carsello",
+    "Judul Lagu": "BOTAK BOTAK",
+    "Status ": "Approve"
+   },
+  {
+    "ID": "FC24",
+    "Nama Artis": "Fany Carsello",
+    "Judul Lagu": "DISKO PARTY",
+    "Status ": "Approve"
+   },
+  {
+    "ID": "IF25",
+    "Nama Artis": "it'smefajar",
+    "Judul Lagu": "Neverland",
+    "Status ": "Approve"
+   },
+  {
+    "ID": "EZ26",
+    "Nama Artis": "EL ZANVIR",
+    "Judul Lagu": "Ada Pokemon",
+    "Status ": "Pending"
+  },
+  {
+    "ID": "ZFR27",
+    "Nama Artis": "Zan Fvnky Rmx",
+    "Judul Lagu": "KAMU BILANG  I LOVE YOU",
+    "Status ": "Pending"
+  },
+  {
+    "ID": "ZFR28",
+    "Nama Artis": "Zan Fvnky Rmx,AGIL SOPAN",
+    "Judul Lagu": "ISA BELLA TRESNO KOE",
+    "Status ": "Pending"
+  },
+  {
+    "ID": "ZFR29",
+    "Nama Artis": "Zan Fvnky Rmx",
+    "Judul Lagu": "BUKAN BONEKA",
+    "Status ": "Pending"
+  },
+  {
+    "ID": "AT30",
+    "Nama Artis": "ABIL Tramaker",
+    "Judul Lagu": "BREAKBEAT HARDCORE",
+    "Status ": "Pending"
+    },
+  {
+    "ID": "ISR31",
+    "Nama Artis": "Ilham Sopan Rmx",
+    "Judul Lagu": "Malam Ini DJ Tangkis Dang",
+    "Status ": "Pending"
   }
 ]
