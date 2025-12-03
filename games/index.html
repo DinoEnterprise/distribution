@@ -125,12 +125,25 @@ footer { position:fixed; bottom:0; left:0; width:100%; background:#000; border-t
   <main id="product-container">
     <!-- PRODUCT 1 -->
     <div class="product-card">
-      <div class="product-image"><img src="https://i.imgur.com/GC6eEKv.gif" alt="Product"></div>
+      <div class="product-image"><img src="https://i.imgur.com/GC6eEKv.gif" alt="Flappy Bird"></div>
       <div class="product-details">
         <h2>Flappy Bird</h2>
         <p class="description">Dekripsi Tidak Tersedia</p>
         <div class="actions">
           <button class="buy-now" onclick="window.location.href='https://flappybird.io/'">Play Games</button>
+          <button class="add-cart">Add to Favorites</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCT 2 -->
+    <div class="product-card">
+      <div class="product-image"><img src="https://i.imgur.com/io4bp7L.jpeg" alt="Tower Building"></div>
+      <div class="product-details">
+        <h2>Tower Building</h2>
+        <p class="description">Bangunlah menaramu tinggi, fokuslah padanya sambil membangun lantai berikutnya.</p>
+        <div class="actions">
+          <button class="buy-now" onclick="window.location.href='https://riseuplabs.com/play/tower-building/'">Play Games</button>
           <button class="add-cart">Add to Favorites</button>
         </div>
       </div>
@@ -198,7 +211,7 @@ function updateCartBadge(){
 /* ADD TO CART */
 products.forEach(card => {
   const name = card.querySelector('h2').textContent;
-  const sellerName = 'Flappy Bird';
+  const sellerName = name;
   const price = 'FREE';
   card.querySelector('.add-cart').addEventListener('click', () => {
     const exists = cart.some(item=>item.name===name && item.sellerName===sellerName);
