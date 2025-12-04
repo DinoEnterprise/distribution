@@ -184,7 +184,7 @@ if (savedDate !== today) {
 // Jika hari ini sudah submit
 if (localStorage.getItem("submittedOnce") === "true") {
     btn.disabled = true;
-    btn.innerText = "Sudah Pernah Generate Hari Ini";
+    btn.innerText = "Limit Harianmu Habis";
 }
 
 // ---- SAAT SUBMIT ----
@@ -197,7 +197,7 @@ form.addEventListener("submit", function(e) {
 
     // Redirect manual setelah Formspree selesai (sedikit delay)
     setTimeout(() => {
-        window.location.href = "success";
+        window.location.href = "../success";
     }, 800);
 });
 </script>
