@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bulan Chat - User</title>
+<title>Bulan Chat - FAQ</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
@@ -43,15 +43,15 @@ header .info .status{font-size:0.8rem;color:#fff;text-shadow:0 0 6px #fff;}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-// Firebase config (ganti sesuai projectmu)
+// Firebase config
 const firebaseConfig = {
-  apiKey: "API_KEYMU",
-  authDomain: "PROJECT_ID.firebaseapp.com",
-  databaseURL: "DATABASE_URL",
-  projectId: "PROJECT_ID",
-  storageBucket: "PROJECT_ID.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID"
+  apiKey: "AIzaSyAc_-F3iHn3gdpl2mqwT9uGgwL2pSipLW4",
+  authDomain: "csbulan-997ea.firebaseapp.com",
+  databaseURL: "https://csbulan-997ea-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "csbulan-997ea",
+  storageBucket: "csbulan-997ea.firebasestorage.app",
+  messagingSenderId: "548129208386",
+  appId: "1:548129208386:web:481ba552040813a39195db"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -59,14 +59,14 @@ const db = firebase.database();
 const chatContainer = document.getElementById('chatContainer');
 const input = document.getElementById('userInput');
 
-// UserID unik per browser
-let userID = localStorage.getItem('userID');
-if(!userID){
-  userID = 'user_' + Math.random().toString(36).substr(2,9);
-  localStorage.setItem('userID', userID);
+// Buat userId sementara (localStorage biar pesan tersimpan)
+let userId = localStorage.getItem('userId');
+if(!userId){
+  userId = 'user-' + Date.now();
+  localStorage.setItem('userId', userId);
 }
 
-// Fungsi tambah bubble
+// Fungsi tampilkan bubble
 function addBubble(msg,type){
   const bubble = document.createElement('div');
   bubble.classList.add('chat-bubble',type);
@@ -79,18 +79,23 @@ function addBubble(msg,type){
 function sendMessage(){
   const msg = input.value.trim();
   if(!msg) return;
-  db.ref('chats/' + userID).push({
-    message: msg,
-    type: 'user',
-    timestamp: Date.now()
-  });
-  input.value = '';
+  db.ref('chats/'+userId).push({message:msg,type:'user',timestamp:Date.now()});
+  input.value='';
 }
 
-// Listener realtime untuk userID ini
-db.ref('chats/' + userID).on('child_added', snapshot=>{
+// Listener realtime dari Firebase
+db.ref('chats/'+userId).on('child_added', snapshot=>{
   const data = snapshot.val();
   addBubble(data.message, data.type==='user'?'user':'bulan');
+});
+
+// Pesan awal Bulan
+window.addEventListener('DOMContentLoaded', ()=>{
+  db.ref('chats/'+userId).once('value', snapshot=>{
+    if(!snapshot.exists()){
+      db.ref('chats/'+userId).push({message:"Halo! Aku Bulan, asisten AI Dynotic Music. Mau tahu info apa hari ini?",type:'bulan',timestamp:Date.now()});
+    }
+  });
 });
 </script>
 
