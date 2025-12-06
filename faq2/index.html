@@ -20,6 +20,37 @@ header .info .status{font-size:0.8rem;color:#fff;text-shadow:0 0 6px #fff;}
 #inputArea{display:flex;gap:10px;padding:10px;border-top:1px solid rgba(255,255,255,0.3);}
 #inputArea input{flex:1;padding:8px 12px;border-radius:15px;border:none;outline:none;font-size:0.95rem;}
 #inputArea button{padding:8px 12px;border-radius:12px;background:#2563eb;color:#fff;border:none;cursor:pointer;}
+
+/* typing bubble */
+.typing{
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(5px);
+  max-width:70%;
+  padding:10px 14px;
+  border-radius:20px;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  color:#fff;
+}
+.dots{
+  display:flex;
+  gap:4px;
+}
+.dots div{
+  width:6px;
+  height:6px;
+  background:#fff;
+  border-radius:50%;
+  animation:blink 1.4s infinite both;
+}
+.dots div:nth-child(2){animation-delay:.2s}
+.dots div:nth-child(3){animation-delay:.4s}
+@keyframes blink{
+ 0%{opacity:.2}
+ 20%{opacity:1}
+ 100%{opacity:.2}
+}
 </style>
 </head>
 <body>
@@ -42,8 +73,8 @@ header .info .status{font-size:0.8rem;color:#fff;text-shadow:0 0 6px #fff;}
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
 <script>
-// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAc_-F3iHn3gdpl2mqwT9uGgwL2pSipLW4",
   authDomain: "csbulan-997ea.firebaseapp.com",
@@ -59,45 +90,105 @@ const db = firebase.database();
 const chatContainer = document.getElementById('chatContainer');
 const input = document.getElementById('userInput');
 
-// Buat userId sementara (localStorage biar pesan tersimpan)
+// user id
 let userId = localStorage.getItem('userId');
 if(!userId){
-  userId = 'user-' + Date.now();
+  userId = 'user-'+Date.now();
   localStorage.setItem('userId', userId);
 }
 
-// Fungsi tampilkan bubble
-function addBubble(msg,type){
+// add bubble
+function addBubble(msg,type,key){
   const bubble = document.createElement('div');
   bubble.classList.add('chat-bubble',type);
   bubble.innerText = msg;
+  
+  bubble.addEventListener("click",()=>{
+    if(confirm("Hapus pesan ini?")){
+      db.ref('chats/'+userId+'/'+key).remove();
+      bubble.remove();
+    }
+  });
+
   chatContainer.appendChild(bubble);
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// Kirim pesan user ke Firebase
+// send
 function sendMessage(){
   const msg = input.value.trim();
   if(!msg) return;
+
   db.ref('chats/'+userId).push({message:msg,type:'user',timestamp:Date.now()});
   input.value='';
+  
+  showTyping();
 }
 
-// Listener realtime dari Firebase
+// typing
+function showTyping(){
+  hideTyping();
+  const bubble=document.createElement("div");
+  bubble.className="typing bulan";
+  bubble.id="typing";
+
+  const dots=document.createElement("div");
+  dots.className="dots";
+  dots.innerHTML=`<div></div><div></div><div></div>`;
+  bubble.appendChild(dots);
+
+  chatContainer.appendChild(bubble);
+  chatContainer.scrollTop=chatContainer.scrollHeight;
+}
+
+function hideTyping(){
+  const el=document.getElementById("typing");
+  if(el) el.remove();
+}
+
+// listen
 db.ref('chats/'+userId).on('child_added', snapshot=>{
-  const data = snapshot.val();
-  addBubble(data.message, data.type==='user'?'user':'bulan');
+  const d=snapshot.val();
+
+  if(d.type==="bulan") hideTyping();
+
+  addBubble(d.message,d.type==='user'?'user':'bulan',snapshot.key);
 });
 
-// Pesan awal Bulan
-window.addEventListener('DOMContentLoaded', ()=>{
-  db.ref('chats/'+userId).once('value', snapshot=>{
-    if(!snapshot.exists()){
-      db.ref('chats/'+userId).push({message:"Halo! Aku Nana, asisten Dynotic Collective. Mau Nanya apa hari ini?",type:'Nana',timestamp:Date.now()});
+// first message
+window.addEventListener('DOMContentLoaded',()=>{
+  db.ref('chats/'+userId).once('value',s=>{
+    if(!s.exists()){
+      db.ref('chats/'+userId).push({message:"Halo! Aku Nana. Ada yang bisa dibantu?",type:'bulan',timestamp:Date.now()});
     }
   });
 });
-</script>
 
+// delete all
+function clearAll(){
+  if(confirm("Hapus semua chat kamu?")){
+    db.ref('chats/'+userId).remove();
+    chatContainer.innerHTML="";
+  }
+}
+
+//  ICON DELETE PNG
+const delBtn = document.createElement("img");
+delBtn.src = "https://i.imgur.com/MIAl6P5.png";
+delBtn.style.position = "fixed";
+delBtn.style.top = "15px";
+delBtn.style.right = "15px";
+delBtn.style.zIndex = "99";
+delBtn.style.width = "32px";
+delBtn.style.height = "32px";
+delBtn.style.cursor = "pointer";
+
+// GLOW PUTIH
+delBtn.style.filter = "drop-shadow(0 0 6px #fff) drop-shadow(0 0 12px #fff)";
+
+delBtn.addEventListener("click", clearAll);
+document.body.appendChild(delBtn);
+
+</script>
 </body>
 </html>
