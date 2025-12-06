@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bulan - Dynotic Music AI</title>
+<title>Bulan Chat - User</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* Gunakan style yang sama seperti kode kamu sebelumnya */
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
 html,body{height:100%;display:flex;flex-direction:column;color:#f5f3ff;background:radial-gradient(circle at 20% 30%, rgba(130,60,255,0.08), transparent 65%),radial-gradient(circle at 80% 70%, rgba(150,70,255,0.06), transparent 70%), #000;overflow-x:hidden;}
 header{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;background:rgba(0,0,0,0.25);backdrop-filter:blur(10px);border-radius:0 0 15px 15px;z-index:10;}
@@ -14,9 +13,6 @@ header img{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px 
 header .info{flex:1;margin-left:10px;}
 header .info .name{font-weight:600;font-size:1rem;color:#fff;text-shadow:0 0 8px #fff,0 0 12px #fff;}
 header .info .status{font-size:0.8rem;color:#fff;text-shadow:0 0 6px #fff;}
-header .actions{display:flex;align-items:center;gap:8px;position:relative;}
-header .actions .icon-btn{background:transparent;border:none;cursor:pointer;padding:5px;position:relative;}
-header .actions .icon-btn img{width:28px;height:28px;filter: drop-shadow(0 0 6px #fff);}
 .chat-container{flex:1;background:rgba(255,255,255,0.05);backdrop-filter:blur(5px);padding:15px;margin:10px;border-radius:15px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;position:relative;border:1px solid rgba(255,255,255,0.2);}
 .chat-bubble{max-width:70%;padding:10px 14px;border-radius:20px;font-size:0.95rem;word-wrap:break-word;display:flex;gap:8px;align-items:flex-end;line-height:1.4rem;}
 .bulan{background:rgba(255,255,255,0.15);backdrop-filter:blur(5px);color:#fff;border-top-left-radius:0;justify-content:flex-start;}
@@ -34,7 +30,6 @@ header .actions .icon-btn img{width:28px;height:28px;filter: drop-shadow(0 0 6px
   <div class="name">Bulan</div>
   <div class="status">Online</div>
 </div>
-<div class="actions"></div>
 </header>
 
 <div class="chat-container" id="chatContainer"></div>
@@ -44,42 +39,59 @@ header .actions .icon-btn img{width:28px;height:28px;filter: drop-shadow(0 0 6px
   <button onclick="sendMessage()">Kirim</button>
 </div>
 
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-const chatContainer = document.getElementById('chatContainer');
+// Firebase config (ganti sesuai projectmu)
+const firebaseConfig = {
+  apiKey: "API_KEYMU",
+  authDomain: "PROJECT_ID.firebaseapp.com",
+  databaseURL: "DATABASE_URL",
+  projectId: "PROJECT_ID",
+  storageBucket: "PROJECT_ID.appspot.com",
+  messagingSenderId: "SENDER_ID",
+  appId: "APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-function addBubble(message,type){
+const chatContainer = document.getElementById('chatContainer');
+const input = document.getElementById('userInput');
+
+// UserID unik per browser
+let userID = localStorage.getItem('userID');
+if(!userID){
+  userID = 'user_' + Math.random().toString(36).substr(2,9);
+  localStorage.setItem('userID', userID);
+}
+
+// Fungsi tambah bubble
+function addBubble(msg,type){
   const bubble = document.createElement('div');
   bubble.classList.add('chat-bubble',type);
-  bubble.innerText = message;
+  bubble.innerText = msg;
   chatContainer.appendChild(bubble);
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// Pesan awal
-window.addEventListener('DOMContentLoaded', ()=>{
-  addBubble("Halo! Aku Bulan, asisten AI Dynotic Music. Mau tahu info apa hari ini?", 'bulan');
-});
-
-async function sendMessage(){
-  const input = document.getElementById('userInput');
+// Kirim pesan user ke Firebase
+function sendMessage(){
   const msg = input.value.trim();
   if(!msg) return;
-  addBubble(msg,'user');
+  db.ref('chats/' + userID).push({
+    message: msg,
+    type: 'user',
+    timestamp: Date.now()
+  });
   input.value = '';
-  
-  // Kirim ke backend Replit (ubah URL sesuai Replit kamu)
-  try{
-    const res = await fetch('https://REPLIT_BACKEND_URL/chat',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({message:msg})
-    });
-    const data = await res.json();
-    addBubble(data.reply,'bulan');
-  }catch(err){
-    addBubble("Maaf, server AI sedang error. Coba lagi nanti.","bulan");
-  }
 }
+
+// Listener realtime untuk userID ini
+db.ref('chats/' + userID).on('child_added', snapshot=>{
+  const data = snapshot.val();
+  addBubble(data.message, data.type==='user'?'user':'bulan');
+});
 </script>
 
 </body>
