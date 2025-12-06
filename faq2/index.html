@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bulan Chat - FAQ</title>
+<title>Nana Chat - FAQ</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
@@ -27,7 +27,7 @@ header .info .status{font-size:0.8rem;color:#fff;text-shadow:0 0 6px #fff;}
 <header>
 <img src="https://i.imgur.com/nQNpS3C.gif" alt="Bulan Avatar">
 <div class="info">
-  <div class="name">Bulan</div>
+  <div class="name">Nana</div>
   <div class="status">Online</div>
 </div>
 </header>
@@ -93,7 +93,7 @@ db.ref('chats/'+userId).on('child_added', snapshot=>{
 window.addEventListener('DOMContentLoaded', ()=>{
   db.ref('chats/'+userId).once('value', snapshot=>{
     if(!snapshot.exists()){
-      db.ref('chats/'+userId).push({message:"Halo! Aku Bulan, asisten AI Dynotic Music. Mau tahu info apa hari ini?",type:'bulan',timestamp:Date.now()});
+      db.ref('chats/'+userId).push({message:"Halo! Aku Nana, asisten Dynotic Collective. Mau Nanya apa hari ini?",type:'Nana',timestamp:Date.now()});
     }
   });
 });
