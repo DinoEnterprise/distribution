@@ -74,7 +74,16 @@ header .info .status{font-size:0.8rem;color:#fff;text-shadow:0 0 6px #fff;}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
+<!-- Email JS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
 <script>
+/* INIT EMAIL JS */
+(function(){
+ emailjs.init("TFIL1eBhlns1iw7ql"); 
+})();
+
+/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyAc_-F3iHn3gdpl2mqwT9uGgwL2pSipLW4",
   authDomain: "csbulan-997ea.firebaseapp.com",
@@ -97,12 +106,24 @@ if(!userId){
   localStorage.setItem('userId', userId);
 }
 
-// add bubble
+// send email
+function sendEmail(message){
+ emailjs.send("service_xdb1jg3","template_n3n2xpo",{
+   user:userId,
+   message:message
+ }).then(()=>{
+   console.log("Email terkirim");
+ }).catch(err=>{
+   console.error("Email gagal",err);
+ });
+}
+
+// bubble
 function addBubble(msg,type,key){
   const bubble = document.createElement('div');
   bubble.classList.add('chat-bubble',type);
   bubble.innerText = msg;
-  
+
   bubble.addEventListener("click",()=>{
     if(confirm("Hapus pesan ini?")){
       db.ref('chats/'+userId+'/'+key).remove();
@@ -119,9 +140,15 @@ function sendMessage(){
   const msg = input.value.trim();
   if(!msg) return;
 
-  db.ref('chats/'+userId).push({message:msg,type:'user',timestamp:Date.now()});
+  db.ref('chats/'+userId).push({
+    message:msg,
+    type:'user',
+    timestamp:Date.now()
+  });
+
+  sendEmail(msg);
+
   input.value='';
-  
   showTyping();
 }
 
@@ -150,16 +177,24 @@ function hideTyping(){
 db.ref('chats/'+userId).on('child_added', snapshot=>{
   const d=snapshot.val();
 
-  if(d.type==="bulan") hideTyping();
+  // FIX
+  hideTyping();
 
-  addBubble(d.message,d.type==='user'?'user':'bulan',snapshot.key);
+  addBubble(d.message, d.type==='user'?'user':'bulan', snapshot.key);
+
+  // if message is from bot also send email
+  if(d.type==='bulan') sendEmail(d.message);
 });
 
 // first message
 window.addEventListener('DOMContentLoaded',()=>{
   db.ref('chats/'+userId).once('value',s=>{
     if(!s.exists()){
-      db.ref('chats/'+userId).push({message:"Halo! Aku Nana. Ada yang bisa dibantu?",type:'bulan',timestamp:Date.now()});
+      db.ref('chats/'+userId).push({
+        message:"Halo! Aku Nana. Ada yang bisa dibantu?",
+        type:'bulan',
+        timestamp:Date.now()
+      });
     }
   });
 });
@@ -172,7 +207,7 @@ function clearAll(){
   }
 }
 
-//  ICON DELETE PNG
+// delete icon
 const delBtn = document.createElement("img");
 delBtn.src = "https://i.imgur.com/MIAl6P5.png";
 delBtn.style.position = "fixed";
@@ -182,13 +217,9 @@ delBtn.style.zIndex = "99";
 delBtn.style.width = "32px";
 delBtn.style.height = "32px";
 delBtn.style.cursor = "pointer";
-
-// GLOW PUTIH
 delBtn.style.filter = "drop-shadow(0 0 6px #fff) drop-shadow(0 0 12px #fff)";
-
 delBtn.addEventListener("click", clearAll);
 document.body.appendChild(delBtn);
-
 </script>
 </body>
 </html>
