@@ -79,9 +79,7 @@ header .info .status{font-size:0.8rem;color:#fff;text-shadow:0 0 6px #fff;}
 
 <script>
 /* INIT EMAIL JS */
-(function(){
- emailjs.init("TFIL1eBhlns1iw7ql"); 
-})();
+(function(){ emailjs.init("TFIL1eBhlns1iw7ql"); })();
 
 /* FIREBASE */
 const firebaseConfig = {
@@ -106,16 +104,18 @@ if(!userId){
   localStorage.setItem('userId', userId);
 }
 
-// send email
-function sendEmail(message){
- emailjs.send("service_xdb1jg3","template_n3n2xpo",{
-   user:userId,
-   message:message
- }).then(()=>{
-   console.log("Email terkirim");
- }).catch(err=>{
-   console.error("Email gagal",err);
- });
+// email satu kali per session
+let emailSent = false;
+function sendEmail(msg){
+  if(emailSent) return;
+  emailjs.send("service_xdb1jg3","template_q2n1g3b",{
+    name: userId,
+    time: new Date().toLocaleString(),
+    message: msg
+  }).then(()=>{ 
+    console.log("Email terkirim (satu kali per session)");
+    emailSent = true;
+  }).catch(err=>console.error("Email gagal",err));
 }
 
 // bubble
@@ -135,7 +135,7 @@ function addBubble(msg,type,key){
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// send
+// send message
 function sendMessage(){
   const msg = input.value.trim();
   if(!msg) return;
@@ -146,7 +146,7 @@ function sendMessage(){
     timestamp:Date.now()
   });
 
-  sendEmail(msg);
+  sendEmail(msg); // email dikirim sekali
 
   input.value='';
   showTyping();
@@ -173,17 +173,12 @@ function hideTyping(){
   if(el) el.remove();
 }
 
-// listen
+// listen firebase
 db.ref('chats/'+userId).on('child_added', snapshot=>{
-  const d=snapshot.val();
-
-  // FIX
+  const d = snapshot.val();
   hideTyping();
-
   addBubble(d.message, d.type==='user'?'user':'bulan', snapshot.key);
-
-  // if message is from bot also send email
-  if(d.type==='bulan') sendEmail(d.message);
+  // email hanya dikirim saat user mengirim pesan, handled di sendMessage
 });
 
 // first message
@@ -199,15 +194,15 @@ window.addEventListener('DOMContentLoaded',()=>{
   });
 });
 
-// delete all
+// DELETE ALL CHAT ICON
 function clearAll(){
   if(confirm("Hapus semua chat kamu?")){
     db.ref('chats/'+userId).remove();
     chatContainer.innerHTML="";
+    emailSent = false; // reset email per session jika chat dihapus
   }
 }
 
-// delete icon
 const delBtn = document.createElement("img");
 delBtn.src = "https://i.imgur.com/MIAl6P5.png";
 delBtn.style.position = "fixed";
