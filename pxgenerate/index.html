@@ -3,102 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PX Co. Bot - PX Music V5</title>
+<title>PX Music V5 - User</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
-html,body{height:100%;display:flex;flex-direction:column;color:#f5f3ff;background:radial-gradient(circle at 20% 30%, rgba(130,60,255,0.08), transparent 65%),radial-gradient(circle at 80% 70%, rgba(150,70,255,0.06), transparent 70%), #000;overflow-x:hidden;}
-header{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;background:rgba(0,0,0,0.25);backdrop-filter:blur(10px);border-radius:0 0 15px 15px;z-index:10;}
-header img{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #fff;}
-header .info{flex:1;margin-left:10px;}
-header .info .name{font-weight:600;font-size:1rem;color:#fff;text-shadow:0 0 8px #fff,0 0 12px #fff;}
+html,body{height:100%;background:#0b0b0b;color:#fff;display:flex;flex-direction:column;}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;background:rgba(255,255,255,0.05);backdrop-filter:blur(12px);border-radius:0 0 15px 15px;box-shadow:0 0 20px rgba(255,255,255,0.1);}
+header img{width:50px;height:50px;border-radius:50%;border:2px solid #fff;object-fit:cover;}
+header .info{flex:1;margin-left:12px;}
+header .info .name{font-weight:600;font-size:1rem;color:#fff;text-shadow:0 0 8px #fff;}
 header .info .status{font-size:0.8rem;color:#fff;text-shadow:0 0 6px #fff;}
 
-.chat-container{flex:1;background:rgba(255,255,255,0.05);backdrop-filter:blur(5px);padding:15px;margin:10px;border-radius:15px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;position:relative;border:1px solid rgba(255,255,255,0.2);}
-.chat-bubble{max-width:70%;padding:10px 14px;border-radius:20px;font-size:0.95rem;word-wrap:break-word;display:flex;gap:8px;align-items:flex-end;line-height:1.4rem;}
-.bulan{background:rgba(255,255,255,0.15);backdrop-filter:blur(5px);color:#fff;border-top-left-radius:0;justify-content:flex-start;}
-.user{background:#2563eb;color:#fff;align-self:flex-end;border-top-right-radius:0;justify-content:flex-end;}
-
-#inputArea{display:flex;gap:10px;padding:10px;border-top:1px solid rgba(255,255,255,0.3);}
-#inputArea input{flex:1;padding:8px 12px;border-radius:15px;border:none;outline:none;font-size:0.95rem;display:none;opacity:0;transform:translateY(10px);}
-#inputArea button{
-padding:10px 16px;
-border-radius:15px;
-background:rgba(0,0,0,0.3);
-color:#fff;
-border:2px solid #fff;
-cursor:pointer;
-font-weight:600;
-font-size:0.95rem;
-transition:all 0.2s ease;
-backdrop-filter:blur(6px);
-box-shadow:0 0 8px rgba(255,255,255,0.6),0 4px 12px rgba(0,0,0,0.3);
-}
-#inputArea button:hover{
-background:rgba(255,255,255,0.1);
-box-shadow:0 0 12px rgba(255,255,255,0.8),0 6px 14px rgba(0,0,0,0.4);
-transform:translateY(-2px);
-}
-
-/* Wizard / Menu buttons */
-.step-btn{
-padding:10px 16px;
-border-radius:15px;
-background:rgba(0,0,0,0.3);
-color:#fff;
-border:2px solid #fff;
-cursor:pointer;
-font-weight:600;
-font-size:0.95rem;
-transition:all 0.2s ease;
-backdrop-filter:blur(6px);
-box-shadow:0 0 8px rgba(255,255,255,0.6),0 4px 12px rgba(0,0,0,0.3);
-}
-.step-btn:hover{
-background:rgba(255,255,255,0.1);
-box-shadow:0 0 12px rgba(255,255,255,0.8),0 6px 14px rgba(0,0,0,0.4);
-transform:translateY(-2px);
-}
-
-/* Animasi */
-.chat-bubble-anim{opacity:0;transform:translateY(10px);animation:fadeSlideBubble 0.4s forwards;}
+.chat-container{flex:1;background:rgba(255,255,255,0.03);backdrop-filter:blur(4px);padding:15px;margin:10px;border-radius:15px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;position:relative;border:1px solid rgba(255,255,255,0.15);}
+.chat-bubble{max-width:90%;padding:12px 16px;border-radius:15px;font-size:0.95rem;word-wrap:break-word;display:flex;gap:8px;align-items:flex-start;line-height:1.4rem;opacity:0;transform:translateY(10px);animation:fadeSlideBubble 0.4s forwards;white-space:pre-line;}
 @keyframes fadeSlideBubble{to{opacity:1;transform:translateY(0);}}
+.bulan{background:rgba(255,255,255,0.1);backdrop-filter:blur(4px);align-self:flex-start;}
+.user{background:#2563eb;color:#fff;align-self:flex-end;}
 
-.step-btn-anim{opacity:0;transform:translateY(20px);animation:fadeSlideInBtn 0.4s forwards;}
-@keyframes fadeSlideInBtn{to{opacity:1;transform:translateY(0);}}
+#inputArea{display:flex;gap:10px;padding:10px;border-top:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(8px);border-radius:15px;margin:10px;}
+#inputArea input{flex:1;padding:10px 14px;border-radius:15px;border:none;outline:none;font-size:0.95rem;display:none;opacity:0;transform:translateY(10px);transition:all 0.3s;}
+#inputArea input.showInput{display:block;opacity:1;transform:translateY(0);}
+#inputArea button{padding:10px 18px;border-radius:15px;background:rgba(0,0,0,0.3);color:#fff;border:2px solid #fff;cursor:pointer;font-weight:600;transition:all 0.2s ease;backdrop-filter:blur(6px);box-shadow:0 0 8px rgba(255,255,255,0.6),0 4px 12px rgba(0,0,0,0.3);}
+#inputArea button:hover{background:rgba(255,255,255,0.1);box-shadow:0 0 12px rgba(255,255,255,0.8),0 6px 14px rgba(0,0,0,0.4);transform:translateY(-2px);}
 
-.start-btn-anim{opacity:0;transform:translateY(20px);animation:fadeSlideInBtn 0.5s forwards;}
+.step-btn{padding:10px 18px;border-radius:15px;background:rgba(0,0,0,0.25);color:#fff;border:2px solid #fff;cursor:pointer;font-weight:600;transition:all 0.2s ease;backdrop-filter:blur(6px);box-shadow:0 0 10px rgba(255,255,255,0.6),0 4px 12px rgba(0,0,0,0.3);}
+.step-btn:hover{background:rgba(255,255,255,0.08);box-shadow:0 0 14px rgba(255,255,255,0.8),0 6px 16px rgba(0,0,0,0.4);transform:translateY(-2px);}
+.menu-btn-container{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:5px;}
 
 .typing-anim{opacity:0;transform:translateY(10px);animation:fadeSlideTyping 0.4s forwards;}
 @keyframes fadeSlideTyping{to{opacity:1;transform:translateY(0);}}
-
 .dots{display:flex;gap:4px;}
 .dots div{width:6px;height:6px;background:#fff;border-radius:50%;animation:blink 1.4s infinite both;}
 .dots div:nth-child(2){animation-delay:.2s}
 .dots div:nth-child(3){animation-delay:.4s}
 @keyframes blink{0%{opacity:.2}20%{opacity:1}100%{opacity:.2}}
-
-.menu-btn-container{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
-.showInput{display:block !important;animation:fadeSlideTyping 0.4s forwards;}
 </style>
-
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyAUoAi_LxYe-a4lgVqbYT2Aj9D0ITIkL2s",
-    authDomain: "texttomusic-6ce7a.firebaseapp.com",
-    projectId: "texttomusic-6ce7a",
-    storageBucket: "texttomusic-6ce7a.firebasestorage.app",
-    messagingSenderId: "287856697988",
-    appId: "1:287856697988:web:b87bf5c6632501d2b098d1"
-  };
-  
-  const app = firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-</script>
-
 </head>
 <body>
 <header>
@@ -117,66 +58,78 @@ transform:translateY(-2px);
 </div>
 
 <script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAUoAi_LxYe-a4lgVqbYT2Aj9D0ITIkL2s",
+  authDomain: "texttomusic-6ce7a.firebaseapp.com",
+  projectId: "texttomusic-6ce7a",
+  storageBucket: "texttomusic-6ce7a.firebasestorage.app",
+  messagingSenderId: "287856697988",
+  appId: "1:287856697988:web:b87bf5c6632501d2b098d1"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 const chatContainer = document.getElementById('chatContainer');
 const input = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 
 let step = 0;
-let userData = {judul:'', style:'', gender:''};
-let hasGenerated = localStorage.getItem('pxGenerated') === 'true';
+let userData = {judul:'', style:'', gender:'', lyrics:''};
+const userId = "currentUser"; // harus sama dengan dokumen user di Firestore
 
-window.addEventListener('DOMContentLoaded',()=>{
-  if(hasGenerated){
-    addBubble("⚠️ Kamu sudah menggunakan PX Music V5 1x. Tidak bisa generate lagi.", 'bulan');
-    hideInput();
-  } else {
-    addBubble("Selamat Datang di PX Music!", 'bulan', ()=>{
-      setTimeout(addStartButton, 500);
-    });
-  }
-});
-
+// Bubble helper
 function addBubble(msg,type='bulan',callback){
   const bubble = document.createElement('div');
-  bubble.classList.add('chat-bubble',type,'chat-bubble-anim');
+  bubble.classList.add('chat-bubble',type);
   bubble.innerText = msg;
   chatContainer.appendChild(bubble);
   chatContainer.scrollTop = chatContainer.scrollHeight;
   if(callback) callback();
 }
 
+// Tombol Start
 function addStartButton(){
   const btn = document.createElement('button');
   btn.innerText = "Start PX Music V5";
-  btn.className = 'step-btn start-btn-anim';
-  btn.onclick = ()=>{
-    btn.remove();
-    nextStep();
-  };
+  btn.className = 'step-btn';
+  btn.onclick = ()=>{ btn.remove(); nextStep(); };
   const container = document.createElement('div');
-  container.style.display='flex';
-  container.style.justifyContent='center';
-  container.style.marginTop='5px';
+  container.className='menu-btn-container';
   container.appendChild(btn);
   chatContainer.appendChild(container);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
+// Typing anim
 function showTyping(callback){
   const bubble=document.createElement("div");
-  bubble.className="typing bulan typing-anim";
+  bubble.className="typing-anim bulan";
   const dots=document.createElement("div");
   dots.className="dots";
   dots.innerHTML=`<div></div><div></div><div></div>`;
   bubble.appendChild(dots);
   chatContainer.appendChild(bubble);
   chatContainer.scrollTop=chatContainer.scrollHeight;
-  setTimeout(()=>{
-    bubble.remove();
-    if(callback) callback();
-  },1000);
+  setTimeout(()=>{ bubble.remove(); if(callback) callback(); },800);
 }
 
+// Render admin terakhir + welcome + start
+function renderAdminAndStart(){
+  db.collection('chats').doc(userId).collection('messages')
+    .orderBy('timestamp','desc')
+    .limit(1)
+    .get()
+    .then(snapshot=>{
+      if(!snapshot.empty){
+        snapshot.forEach(doc=>{
+          const data = doc.data();
+          addBubble(data.message,'bulan');
+        });
+      }
+      addBubble("Selamat Datang di PX Music!",'bulan',()=>setTimeout(addStartButton,400));
+    });
+}
+
+// Input control
 function showInput(){
   input.classList.add('showInput'); 
   input.disabled=false; 
@@ -190,94 +143,104 @@ function hideInput(){
   sendBtn.disabled=true;
 }
 
-function nextStep(){
-  if(hasGenerated) return;
+// Menu button helper
+function addMenuButtons(labels, actions){
+  const btnContainer = document.createElement('div');
+  btnContainer.className='menu-btn-container';
+  labels.forEach((label,i)=>{
+    const btn = document.createElement('button');
+    btn.innerText=label;
+    btn.className='step-btn';
+    btn.onclick=()=>{actions[i](); btnContainer.remove();};
+    btnContainer.appendChild(btn);
+  });
+  chatContainer.appendChild(btnContainer);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
 
+// ================== Step Logic ==================
+window.addEventListener('DOMContentLoaded',()=>{
+  renderAdminAndStart();
+});
+
+function nextStep(){
   step++;
   switch(step){
     case 1:
       showTyping(()=>{
         addBubble("Pilih tipe generasi musik (PX Music V5):");
-        addMenuButtons(['Text To Music','Instrumen (Belum Support)'],[()=>nextStep(),()=>showTyping(()=>addBubble("Instrumen belum support"))]);
+        addMenuButtons(['Text To Music','Instrumen (Belum Support)'],[
+          ()=>nextStep(),
+          ()=>showTyping(()=>addBubble("Instrumen belum support"))
+        ]);
       });
       break;
     case 2:
-      showTyping(()=>{
-        addBubble("🎵 PX Music V5 - Custom Mode\n・Tipe: Dengan Lirik\n・Mode: Custom\nLangkah 1: Masukkan Judul Lagu");
-        showInput();
-      });
+      showTyping(()=>{ addBubble(`╭─────────────────\n┊ 🎵 PX Music V5 - Custom Mode\n┊\n┊ ・ Tipe: Dengan Lirik\n┊ ・ Mode: Custom\n┊\n┊ Langkah 1: Masukkan Judul Lagu\n╰─────────────────`); showInput(); });
       break;
     case 3:
-      showTyping(()=>{
-        addBubble(`🎵 PX Music V5 - Custom Mode\n・Judul: ${userData.judul}\nLangkah 2: Masukkan Style (misal: metal, rock, pop)`);
-        showInput();
-      });
+      showTyping(()=>{ addBubble(`╭─────────────────\n┊ 🎵 PX Music V5 - Custom Mode\n┊\n┊ ・ Judul: ${userData.judul}\n┊\n┊ Langkah 2: Masukkan Style\n┊ (Misal: metal, rock, pop)\n╰─────────────────`); showInput(); });
       break;
     case 4:
       showTyping(()=>{
-        addBubble(`🎵 PX Music V5 - Custom Mode\n・Judul: ${userData.judul}\n・Style: ${userData.style}\nLangkah 3: Pilih Gender Vokal`);
+        addBubble(`╭─────────────────\n┊ 🎵 PX Music V5 - Custom Mode\n┊\n┊ ・ Judul: ${userData.judul}\n┊ ・ Style: ${userData.style}\n┊\n┊ Langkah 3: Pilih Gender Vokal\n╰─────────────────`);
         hideInput();
         addMenuButtons(['Perempuan','Laki-Laki','Auto'],[g=>selectGender('Perempuan'),g=>selectGender('Laki-Laki'),g=>selectGender('Auto')]);
       });
       break;
     case 5:
-      showTyping(()=>{
-        const jobId = crypto.randomUUID();
-        addBubble(`・Job Terkirim (PX Music V5)\n・Job ID: ${jobId}\n・Status: Memproses...\n・Estimasi: 5-15 menit`);
-
-        db.collection("jobs").add({
-          judul: userData.judul,
-          style: userData.style,
-          gender: userData.gender,
-          jobId: jobId,
-          status: "Memproses",
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => console.log("Job tersimpan di Firebase!"))
-          .catch(err => console.error("Error:", err));
-
-        localStorage.setItem('pxGenerated','true');
-        hasGenerated = true;
-        hideInput();
-        addBubble("⚠️ Kamu sudah generate 1x. Tidak bisa generate lagi.", 'bulan');
-      });
+      showTyping(()=>{ addBubble(`╭─────────────────\n┊ 🎵 PX Music V5 - Custom Mode\n┊\n┊ ・ Judul: ${userData.judul}\n┊ ・ Style: ${userData.style}\n┊ ・ Gender: ${userData.gender}\n┊\n┊ Langkah 4: Masukkan Lirik Lagu\n╰─────────────────`); showInput(); });
       break;
+    case 6: submitJob(); break;
   }
 }
 
+// Handle input user
 function handleInput(){
-  if(hasGenerated) return;
   const val = input.value.trim();
   if(!val) return;
   addBubble(val,'user');
   hideInput();
   if(step===2) userData.judul=val;
   if(step===3) userData.style=val;
+  if(step===5) userData.lyrics=val;
   nextStep();
 }
 
+// Pilih gender
 function selectGender(g){
-  if(hasGenerated) return;
   userData.gender=g;
-  addBubble(`Gender Vokal Dipilih: ${g}`,'user');
+  addBubble(`Gender dipilih: ${g}`,'user');
   document.querySelectorAll('.step-btn').forEach(b=>b.remove());
   nextStep();
 }
 
-function addMenuButtons(labels, actions){
-  const btnContainer = document.createElement('div');
-  btnContainer.className='menu-btn-container';
-  labels.forEach((label, i) => {
-    const btn = document.createElement('button');
-    btn.innerText = label;
-    btn.className = 'step-btn step-btn-anim';
-    btn.onclick = ()=>{
-      actions[i](); 
-      btnContainer.remove();
-    };
-    btnContainer.appendChild(btn);
+// Submit job
+function submitJob(){
+  const jobId = crypto.randomUUID();
+  const today = new Date().toISOString().slice(0,10);
+
+  if(!userData.lyrics || userData.lyrics.trim() === ""){
+    addBubble("⚠️ Lirik wajib diisi!",'bulan');
+    step = 5;
+    showInput();
+    return;
+  }
+
+  db.collection("jobs").add({
+    userId: userId,
+    judul: userData.judul,
+    style: userData.style,
+    gender: userData.gender,
+    lyrics: userData.lyrics,
+    jobId: jobId,
+    status: "Memproses",
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    date: today
   });
-  chatContainer.appendChild(btnContainer);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  db.collection("users").doc(userId).set({lastGenerate: today},{merge:true});
+  addBubble(`╭────────────────\n┊ ・ Job Terkirim (PX Music V5)\n┊ ・ Job ID: ${jobId}\n┊ ・ Status: Memproses...\n┊ ・ Estimasi: 1 - 3 menit\n╰────────────────`,'bulan');
 }
 </script>
 </body>
