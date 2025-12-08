@@ -1,206 +1,241 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Pixels Co. - Generate</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PX Co. Bot - PX Music V5</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family:"Outfit",sans-serif; }
-body { background:#000; color:#fff; min-height:100vh; }
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
+html,body{height:100%;display:flex;flex-direction:column;color:#f5f3ff;background:radial-gradient(circle at 20% 30%, rgba(130,60,255,0.08), transparent 65%),radial-gradient(circle at 80% 70%, rgba(150,70,255,0.06), transparent 70%), #000;overflow-x:hidden;}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;background:rgba(0,0,0,0.25);backdrop-filter:blur(10px);border-radius:0 0 15px 15px;z-index:10;}
+header img{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #fff;}
+header .info{flex:1;margin-left:10px;}
+header .info .name{font-weight:600;font-size:1rem;color:#fff;text-shadow:0 0 8px #fff,0 0 12px #fff;}
+header .info .status{font-size:0.8rem;color:#fff;text-shadow:0 0 6px #fff;}
 
-/* NAVBAR */
-.nav {
-    width:100%;
-    padding:18px 22px;
-    display:flex;
-    justify-content:flex-start;
-    align-items:center;
-    background:#000;
-    border-bottom:1px solid rgba(255,255,255,0.1);
-    position:sticky;
-    top:0;
-    z-index:1000;
-}
-.logo{width:48px;border-radius:12px;}
+.chat-container{flex:1;background:rgba(255,255,255,0.05);backdrop-filter:blur(5px);padding:15px;margin:10px;border-radius:15px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;position:relative;border:1px solid rgba(255,255,255,0.2);}
+.chat-bubble{max-width:70%;padding:10px 14px;border-radius:20px;font-size:0.95rem;word-wrap:break-word;display:flex;gap:8px;align-items:flex-end;line-height:1.4rem;}
+.bulan{background:rgba(255,255,255,0.15);backdrop-filter:blur(5px);color:#fff;border-top-left-radius:0;justify-content:flex-start;}
+.user{background:#2563eb;color:#fff;align-self:flex-end;border-top-right-radius:0;justify-content:flex-end;}
 
-/* HERO */
-.hero{
-    padding:60px 20px;
-    text-align:center;
+#inputArea{display:flex;gap:10px;padding:10px;border-top:1px solid rgba(255,255,255,0.3);}
+#inputArea input{flex:1;padding:8px 12px;border-radius:15px;border:none;outline:none;font-size:0.95rem;display:none;opacity:0;transform:translateY(10px);}
+#inputArea button{
+padding:10px 16px;
+border-radius:15px;
+background:rgba(0,0,0,0.3);
+color:#fff;
+border:2px solid #fff;
+cursor:pointer;
+font-weight:600;
+font-size:0.95rem;
+transition:all 0.2s ease;
+backdrop-filter:blur(6px);
+box-shadow:0 0 8px rgba(255,255,255,0.6),0 4px 12px rgba(0,0,0,0.3);
 }
-.hero h1{
-    font-size:48px;
-    font-weight:700;
-    margin-bottom:12px;
-    color:#fff;
-}
-.hero p{
-    font-size:18px;
-    max-width:600px;
-    margin:auto;
-    margin-bottom:30px;
-    color:#fff;
-}
-.hero p a{
-    opacity:0.9;
-    font-size:16px;
-    color:#fff;
-    text-decoration:none;
-    font-weight:600;
-    text-shadow:0 0 10px #fff, 0 0 20px #fff;
-    transition:0.3s ease;
-}
-.hero p a:hover{
-    text-shadow:0 0 15px #fff, 0 0 25px #fff;
+#inputArea button:hover{
+background:rgba(255,255,255,0.1);
+box-shadow:0 0 12px rgba(255,255,255,0.8),0 6px 14px rgba(0,0,0,0.4);
+transform:translateY(-2px);
 }
 
-/* FORM */
-.apply-form{
-    width:90%;
-    max-width:700px;
-    margin:0 auto 50px auto;
-    padding:20px;
-    background:rgba(255,255,255,0.05);
-    border-radius:14px;
-    backdrop-filter:blur(10px);
-    box-shadow:0 0 10px rgba(255,255,255,0.2);
+/* Wizard / Menu buttons */
+.step-btn{
+padding:10px 16px;
+border-radius:15px;
+background:rgba(0,0,0,0.3);
+color:#fff;
+border:2px solid #fff;
+cursor:pointer;
+font-weight:600;
+font-size:0.95rem;
+transition:all 0.2s ease;
+backdrop-filter:blur(6px);
+box-shadow:0 0 8px rgba(255,255,255,0.6),0 4px 12px rgba(0,0,0,0.3);
 }
-.apply-form label{display:block; margin-bottom:6px; font-weight:600;}
-.apply-form input,
-.apply-form select,
-.apply-form textarea{
-    width:100%;
-    padding:12px 14px;
-    margin-bottom:18px;
-    border-radius:10px;
-    border:1px solid rgba(255,255,255,0.3);
-    background:rgba(255,255,255,0.05);
-    color:#fff;
-    resize:none;
-}
-.apply-form input::placeholder,
-.apply-form textarea::placeholder{color:rgba(255,255,255,0.6);}
-.apply-form button{
-    padding:14px 28px;
-    border-radius:16px;
-    border:2px solid #fff;
-    background:rgba(255,255,255,0.05);
-    color:#fff;
-    font-weight:600;
-    cursor:pointer;
-    transition:all 0.3s ease;
-    box-shadow:0 0 6px rgba(255,255,255,0.3);
-}
-.apply-form button:hover{
-    background:rgba(255,255,255,0.1);
-    box-shadow:0 0 10px rgba(255,255,255,0.5);
+.step-btn:hover{
+background:rgba(255,255,255,0.1);
+box-shadow:0 0 12px rgba(255,255,255,0.8),0 6px 14px rgba(0,0,0,0.4);
+transform:translateY(-2px);
 }
 
-/* ANIMATION */
-.fade-up { opacity:0; transform:translateY(30px); animation:fadeUpAnim 1s forwards; }
-.fade-up-delay { opacity:0; transform:translateY(30px); animation:fadeUpAnim 1s forwards; animation-delay:0.3s; }
-@keyframes fadeUpAnim { to { opacity:1; transform:translateY(0); } }
+/* Animasi */
+.chat-bubble-anim{opacity:0;transform:translateY(10px);animation:fadeSlideBubble 0.4s forwards;}
+@keyframes fadeSlideBubble{to{opacity:1;transform:translateY(0);}}
 
-/* DESKTOP */
-@media (min-width: 900px) {
-    .hero { padding: 90px 20px; }
-    .hero h1 { font-size: 68px; }
-    .hero p { font-size: 24px; max-width: 800px; }
-    .apply-form { max-width: 900px; padding: 40px; }
-    .apply-form input,
-    .apply-form select,
-    .apply-form textarea { font-size: 18px; padding: 16px 18px; }
-    .apply-form button { font-size: 18px; padding: 16px 35px; }
-}
+.step-btn-anim{opacity:0;transform:translateY(20px);animation:fadeSlideInBtn 0.4s forwards;}
+@keyframes fadeSlideInBtn{to{opacity:1;transform:translateY(0);}}
+
+.start-btn-anim{opacity:0;transform:translateY(20px);animation:fadeSlideInBtn 0.5s forwards;}
+
+.typing-anim{opacity:0;transform:translateY(10px);animation:fadeSlideTyping 0.4s forwards;}
+@keyframes fadeSlideTyping{to{opacity:1;transform:translateY(0);}}
+
+.dots{display:flex;gap:4px;}
+.dots div{width:6px;height:6px;background:#fff;border-radius:50%;animation:blink 1.4s infinite both;}
+.dots div:nth-child(2){animation-delay:.2s}
+.dots div:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%{opacity:.2}20%{opacity:1}100%{opacity:.2}}
+
+.menu-btn-container{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+.showInput{display:block !important;animation:fadeSlideTyping 0.4s forwards;}
 </style>
 </head>
-
 <body>
-
-<!-- NAV -->
-<div class="nav fade-up">
-    <img src="https://i.imgur.com/ExJqq0w.png" class="logo">
+<header>
+<img src="https://i.imgur.com/hYvP4vp.png" alt="PX Co. Bot Avatar">
+<div class="info">
+  <div class="name">PX Co. Bot</div>
+  <div class="status">Online</div>
 </div>
+</header>
 
-<!-- HERO -->
-<div class="hero fade-up">
-    <h1 class="fade-up-delay">Generate</h1>
-    <p class="fade-up-delay">
-        Write the vibe. AI makes the track.
-        <br>
-        <a href="https://wa.me/62881024164429" target="_blank">@heydarryl</a>
-    </p>
-</div>
+<div class="chat-container" id="chatContainer"></div>
 
-<!-- FORM -->
-<div class="apply-form fade-up">
-    <form id="requestForm" action="https://formspree.io/f/xqarbjja" method="POST">
-
-        <label>Full Name</label>
-        <input type="text" name="full_name" placeholder="Your full name" required>
-
-        <label>No WhatsApp Aktif</label>
-        <input type="text" name="whatsapp" placeholder="+62 ..." required>
-
-        <label>Judul Lagu</label>
-        <input type="text" name="judul_lagu" placeholder="Masukkan judul lagu" required>
-
-        <label>Genre / Style Musik</label>
-        <input type="text" name="genre" placeholder="Misal: Lofi, Chill, Hyperpop, Dance, dll" required>
-
-        <label>Vocal</label>
-        <select name="vocal" required>
-            <option value="">Pilih jenis vocal</option>
-            <option value="male">Laki-Laki</option>
-            <option value="female">Perempuan</option>
-        </select>
-
-        <label>Lirik Lagu</label>
-        <textarea name="lirik" rows="4" placeholder="Masukkan lirik lagu di sini" required></textarea>
-
-        <label>Negative Tag (Opsional)</label>
-        <textarea name="negative_tag" rows="3" placeholder="Contoh: no reverb, no fx, no autotune, dll (opsional)"></textarea>
-
-        <button id="submitBtn" type="submit">Generate</button>
-    </form>
+<div id="inputArea">
+  <input type="text" id="userInput" placeholder="Tulis jawaban..." />
+  <button id="sendBtn" onclick="handleInput()">Kirim</button>
 </div>
 
 <script>
-// ---- CEK & RESET JATAH HARIAN ----
-const form = document.getElementById("requestForm");
-const btn = document.getElementById("submitBtn");
+const chatContainer = document.getElementById('chatContainer');
+const input = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
 
-const today = new Date().toDateString();
-const savedDate = localStorage.getItem("submitDate");
+let step = 0;
+let userData = {judul:'', style:'', gender:''};
 
-// Reset jika hari sudah berganti
-if (savedDate !== today) {
-    localStorage.removeItem("submittedOnce");
-    localStorage.setItem("submitDate", today);
-}
-
-// Jika hari ini sudah submit
-if (localStorage.getItem("submittedOnce") === "true") {
-    btn.disabled = true;
-    btn.innerText = "Limit Harianmu Habis";
-}
-
-// ---- SAAT SUBMIT ----
-form.addEventListener("submit", function(e) {
-    btn.disabled = true;
-    btn.innerText = "Submitting...";
-
-    localStorage.setItem("submittedOnce", "true");
-    localStorage.setItem("submitDate", today);
-
-    // Redirect manual setelah Formspree selesai (sedikit delay)
-    setTimeout(() => {
-        window.location.href = "../success";
-    }, 800);
+window.addEventListener('DOMContentLoaded',()=>{
+  addBubble("Selamat Datang di PX Music!", 'bulan', ()=>{
+    setTimeout(addStartButton, 500);
+  });
 });
-</script>
 
+function addBubble(msg,type='bulan',callback){
+  const bubble = document.createElement('div');
+  bubble.classList.add('chat-bubble',type,'chat-bubble-anim');
+  bubble.innerText = msg;
+  chatContainer.appendChild(bubble);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+  if(callback) callback();
+}
+
+function addStartButton(){
+  const btn = document.createElement('button');
+  btn.innerText = "Start PX Music V5";
+  btn.className = 'step-btn start-btn-anim';
+  btn.onclick = ()=>{
+    btn.remove();
+    nextStep();
+  };
+  const container = document.createElement('div');
+  container.style.display='flex';
+  container.style.justifyContent='center';
+  container.style.marginTop='5px';
+  container.appendChild(btn);
+  chatContainer.appendChild(container);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+function showTyping(callback){
+  const bubble=document.createElement("div");
+  bubble.className="typing bulan typing-anim";
+  const dots=document.createElement("div");
+  dots.className="dots";
+  dots.innerHTML=`<div></div><div></div><div></div>`;
+  bubble.appendChild(dots);
+  chatContainer.appendChild(bubble);
+  chatContainer.scrollTop=chatContainer.scrollHeight;
+  setTimeout(()=>{
+    bubble.remove();
+    if(callback) callback();
+  },1000);
+}
+
+function showInput(){
+  input.classList.add('showInput'); 
+  input.disabled=false; 
+  sendBtn.disabled=false; 
+  input.focus();
+}
+function hideInput(){
+  input.value='';
+  input.classList.remove('showInput'); 
+  input.disabled=true; 
+  sendBtn.disabled=true;
+}
+
+function nextStep(){
+  step++;
+  switch(step){
+    case 1:
+      showTyping(()=>{
+        addBubble("Pilih tipe generasi musik (PX Music V5):");
+        addMenuButtons(['Text To Music','Instrumen (Belum Support)'],[()=>nextStep(),()=>showTyping(()=>addBubble("Instrumen belum support"))]);
+      });
+      break;
+    case 2:
+      showTyping(()=>{
+        addBubble("🎵 PX Music V5 - Custom Mode\n・Tipe: Dengan Lirik\n・Mode: Custom\nLangkah 1: Masukkan Judul Lagu");
+        showInput();
+      });
+      break;
+    case 3:
+      showTyping(()=>{
+        addBubble(`🎵 PX Music V5 - Custom Mode\n・Judul: ${userData.judul}\nLangkah 2: Masukkan Style (misal: metal, rock, pop)`);
+        showInput();
+      });
+      break;
+    case 4:
+      showTyping(()=>{
+        addBubble(`🎵 PX Music V5 - Custom Mode\n・Judul: ${userData.judul}\n・Style: ${userData.style}\nLangkah 3: Pilih Gender Vokal`);
+        hideInput();
+        addMenuButtons(['Perempuan','Laki-Laki','Auto'],[g=>selectGender('Perempuan'),g=>selectGender('Laki-Laki'),g=>selectGender('Auto')]);
+      });
+      break;
+    case 5:
+      showTyping(()=>{
+        const jobId = crypto.randomUUID();
+        addBubble(`・Job Terkirim (PX Music V5)\n・Job ID: ${jobId}\n・Status: Memproses...\n・Estimasi: 5-15 menit`);
+      });
+      break;
+  }
+}
+
+function handleInput(){
+  const val = input.value.trim();
+  if(!val) return;
+  addBubble(val,'user');
+  hideInput();
+  if(step===2) userData.judul=val;
+  if(step===3) userData.style=val;
+  nextStep();
+}
+
+function selectGender(g){
+  userData.gender=g;
+  addBubble(`Gender Vokal Dipilih: ${g}`,'user');
+  document.querySelectorAll('.step-btn').forEach(b=>b.remove());
+  nextStep();
+}
+
+function addMenuButtons(labels, actions){
+  const btnContainer = document.createElement('div');
+  btnContainer.className='menu-btn-container';
+  labels.forEach((label, i) => {
+    const btn = document.createElement('button');
+    btn.innerText = label;
+    btn.className = 'step-btn step-btn-anim';
+    btn.onclick = ()=>{
+      actions[i](); 
+      btnContainer.remove();
+    };
+    btnContainer.appendChild(btn);
+  });
+  chatContainer.appendChild(btnContainer);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+</script>
 </body>
 </html>
