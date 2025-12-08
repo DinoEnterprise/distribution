@@ -8,28 +8,27 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
 html,body{height:100%;background:#0b0b0b;color:#fff;display:flex;flex-direction:column;}
-header{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;background:rgba(255,255,255,0.05);backdrop-filter:blur(12px);border-radius:0 0 15px 15px;box-shadow:0 0 20px rgba(255,255,255,0.1);}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;background:rgba(255,255,255,0.05);backdrop-filter:blur(12px);border-radius:0 0 15px 15px;box-shadow:0 0 20px rgba(255,255,255,0.1);position:relative;}
 header img{width:50px;height:50px;border-radius:50%;border:2px solid #fff;object-fit:cover;}
 header .info{flex:1;margin-left:12px;}
 header .info .name{font-weight:600;font-size:1rem;color:#fff;text-shadow:0 0 8px #fff;}
 header .info .status{font-size:0.8rem;color:#fff;text-shadow:0 0 6px #fff;}
-
+#clearBtn{position:absolute;top:50%;right:12px;transform:translateY(-50%);background:none;border:none;color:#f55;font-size:22px;cursor:pointer;}
 .chat-container{flex:1;background:rgba(255,255,255,0.03);backdrop-filter:blur(4px);padding:15px;margin:10px;border-radius:15px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;position:relative;border:1px solid rgba(255,255,255,0.15);}
 .chat-bubble{max-width:90%;padding:12px 16px;border-radius:15px;font-size:0.95rem;word-wrap:break-word;display:flex;gap:8px;align-items:flex-start;line-height:1.4rem;opacity:0;transform:translateY(10px);animation:fadeSlideBubble 0.4s forwards;white-space:pre-line;}
 @keyframes fadeSlideBubble{to{opacity:1;transform:translateY(0);}}
 .bulan{background:rgba(255,255,255,0.1);backdrop-filter:blur(4px);align-self:flex-start;}
 .user{background:#2563eb;color:#fff;align-self:flex-end;}
-
 #inputArea{display:flex;gap:10px;padding:10px;border-top:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(8px);border-radius:15px;margin:10px;}
 #inputArea input{flex:1;padding:10px 14px;border-radius:15px;border:none;outline:none;font-size:0.95rem;display:none;opacity:0;transform:translateY(10px);transition:all 0.3s;}
 #inputArea input.showInput{display:block;opacity:1;transform:translateY(0);}
 #inputArea button{padding:10px 18px;border-radius:15px;background:rgba(0,0,0,0.3);color:#fff;border:2px solid #fff;cursor:pointer;font-weight:600;transition:all 0.2s ease;backdrop-filter:blur(6px);box-shadow:0 0 8px rgba(255,255,255,0.6),0 4px 12px rgba(0,0,0,0.3);}
 #inputArea button:hover{background:rgba(255,255,255,0.1);box-shadow:0 0 12px rgba(255,255,255,0.8),0 6px 14px rgba(0,0,0,0.4);transform:translateY(-2px);}
-
 .step-btn{padding:10px 18px;border-radius:15px;background:rgba(0,0,0,0.25);color:#fff;border:2px solid #fff;cursor:pointer;font-weight:600;transition:all 0.2s ease;backdrop-filter:blur(6px);box-shadow:0 0 10px rgba(255,255,255,0.6),0 4px 12px rgba(0,0,0,0.3);}
 .step-btn:hover{background:rgba(255,255,255,0.08);box-shadow:0 0 14px rgba(255,255,255,0.8),0 6px 16px rgba(0,0,0,0.4);transform:translateY(-2px);}
-.menu-btn-container{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:5px;}
-
+.menu-btn-container{display:flex;flex-wrap:wrap;gap:8px;margin-top:5px;}
+.menu-btn-center{justify-content:center;align-items:center;height:100%;display:flex;flex-direction:column;gap:10px;}
+.menu-btn-left{display:flex;flex-direction:column;gap:8px;align-items:flex-start;margin:10px 0;}
 .typing-anim{opacity:0;transform:translateY(10px);animation:fadeSlideTyping 0.4s forwards;}
 @keyframes fadeSlideTyping{to{opacity:1;transform:translateY(0);}}
 .dots{display:flex;gap:4px;}
@@ -38,6 +37,7 @@ header .info .status{font-size:0.8rem;color:#fff;text-shadow:0 0 6px #fff;}
 .dots div:nth-child(3){animation-delay:.4s}
 @keyframes blink{0%{opacity:.2}20%{opacity:1}100%{opacity:.2}}
 </style>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
@@ -48,16 +48,18 @@ header .info .status{font-size:0.8rem;color:#fff;text-shadow:0 0 6px #fff;}
   <div class="name">PX Co. Bot</div>
   <div class="status">Online</div>
 </div>
+<button id="clearBtn" title="Hapus Semua Riwayat">🗑️</button>
 </header>
 
 <div class="chat-container" id="chatContainer"></div>
 
 <div id="inputArea">
   <input type="text" id="userInput" placeholder="Tulis jawaban..." />
-  <button id="sendBtn" onclick="handleInput()">Kirim</button>
+  <button id="sendBtn">Kirim</button>
 </div>
 
 <script>
+// ===== Firebase =====
 const firebaseConfig = {
   apiKey: "AIzaSyAUoAi_LxYe-a4lgVqbYT2Aj9D0ITIkL2s",
   authDomain: "texttomusic-6ce7a.firebaseapp.com",
@@ -72,34 +74,33 @@ const db = firebase.firestore();
 const chatContainer = document.getElementById('chatContainer');
 const input = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
+const clearBtn = document.getElementById('clearBtn');
 
 let step = 0;
 let userData = {judul:'', style:'', gender:'', lyrics:''};
-const userId = "currentUser"; // harus sama dengan dokumen user di Firestore
+const userId = "currentUser"; // Ganti sesuai user
 
-// Bubble helper
-function addBubble(msg,type='bulan',callback){
+// ===== Helpers =====
+function addBubble(msg,type='bulan'){
   const bubble = document.createElement('div');
   bubble.classList.add('chat-bubble',type);
   bubble.innerText = msg;
   chatContainer.appendChild(bubble);
   chatContainer.scrollTop = chatContainer.scrollHeight;
-  if(callback) callback();
 }
 
-// Tombol Start
 function addStartButton(){
   const btn = document.createElement('button');
   btn.innerText = "Start PX Music V5";
   btn.className = 'step-btn';
   btn.onclick = ()=>{ btn.remove(); nextStep(); };
   const container = document.createElement('div');
-  container.className='menu-btn-container';
+  container.className='menu-btn-container menu-btn-center';
   container.appendChild(btn);
   chatContainer.appendChild(container);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// Typing anim
 function showTyping(callback){
   const bubble=document.createElement("div");
   bubble.className="typing-anim bulan";
@@ -112,56 +113,42 @@ function showTyping(callback){
   setTimeout(()=>{ bubble.remove(); if(callback) callback(); },800);
 }
 
-// Render admin terakhir + welcome + start
-function renderAdminAndStart(){
-  db.collection('chats').doc(userId).collection('messages')
-    .orderBy('timestamp','desc')
-    .limit(1)
-    .get()
-    .then(snapshot=>{
-      if(!snapshot.empty){
-        snapshot.forEach(doc=>{
-          const data = doc.data();
-          addBubble(data.message,'bulan');
-        });
-      }
-      addBubble("Selamat Datang di PX Music!",'bulan',()=>setTimeout(addStartButton,400));
-    });
-}
-
-// Input control
 function showInput(){
-  input.classList.add('showInput'); 
-  input.disabled=false; 
-  sendBtn.disabled=false; 
+  input.classList.add('showInput');   
+  input.disabled=false;   
+  sendBtn.disabled=false;   
   input.focus();
 }
+
 function hideInput(){
   input.value='';
-  input.classList.remove('showInput'); 
-  input.disabled=true; 
+  input.classList.remove('showInput');   
+  input.disabled=true;   
   sendBtn.disabled=true;
 }
 
-// Menu button helper
-function addMenuButtons(labels, actions){
-  const btnContainer = document.createElement('div');
-  btnContainer.className='menu-btn-container';
-  labels.forEach((label,i)=>{
-    const btn = document.createElement('button');
-    btn.innerText=label;
-    btn.className='step-btn';
-    btn.onclick=()=>{actions[i](); btnContainer.remove();};
-    btnContainer.appendChild(btn);
-  });
-  chatContainer.appendChild(btnContainer);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+function initRealtimeChat(){
+  db.collection('chats').doc(userId).collection('messages')
+    .orderBy('timestamp','asc')
+    .onSnapshot(snapshot=>{
+      snapshot.docChanges().forEach(change=>{
+        if(change.type === 'added'){
+          const data = change.doc.data();
+          addBubble(data.message, data.type==='user'?'user':'bulan');
+        }
+      });
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    });
 }
 
-// ================== Step Logic ==================
-window.addEventListener('DOMContentLoaded',()=>{
-  renderAdminAndStart();
-});
+// ===== Step PX Music =====
+function renderAdminAndStart(){
+  addBubble("Selamat Datang di PX Music!",'bulan');
+  addStartButton();
+  initRealtimeChat();
+}
+
+window.addEventListener('DOMContentLoaded',()=>{ renderAdminAndStart(); });
 
 function nextStep(){
   step++;
@@ -176,26 +163,25 @@ function nextStep(){
       });
       break;
     case 2:
-      showTyping(()=>{ addBubble(`╭─────────────────\n┊ 🎵 PX Music V5 - Custom Mode\n┊\n┊ ・ Tipe: Dengan Lirik\n┊ ・ Mode: Custom\n┊\n┊ Langkah 1: Masukkan Judul Lagu\n╰─────────────────`); showInput(); });
+      showTyping(()=>{ addBubble(`╭─────────────────\n┊ 🎵 PX Music V5 - Custom Mode\n┊ Langkah 1: Masukkan Judul Lagu\n╰─────────────────`); showInput(); });
       break;
     case 3:
-      showTyping(()=>{ addBubble(`╭─────────────────\n┊ 🎵 PX Music V5 - Custom Mode\n┊\n┊ ・ Judul: ${userData.judul}\n┊\n┊ Langkah 2: Masukkan Style\n┊ (Misal: metal, rock, pop)\n╰─────────────────`); showInput(); });
+      showTyping(()=>{ addBubble(`╭─────────────────\n┊ ・ Judul: ${userData.judul}\n┊ Langkah 2: Masukkan Style\n╰─────────────────`); showInput(); });
       break;
     case 4:
       showTyping(()=>{
-        addBubble(`╭─────────────────\n┊ 🎵 PX Music V5 - Custom Mode\n┊\n┊ ・ Judul: ${userData.judul}\n┊ ・ Style: ${userData.style}\n┊\n┊ Langkah 3: Pilih Gender Vokal\n╰─────────────────`);
+        addBubble(`╭─────────────────\n┊ ・ Judul: ${userData.judul}\n┊ ・ Style: ${userData.style}\n┊ Langkah 3: Pilih Gender Vokal\n╰─────────────────`);
         hideInput();
         addMenuButtons(['Perempuan','Laki-Laki','Auto'],[g=>selectGender('Perempuan'),g=>selectGender('Laki-Laki'),g=>selectGender('Auto')]);
       });
       break;
     case 5:
-      showTyping(()=>{ addBubble(`╭─────────────────\n┊ 🎵 PX Music V5 - Custom Mode\n┊\n┊ ・ Judul: ${userData.judul}\n┊ ・ Style: ${userData.style}\n┊ ・ Gender: ${userData.gender}\n┊\n┊ Langkah 4: Masukkan Lirik Lagu\n╰─────────────────`); showInput(); });
+      showTyping(()=>{ addBubble(`╭─────────────────\n┊ ・ Judul: ${userData.judul}\n┊ ・ Style: ${userData.style}\n┊ ・ Gender: ${userData.gender}\n┊ Langkah 4: Masukkan Lirik Lagu\n╰─────────────────`); showInput(); });
       break;
     case 6: submitJob(); break;
   }
 }
 
-// Handle input user
 function handleInput(){
   const val = input.value.trim();
   if(!val) return;
@@ -207,7 +193,20 @@ function handleInput(){
   nextStep();
 }
 
-// Pilih gender
+function addMenuButtons(labels, actions, center=false){
+  const btnContainer = document.createElement('div');
+  btnContainer.className=center?'menu-btn-container menu-btn-center':'menu-btn-container menu-btn-left';
+  labels.forEach((label,i)=>{
+    const btn = document.createElement('button');
+    btn.innerText=label;
+    btn.className='step-btn';
+    btn.onclick=()=>{actions[i](); btnContainer.remove();};
+    btnContainer.appendChild(btn);
+  });
+  chatContainer.appendChild(btnContainer);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
 function selectGender(g){
   userData.gender=g;
   addBubble(`Gender dipilih: ${g}`,'user');
@@ -215,7 +214,6 @@ function selectGender(g){
   nextStep();
 }
 
-// Submit job
 function submitJob(){
   const jobId = crypto.randomUUID();
   const today = new Date().toISOString().slice(0,10);
@@ -227,7 +225,7 @@ function submitJob(){
     return;
   }
 
-  db.collection("jobs").add({
+  db.collection("jobs").doc(userId).set({
     userId: userId,
     judul: userData.judul,
     style: userData.style,
@@ -237,11 +235,28 @@ function submitJob(){
     status: "Memproses",
     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     date: today
-  });
+  }, {merge:true});
 
   db.collection("users").doc(userId).set({lastGenerate: today},{merge:true});
-  addBubble(`╭────────────────\n┊ ・ Job Terkirim (PX Music V5)\n┊ ・ Job ID: ${jobId}\n┊ ・ Status: Memproses...\n┊ ・ Estimasi: 1 - 3 menit\n╰────────────────`,'bulan');
+
+  addBubble(`╭────────────────\n┊ ・ Job Terkirim (PX Music V5)\n┊ ・ Job ID: ${jobId}\n┊ ・ Status: Memproses...\n╰────────────────`,'bulan');
 }
+
+sendBtn.addEventListener('click', handleInput);
+input.addEventListener('keypress', e=>{ if(e.key==='Enter') handleInput(); });
+
+// ===== Clear All =====
+clearBtn.addEventListener('click', ()=>{
+  if(confirm("Hapus semua chat & job?")){
+    db.collection("jobs").doc(userId).delete();
+    db.collection("chats").doc(userId).delete();
+    chatContainer.innerHTML='';
+    step = 0;
+    userData = {judul:'', style:'', gender:'', lyrics:''};
+    addBubble("Selamat Datang di PX Music!",'bulan');
+    addStartButton();
+  }
+});
 </script>
 </body>
 </html>
