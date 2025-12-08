@@ -81,6 +81,24 @@ transform:translateY(-2px);
 .menu-btn-container{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
 .showInput{display:block !important;animation:fadeSlideTyping 0.4s forwards;}
 </style>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAUoAi_LxYe-a4lgVqbYT2Aj9D0ITIkL2s",
+    authDomain: "texttomusic-6ce7a.firebaseapp.com",
+    projectId: "texttomusic-6ce7a",
+    storageBucket: "texttomusic-6ce7a.firebasestorage.app",
+    messagingSenderId: "287856697988",
+    appId: "1:287856697988:web:b87bf5c6632501d2b098d1"
+  };
+  
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
+
 </head>
 <body>
 <header>
@@ -105,11 +123,17 @@ const sendBtn = document.getElementById('sendBtn');
 
 let step = 0;
 let userData = {judul:'', style:'', gender:''};
+let hasGenerated = localStorage.getItem('pxGenerated') === 'true';
 
 window.addEventListener('DOMContentLoaded',()=>{
-  addBubble("Selamat Datang di PX Music!", 'bulan', ()=>{
-    setTimeout(addStartButton, 500);
-  });
+  if(hasGenerated){
+    addBubble("⚠️ Kamu sudah menggunakan PX Music V5 1x. Tidak bisa generate lagi.", 'bulan');
+    hideInput();
+  } else {
+    addBubble("Selamat Datang di PX Music!", 'bulan', ()=>{
+      setTimeout(addStartButton, 500);
+    });
+  }
 });
 
 function addBubble(msg,type='bulan',callback){
@@ -167,6 +191,8 @@ function hideInput(){
 }
 
 function nextStep(){
+  if(hasGenerated) return;
+
   step++;
   switch(step){
     case 1:
@@ -198,12 +224,28 @@ function nextStep(){
       showTyping(()=>{
         const jobId = crypto.randomUUID();
         addBubble(`・Job Terkirim (PX Music V5)\n・Job ID: ${jobId}\n・Status: Memproses...\n・Estimasi: 5-15 menit`);
+
+        db.collection("jobs").add({
+          judul: userData.judul,
+          style: userData.style,
+          gender: userData.gender,
+          jobId: jobId,
+          status: "Memproses",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => console.log("Job tersimpan di Firebase!"))
+          .catch(err => console.error("Error:", err));
+
+        localStorage.setItem('pxGenerated','true');
+        hasGenerated = true;
+        hideInput();
+        addBubble("⚠️ Kamu sudah generate 1x. Tidak bisa generate lagi.", 'bulan');
       });
       break;
   }
 }
 
 function handleInput(){
+  if(hasGenerated) return;
   const val = input.value.trim();
   if(!val) return;
   addBubble(val,'user');
@@ -214,6 +256,7 @@ function handleInput(){
 }
 
 function selectGender(g){
+  if(hasGenerated) return;
   userData.gender=g;
   addBubble(`Gender Vokal Dipilih: ${g}`,'user');
   document.querySelectorAll('.step-btn').forEach(b=>b.remove());
