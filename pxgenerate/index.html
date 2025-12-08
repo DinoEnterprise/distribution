@@ -13,7 +13,16 @@ header img{width:50px;height:50px;border-radius:50%;border:2px solid #fff;object
 header .info{flex:1;margin-left:12px;}
 header .info .name{font-weight:600;font-size:1rem;color:#fff;text-shadow:0 0 8px #fff;}
 header .info .status{font-size:0.8rem;color:#fff;text-shadow:0 0 6px #fff;}
-#clearBtn{position:absolute;top:50%;right:12px;transform:translateY(-50%);background:none;border:none;color:#f55;font-size:22px;cursor:pointer;}
+#clearBtn{position:absolute;top:50%;right:12px;transform:translateY(-50%);background:none;border:none;cursor:pointer;}
+#clearBtn img{
+  width:22px;
+  height:22px;
+  filter: drop-shadow(0 0 8px #fff);
+  transition: filter 0.3s ease;
+}
+#clearBtn img:hover{
+  filter: drop-shadow(0 0 12px #fff);
+}
 .chat-container{flex:1;background:rgba(255,255,255,0.03);backdrop-filter:blur(4px);padding:15px;margin:10px;border-radius:15px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;position:relative;border:1px solid rgba(255,255,255,0.15);}
 .chat-bubble{max-width:90%;padding:12px 16px;border-radius:15px;font-size:0.95rem;word-wrap:break-word;display:flex;gap:8px;align-items:flex-start;line-height:1.4rem;opacity:0;transform:translateY(10px);animation:fadeSlideBubble 0.4s forwards;white-space:pre-line;}
 @keyframes fadeSlideBubble{to{opacity:1;transform:translateY(0);}}
@@ -48,7 +57,9 @@ header .info .status{font-size:0.8rem;color:#fff;text-shadow:0 0 6px #fff;}
   <div class="name">PX Co. Bot</div>
   <div class="status">Online</div>
 </div>
-<button id="clearBtn" title="Hapus Semua Riwayat">🗑️</button>
+<button id="clearBtn" title="Hapus Semua Riwayat">
+  <img src="https://i.imgur.com/MIAl6P5.png" alt="Hapus">
+</button>
 </header>
 
 <div class="chat-container" id="chatContainer"></div>
