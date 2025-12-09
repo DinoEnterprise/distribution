@@ -93,16 +93,24 @@ let userData = {judul:'', style:'', gender:'', lyrics:''};
 // ===== User ID unik per device =====
 let userId = localStorage.getItem('px_userId');
 if(!userId){
-    userId = crypto.randomUUID();  // buat UUID baru
+    userId = crypto.randomUUID();  
     localStorage.setItem('px_userId', userId);
 }
-console.log("User ID:", userId);
 
 // ===== Helpers =====
 function addBubble(msg,type='bulan'){
   const bubble = document.createElement('div');
   bubble.classList.add('chat-bubble',type);
-  bubble.innerText = msg;
+
+  // ===== Filter Link Panjang Jadi Download =====
+  const linkRegex = /(https?:\/\/[^\s]+)/g;
+  if(linkRegex.test(msg)){
+    const formatted = msg.replace(linkRegex,(match)=>`<a href="${match}" target="_blank" style="color:#3b82f6;text-decoration:underline;">Download</a>`);
+    bubble.innerHTML = formatted;
+  }else{
+    bubble.innerText = msg;
+  }
+
   chatContainer.appendChild(bubble);
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
@@ -185,7 +193,7 @@ function nextStep(){
       showTyping(()=>{ addBubble(`╭─────────────────\n┊ 🎵 PX Music V5 - Custom Mode\n┊ Langkah 1: Masukkan Judul Lagu\n╰─────────────────`); showInput(); });
       break;
     case 3:
-      showTyping(()=>{ addBubble(`╭─────────────────\n┊ ・ Judul: ${userData.judul}\n┊ Langkah 2: Masukkan Style\n╰─────────────────`); showInput(); });
+      showTyping(()=>{ addBubble(`╭─────────────────\n┊ ・ Judul: ${userData.judul}\n┊ Langkah 2: Masukkan Genre/Style (Contoh Pop, Lofi, EDM dan lainnya)\n╰─────────────────`); showInput(); });
       break;
     case 4:
       showTyping(()=>{
