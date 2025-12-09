@@ -195,7 +195,7 @@
     "ID": "FC18",
     "Nama Artis": "Fany Carsello",
     "Judul Lagu": "Terpendo",
-    "Status ": "Pending"
+    "Status ": "Approve"
   },
   {
     "ID": "IM19",
@@ -207,13 +207,13 @@
     "ID": "ZM20",
     "Nama Artis": "Zanrmx",
     "Judul Lagu": "BBHC BACK AGAIN X MENGKNE",
-    "Status ": "Pending"
+    "Status ": "Rejected"
   },
   {
     "ID": "IM19",
     "Nama Artis": "Ilham Sopan Rmx",
     "Judul Lagu": "Geleng Geleng",
-    "Status ": "Pending"
+    "Status ": "Rejected"
   },
   {
     "ID": "EZ20",
@@ -255,55 +255,55 @@
     "ID": "EZ26",
     "Nama Artis": "EL ZANVIR",
     "Judul Lagu": "Ada Pokemon",
-    "Status ": "Pending"
+    "Status ": "Rejected"
   },
   {
     "ID": "ZFR27",
     "Nama Artis": "Zan Fvnky Rmx",
     "Judul Lagu": "KAMU BILANG I LOVE YOU",
-    "Status ": "Pending"
+    "Status ": "Rejected"
   },
   {
     "ID": "ZFR28",
     "Nama Artis": "Zan Fvnky Rmx,AGIL SOPAN",
     "Judul Lagu": "ISA BELLA TRESNO KOE",
-    "Status ": "Pending"
+    "Status ": "Rejected"
   },
   {
     "ID": "ZFR29",
     "Nama Artis": "Zan Fvnky Rmx",
     "Judul Lagu": "BUKAN BONEKA",
-    "Status ": "Pending"
+    "Status ": "Rejected"
   },
   {
     "ID": "AT30",
-    "Nama Artis": "ABIL Tramaker",
+    "Nama Artis": "ABIL for Wolf, Extarneveedie",
     "Judul Lagu": "BREAKBEAT HARDCORE",
-    "Status ": "Pending"
+    "Status ": "Approve"
   },
   {
     "ID": "ISR31",
     "Nama Artis": "Ilham Sopan Rmx",
     "Judul Lagu": "Malam Ini DJ Tangkis Dang",
-    "Status ": "Pending"
+    "Status ": "Rejected"
   },
   {
     "ID": "DG32",
     "Nama Artis": "Darna Gvnby",
     "Judul Lagu": "Sleepy",
-    "Status ": "Pending"
+    "Status ": "Approve"
   },
   {
     "ID": "DG34",
     "Nama Artis": "Darna Gvnby",
     "Judul Lagu": "Insomnia",
-    "Status ": "Pending"
+    "Status ": "Approve"
   },
   {
     "ID": "DG33",
     "Nama Artis": "Darna Gvnby",
     "Judul Lagu": "Cold",
-    "Status ": "Pending"
+    "Status ": "Approve"
   },
   {
     "ID": "DG34",
@@ -315,12 +315,42 @@
     "ID": "IF35",
     "Nama Artis": "It'smefajar",
     "Judul Lagu": "Mexican Tropical",
-    "Status ": "Pending"
+    "Status ": "Approve"
   },
   {
     "ID": "ZR36",
     "Nama Artis": "Zanrmx",
     "Judul Lagu": "BBHC SHATTERED LIGHT",
     "Status ": "Pending"
+    },
+  {
+    "ID": "ZR37",
+    "Nama Artis": "Zanrmx, SFRX",
+    "Judul Lagu": "DJ RAIN DROP PARTY",
+    "Status ": "Pending"
+    },
+  {
+    "ID": "DG38",
+    "Nama Artis": "Darna Gvnby",
+    "Judul Lagu": "MXNTAGEM CHUPA",
+    "Status ": "Approve"
+   },
+  {
+    "ID": "IF39",
+    "Nama Artis": "It'smefajar",
+    "Judul Lagu": "Burning Inside",
+    "Status ": "Pending" 
+   },
+  {
+    "ID": "IF40",
+    "Nama Artis": "It'smefajar",
+    "Judul Lagu": "Echo of My Heart",
+    "Status ": "Pending" 
+   },
+  {
+    "ID": "SR41",
+    "Nama Artis": "SRVLR RMX",
+    "Judul Lagu": "AKU AKAN SELALU ADA",
+    "Status ": "Pending"    
   }
 ]
