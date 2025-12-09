@@ -160,7 +160,13 @@ window.addEventListener('DOMContentLoaded',()=>{
           const data = change.doc.data();
           const bubble = document.createElement('div');
           bubble.classList.add('chat-bubble', data.type==='user' ? 'user' : 'bulan');
-          bubble.innerHTML = data.message.replace(/\n/g,'<br>');
+
+          // Render HTML admin rapi
+          const inner = document.createElement('div');
+          inner.style.display='block';
+          inner.innerHTML = data.message;
+          bubble.appendChild(inner);
+
           chatContainer.appendChild(bubble);
           chatContainer.scrollTop = chatContainer.scrollHeight;
         }
@@ -184,7 +190,7 @@ function nextStep(){
       showTyping(()=>{ addBubble(`╭─────────────────\n┊ 🎵 PX Music V5 - Custom Mode\n┊ Langkah 1: Masukkan Judul Lagu\n╰─────────────────`); input.focus(); });
       break;
     case 3:
-      showTyping(()=>{ addBubble(`╭─────────────────\n┊ ・ Judul: ${userData.judul}\n┊ Langkah 2: Masukkan Style\n╰─────────────────`); input.focus(); });
+      showTyping(()=>{ addBubble(`╭─────────────────\n┊ ・ Judul: ${userData.judul}\n┊ Langkah 2: Masukkan Genre/Style\n╰─────────────────`); input.focus(); });
       break;
     case 4:
       showTyping(()=>{
