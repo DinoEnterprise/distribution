@@ -93,27 +93,40 @@ if(!userId){
 // ===== Helpers =====
 function addBubble(msg,type='bulan'){
   const bubble = document.createElement('div');
-  bubble.classList.add('chat-bubble',type);
+  bubble.classList.add('chat-bubble', type);
 
-  // Ganti link panjang jadi tombol Download
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  const replaced = msg.replace(urlRegex, (url)=>`[Download](${url})`);
-  const parts = replaced.split(/(\[Download\]\([^\)]+\))/g);
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = msg;
 
-  parts.forEach(p=>{
-    const match = p.match(/\[Download\]\(([^)]+)\)/);
-    if(match){
-      const a = document.createElement('a');
-      a.href = match[1];
-      a.target="_blank";
-      a.className='link-btn';
-      a.innerText='Download';
-      bubble.appendChild(a);
-    } else {
-      bubble.appendChild(document.createTextNode(p));
+  function processNode(node){
+    if(node.nodeType === Node.TEXT_NODE){
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      let lastIndex = 0;
+      let match;
+      const frag = document.createDocumentFragment();
+      while((match = urlRegex.exec(node.textContent)) !== null){
+        if(match.index > lastIndex){
+          frag.appendChild(document.createTextNode(node.textContent.slice(lastIndex, match.index)));
+        }
+        const a = document.createElement('a');
+        a.href = match[0];
+        a.target = "_blank";
+        a.className = 'link-btn';
+        a.innerText = 'DOWNLOAD';
+        frag.appendChild(a);
+        lastIndex = match.index + match[0].length;
+      }
+      if(lastIndex < node.textContent.length){
+        frag.appendChild(document.createTextNode(node.textContent.slice(lastIndex)));
+      }
+      node.replaceWith(frag);
+    } else if(node.nodeType === Node.ELEMENT_NODE){
+      Array.from(node.childNodes).forEach(child=>processNode(child));
     }
-  });
+  }
 
+  Array.from(tempDiv.childNodes).forEach(child=>processNode(child));
+  bubble.appendChild(tempDiv);
   chatContainer.appendChild(bubble);
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
@@ -151,24 +164,14 @@ function renderStart(){
 window.addEventListener('DOMContentLoaded',()=>{
   renderStart();
 
-  // ===== Listen chat realtime dari admin =====
   db.collection('chats').doc(userId).collection('messages')
     .orderBy('timestamp','asc')
     .onSnapshot(snapshot => {
       snapshot.docChanges().forEach(change => {
         if(change.type === 'added'){
           const data = change.doc.data();
-          const bubble = document.createElement('div');
-          bubble.classList.add('chat-bubble', data.type==='user' ? 'user' : 'bulan');
-
-          // Render HTML admin rapi
-          const inner = document.createElement('div');
-          inner.style.display='block';
-          inner.innerHTML = data.message;
-          bubble.appendChild(inner);
-
-          chatContainer.appendChild(bubble);
-          chatContainer.scrollTop = chatContainer.scrollHeight;
+          const bubbleType = data.type==='user'?'user':'bulan';
+          addBubble(data.message, bubbleType);
         }
       });
     });
