@@ -337,13 +337,13 @@
    },
   {
     "ID": "IF39",
-    "Nama Artis": "It'smefajar",
+    "Nama Artis": "Muhammad Fajar",
     "Judul Lagu": "Burning Inside",
     "Status ": "Pending" 
    },
   {
     "ID": "IF40",
-    "Nama Artis": "It'smefajar",
+    "Nama Artis": "Muhammad Fajar",
     "Judul Lagu": "Echo of My Heart",
     "Status ": "Pending" 
    },
@@ -351,6 +351,12 @@
     "ID": "SR41",
     "Nama Artis": "SRVLR RMX",
     "Judul Lagu": "AKU AKAN SELALU ADA",
-    "Status ": "Pending"    
+    "Status ": "Pending"  
+  },
+  {
+    "ID": "IF42",
+    "Nama Artis": "Muhammad Fajar",
+    "Judul Lagu": "Climbing High",
+    "Status ": "Pending" 
   }
 ]
