@@ -321,7 +321,7 @@
     "ID": "ZR36",
     "Nama Artis": "Zanrmx",
     "Judul Lagu": "BBHC SHATTERED LIGHT",
-    "Status ": "Pending"
+    "Status ": "Approve"
     },
   {
     "ID": "ZR37",
@@ -351,7 +351,7 @@
     "ID": "SR41",
     "Nama Artis": "SRVLR RMX",
     "Judul Lagu": "AKU AKAN SELALU ADA",
-    "Status ": "Pending"  
+    "Status ": "Approve"  
   },
   {
     "ID": "IF42",
@@ -369,6 +369,12 @@
     "ID": "IV44",
     "Nama Artis": "i5vR",
     "Judul Lagu": "DROP HRX-Q",
-    "Status ": "Pending" 
+    "Status ": "Pending"
+  },
+  {
+    "ID": "EZ45",
+    "Nama Artis": "EL ZANVIR",
+    "Judul Lagu": "Aisyah Bukan Restu",
+    "Status ": "Pending"
   }
 ]
