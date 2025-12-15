@@ -1,24 +1,136 @@
-<!DOCTYPE html>  <html lang="id">  
-<head>  
-<meta charset="UTF-8">  
-<meta name="viewport" content="width=device-width, initial-scale=1.0">  
-<title>Nana Chat - FAQ</title>  
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">  
-<style>  
-*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}  
-html,body{height:100%;display:flex;flex-direction:column;color:#f5f3ff;background:radial-gradient(circle at 20% 30%, rgba(130,60,255,0.08), transparent 65%),radial-gradient(circle at 80% 70%, rgba(150,70,255,0.06), transparent 70%), #000;overflow-x:hidden;}  
-header{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;background:rgba(0,0,0,0.25);backdrop-filter:blur(10px);border-radius:0 0 15px 15px;z-index:10;}  
-header img{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #fff;}  
-header .info{flex:1;margin-left:10px;}  
-header .info .name{font-weight:600;font-size:1rem;color:#fff;text-shadow:0 0 8px #fff,0 0 12px #fff;}  
-header .info .status{font-size:0.8rem;color:#fff;text-shadow:0 0 6px #fff;}  
-.chat-container{flex:1;background:rgba(255,255,255,0.05);backdrop-filter:blur(5px);padding:15px;margin:10px;border-radius:15px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;position:relative;border:1px solid rgba(255,255,255,0.2);}  
-.chat-bubble{max-width:70%;padding:10px 14px;border-radius:20px;font-size:0.95rem;word-wrap:break-word;display:flex;gap:8px;align-items:flex-end;line-height:1.4rem;}  
-.bulan{background:rgba(255,255,255,0.15);backdrop-filter:blur(5px);color:#fff;border-top-left-radius:0;justify-content:flex-start;}  
-.user{background:#2563eb;color:#fff;align-self:flex-end;border-top-right-radius:0;justify-content:flex-end;}  
-#inputArea{display:flex;gap:10px;padding:10px;border-top:1px solid rgba(255,255,255,0.3);}  
-#inputArea input{flex:1;padding:8px 12px;border-radius:15px;border:none;outline:none;font-size:0.95rem;}  
-#inputArea button{padding:8px 12px;border-radius:12px;background:#2563eb;color:#fff;border:none;cursor:pointer;}  
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nana Chat - FAQ</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
+
+html,body{
+height:100%;
+display:flex;
+flex-direction:column;
+color:#f5f3ff;
+background:
+radial-gradient(circle at 20% 30%, rgba(130,60,255,0.08), transparent 65%),
+radial-gradient(circle at 80% 70%, rgba(150,70,255,0.06), transparent 70%),
+#000;
+overflow-x:hidden;
+}
+
+header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:12px 15px;
+background:rgba(0,0,0,0.25);
+backdrop-filter:blur(10px);
+border-radius:0 0 15px 15px;
+z-index:10;
+}
+
+header img{
+width:50px;
+height:50px;
+border-radius:50%;
+object-fit:cover;
+border:2px solid #fff;
+}
+
+header .info{
+flex:1;
+margin-left:10px;
+}
+
+header .info .name{
+font-weight:600;
+font-size:1rem;
+color:#fff;
+text-shadow:0 0 8px #fff,0 0 12px #fff;
+}
+
+header .info .status{
+font-size:0.8rem;
+color:#fff;
+text-shadow:0 0 6px #fff;
+}
+
+.chat-container{
+flex:1;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(5px);
+padding:15px;
+margin:10px;
+border-radius:15px;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:8px;
+position:relative;
+border:1px solid rgba(255,255,255,0.2);
+}
+
+.chat-bubble{
+max-width:70%;
+padding:10px 14px;
+border-radius:20px;
+font-size:0.95rem;
+word-wrap:break-word;
+white-space:pre-wrap; /* 🔑 GARIS BARU */
+display:flex;
+gap:8px;
+align-items:flex-end;
+line-height:1.4rem;
+}
+
+.bulan{
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(5px);
+color:#fff;
+border-top-left-radius:0;
+justify-content:flex-start;
+}
+
+.user{
+background:#2563eb;
+color:#fff;
+align-self:flex-end;
+border-top-right-radius:0;
+justify-content:flex-end;
+}
+
+#inputArea{
+display:flex;
+gap:10px;
+padding:10px;
+border-top:1px solid rgba(255,255,255,0.3);
+}
+
+/* GANTI INPUT → TEXTAREA (TAMPILAN SAMA) */
+#inputArea textarea{
+flex:1;
+padding:8px 12px;
+border-radius:15px;
+border:none;
+outline:none;
+font-size:0.95rem;
+resize:none;
+height:38px;
+line-height:1.4rem;
+}
+
+#inputArea button{
+padding:8px 12px;
+border-radius:12px;
+background:#2563eb;
+color:#fff;
+border:none;
+cursor:pointer;
+}
 
 /* typing bubble */
 .typing{
@@ -32,10 +144,12 @@ align-items:center;
 gap:4px;
 color:#fff;
 }
+
 .dots{
 display:flex;
 gap:4px;
 }
+
 .dots div{
 width:6px;
 height:6px;
@@ -43,189 +157,160 @@ background:#fff;
 border-radius:50%;
 animation:blink 1.4s infinite both;
 }
+
 .dots div:nth-child(2){animation-delay:.2s}
 .dots div:nth-child(3){animation-delay:.4s}
+
 @keyframes blink{
 0%{opacity:.2}
 20%{opacity:1}
 100%{opacity:.2}
 }
 
-/* ⚡ ANIMASI MASUK */
-@keyframes slideIn {
-  from {opacity:0;transform:translateY(15px);}
-  to {opacity:1;transform:translateY(0);}
+/* animasi masuk */
+@keyframes slideIn{
+from{opacity:0;transform:translateY(15px);}
+to{opacity:1;transform:translateY(0);}
 }
+
 .animate-in{
 animation:slideIn .35s ease forwards;
 }
-
 </style>
-</head>  
-<body>  
+</head>
 
-<header>  
-<img src="https://i.imgur.com/nQNpS3C.gif" alt="Bulan Avatar">  
-<div class="info">  
-  <div class="name">Nana</div>  
-  <div class="status">Online</div>  
-</div>  
-</header>  
+<body>
 
-<div class="chat-container" id="chatContainer"></div>  
+<header>
+<img src="https://i.imgur.com/nQNpS3C.gif">
+<div class="info">
+<div class="name">Nana</div>
+<div class="status">Online</div>
+</div>
+</header>
 
-<div id="inputArea">  
-  <input type="text" id="userInput" placeholder="Tanya sesuatu...">  
-  <button onclick="sendMessage()">Kirim</button>  
-</div>  
+<div class="chat-container" id="chatContainer"></div>
 
-<!-- Firebase -->  
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>  
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>  
+<div id="inputArea">
+<textarea id="userInput" placeholder="Tanya sesuatu..."></textarea>
+<button onclick="sendMessage()">Kirim</button>
+</div>
 
-<!-- Email JS -->  
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>  
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
-<script>  
+<script>
+(function(){ emailjs.init("TFIL1eBhlns1iw7ql"); })();
 
-/* INIT EMAIL JS */  
-(function(){ emailjs.init("TFIL1eBhlns1iw7ql"); })();  
+const firebaseConfig={
+apiKey:"AIzaSyAc_-F3iHn3gdpl2mqwT9uGgwL2pSipLW4",
+authDomain:"csbulan-997ea.firebaseapp.com",
+databaseURL:"https://csbulan-997ea-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"csbulan-997ea",
+storageBucket:"csbulan-997ea.firebasestorage.app",
+messagingSenderId:"548129208386",
+appId:"1:548129208386:web:481ba552040813a39195db"
+};
 
-/* FIREBASE */  
-const firebaseConfig = {  
-  apiKey: "AIzaSyAc_-F3iHn3gdpl2mqwT9uGgwL2pSipLW4",  
-  authDomain: "csbulan-997ea.firebaseapp.com",  
-  databaseURL: "https://csbulan-997ea-default-rtdb.asia-southeast1.firebasedatabase.app",  
-  projectId: "csbulan-997ea",  
-  storageBucket: "csbulan-997ea.firebasestorage.app",  
-  messagingSenderId: "548129208386",  
-  appId: "1:548129208386:web:481ba552040813a39195db"  
-};  
-firebase.initializeApp(firebaseConfig);  
-const db = firebase.database();  
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
 
-const chatContainer = document.getElementById('chatContainer');  
-const input = document.getElementById('userInput');  
+const chatContainer=document.getElementById("chatContainer");
+const input=document.getElementById("userInput");
 
-// user id  
-let userId = localStorage.getItem('userId');  
-if(!userId){  
-  userId = 'user-'+Date.now();  
-  localStorage.setItem('userId', userId);  
-}  
+/* USER ID */
+let userId=localStorage.getItem("userId");
+if(!userId){
+userId="user-"+Date.now();
+localStorage.setItem("userId",userId);
+}
 
-// email satu kali per session  
-let emailSent = false;  
-function sendEmail(msg){  
-  if(emailSent) return;  
-  emailjs.send("service_xdb1jg3","template_q2n1g3b",{  
-    name: userId,  
-    time: new Date().toLocaleString(),  
-    message: msg  
-  }).then(()=>{   
-    emailSent = true;  
-  })  
-}  
+/* EMAIL SEKALI */
+let emailSent=false;
+function sendEmail(msg){
+if(emailSent) return;
+emailjs.send("service_xdb1jg3","template_q2n1g3b",{
+name:userId,
+time:new Date().toLocaleString(),
+message:msg
+}).then(()=>emailSent=true);
+}
 
-// bubble  
-function addBubble(msg,type,key){  
-  const bubble = document.createElement('div');  
-  bubble.classList.add('chat-bubble',type);
+/* BUBBLE */
+function addBubble(msg,type,key){
+const bubble=document.createElement("div");
+bubble.classList.add("chat-bubble",type,"animate-in");
+bubble.innerText=msg;
 
-  // ⚡ animasi masuk
-  bubble.classList.add("animate-in");
+bubble.addEventListener("click",()=>{
+if(confirm("Hapus pesan ini?")){
+db.ref("chats/"+userId+"/"+key).remove();
+bubble.remove();
+}
+});
 
-  bubble.innerText = msg;  
+chatContainer.appendChild(bubble);
+chatContainer.scrollTop=chatContainer.scrollHeight;
+}
 
-  bubble.addEventListener("click",()=>{  
-    if(confirm("Hapus pesan ini?")){  
-      db.ref('chats/'+userId+'/'+key).remove();  
-      bubble.remove();  
-    }  
-  });  
+/* SEND (HANYA VIA BUTTON) */
+function sendMessage(){
+const msg=input.value.trim();
+if(!msg) return;
 
-  chatContainer.appendChild(bubble);  
-  chatContainer.scrollTop = chatContainer.scrollHeight;  
-}  
+db.ref("chats/"+userId).push({
+message:msg,
+type:"user",
+timestamp:Date.now()
+});
 
-// send message  
-function sendMessage(){  
-  const msg = input.value.trim();  
-  if(!msg) return;  
+sendEmail(msg);
+input.value="";
+showTyping();
+}
 
-  db.ref('chats/'+userId).push({  
-    message:msg,  
-    type:'user',  
-    timestamp:Date.now()  
-  });  
+/* TYPING */
+function showTyping(){
+hideTyping();
+const bubble=document.createElement("div");
+bubble.className="typing bulan animate-in";
+bubble.id="typing";
 
-  sendEmail(msg);  
-  input.value='';  
-  showTyping();  
-}  
+const dots=document.createElement("div");
+dots.className="dots";
+dots.innerHTML="<div></div><div></div><div></div>";
+bubble.appendChild(dots);
 
-// typing … (fixed)
-function showTyping(){  
-  hideTyping();  
-  const bubble=document.createElement("div");  
-  bubble.className="typing bulan animate-in";  
-  bubble.id="typing";  
+chatContainer.appendChild(bubble);
+chatContainer.scrollTop=chatContainer.scrollHeight;
+}
 
-  const dots=document.createElement("div");  
-  dots.className="dots";  
-  dots.innerHTML=`<div></div><div></div><div></div>`;  
-  bubble.appendChild(dots);  
+function hideTyping(){
+const el=document.getElementById("typing");
+if(el) el.remove();
+}
 
-  chatContainer.appendChild(bubble);  
-  chatContainer.scrollTop=chatContainer.scrollHeight;  
-}  
+/* LISTENER */
+db.ref("chats/"+userId).on("child_added",snap=>{
+const d=snap.val();
+hideTyping();
+addBubble(d.message,d.type==="user"?"user":"bulan",snap.key);
+});
 
-function hideTyping(){  
-  const el=document.getElementById("typing");  
-  if(el) el.remove();  
-}  
+/* FIRST MESSAGE */
+window.addEventListener("DOMContentLoaded",()=>{
+db.ref("chats/"+userId).once("value",s=>{
+if(!s.exists()){
+db.ref("chats/"+userId).push({
+message:"Halo! Aku Nana. Ada yang bisa dibantu?",
+type:"bulan",
+timestamp:Date.now()
+});
+}
+});
+});
+</script>
 
-// listen firebase  
-db.ref('chats/'+userId).on('child_added', snapshot=>{  
-  const d = snapshot.val();  
-  hideTyping();  
-  addBubble(d.message, d.type==='user'?'user':'bulan', snapshot.key);  
-});  
-
-// first message  
-window.addEventListener('DOMContentLoaded',()=>{  
-  db.ref('chats/'+userId).once('value',s=>{  
-    if(!s.exists()){  
-      db.ref('chats/'+userId).push({  
-        message:"Halo! Aku Nana. Ada yang bisa dibantu?",  
-        type:'bulan',  
-        timestamp:Date.now()  
-      });  
-    }  
-  });  
-});  
-
-// DELETE ALL CHAT ICON  
-function clearAll(){  
-  if(confirm("Hapus semua chat kamu?")){  
-    db.ref('chats/'+userId).remove();  
-    chatContainer.innerHTML="";  
-    emailSent = false;  
-  }  
-}  
-
-const delBtn = document.createElement("img");  
-delBtn.src = "https://i.imgur.com/MIAl6P5.png";  
-delBtn.style.position = "fixed";  
-delBtn.style.top = "15px";  
-delBtn.style.right = "15px";  
-delBtn.style.zIndex = "99";  
-delBtn.style.width = "32px";  
-delBtn.style.height = "32px";  
-delBtn.style.cursor = "pointer";  
-delBtn.style.filter = "drop-shadow(0 0 6px #fff) drop-shadow(0 0 12px #fff)";  
-delBtn.addEventListener("click", clearAll);  
-document.body.appendChild(delBtn);  
-</script>  
-</body>  
+</body>
 </html>
