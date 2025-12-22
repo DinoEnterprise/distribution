@@ -20,11 +20,8 @@ html,body{
     #000;
   overflow-x:hidden;
 }
-
-/* BLOCK RIGHT CLICK */
 body{user-select:none; pointer-events:auto;}
 
-/* HEADER */
 header{
   display:flex;
   align-items:center;
@@ -60,21 +57,18 @@ header .info{
   flex:1;
   margin-left:12px;
 }
-
 header .info .name{
   font-weight:600;
   font-size:1rem;
   color:#fff;
   text-shadow:0 0 8px #fff,0 0 12px #fff;
 }
-
 header .info .status{
   font-size:0.8rem;
   color:#fff;
   text-shadow:0 0 6px #fff;
 }
 
-/* CHAT CONTAINER */
 .chat-container{
   flex:1;
   background:rgba(255,255,255,0.05);
@@ -90,7 +84,6 @@ header .info .status{
   scroll-behavior: smooth;
 }
 
-/* CHAT BUBBLE */
 .chat-bubble{
   max-width:75%;
   padding:12px 16px;
@@ -100,7 +93,7 @@ header .info .status{
   white-space:pre-wrap;
   display:flex;
   flex-direction:column;
-  gap:4px;
+  gap:2px;
   line-height:1.4rem;
   backdrop-filter: blur(5px);
   position:relative;
@@ -110,10 +103,9 @@ header .info .status{
   font-size:0.7rem;
   color:rgba(255,255,255,0.7);
   align-self:flex-end;
-  margin-top:2px;
+  margin-top:0px;
 }
 
-/* Bubble styles */
 .bulan{
   background:rgba(168,85,247,0.3);
   color:#fff;
@@ -131,7 +123,12 @@ header .info .status{
   box-shadow:0 0 10px rgba(37,99,235,0.4);
 }
 
-/* INPUT AREA */
+.chat-bubble a{
+  color:#3b82f6;
+  text-decoration:underline;
+  word-break:break-word;
+}
+
 #inputArea{
   display:flex;
   gap:10px;
@@ -141,7 +138,6 @@ header .info .status{
   backdrop-filter:blur(10px);
   border-radius:12px 12px 0 0;
 }
-
 #inputArea textarea{
   flex:1;
   padding:10px 14px;
@@ -156,7 +152,6 @@ header .info .status{
   color:#fff;
   backdrop-filter:blur(5px);
 }
-
 #inputArea button{
   padding:10px 14px;
   border-radius:12px;
@@ -166,11 +161,8 @@ header .info .status{
   cursor:pointer;
   transition:all 0.25s ease;
 }
-#inputArea button:hover{
-  background:#1e40af;
-}
+#inputArea button:hover{background:#1e40af;}
 
-/* TYPING BUBBLE */
 .typing{
   background:rgba(255,255,255,0.15);
   backdrop-filter:blur(5px);
@@ -183,11 +175,7 @@ header .info .status{
   color:#fff;
   box-shadow:0 0 8px rgba(168,85,247,0.3);
 }
-
-.dots{
-  display:flex;
-  gap:4px;
-}
+.dots{display:flex; gap:4px;}
 .dots div{
   width:6px;
   height:6px;
@@ -197,22 +185,11 @@ header .info .status{
 }
 .dots div:nth-child(2){animation-delay:.2s;}
 .dots div:nth-child(3){animation-delay:.4s;}
-@keyframes blink{
-  0%{opacity:.2}
-  20%{opacity:1}
-  100%{opacity:.2}
-}
+@keyframes blink{0%{opacity:.2} 20%{opacity:1} 100%{opacity:.2}}
 
-/* ANIMASI MASUK */
-@keyframes slideIn{
-  from{opacity:0;transform:translateY(15px);}
-  to{opacity:1;transform:translateY(0);}
-}
-.animate-in{
-  animation:slideIn .35s ease forwards;
-}
+@keyframes slideIn{from{opacity:0;transform:translateY(15px);} to{opacity:1;transform:translateY(0);}}
+.animate-in{animation:slideIn .35s ease forwards;}
 
-/* RESPONSIVE */
 @media(max-width:480px){
   .avatar{width:40px;height:40px;}
   header .info .name{font-size:0.9rem;}
@@ -261,14 +238,12 @@ const db=firebase.database();
 const chatContainer=document.getElementById("chatContainer");
 const input=document.getElementById("userInput");
 
-/* USER ID */
 let userId=localStorage.getItem("userId");
 if(!userId){
   userId="user-"+Date.now();
   localStorage.setItem("userId",userId);
 }
 
-/* EMAIL SEKALI */
 let emailSent=false;
 function sendEmail(msg){
   if(emailSent) return;
@@ -279,13 +254,15 @@ function sendEmail(msg){
   }).then(()=>emailSent=true);
 }
 
-/* ADD BUBBLE */
 function addBubble(msg,type,key,timestamp){
   const bubble=document.createElement("div");
   bubble.classList.add("chat-bubble",type,"animate-in");
 
+  // Ubah link jadi <a>
+  const linkifiedMsg = msg.replace(/(https?:\/\/[^\s]+)/g, url => `<a href="${url}" target="_blank">${url}</a>`);
+
   const textNode=document.createElement("div");
-  textNode.innerText=msg;
+  textNode.innerHTML = linkifiedMsg;
   bubble.appendChild(textNode);
 
   const timeNode=document.createElement("span");
@@ -307,7 +284,6 @@ function addBubble(msg,type,key,timestamp){
   chatContainer.scrollTop=chatContainer.scrollHeight;
 }
 
-/* SEND MESSAGE */
 function sendMessage(){
   const msg=input.value.trim();
   if(!msg) return;
@@ -323,7 +299,6 @@ function sendMessage(){
   showTyping();
 }
 
-/* TYPING */
 function showTyping(){
   hideTyping();
   const bubble=document.createElement("div");
@@ -344,14 +319,12 @@ function hideTyping(){
   if(el) el.remove();
 }
 
-/* LISTENER */
 db.ref("chats/"+userId).on("child_added",snap=>{
   const d=snap.val();
   hideTyping();
   addBubble(d.message,d.type==="user"?"user":"bulan",snap.key,d.timestamp);
 });
 
-/* FIRST MESSAGE */
 window.addEventListener("DOMContentLoaded",()=>{
   db.ref("chats/"+userId).once("value",s=>{
     if(!s.exists()){
