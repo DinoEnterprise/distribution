@@ -39,6 +39,11 @@ header img{
   border-radius:50%;
   object-fit:cover;
   border:2px solid #fff;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 header .info{
@@ -202,7 +207,7 @@ header .info .status{
 <body>
 
 <header>
-<img src="../assets/nazwa.png" alt="Nana">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIA..." alt="Nazwa">
 <div class="info">
 <div class="name">Nazwa</div>
 <div class="status">Online</div>
@@ -222,6 +227,9 @@ header .info .status{
 
 <script>
 (function(){ emailjs.init("TFIL1eBhlns1iw7ql"); })();
+
+// blok klik kanan pada gambar
+document.querySelector('header img').addEventListener('contextmenu', e => e.preventDefault());
 
 const firebaseConfig={
 apiKey:"AIzaSyAc_-F3iHn3gdpl2mqwT9uGgwL2pSipLW4",
