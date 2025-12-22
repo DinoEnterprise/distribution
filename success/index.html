@@ -1,85 +1,80 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Generating... - Pixels Co.</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>Berhasil - Pixels Co.</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family:"Outfit",sans-serif; }
-body { 
-    background:#000; 
-    color:#fff; 
-    min-height:100vh; 
-    display:flex; 
-    justify-content:center; 
-    align-items:center;
-    animation:fadePage 1s ease forwards;
-    opacity:0;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Outfit",sans-serif;
 }
-
-@keyframes fadePage { to { opacity:1; } }
+body{
+    background:#000;
+    color:#fff;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
 
 /* CONTAINER */
-.success-box{
+.box{
     text-align:center;
-    transform:translateY(20px);
-    animation:slideUp 1s ease forwards;
-    animation-delay:0.2s;
+    max-width:360px;
+    width:100%;
+    animation:fadeUp 0.8s ease forwards;
     opacity:0;
+    transform:translateY(20px);
 }
 
-@keyframes slideUp {
-    to { opacity:1; transform:translateY(0); }
+@keyframes fadeUp{
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
 }
 
-/* LOADING RING */
-.loader {
-    width:120px;
-    height:120px;
-    border-radius:50%;
-    border:5px solid rgba(0,255,153,0.2);
-    border-top-color:#00ff99;
-    margin:0 auto 22px auto;
-    animation:spin 1s linear infinite, pulse 2s infinite ease-in-out;
-}
-
-@keyframes spin { 100% { transform:rotate(360deg); } }
-
-@keyframes pulse {
-    0% { box-shadow:0 0 0px #00ff99; }
-    50% { box-shadow:0 0 15px #00ff99; }
-    100% { box-shadow:0 0 0px #00ff99; }
+/* ICON */
+.icon{
+    width:72px;
+    margin-bottom:18px;
+    opacity:0.9;
 }
 
 /* TEXT */
-.success-box h1{
-    font-size:32px;
-    margin-bottom:6px;
-    opacity:0;
-    animation:fadeText 1s ease forwards;
-    animation-delay:0.5s;
+h1{
+    font-size:22px;
+    font-weight:700;
+    margin-bottom:8px;
 }
 
-.success-box p{
-    font-size:16px;
-    opacity:0.7;
-    opacity:0;
-    animation:fadeText 1s ease forwards;
-    animation-delay:0.8s;
+p{
+    font-size:14px;
+    opacity:0.75;
+    line-height:1.5;
 }
-
-@keyframes fadeText { to { opacity:1; } }
 </style>
-
 </head>
+
 <body>
 
-<div class="success-box">
-    <div class="loader"></div>
-    <h1>Generating Your Song...</h1>
-    <p>Your prompt has been received.<br>We’ll send your generated track soon.</p>
+<div class="box">
+    <!-- GANTI DENGAN ASSET KAMU -->
+    <img src="../assets/email_icon.png" class="icon" alt="Email Icon">
+
+    <h1>Permintaan Diterima</h1>
+    <p>
+        Kamu bisa keluar dari halaman ini.<br>
+        musik akan dikirim melalui email.
+    </p>
 </div>
 
 </body>
