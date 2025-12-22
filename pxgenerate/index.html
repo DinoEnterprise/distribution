@@ -1,278 +1,192 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PX Music V5 - User</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dynotic Text To Music</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
-html,body{height:100%;background:#0b0b0b;color:#fff;display:flex;flex-direction:column;}
-header{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;background:rgba(255,255,255,0.05);backdrop-filter:blur(12px);border-radius:0 0 15px 15px;box-shadow:0 0 20px rgba(255,255,255,0.1);position:relative;}
-header img{width:50px;height:50px;border-radius:50%;border:2px solid #fff;object-fit:cover;}
-header .info{flex:1;margin-left:12px;}
-header .info .name{font-weight:600;font-size:1rem;color:#fff;text-shadow:0 0 8px #fff;}
-header .info .status{font-size:0.8rem;color:#fff;text-shadow:0 0 6px #fff;}
-#clearBtn{position:absolute;top:50%;right:12px;transform:translateY(-50%);background:none;border:none;cursor:pointer;}
-#clearBtn img{width:22px;height:22px;filter: drop-shadow(0 0 8px #fff);transition: filter 0.3s ease;}
-#clearBtn img:hover{filter: drop-shadow(0 0 12px #fff);}
-.chat-container{flex:1;background:rgba(255,255,255,0.03);backdrop-filter:blur(4px);padding:15px;margin:10px;border-radius:15px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;position:relative;border:1px solid rgba(255,255,255,0.15);}
-.chat-bubble{max-width:90%;padding:12px 16px;border-radius:15px;font-size:0.95rem;word-wrap:break-word;display:flex;gap:8px;align-items:flex-start;line-height:1.4rem;opacity:0;transform:translateY(10px);animation:fadeSlideBubble 0.4s forwards;white-space:pre-line;}
-@keyframes fadeSlideBubble{to{opacity:1;transform:translateY(0);}}
-.bulan{background:rgba(255,255,255,0.1);backdrop-filter:blur(4px);align-self:flex-start;}
-.user{background:#2563eb;color:#fff;align-self:flex-end;}
-#inputArea{display:flex;gap:10px;padding:10px;border-top:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(8px);border-radius:15px;margin:10px;}
-#inputArea textarea{flex:1;padding:10px 14px;border-radius:15px;border:none;outline:none;font-size:0.95rem;resize:none;}
-#inputArea button{padding:10px 18px;border-radius:15px;background:rgba(0,0,0,0.3);color:#fff;border:2px solid #fff;cursor:pointer;font-weight:600;transition:all 0.2s ease;backdrop-filter:blur(6px);box-shadow:0 0 8px rgba(255,255,255,0.6),0 4px 12px rgba(0,0,0,0.3);}
-#inputArea button:hover{background:rgba(255,255,255,0.1);box-shadow:0 0 12px rgba(255,255,255,0.8),0 6px 14px rgba(0,0,0,0.4);transform:translateY(-2px);}
-.step-btn{padding:10px 18px;border-radius:15px;background:rgba(0,0,0,0.25);color:#fff;border:2px solid #fff;cursor:pointer;font-weight:600;transition:all 0.2s ease;backdrop-filter:blur(6px);box-shadow:0 0 10px rgba(255,255,255,0.6),0 4px 12px rgba(0,0,0,0.3);}
-.step-btn:hover{background:rgba(255,255,255,0.08);box-shadow:0 0 14px rgba(255,255,255,0.8),0 6px 16px rgba(0,0,0,0.4);transform:translateY(-2px);}
-.menu-btn-container{display:flex;flex-wrap:wrap;gap:8px;margin-top:5px;}
-.menu-btn-center{justify-content:center;align-items:center;height:100%;display:flex;flex-direction:column;gap:10px;}
-.menu-btn-left{display:flex;flex-direction:column;gap:8px;align-items:flex-start;margin:10px 0;}
-.typing-anim{opacity:0;transform:translateY(10px);animation:fadeSlideTyping 0.4s forwards;}
-@keyframes fadeSlideTyping{to{opacity:1;transform:translateY(0);}}
-.dots{display:flex;gap:4px;}
-.dots div{width:6px;height:6px;background:#fff;border-radius:50%;animation:blink 1.4s infinite both;}
-.dots div:nth-child(2){animation-delay:.2s}
-.dots div:nth-child(3){animation-delay:.4s}
-@keyframes blink{0%{opacity:.2}20%{opacity:1}100%{opacity:.2}}
-.link-btn{color:#1e90ff;text-decoration:underline;cursor:pointer;}
+body{background:#000;color:#fff;min-height:100vh;}
+
+.nav{
+    padding:18px 22px;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+}
+.logo{width:48px;border-radius:12px;}
+
+.hero{
+    padding:60px 20px;
+    text-align:center;
+}
+.hero h1{
+    font-size:48px;
+    font-weight:700;
+    margin-bottom:10px;
+}
+.hero p{opacity:0.9;}
+
+.form-box{
+    width:90%;
+    max-width:700px;
+    margin:0 auto 60px;
+    padding:24px;
+    background:rgba(255,255,255,0.05);
+    border-radius:16px;
+    backdrop-filter:blur(10px);
+}
+
+label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:600;
+}
+input, select, textarea{
+    width:100%;
+    padding:12px 14px;
+    margin-bottom:18px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.3);
+    background:rgba(255,255,255,0.05);
+    color:#fff;
+}
+textarea{min-height:120px;resize:vertical;}
+
+button{
+    width:100%;
+    padding:14px;
+    border-radius:16px;
+    border:2px solid #fff;
+    background:rgba(255,255,255,0.05);
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+}
+button:disabled{
+    opacity:0.4;
+    cursor:not-allowed;
+}
+
+.limit-info{
+    margin-top:12px;
+    font-size:14px;
+    opacity:0.8;
+    text-align:center;
+}
 </style>
-
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
+
 <body>
-<header>
-<img src="https://i.imgur.com/hYvP4vp.png" alt="PX Co. Bot Avatar">
-<div class="info">
-  <div class="name">PX Co. Bot</div>
-  <div class="status">Online</div>
+
+<div class="nav">
+    <img src="https://i.imgur.com/3quyoQo.png" class="logo">
 </div>
-<button id="clearBtn" title="Hapus Semua Riwayat">
-  <img src="https://i.imgur.com/MIAl6P5.png" alt="Hapus">
-</button>
-</header>
 
-<div class="chat-container" id="chatContainer"></div>
+<div class="hero">
+    <h1>Text To Music</h1>
+    <p>Generate music using text • 2x per day</p>
+</div>
 
-<div id="inputArea">
-  <textarea id="userInput" placeholder="Tulis jawaban..." rows="2"></textarea>
-  <button id="sendBtn">Kirim</button>
+<div class="form-box">
+<form id="musicForm">
+
+    <label>Email</label>
+    <input type="email" name="email" required>
+
+    <label>Judul Lagu</label>
+    <input type="text" name="title" required>
+
+    <label>Style Music</label>
+    <input type="text" name="style" placeholder="Lo-fi, chill, jazzy" required>
+
+    <label>Vocal Gender</label>
+    <select name="vocal_gender" required>
+        <option value="">Select</option>
+        <option value="Female">Perempuan</option>
+        <option value="Male">Laki-laki</option>
+        <option value="Auto">Auto</option>
+    </select>
+
+    <label>Lyrics</label>
+    <textarea name="lyrics" required></textarea>
+
+    <button type="submit" id="submitBtn">Generate</button>
+    <div class="limit-info" id="limitInfo"></div>
+</form>
 </div>
 
 <script>
-// ===== Firebase =====
-const firebaseConfig = {
-  apiKey: "AIzaSyAUoAi_LxYe-a4lgVqbYT2Aj9D0ITIkL2s",
-  authDomain: "texttomusic-6ce7a.firebaseapp.com",
-  projectId: "texttomusic-6ce7a",
-  storageBucket: "texttomusic-6ce7a.firebasestorage.app",
-  messagingSenderId: "287856697988",
-  appId: "1:287856697988:web:b87bf5c6632501d2b098d1"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-const chatContainer = document.getElementById('chatContainer');
-const input = document.getElementById('userInput');
-const sendBtn = document.getElementById('sendBtn');
-const clearBtn = document.getElementById('clearBtn');
-
-let step = 0;
-let userData = {judul:'', style:'', gender:'', lyrics:''};
-
-// ===== User ID unik per device =====
-let userId = localStorage.getItem('px_userId');
-if(!userId){
-    userId = crypto.randomUUID();
-    localStorage.setItem('px_userId', userId);
+/* ===============================
+   USER ID
+================================ */
+if(!localStorage.getItem("dynotic_user_id")){
+    localStorage.setItem(
+        "dynotic_user_id",
+        "user_" + Math.random().toString(36).substr(2,9)
+    );
 }
 
-// ===== Helpers =====
-function addBubble(msg,type='bulan'){
-  const bubble = document.createElement('div');
-  bubble.classList.add('chat-bubble', type);
+/* ===============================
+   DAILY RESET
+================================ */
+const today = new Date().toISOString().slice(0,10);
+if(localStorage.getItem("dynotic_date") !== today){
+    localStorage.setItem("dynotic_date", today);
+    localStorage.setItem("dynotic_generate_count", "0");
+}
 
-  const tempDiv = document.createElement('div');
-  tempDiv.innerHTML = msg;
+/* ===============================
+   LIMIT LOGIC
+================================ */
+let count = parseInt(localStorage.getItem("dynotic_generate_count")) || 0;
+const maxGenerate = 2;
 
-  function processNode(node){
-    if(node.nodeType === Node.TEXT_NODE){
-      const urlRegex = /(https?:\/\/[^\s]+)/g;
-      let lastIndex = 0;
-      let match;
-      const frag = document.createDocumentFragment();
-      while((match = urlRegex.exec(node.textContent)) !== null){
-        if(match.index > lastIndex){
-          frag.appendChild(document.createTextNode(node.textContent.slice(lastIndex, match.index)));
-        }
-        const a = document.createElement('a');
-        a.href = match[0];
-        a.target = "_blank";
-        a.className = 'link-btn';
-        a.innerText = 'DOWNLOAD';
-        frag.appendChild(a);
-        lastIndex = match.index + match[0].length;
-      }
-      if(lastIndex < node.textContent.length){
-        frag.appendChild(document.createTextNode(node.textContent.slice(lastIndex)));
-      }
-      node.replaceWith(frag);
-    } else if(node.nodeType === Node.ELEMENT_NODE){
-      Array.from(node.childNodes).forEach(child=>processNode(child));
+const btn = document.getElementById("submitBtn");
+const info = document.getElementById("limitInfo");
+
+function updateUI(){
+    if(count >= maxGenerate){
+        btn.disabled = true;
+        info.innerText = "Daily limit reached (2/2). Try again tomorrow.";
+    }else{
+        info.innerText = `Remaining today: ${maxGenerate - count}`;
     }
-  }
-
-  Array.from(tempDiv.childNodes).forEach(child=>processNode(child));
-  bubble.appendChild(tempDiv);
-  chatContainer.appendChild(bubble);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
 }
+updateUI();
 
-function addStartButton(){
-  const btn = document.createElement('button');
-  btn.innerText = "Start PX Music V5";
-  btn.className = 'step-btn';
-  btn.onclick = ()=>{ btn.remove(); nextStep(); };
-  const container = document.createElement('div');
-  container.className='menu-btn-container menu-btn-center';
-  container.appendChild(btn);
-  chatContainer.appendChild(container);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
-}
+/* ===============================
+   SUBMIT + REDIRECT
+================================ */
+document.getElementById("musicForm").addEventListener("submit", function(e){
+    e.preventDefault();
 
-function showTyping(callback){
-  const bubble=document.createElement("div");
-  bubble.className="typing-anim bulan";
-  const dots=document.createElement("div");
-  dots.className="dots";
-  dots.innerHTML=`<div></div><div></div><div></div>`;
-  bubble.appendChild(dots);
-  chatContainer.appendChild(bubble);
-  chatContainer.scrollTop=chatContainer.scrollHeight;
-  setTimeout(()=>{ bubble.remove(); if(callback) callback(); },800);
-}
+    if(count >= maxGenerate) return;
 
-// ===== Step PX Music =====
-function renderStart(){
-  addBubble("Selamat Datang di PX Music!",'bulan');
-  addStartButton();
-}
+    count++;
+    localStorage.setItem("dynotic_generate_count", count);
 
-window.addEventListener('DOMContentLoaded',()=>{
-  renderStart();
+    btn.disabled = true;
+    btn.innerText = "Generating...";
 
-  db.collection('chats').doc(userId).collection('messages')
-    .orderBy('timestamp','asc')
-    .onSnapshot(snapshot => {
-      snapshot.docChanges().forEach(change => {
-        if(change.type === 'added'){
-          const data = change.doc.data();
-          const bubbleType = data.type==='user'?'user':'bulan';
-          addBubble(data.message, bubbleType);
-        }
-      });
+    const formData = new FormData(this);
+
+    fetch("https://formspree.io/f/xqarbjja", {
+        method: "POST",
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+    })
+    .then(() => {
+        window.location.href = "/success";
+    })
+    .catch(() => {
+        alert("Something went wrong. Please try again.");
+        btn.disabled = false;
+        btn.innerText = "Generate";
     });
 });
-
-function nextStep(){
-  step++;
-  switch(step){
-    case 1:
-      showTyping(()=>{
-        addBubble("Pilih tipe generasi musik (PX Music V5):");
-        addMenuButtons(['Text To Music','Instrumen (Belum Support)'],[
-          ()=>nextStep(),
-          ()=>showTyping(()=>addBubble("Instrumen belum support"))
-        ]);
-      });
-      break;
-    case 2:
-      showTyping(()=>{ addBubble(`╭─────────────────\n┊ 🎵 PX Music V5 - Custom Mode\n┊ Langkah 1: Masukkan Judul Lagu\n╰─────────────────`); input.focus(); });
-      break;
-    case 3:
-      showTyping(()=>{ addBubble(`╭─────────────────\n┊ ・ Judul: ${userData.judul}\n┊ Langkah 2: Masukkan Genre/Style\n╰─────────────────`); input.focus(); });
-      break;
-    case 4:
-      showTyping(()=>{
-        addBubble(`╭─────────────────\n┊ ・ Judul: ${userData.judul}\n┊ ・ Style: ${userData.style}\n┊ Langkah 3: Pilih Gender Vokal\n╰─────────────────`);
-        addMenuButtons(['Perempuan','Laki-Laki','Auto'],[g=>selectGender('Perempuan'),g=>selectGender('Laki-Laki'),g=>selectGender('Auto')]);
-      });
-      break;
-    case 5:
-      showTyping(()=>{ addBubble(`╭─────────────────\n┊ ・ Judul: ${userData.judul}\n┊ ・ Style: ${userData.style}\n┊ ・ Gender: ${userData.gender}\n┊ Langkah 4: Masukkan Lirik Lagu\n╰─────────────────`); input.focus(); });
-      break;
-    case 6: submitJob(); break;
-  }
-}
-
-function handleInput(){
-  const val = input.value.trim();
-  if(!val) return;
-  addBubble(val,'user');
-  input.value='';
-  if(step===2) userData.judul=val;
-  if(step===3) userData.style=val;
-  if(step===5) userData.lyrics=val;
-  nextStep();
-}
-
-function addMenuButtons(labels, actions, center=false){
-  const btnContainer = document.createElement('div');
-  btnContainer.className=center?'menu-btn-container menu-btn-center':'menu-btn-container menu-btn-left';
-  labels.forEach((label,i)=>{
-    const btn = document.createElement('button');
-    btn.innerText=label;
-    btn.className='step-btn';
-    btn.onclick=()=>{actions[i](); btnContainer.remove();};
-    btnContainer.appendChild(btn);
-  });
-  chatContainer.appendChild(btnContainer);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
-}
-
-function selectGender(g){
-  userData.gender=g;
-  addBubble(`Gender dipilih: ${g}`,'user');
-  document.querySelectorAll('.step-btn').forEach(b=>b.remove());
-  nextStep();
-}
-
-function submitJob(){
-  const jobId = crypto.randomUUID();
-  const today = new Date().toISOString().slice(0,10);
-
-  db.collection("jobs").doc(userId).set({
-    userId: userId,
-    judul: userData.judul,
-    style: userData.style,
-    gender: userData.gender,
-    lyrics: userData.lyrics,
-    jobId: jobId,
-    status: "Memproses",
-    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-    date: today
-  }, {merge:true});
-
-  addBubble(`╭────────────────\n┊ ・ Job Terkirim (PX Music V5)\n┊ ・ Job ID: ${jobId}\n┊ ・ Status: Memproses...\n╰────────────────`,'bulan');
-}
-
-sendBtn.addEventListener('click', handleInput);
-
-// ===== Clear All =====
-clearBtn.addEventListener('click', ()=>{
-  if(confirm("Hapus semua chat & job?")){
-    db.collection("jobs").doc(userId).delete();
-    db.collection("chats").doc(userId).delete();
-    chatContainer.innerHTML='';
-    step = 0;
-    userData = {judul:'', style:'', gender:'', lyrics:''};
-    addBubble("Selamat Datang di PX Music!",'bulan');
-    addStartButton();
-  }
-});
 </script>
+
 </body>
 </html>
