@@ -5,17 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Dynotic Text To Music</title>
 
+<!-- PRELOAD LOGO -->
+<link rel="preload" as="image" href="assets/logo_dynotic.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
-body{background:#000;color:#fff;min-height:100vh;}
+body{background:#000;color:#fff;min-height:100vh;overflow-x:hidden;}
 
 .nav{
     padding:18px 22px;
     border-bottom:1px solid rgba(255,255,255,0.1);
 }
-.logo{width:48px;border-radius:12px;}
+.logo{
+    width:48px;
+    border-radius:12px;
+}
 
 .hero{
     padding:60px 20px;
@@ -38,6 +44,7 @@ body{background:#000;color:#fff;min-height:100vh;}
     backdrop-filter:blur(10px);
 }
 
+/* FORM */
 label{
     display:block;
     margin-bottom:6px;
@@ -63,7 +70,9 @@ button{
     color:#fff;
     font-weight:600;
     cursor:pointer;
+    transition:0.3s;
 }
+button:hover{background:rgba(255,255,255,0.1);}
 button:disabled{
     opacity:0.4;
     cursor:not-allowed;
@@ -75,21 +84,43 @@ button:disabled{
     opacity:0.8;
     text-align:center;
 }
+
+/* ANIMATION */
+.fade-up{
+    opacity:0;
+    transform:translateY(30px);
+    animation:fadeUp 0.9s ease forwards;
+}
+.delay-1{animation-delay:0.15s;}
+.delay-2{animation-delay:0.3s;}
+
+@keyframes fadeUp{
+    to{opacity:1;transform:translateY(0);}
+}
 </style>
 </head>
 
 <body>
 
-<div class="nav">
-    <img src="https://i.imgur.com/3quyoQo.png" class="logo">
+<!-- NAV -->
+<div class="nav fade-up">
+    <img 
+        src="assets/logo_dynotic.png"
+        class="logo"
+        loading="eager"
+        decoding="async"
+        alt="Dynotic Logo"
+    >
 </div>
 
-<div class="hero">
+<!-- HERO -->
+<div class="hero fade-up delay-1">
     <h1>Text To Music</h1>
     <p>Generate music using text • 2x per day</p>
 </div>
 
-<div class="form-box">
+<!-- FORM -->
+<div class="form-box fade-up delay-2">
 <form id="musicForm">
 
     <label>Email</label>
@@ -118,30 +149,24 @@ button:disabled{
 </div>
 
 <script>
-/* ===============================
-   USER ID
-================================ */
+/* USER ID */
 if(!localStorage.getItem("dynotic_user_id")){
     localStorage.setItem(
         "dynotic_user_id",
-        "user_" + Math.random().toString(36).substr(2,9)
+        "user_" + Math.random().toString(36).slice(2)
     );
 }
 
-/* ===============================
-   DAILY RESET
-================================ */
+/* DAILY RESET */
 const today = new Date().toISOString().slice(0,10);
 if(localStorage.getItem("dynotic_date") !== today){
     localStorage.setItem("dynotic_date", today);
     localStorage.setItem("dynotic_generate_count", "0");
 }
 
-/* ===============================
-   LIMIT LOGIC
-================================ */
-let count = parseInt(localStorage.getItem("dynotic_generate_count")) || 0;
+/* LIMIT */
 const maxGenerate = 2;
+let count = parseInt(localStorage.getItem("dynotic_generate_count")) || 0;
 
 const btn = document.getElementById("submitBtn");
 const info = document.getElementById("limitInfo");
@@ -149,19 +174,26 @@ const info = document.getElementById("limitInfo");
 function updateUI(){
     if(count >= maxGenerate){
         btn.disabled = true;
+        btn.innerText = "Limit Reached";
         info.innerText = "Daily limit reached (2/2). Try again tomorrow.";
     }else{
+        btn.disabled = false;
+        btn.innerText = "Generate";
         info.innerText = `Remaining today: ${maxGenerate - count}`;
     }
 }
+
+/* REFRESH SAAT BACK */
+window.addEventListener("pageshow", () => {
+    count = parseInt(localStorage.getItem("dynotic_generate_count")) || 0;
+    updateUI();
+});
+
 updateUI();
 
-/* ===============================
-   SUBMIT + REDIRECT
-================================ */
+/* SUBMIT */
 document.getElementById("musicForm").addEventListener("submit", function(e){
     e.preventDefault();
-
     if(count >= maxGenerate) return;
 
     count++;
@@ -170,20 +202,17 @@ document.getElementById("musicForm").addEventListener("submit", function(e){
     btn.disabled = true;
     btn.innerText = "Generating...";
 
-    const formData = new FormData(this);
-
     fetch("https://formspree.io/f/xqarbjja", {
         method: "POST",
-        body: formData,
-        headers: { 'Accept': 'application/json' }
+        body: new FormData(this),
+        headers: { "Accept":"application/json" }
     })
-    .then(() => {
-        window.location.href = "/success";
-    })
+    .then(() => window.location.href = "/success")
     .catch(() => {
-        alert("Something went wrong. Please try again.");
-        btn.disabled = false;
-        btn.innerText = "Generate";
+        count--;
+        localStorage.setItem("dynotic_generate_count", count);
+        updateUI();
+        alert("Error. Please try again.");
     });
 });
 </script>
