@@ -99,14 +99,23 @@ header .info .status{
   word-wrap:break-word;
   white-space:pre-wrap;
   display:flex;
-  gap:8px;
-  align-items:flex-end;
+  flex-direction:column;
+  gap:4px;
   line-height:1.4rem;
   backdrop-filter: blur(5px);
+  position:relative;
 }
 
+.chat-bubble .time{
+  font-size:0.7rem;
+  color:rgba(255,255,255,0.7);
+  align-self:flex-end;
+  margin-top:2px;
+}
+
+/* Bubble styles */
 .bulan{
-  background:rgba(255,255,255,0.15);
+  background:rgba(168,85,247,0.3);
   color:#fff;
   border-top-left-radius:0;
   justify-content:flex-start;
@@ -271,10 +280,21 @@ function sendEmail(msg){
 }
 
 /* ADD BUBBLE */
-function addBubble(msg,type,key){
+function addBubble(msg,type,key,timestamp){
   const bubble=document.createElement("div");
   bubble.classList.add("chat-bubble",type,"animate-in");
-  bubble.innerText=msg;
+
+  const textNode=document.createElement("div");
+  textNode.innerText=msg;
+  bubble.appendChild(textNode);
+
+  const timeNode=document.createElement("span");
+  const date = new Date(timestamp);
+  const hours = String(date.getHours()).padStart(2,'0');
+  const minutes = String(date.getMinutes()).padStart(2,'0');
+  timeNode.innerText = hours + ":" + minutes;
+  timeNode.className="time";
+  bubble.appendChild(timeNode);
 
   bubble.addEventListener("click",()=>{
     if(confirm("Hapus pesan ini?")){
@@ -328,7 +348,7 @@ function hideTyping(){
 db.ref("chats/"+userId).on("child_added",snap=>{
   const d=snap.val();
   hideTyping();
-  addBubble(d.message,d.type==="user"?"user":"bulan",snap.key);
+  addBubble(d.message,d.type==="user"?"user":"bulan",snap.key,d.timestamp);
 });
 
 /* FIRST MESSAGE */
