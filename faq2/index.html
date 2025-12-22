@@ -13,14 +13,14 @@ radial-gradient(circle at 20% 30%, rgba(130,60,255,0.08), transparent 65%),
 radial-gradient(circle at 80% 70%, rgba(150,70,255,0.06), transparent 70%),
 #000;
 overflow-x:hidden;}
-body{user-select:none; pointer-events:auto;}
+body{pointer-events:auto;} /* hapus user-select:none agar bisa copy text */
 
 header{display:flex;align-items:center;justify-content:flex-start;padding:12px 15px;background:rgba(0,0,0,0.25);
 backdrop-filter:blur(10px);border-radius:0 0 15px 15px;z-index:10;}
 
 .avatar{width:50px;height:50px;border-radius:50%;background-image:url('../assets/nazwa.png');
 background-size:cover;background-position:center;border:2px solid #fff;pointer-events:none;
-user-select:none;box-shadow:0 0 8px #fff,0 0 15px rgba(168,85,247,0.4);animation:glow 2s infinite alternate;}
+box-shadow:0 0 8px #fff,0 0 15px rgba(168,85,247,0.4);animation:glow 2s infinite alternate;}
 
 @keyframes glow{0%{box-shadow:0 0 8px #fff,0 0 15px rgba(168,85,247,0.2);}50%{box-shadow:0 0 12px #fff,0 0 20px rgba(168,85,247,0.5);}100%{box-shadow:0 0 8px #fff,0 0 15px rgba(168,85,247,0.2);}}
 
@@ -30,10 +30,11 @@ header .info .status{font-size:0.8rem;color:#fff;text-shadow:0 0 6px #fff;}
 
 .chat-container{flex:1;background:rgba(255,255,255,0.05);backdrop-filter:blur(5px);padding:15px;margin:10px 12px;
 border-radius:15px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;border:1px solid rgba(255,255,255,0.2);
-scroll-behavior:smooth;}
+scroll-behavior:smooth;user-select:text;} /* bisa select text */
 
 .chat-bubble{max-width:75%;padding:12px 16px;border-radius:20px;font-size:0.95rem;word-wrap:break-word;
-white-space:pre-wrap;display:flex;flex-direction:column;gap:2px;line-height:1.4rem;backdrop-filter:blur(5px);position:relative;cursor:pointer;}
+white-space:pre-wrap;display:flex;flex-direction:column;gap:2px;line-height:1.4rem;backdrop-filter:blur(5px);position:relative;
+cursor:pointer;user-select:text;} /* bisa disalin */
 
 .chat-bubble .time{font-size:0.7rem;color:rgba(255,255,255,0.7);align-self:flex-end;margin-top:0px;}
 
@@ -71,7 +72,7 @@ header .info .status{font-size:0.7rem;}
 #inputArea button{padding:8px 12px;}}
 </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 <header>
   <div class="avatar"></div>
   <div class="info">
@@ -117,7 +118,7 @@ function addBubble(msg,type,key,timestamp){
   const bubble=document.createElement("div");
   bubble.classList.add("chat-bubble",type,"animate-in");
 
-  const linkifiedMsg = msg.replace(/(https?:\/\/[^\s]+)/g, url => `<a href="${url}" target="_blank">${url}<\/a>`);
+  const linkifiedMsg = msg.replace(/(https?:\/\/[^\s]+)/g, url => `<a href="${url}" target="_blank">${url}</a>`);
   const textNode=document.createElement("div");
   textNode.innerHTML = linkifiedMsg;
   bubble.appendChild(textNode);
@@ -130,6 +131,7 @@ function addBubble(msg,type,key,timestamp){
   timeNode.className="time";
   bubble.appendChild(timeNode);
 
+  // Klik bubble = hapus hanya jika bukan link
   bubble.addEventListener("click",(e)=>{
     if(e.target.tagName!=="A" && confirm("Hapus pesan ini?")){
       db.ref("chats/"+userId+"/"+key).remove();
