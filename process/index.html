@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Apply Berhasil - Pixels Co.</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Outfit",sans-serif;
+}
+body{
+    background:#000;
+    color:#fff;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+/* CONTAINER */
+.box{
+    text-align:center;
+    max-width:360px;
+    width:100%;
+    animation:fadeUp 0.8s ease forwards;
+    opacity:0;
+    transform:translateY(20px);
+}
+
+@keyframes fadeUp{
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* ICON */
+.icon{
+    width:72px;
+    margin-bottom:18px;
+    opacity:0.9;
+}
+
+/* TEXT */
+h1{
+    font-size:22px;
+    font-weight:700;
+    margin-bottom:12px;
+}
+
+p{
+    font-size:14px;
+    opacity:0.85;
+    line-height:1.6;
+    margin-bottom:0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+    <!-- GANTI DENGAN ASSET KAMU -->
+    <img src="../assets/email_icon.png" class="icon" alt="Email Icon">
+
+    <h1>Apply Berhasil</h1>
+    <p>
+        Permintaan kamu telah berhasil diajukan.<br>
+        Mohon tunggu email dari tim kami.  
+        Kami akan menghubungi kamu setelah proses review selesai.
+    </p>
+</div>
+
+</body>
+</html>
