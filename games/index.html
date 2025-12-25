@@ -74,14 +74,6 @@ main{
 }
 .thumb{height:150px;position:relative;}
 .thumb img{width:100%;height:100%;object-fit:cover;}
-.badge{
-  position:absolute;
-  top:10px;left:10px;
-  font-size:.6rem;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  padding:4px 8px;
-  border-radius:8px;
-}
 .content{padding:14px;}
 .content h3{font-size:.95rem;margin-bottom:6px;}
 .desc{font-size:.78rem;opacity:.75;margin-bottom:12px;line-height:1.4;}
@@ -145,8 +137,10 @@ footer{
 <script>
 const data=[
   {title:"Flappy Bird", genre:"Casual", img:"../assets/game/flappy.gif", desc:"Tap and fly endlessly.", link:"https://flappybird.io/"},
-  {title:"Marvel vs Capcom", genre:"Fighting", img:"../assets/game/mvc.png", desc:"Legendary crossover fighter.", link:"https://gam.onl/arcade/marvel-vs-capcom-clash-of-super-heroes.html#game", badge:"NEW"},
-  {title:"Metal Slug", genre:"Run & Gun", img:"../assets/game/metalslug.png", desc:"Classic run & gun arcade.", link:"https://gam.onl/arcade/metal-slug.html#game", badge:"NEW"},
+  {title:"Harvest Moon: Friends Of Mineral Town", genre:"Casual", img:"../assets/game/harvestmoon.png", desc:"Farm, make friends, and live your life.", link:"https://gam.onl/gba/harvest-moon-friends-of-mineral-town.html#game"},
+  {title:"Marvel vs Capcom", genre:"Fighting", img:"../assets/game/mvc.png", desc:"Legendary crossover fighter.", link:"https://gam.onl/arcade/marvel-vs-capcom-clash-of-super-heroes.html#game"},
+  {title:"Metal Slug", genre:"Run & Gun", img:"../assets/game/metalslug.png", desc:"Classic run & gun arcade.", link:"https://gam.onl/arcade/metal-slug.html#game"},
+  {title:"Super Mario World", genre:"Action", img:"../assets/game/marioworld.png", desc:"Classic platform adventure.", link:"https://gam.onl/snes/super-mario-world.html#game"},
   {title:"Tower Building", genre:"Puzzle", img:"../assets/game/tower.png", desc:"Timing stack challenge.", link:"https://riseuplabs.com/play/tower-building/"}
 ];
 
@@ -173,7 +167,6 @@ function render(){
     el.innerHTML=`
       <div class="thumb">
         <img src="${g.img}">
-        ${g.badge?`<span class="badge">${g.badge}</span>`:""}
       </div>
       <div class="content">
         <h3>${g.title}</h3>
