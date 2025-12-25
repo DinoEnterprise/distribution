@@ -160,62 +160,6 @@ main{
   background:rgba(255,255,255,.1);
 }
 
-/* ===== MINI CART ===== */
-#mini-cart{
-  position:fixed;
-  bottom:64px;
-  left:50%;
-  transform:translateX(-50%);
-  width:92%;
-  max-width:420px;
-  max-height:0;
-  overflow:hidden;
-  background:rgba(15,15,15,.95);
-  border-radius:18px 18px 0 0;
-  transition:.35s ease;
-  z-index:200;
-}
-
-#mini-cart.expanded{
-  max-height:420px;
-  padding:14px 18px;
-}
-
-#mini-cart-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-#mini-cart-header h3{
-  color:#a855f7;
-  font-size:.95rem;
-}
-
-#mini-cart-header button{
-  background:#ef4444;
-  border:none;
-  border-radius:6px;
-  color:#fff;
-  padding:2px 8px;
-  cursor:pointer;
-}
-
-#cart-items{
-  margin-top:10px;
-  list-style:none;
-  max-height:300px;
-  overflow:auto;
-}
-
-#cart-items li{
-  display:flex;
-  justify-content:space-between;
-  padding:6px 0;
-  font-size:.85rem;
-  border-bottom:1px solid rgba(255,255,255,.08);
-}
-
 /* ===== FOOTER ===== */
 footer{
   position:fixed;
@@ -260,18 +204,6 @@ footer{
   padding:2px 6px;
   display:none;
 }
-
-/* ===== MOBILE ===== */
-@media(max-width:480px){
-  .product-card{
-    gap:14px;
-    padding:16px;
-  }
-  .product-image{flex:0 0 42%}
-  .product-details h2{font-size:1rem}
-  .description{font-size:.78rem}
-  .actions{flex-direction:column}
-}
 </style>
 </head>
 
@@ -286,13 +218,14 @@ footer{
 
 <main id="product-container">
 
+  <!-- Flappy Bird -->
   <div class="product-card">
     <div class="product-image">
       <img src="../assets/game/flappy.gif">
     </div>
     <div class="product-details">
       <h2>Flappy Bird</h2>
-      <p class="description">Classic tap & fly game</p>
+      <p class="description">Classic tap & fly game with simple mechanics and addictive gameplay.</p>
       <div class="actions">
         <button class="buy-now" onclick="location.href='https://flappybird.io/'">Play</button>
         <button class="add-cart">Favorite</button>
@@ -300,15 +233,46 @@ footer{
     </div>
   </div>
 
+  <!-- Tower Building -->
   <div class="product-card">
     <div class="product-image">
       <img src="../assets/game/tower.png">
     </div>
     <div class="product-details">
       <h2>Tower Building</h2>
-      <p class="description">Timing based stacking game</p>
+      <p class="description">Test your timing skills by stacking blocks as high as possible.</p>
       <div class="actions">
         <button class="buy-now" onclick="location.href='https://riseuplabs.com/play/tower-building/'">Play</button>
+        <button class="add-cart">Favorite</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metal Slug -->
+  <div class="product-card">
+    <div class="product-image">
+      <img src="../assets/game/metalslug.png">
+    </div>
+    <div class="product-details">
+      <h2>Metal Slug</h2>
+      <p class="description">Fast-paced run & gun action with classic arcade visuals and explosive combat.</p>
+      <div class="actions">
+        <button class="buy-now" onclick="location.href='https://gam.onl/arcade/metal-slug.html#game'">Play</button>
+        <button class="add-cart">Favorite</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Marvel vs Capcom -->
+  <div class="product-card">
+    <div class="product-image">
+      <img src="../assets/game/mvc.png">
+    </div>
+    <div class="product-details">
+      <h2>Marvel vs Capcom</h2>
+      <p class="description">Legendary crossover fighting game featuring Marvel heroes and Capcom icons.</p>
+      <div class="actions">
+        <button class="buy-now" onclick="location.href='https://gam.onl/arcade/marvel-vs-capcom-clash-of-super-heroes.html#game'">Play</button>
         <button class="add-cart">Favorite</button>
       </div>
     </div>
