@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DynoPlays — Elite Hub</title>
+<title>DynoPlays Elite Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -147,11 +147,16 @@ const data=[
   {title:"Harvest Moon: Friends Of Mineral Town", genre:"Casual", img:"../assets/game/harvestmoon.png", desc:"Farm, make friends, and live your life.", link:"https://gam.onl/gba/harvest-moon-friends-of-mineral-town.html#game"},
   {title:"Marvel vs Capcom", genre:"Fighting", img:"../assets/game/mvc.png", desc:"Legendary crossover fighter.", link:"https://gam.onl/arcade/marvel-vs-capcom-clash-of-super-heroes.html#game"},
   {title:"Metal Slug", genre:"Run & Gun", img:"../assets/game/metalslug.png", desc:"Classic run & gun arcade.", link:"https://gam.onl/arcade/metal-slug.html#game"},
+  {title:"Metal Slug 2", genre:"Run & Gun", img:"../assets/game/metalslug2.png", desc:"Sequel run & gun arcade.", link:"https://gam.onl/arcade/metal-slug-2.html#game"},
+  {title:"Metal Slug 3", genre:"Run & Gun", img:"../assets/game/metalslug3.png", desc:"Epic third installment.", link:"https://gam.onl/arcade/metal-slug-3.html#game"},
+  {title:"Metal Slug 4", genre:"Run & Gun", img:"../assets/game/metalslug4.png", desc:"Continue the action.", link:"https://gam.onl/arcade/metal-slug-4.html#game"},
+  {title:"Metal Slug 5", genre:"Run & Gun", img:"../assets/game/metalslug5.png", desc:"More classic shooting fun.", link:"https://gam.onl/arcade/metal-slug-5.html#game"},
+  {title:"Metal Slug X", genre:"Run & Gun", img:"../assets/game/metalslugx.png", desc:"Enhanced version with extra features.", link:"https://gam.onl/arcade/metal-slug-x.html#game"},
   {title:"Super Mario World", genre:"Action", img:"../assets/game/marioworld.png", desc:"Classic platform adventure.", link:"https://gam.onl/snes/super-mario-world.html#game"},
   {title:"Tower Building", genre:"Puzzle", img:"../assets/game/tower.png", desc:"Timing stack challenge.", link:"https://riseuplabs.com/play/tower-building/"}
 ];
 
-// Sort alphabetically by title
+// Sort alphabetically
 data.sort((a,b)=>a.title.localeCompare(b.title));
 
 const wrap=document.getElementById("games");
@@ -160,7 +165,7 @@ const genre=document.getElementById("genre");
 const favCount=document.getElementById("favCount");
 let fav=JSON.parse(localStorage.getItem("fav"))||[];
 
-// Set background music volume
+// Background music volume
 const bgMusic = document.getElementById('bgMusic');
 bgMusic.volume = 0.25; // 25%
 
