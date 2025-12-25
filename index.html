@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dynotic Member</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
 *{
   margin:0;
@@ -16,36 +18,37 @@
 body{
   min-height:100vh;
   background:
-    radial-gradient(circle at 20% 20%, rgba(138,43,226,0.15), transparent 60%),
-    radial-gradient(circle at 80% 80%, rgba(168,85,247,0.12), transparent 60%),
+    radial-gradient(circle at 20% 20%, rgba(138,43,226,0.12), transparent 60%),
+    radial-gradient(circle at 80% 80%, rgba(168,85,247,0.10), transparent 60%),
     #000;
   color:#fff;
 }
 
-/* HEADER */
+/* ================= HEADER ================= */
 header{
   position:fixed;
   top:0; left:0;
   width:100%;
-  padding:18px 20px;
+  padding:16px 20px;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  backdrop-filter: blur(14px);
-  background: rgba(0,0,0,0.55);
+  background:rgba(0,0,0,0.65);
   border-bottom:1px solid rgba(255,255,255,0.08);
   z-index:100;
 }
 
+@media(min-width:769px){
+  header{ backdrop-filter: blur(14px); }
+}
+
 header h1{
-  font-size:1.6rem;
+  font-size:1.5rem;
   font-weight:700;
-  letter-spacing:0.5px;
 }
 
 #search-input{
-  width:300px;
-  max-width:100%;
+  width:260px;
   padding:10px 14px;
   border-radius:14px;
   border:1px solid rgba(255,255,255,0.15);
@@ -55,77 +58,82 @@ header h1{
 }
 #search-input::placeholder{color:#aaa;}
 
-/* MAIN */
+/* ================= MAIN ================= */
 main{
-  padding:110px 40px 120px;
+  padding:110px 36px 130px;
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-  gap:24px;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
 }
 
-/* GLASS CARD */
+/* ================= CARD ================= */
 .menu-card{
   background:rgba(255,255,255,0.06);
-  backdrop-filter: blur(16px);
-  border:1px solid rgba(255,255,255,0.15);
+  border:1px solid rgba(255,255,255,0.14);
   border-radius:22px;
-  padding:28px;
+  padding:24px;
   display:flex;
-  gap:24px;
+  gap:20px;
   align-items:center;
   cursor:pointer;
-  transition:all .35s ease;
-  opacity:0;
-  transform:translateY(20px);
+  transition:transform .25s ease, background .25s ease;
+  will-change:transform;
+  animation:fadeUp .35s ease both;
 }
 
-.menu-card.show{
-  opacity:1;
-  transform:translateY(0);
+@keyframes fadeUp{
+  from{opacity:0; transform:translateY(10px)}
+  to{opacity:1; transform:none}
 }
 
-.menu-card:hover{
-  background:rgba(168,85,247,0.18);
-  transform:translateY(-6px) scale(1.03);
-  box-shadow:0 0 40px rgba(168,85,247,0.45);
+/* hover DESKTOP only */
+@media(min-width:769px){
+  .menu-card:hover{
+    background:rgba(168,85,247,0.16);
+    transform:translateY(-4px);
+  }
 }
 
-/* ICON */
+/* ================= ICON ================= */
 .menu-icon{
-  width:70px;
-  height:70px;
-  border-radius:18px;
+  width:64px;
+  height:64px;
+  border-radius:16px;
   background:rgba(255,255,255,0.12);
   display:flex;
   justify-content:center;
   align-items:center;
+  flex-shrink:0;
 }
 .menu-icon img{
-  width:40px;
-  height:40px;
+  width:36px;
+  height:36px;
 }
 
-/* TEXT */
+/* ================= TEXT ================= */
 .menu-details h2{
-  font-size:1.3rem;
+  font-size:1.2rem;
   margin-bottom:6px;
 }
 .menu-details p{
-  font-size:.95rem;
+  font-size:.9rem;
   opacity:.75;
 }
 
-/* FOOTER */
+/* ================= FOOTER ================= */
 footer{
   position:fixed;
   bottom:0; left:0;
   width:100%;
-  padding:14px 20px;
+  padding:12px 18px;
   display:flex;
   justify-content:space-around;
-  backdrop-filter: blur(14px);
-  background: rgba(0,0,0,0.55);
+  background:rgba(0,0,0,0.65);
   border-top:1px solid rgba(255,255,255,0.08);
+}
+
+@media(min-width:769px){
+  footer{ backdrop-filter: blur(14px); }
 }
 
 .footer-icon{
@@ -133,66 +141,46 @@ footer{
   flex-direction:column;
   align-items:center;
   gap:4px;
-  font-size:.75rem;
-  opacity:.8;
-  transition: all 0.3s ease;
+  font-size:.72rem;
+  opacity:.75;
 }
+
 .footer-icon img{
-  width:28px;
-  height:28px;
-  border-radius:50%; /* bikin bulat */
-  background: rgba(255,255,255,0.1); /* efek glass */
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.1);
   padding:6px;
-  transition: all 0.3s ease;
 }
-.footer-icon.active img,
-.footer-icon:hover img{
-  box-shadow:0 0 12px rgba(168,85,247,0.8),
-             0 0 20px rgba(168,85,247,0.5);
-}
+
 .footer-icon.active{
   opacity:1;
 }
 
-/* RESPONSIVE MOBILE */
+/* ================= MOBILE ================= */
 @media(max-width:768px){
   main{
-    padding:110px 16px 140px;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:18px;
-  }
-  #search-input{
-    width:180px;
-  }
-}
-@media(max-width:480px){
-  main{
-    padding:110px 12px 160px;
-    grid-template-columns:1fr;
+    padding:110px 14px 150px;
     gap:14px;
   }
-  #search-input{
-    width:150px;
-  }
+  #search-input{width:160px}
+}
+
+@media(max-width:480px){
   .menu-card{
-    flex-direction:row;
-    padding:20px;
-    gap:16px;
+    padding:18px;
+    gap:14px;
   }
   .menu-icon{
     width:50px;
     height:50px;
   }
   .menu-icon img{
-    width:30px;
-    height:30px;
+    width:28px;
+    height:28px;
   }
-  .menu-details h2{
-    font-size:1rem;
-  }
-  .menu-details p{
-    font-size:.8rem;
-  }
+  .menu-details h2{font-size:1rem}
+  .menu-details p{font-size:.8rem}
 }
 </style>
 </head>
@@ -204,10 +192,12 @@ footer{
   <input type="text" id="search-input" placeholder="Cari menu...">
 </header>
 
-<main id="menu-container">
+<main>
 
   <div class="menu-card" onclick="location.href='holiday'">
-    <div class="menu-icon"><img src="https://i.imgur.com/kZJHK5w.png"></div>
+    <div class="menu-icon">
+      <img src="https://i.imgur.com/kZJHK5w.png">
+    </div>
     <div class="menu-details">
       <h2>Rilis Original</h2>
       <p>Distribusi lagu original</p>
@@ -215,7 +205,9 @@ footer{
   </div>
 
   <div class="menu-card" onclick="location.href='holiday'">
-    <div class="menu-icon"><img src="https://i.imgur.com/6wLUh0j.png"></div>
+    <div class="menu-icon">
+      <img src="https://i.imgur.com/6wLUh0j.png">
+    </div>
     <div class="menu-details">
       <h2>Rilis Katalog</h2>
       <p>Cover & katalog publisher</p>
@@ -223,7 +215,9 @@ footer{
   </div>
 
   <div class="menu-card" onclick="location.href='catalog'">
-    <div class="menu-icon"><img src="https://i.imgur.com/eBRVJ8r.png"></div>
+    <div class="menu-icon">
+      <img src="https://i.imgur.com/eBRVJ8r.png">
+    </div>
     <div class="menu-details">
       <h2>Katalog</h2>
       <p>Daftar publisher & skema</p>
@@ -231,7 +225,9 @@ footer{
   </div>
 
   <div class="menu-card" onclick="location.href='holiday'">
-    <div class="menu-icon"><img src="https://i.imgur.com/hYvP4vp.png"></div>
+    <div class="menu-icon">
+      <img src="https://i.imgur.com/hYvP4vp.png">
+    </div>
     <div class="menu-details">
       <h2>Text to Music</h2>
       <p>Generate musik AI</p>
@@ -239,7 +235,9 @@ footer{
   </div>
 
   <div class="menu-card" onclick="location.href='games'">
-    <div class="menu-icon"><img src="https://i.imgur.com/Kn38R0c.png"></div>
+    <div class="menu-icon">
+      <img src="https://i.imgur.com/Kn38R0c.png">
+    </div>
     <div class="menu-details">
       <h2>Games</h2>
       <p>Mini games & fun</p>
@@ -265,14 +263,12 @@ footer{
 
 <script>
 const cards = document.querySelectorAll('.menu-card');
-cards.forEach((card,i)=>{
-  setTimeout(()=>card.classList.add('show'), i*120);
-});
+const search = document.getElementById('search-input');
 
-document.getElementById('search-input').addEventListener('input', e=>{
+search.addEventListener('input', e=>{
   const q = e.target.value.toLowerCase();
   cards.forEach(c=>{
-    c.style.display = c.innerText.toLowerCase().includes(q) ? 'flex':'none';
+    c.style.display = c.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
   });
 });
 </script>
