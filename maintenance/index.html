@@ -1,54 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maintenance</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #000; /* Background hitam */
-            color: #fff; /* Teks putih */
-            font-family: Arial, sans-serif;
-            text-align: center;
-            flex-direction: column;
-        }
-
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-
-        p {
-            font-size: 1.2rem;
-            color: #ccc;
-        }
-
-        /* Tambahan animasi loading simple */
-        .loader {
-            border: 4px solid #333;
-            border-top: 4px solid #fff;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin-top: 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg);}
-            100% { transform: rotate(360deg);}
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Under Maintenance — Dynotic</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#a855f7;
+  --accent2:#8b5cf6;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif}
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:radial-gradient(circle at 20% 20%, rgba(168,85,247,.2), transparent 60%),
+             radial-gradient(circle at 80% 80%, rgba(139,92,246,.2), transparent 60%),
+             #000;
+  color:#fff;
+  text-align:center;
+  padding:20px;
+}
+.container{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.14);
+  padding:60px 50px;
+  border-radius:30px;
+  backdrop-filter:blur(12px);
+  animation:pop .5s ease both;
+  max-width:700px;
+  width:100%;
+}
+@keyframes pop{
+  from{opacity:0;transform:scale(.95)}
+  to{opacity:1;transform:none}
+}
+h1{
+  font-size:3rem;
+  font-weight:700;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;
+  color:transparent;
+  margin-bottom:25px;
+}
+p{
+  font-size:1.2rem;
+  opacity:0.85;
+  margin-bottom:35px;
+  line-height:1.5;
+}
+.button{
+  padding:15px 30px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  color:#fff;
+  font-weight:700;
+  font-size:1rem;
+  border:none;
+  border-radius:18px;
+  cursor:pointer;
+  transition:.2s;
+  text-decoration:none;
+}
+.button:hover{
+  filter:brightness(1.1);
+}
+/* Responsive Mobile */
+@media(max-width:480px){
+  .container{
+    padding:40px 30px;
+  }
+  h1{
+    font-size:2.2rem;
+  }
+  p{
+    font-size:1rem;
+  }
+  .button{
+    padding:12px 25px;
+    font-size:0.9rem;
+  }
+}
+</style>
 </head>
 <body>
-    <h1>Under Maintenance</h1>
-    <p>Kami sedang melakukan perbaikan. Silakan cek kembali nanti.</p>
-    <div class="loader"></div>
+
+<div class="container">
+  <h1>🚧 Under Maintenance</h1>
+  <p>Our website is currently undergoing scheduled maintenance.<br>We’ll be back shortly. Thanks for your patience!</p>
+  <a href="https://dynotic.web.id" class="button">Back to Home</a>
+</div>
+
 </body>
 </html>
