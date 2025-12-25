@@ -114,6 +114,10 @@ footer{
 </style>
 </head>
 <body>
+
+<!-- ===== BACKGROUND MUSIC ===== -->
+<audio id="bgMusic" src="../assets/mood/pompeii.mp3" autoplay loop></audio>
+
 <header>
   <h1>DynoPlays</h1>
   <div class="controls">
@@ -128,12 +132,15 @@ footer{
     </select>
   </div>
 </header>
+
 <main id="games"></main>
+
 <footer>
   <div class="footer-icon"><img src="https://i.imgur.com/EoomL6q.png"><span>Home</span></div>
   <div class="footer-icon"><img src="https://i.imgur.com/b3f4k1v.png"><span>Favorite</span><span class="count" id="favCount">0</span></div>
   <div class="footer-icon"><img src="https://i.imgur.com/6hVaWxq.png"><span>Profile</span></div>
 </footer>
+
 <script>
 const data=[
   {title:"Flappy Bird", genre:"Casual", img:"../assets/game/flappy.gif", desc:"Tap and fly endlessly.", link:"https://flappybird.io/"},
@@ -152,6 +159,10 @@ const search=document.getElementById("search");
 const genre=document.getElementById("genre");
 const favCount=document.getElementById("favCount");
 let fav=JSON.parse(localStorage.getItem("fav"))||[];
+
+// Set background music volume
+const bgMusic = document.getElementById('bgMusic');
+bgMusic.volume = 0.25; // 25%
 
 function render(){
   wrap.innerHTML="";
@@ -198,5 +209,6 @@ genre.onchange=render;
 render();
 updateFav();
 </script>
+
 </body>
 </html>
