@@ -4,272 +4,355 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dynotic Play Games</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family:'Outfit', sans-serif; }
-body { background:#000; color:#fff; display:flex; flex-direction:column; min-height:100vh; }
-
-/* HEADER */
-header { background:#000; padding:20px; display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #fff; z-index:100; }
-header h1 { font-size:28px; font-weight:700; color:#fff; }
-.header-right { display:flex; align-items:center; gap:10px; }
-#search-input { padding:10px 15px; border-radius:8px; border:1px solid #555; background:#111; color:#fff; outline:none; width:250px; font-size:16px; transition: all 0.3s; }
-#search-input::placeholder { color:#888; }
-#search-input:focus { border-color:#fff; background-color:#222; }
-#search-icon { width:24px; height:24px; cursor:pointer; }
-
-/* MAIN */
-main { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:20px; }
-
-/* PRODUCT CARD */
-.product-card { background:#000; border-radius:15px; border:2px solid #fff; display:flex; flex-wrap:nowrap; align-items:center; transition: transform 0.3s, box-shadow 0.3s; padding:15px; width:100%; will-change: transform; opacity:0; transform: translateY(20px); } 
-.product-card.show { animation: productFadeIn 0.5s ease forwards; }
-.product-card:hover { transform:translateY(-2px); box-shadow:0 4px 15px rgba(255,255,255,0.1); }
-.product-image { flex:0 0 35%; max-width:35%; overflow:hidden; border-radius:15px; will-change: transform; }
-.product-image img { width:100%; height:auto; object-fit:cover; border-radius:15px; transition: transform 0.3s; }
-.product-card:hover .product-image img { transform: scale(1.02); }
-.product-details { flex:1; padding-left:20px; display:flex; flex-direction:column; justify-content:flex-start; }
-.product-details h2 { font-size:22px; margin-bottom:5px; color:#fff; }
-.description { font-size:14px; color:#bbb; margin-bottom:15px; }
-.actions { display:flex; gap:10px; flex-wrap:nowrap; margin-bottom:10px; }
-.actions button { flex:1; padding:10px 12px; font-size:14px; font-weight:600; border-radius:8px; cursor:pointer; transition: all 0.3s; }
-.buy-now { background:#ffd700; color:#000; border:none; font-weight:700; }
-.buy-now:hover { background:#e0c200; transform:translateY(-1px); }
-.add-cart { background:transparent; color:#fff; border:2px solid #fff; }
-.add-cart:hover { background:rgba(255,255,255,0.1); transform:scale(1.03); }
-
-/* ANIMASI MASUK PRODUK */
-@keyframes productFadeIn {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Outfit",sans-serif;
 }
 
-/* MINI-CART PREMIUM */
-#mini-cart {
-position:fixed; bottom:60px; left:50%; transform:translateX(-50%);
-width:90%; max-width:400px; max-height:0; background:rgba(17,17,17,0.95); overflow:hidden;
-transition:max-height 0.4s ease, padding 0.4s ease; z-index:150; padding:0 20px;
-display:flex; flex-direction:column; border-radius:10px 10px 0 0;
-will-change: max-height, padding;
-}
-#mini-cart.expanded { max-height:400px; padding:15px 20px; }
-#mini-cart-header { display:flex; justify-content:space-between; align-items:center; }
-#mini-cart-header h3 { color:#ffd700; font-size:16px; }
-#mini-cart-header button { background:red; color:#fff; border:none; border-radius:5px; padding:2px 8px; cursor:pointer; font-weight:700; }
-#cart-items { list-style:none; padding:0; margin-top:10px; overflow-y:auto; max-height:300px; }
-#cart-items li { display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid #fff; }
-
-/* ITEM MASUK PREMIUM */
-@keyframes cartItemInPremium {
-0% { opacity: 0; transform: translateY(10px) scale(0.9); }
-100% { opacity: 1; transform: translateY(0) scale(1); }
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(138,43,226,.14), transparent 60%),
+    radial-gradient(circle at 80% 80%, rgba(168,85,247,.12), transparent 60%),
+    #000;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
 }
 
-/* ICON CART PREMIUM */
-@keyframes cartBumpGlow {
-0% { transform: scale(1); filter: drop-shadow(0 0 0px #ffd700); }
-50% { transform: scale(1.3); filter: drop-shadow(0 0 6px #ffd700); }
-100% { transform: scale(1); filter: drop-shadow(0 0 0px #ffd700); }
-}
-.cart-badge.bump { animation: cartBumpGlow 0.4s ease; }
-
-/* REMOVE BUTTON */
-.cart-item-remove { background:transparent; border:none; padding:0; cursor:pointer; }
-.cart-item-remove img { display:block; width:18px; height:18px; }
-
-/* FOOTER */
-footer { position:fixed; bottom:0; left:0; width:100%; background:#000; border-top:2px solid #fff; padding:10px 20px; display:flex; justify-content:space-around; align-items:center; z-index:100; }
-.footer-icon { position:relative; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; color:#fff; font-size:12px; }
-.footer-icon img { width:30px; height:30px; }
-.cart-badge { position:absolute; top:-5px; right:-5px; background:red; color:#fff; font-size:12px; font-weight:700; border-radius:50%; padding:2px 6px; display:none; }
-
-/* RESPONSIVE */
-@media(max-width:768px){
-#search-input{width:200px;font-size:14px;}
-.product-card{flex-wrap:nowrap;}
-.product-image{flex:0 0 35%;}
-.product-details{padding-left:15px;}
-.product-details h2{font-size:20px;}
-.price{font-size:20px;}
-.actions button{font-size:13px; padding:8px 10px;}
-}
-@media(max-width:480px){
-#search-input{width:140px;font-size:14px;}
-.product-card{flex-direction:row; gap:12px; align-items:flex-start; padding:12px;}
-.product-image{flex:0 0 45%; max-width:45%;}
-.product-image img{width:100%; height:auto; border-radius:12px;}
-.product-details{flex:1; padding-left:5px;}
-.product-details h2{font-size:18px; line-height:20px;}
-.price{font-size:18px; margin-bottom:10px;}
-.actions{flex-direction:column; gap:6px;}
-.actions button{width:100%; padding:8px 10px; font-size:13px;}
+/* ===== HEADER ===== */
+header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  padding:18px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:rgba(0,0,0,.65);
+  border-bottom:1px solid rgba(255,255,255,.08);
 }
 
-/* MINI-CART FULL LEBAR DESKTOP */
 @media(min-width:769px){
-#mini-cart{ width:100%; max-width:none; left:0; transform:none; border-radius:0; }
-}
-</style>
-</head>
-<body>
-  <!-- HEADER -->
-  <header>
-    <h1>DynoPlays</h1>
-    <div class="header-right">
-      <input type="text" id="search-input" placeholder="Search Games...">
-      <img src="https://i.imgur.com/56IP0jb.png" id="search-icon" alt="Search">
-    </div>
-  </header>
-
-  <!-- MAIN -->
-  <main id="product-container">
-    <!-- PRODUCT 1 -->
-    <div class="product-card">
-      <div class="product-image"><img src="https://i.imgur.com/GC6eEKv.gif" alt="Flappy Bird"></div>
-      <div class="product-details">
-        <h2>Flappy Bird</h2>
-        <p class="description">Dekripsi Tidak Tersedia</p>
-        <div class="actions">
-          <button class="buy-now" onclick="window.location.href='https://flappybird.io/'">Play Games</button>
-          <button class="add-cart">Add to Favorites</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- PRODUCT 2 -->
-    <div class="product-card">
-      <div class="product-image"><img src="https://i.imgur.com/io4bp7L.jpeg" alt="Tower Building"></div>
-      <div class="product-details">
-        <h2>Tower Building</h2>
-        <p class="description">Deskripsi Tidak Tersedia</p>
-        <div class="actions">
-          <button class="buy-now" onclick="window.location.href='https://riseuplabs.com/play/tower-building/'">Play Games</button>
-          <button class="add-cart">Add to Favorites</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- PRODUCT 3 -->
-    <div class="product-card">
-      <div class="product-image"><img src="https://i.imgur.com/7hODGzL.jpeg" alt="Subway Surfers: Classic"></div>
-      <div class="product-details">
-        <h2>Happy Filled Glass</h2>
-        <p class="description">Deskripsi Tidak Tersedia</p>
-        <div class="actions">
-          <button class="buy-now" onclick="window.location.href='https://www.primarygames.com/puzzles/physics/happyfilledglass/mobile/'">Play Games</button>
-          <button class="add-cart">Add to Favorites</button>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- MINI-CART -->
-  <div id="mini-cart">
-    <div id="mini-cart-header">
-      <h3>Favorite</h3>
-      <button>X</button>
-    </div>
-    <ul id="cart-items"></ul>
-  </div>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-icon" onclick="window.location.href='https://dynotic.web.id'">
-      <img src="https://i.imgur.com/EoomL6q.png" alt="Home">
-      <span>Home</span>
-    </div>
-    <div class="footer-icon" id="cart-footer">
-      <img src="https://i.imgur.com/b3f4k1v.png" alt="Cart">
-      <span>Favorite</span>
-      <span class="cart-badge" id="cart-badge">0</span>
-    </div>
-    <div class="footer-icon" onclick="alert('Profile clicked')">
-      <img src="https://i.imgur.com/6hVaWxq.png" alt="Profile">
-      <span>Profile</span>
-    </div>
-  </footer>
-
-<script>
-const searchInput = document.getElementById('search-input');
-const products = Array.from(document.querySelectorAll('.product-card'));
-const miniCart = document.getElementById('mini-cart');
-const cartBadge = document.getElementById('cart-badge');
-const cartItemsList = document.getElementById('cart-items');
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-/* SEARCH FUNCTION */
-searchInput.addEventListener('input', () => {
-  const query = searchInput.value.toLowerCase();
-  products.forEach(card => {
-    const title = card.querySelector('h2').textContent.toLowerCase();
-    card.style.display = title.includes(query) ? 'flex' : 'none';
-  });
-});
-
-/* TOGGLE MINI-CART */
-function toggleMiniCart(){ miniCart.classList.toggle('expanded'); }
-document.querySelector('#mini-cart-header button').addEventListener('click', toggleMiniCart);
-document.getElementById('cart-footer').addEventListener('click', toggleMiniCart);
-
-/* UPDATE CART BADGE */
-function updateCartBadge(){
-  if(cart.length>0){
-    cartBadge.style.display='block';
-    cartBadge.textContent = cart.length;
-    cartBadge.classList.add('bump');
-    setTimeout(()=>cartBadge.classList.remove('bump'),400);
-  } else cartBadge.style.display='none';
+  header{ backdrop-filter:blur(14px); }
 }
 
-/* ADD TO CART */
-products.forEach(card => {
-  const name = card.querySelector('h2').textContent;
-  const sellerName = name;
-  const price = 'FREE';
-  card.querySelector('.add-cart').addEventListener('click', () => {
-    const exists = cart.some(item=>item.name===name && item.sellerName===sellerName);
-    if(exists){ alert('Produk sudah ada di keranjang!'); return; }
-    cart.push({name, price, sellerName});
-    localStorage.setItem('cart',JSON.stringify(cart));
+header h1{
+  font-size:1.6rem;
+  font-weight:700;
+}
 
-    const li = document.createElement('li');
-    li.innerHTML = `<span>${name} (${sellerName}) - ${price}</span>
-      <button class="cart-item-remove"><img src="https://i.imgur.com/MIAl6P5.png" alt="Hapus"></button>`;
-    li.style.animation = 'cartItemInPremium 0.3s ease forwards';
-    li.querySelector('.cart-item-remove').addEventListener('click', () => removeFromCart(name,sellerName,li));
-    cartItemsList.appendChild(li);
+.header-right{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
 
-    updateCartBadge();
-  });
-});
+#search-input{
+  width:220px;
+  padding:10px 14px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  outline:none;
+}
+#search-input::placeholder{color:#aaa}
 
-/* REMOVE FROM CART */
-function removeFromCart(name,sellerName,li){
-  const index = cart.findIndex(item=>item.name===name && item.sellerName===sellerName);
-  if(index!==-1){
-    cart.splice(index,1);
-    localStorage.setItem('cart',JSON.stringify(cart));
-    li.remove();
-    updateCartBadge();
+/* ===== MAIN ===== */
+main{
+  flex:1;
+  padding:26px 20px 120px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+/* ===== CARD ===== */
+.product-card{
+  display:flex;
+  gap:18px;
+  padding:20px;
+  border-radius:22px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.14);
+  transition:transform .25s ease, background .25s ease;
+  animation:fadeUp .35s ease both;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:none}
+}
+
+@media(min-width:769px){
+  .product-card:hover{
+    background:rgba(168,85,247,.16);
+    transform:translateY(-4px);
   }
 }
 
-/* INITIAL LOAD CART */
-cart.forEach(item=>{
-  const li = document.createElement('li');
-  li.innerHTML = `<span>${item.name} (${item.sellerName}) - ${item.price}</span>
-    <button class="cart-item-remove"><img src="https://i.imgur.com/MIAl6P5.png" alt="Hapus"></button>`;
-  li.querySelector('.cart-item-remove').addEventListener('click', () => removeFromCart(item.name,item.sellerName,li));
-  cartItemsList.appendChild(li);
-});
-updateCartBadge();
+.product-image{
+  flex:0 0 34%;
+  border-radius:18px;
+  overflow:hidden;
+}
+.product-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
 
-/* ANIMASI MASUK PRODUK */
-window.addEventListener('DOMContentLoaded', () => {
-  products.forEach((card, index) => {
-    setTimeout(() => { card.classList.add('show'); }, index * 150);
+.product-details{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+.product-details h2{
+  font-size:1.2rem;
+  margin-bottom:6px;
+}
+
+.description{
+  font-size:.85rem;
+  opacity:.7;
+  margin-bottom:14px;
+}
+
+/* ===== ACTIONS ===== */
+.actions{
+  display:flex;
+  gap:10px;
+}
+
+.actions button{
+  flex:1;
+  padding:10px;
+  border-radius:12px;
+  font-size:.85rem;
+  font-weight:600;
+  cursor:pointer;
+  transition:.25s;
+}
+
+.buy-now{
+  background:linear-gradient(90deg,#a855f7,#8b5cf6);
+  border:none;
+  color:#fff;
+}
+
+.buy-now:hover{opacity:.9}
+
+.add-cart{
+  background:transparent;
+  border:1px solid rgba(255,255,255,.35);
+  color:#fff;
+}
+
+.add-cart:hover{
+  background:rgba(255,255,255,.1);
+}
+
+/* ===== MINI CART ===== */
+#mini-cart{
+  position:fixed;
+  bottom:64px;
+  left:50%;
+  transform:translateX(-50%);
+  width:92%;
+  max-width:420px;
+  max-height:0;
+  overflow:hidden;
+  background:rgba(15,15,15,.95);
+  border-radius:18px 18px 0 0;
+  transition:.35s ease;
+  z-index:200;
+}
+
+#mini-cart.expanded{
+  max-height:420px;
+  padding:14px 18px;
+}
+
+#mini-cart-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+#mini-cart-header h3{
+  color:#a855f7;
+  font-size:.95rem;
+}
+
+#mini-cart-header button{
+  background:#ef4444;
+  border:none;
+  border-radius:6px;
+  color:#fff;
+  padding:2px 8px;
+  cursor:pointer;
+}
+
+#cart-items{
+  margin-top:10px;
+  list-style:none;
+  max-height:300px;
+  overflow:auto;
+}
+
+#cart-items li{
+  display:flex;
+  justify-content:space-between;
+  padding:6px 0;
+  font-size:.85rem;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+/* ===== FOOTER ===== */
+footer{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  padding:12px 20px;
+  display:flex;
+  justify-content:space-around;
+  background:rgba(0,0,0,.65);
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+@media(min-width:769px){
+  footer{ backdrop-filter:blur(14px); }
+}
+
+.footer-icon{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  font-size:.7rem;
+  opacity:.8;
+}
+
+.footer-icon img{
+  width:26px;
+  height:26px;
+}
+
+.footer-icon.active{opacity:1}
+
+.cart-badge{
+  position:absolute;
+  top:-5px;
+  right:-5px;
+  background:#ef4444;
+  color:#fff;
+  font-size:.65rem;
+  border-radius:50%;
+  padding:2px 6px;
+  display:none;
+}
+
+/* ===== MOBILE ===== */
+@media(max-width:480px){
+  .product-card{
+    gap:14px;
+    padding:16px;
+  }
+  .product-image{flex:0 0 42%}
+  .product-details h2{font-size:1rem}
+  .description{font-size:.78rem}
+  .actions{flex-direction:column}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>DynoPlays</h1>
+  <div class="header-right">
+    <input type="text" id="search-input" placeholder="Search games...">
+  </div>
+</header>
+
+<main id="product-container">
+
+  <div class="product-card">
+    <div class="product-image">
+      <img src="../assets/game/flappy.gif">
+    </div>
+    <div class="product-details">
+      <h2>Flappy Bird</h2>
+      <p class="description">Classic tap & fly game</p>
+      <div class="actions">
+        <button class="buy-now" onclick="location.href='https://flappybird.io/'">Play</button>
+        <button class="add-cart">Favorite</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <div class="product-image">
+      <img src="../assets/game/tower.png">
+    </div>
+    <div class="product-details">
+      <h2>Tower Building</h2>
+      <p class="description">Timing based stacking game</p>
+      <div class="actions">
+        <button class="buy-now" onclick="location.href='https://riseuplabs.com/play/tower-building/'">Play</button>
+        <button class="add-cart">Favorite</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-icon active">
+    <img src="https://i.imgur.com/EoomL6q.png">
+    <span>Home</span>
+  </div>
+  <div class="footer-icon" id="cart-footer">
+    <img src="https://i.imgur.com/b3f4k1v.png">
+    <span>Favorite</span>
+    <span class="cart-badge" id="cart-badge">0</span>
+  </div>
+  <div class="footer-icon">
+    <img src="https://i.imgur.com/6hVaWxq.png">
+    <span>Profile</span>
+  </div>
+</footer>
+
+<script>
+const search = document.getElementById('search-input');
+const cards = document.querySelectorAll('.product-card');
+const badge = document.getElementById('cart-badge');
+let fav = [];
+
+search.addEventListener('input',()=>{
+  const q = search.value.toLowerCase();
+  cards.forEach(c=>{
+    c.style.display = c.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
   });
 });
+
+document.querySelectorAll('.add-cart').forEach(btn=>{
+  btn.onclick=()=>{
+    fav.push(1);
+    badge.style.display='block';
+    badge.textContent=fav.length;
+  }
+});
 </script>
+
 </body>
 </html>
