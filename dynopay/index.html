@@ -4,107 +4,152 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dynotic Revenue</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
+/* ================= RESET ================= */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Outfit",sans-serif;
+}
+
 /* ================= BODY ================= */
 body{
-  margin:0;
-  font-family:"Outfit",sans-serif;
   min-height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
   background:
-    radial-gradient(circle at 20% 20%, rgba(138,43,226,0.15), transparent 60%),
-    radial-gradient(circle at 80% 80%, rgba(168,85,247,0.12), transparent 60%),
+    radial-gradient(circle at 15% 20%, rgba(138,43,226,0.18), transparent 55%),
+    radial-gradient(circle at 85% 80%, rgba(168,85,247,0.15), transparent 55%),
     #000;
   color:#fff;
-  text-align:center;
-  padding:20px;
-  overflow:hidden;
+  padding:40px;
+}
+
+/* ================= WRAPPER ================= */
+.wrapper{
+  width:100%;
+  max-width:1100px; /* DESKTOP GEDE */
+  display:flex;
+  justify-content:center;
 }
 
 /* ================= CONTAINER ================= */
 .container{
-  background:rgba(0,0,0,0.5);
-  backdrop-filter: blur(14px);
-  padding:50px 30px;
-  border-radius:24px;
-  max-width:420px;
   width:100%;
-  box-shadow:0 16px 40px rgba(0,0,0,0.5);
-  animation:fadeIn 0.6s ease forwards;
+  background:rgba(0,0,0,0.55);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:28px;
+  padding:80px 90px;
+  text-align:center;
+  backdrop-filter: blur(18px);
+  box-shadow:0 30px 80px rgba(0,0,0,0.65);
+  animation:fadeUp .7s ease both;
 }
 
 /* ================= LOGO ================= */
 .logo{
-  width:120px;
-  height:120px;
-  margin:0 auto 20px;
-  animation:beat 1.5s infinite;
+  width:140px;
+  height:140px;
+  margin:0 auto 28px;
+  opacity:.95;
 }
 
 /* ================= TEXT ================= */
 h1{
-  font-size:1.8rem;
-  margin-bottom:16px;
-  text-shadow:0 0 12px rgba(168,85,247,0.8);
+  font-size:2.6rem;
+  font-weight:700;
+  margin-bottom:18px;
+  letter-spacing:-0.5px;
 }
 
 p{
-  font-size:1rem;
-  opacity:0.85;
-  margin-bottom:30px;
+  font-size:1.15rem;
+  max-width:520px;
+  margin:0 auto 42px;
+  opacity:.82;
+  line-height:1.7;
 }
 
 /* ================= BUTTON ================= */
 .download-btn{
   display:inline-block;
-  padding:16px 36px;
-  font-size:1rem;
-  font-weight:700;
+  padding:18px 48px;
+  font-size:1.05rem;
+  font-weight:600;
   color:#fff;
-  background:linear-gradient(135deg, #8a2be2, #a855f7);
-  border:none;
-  border-radius:14px;
+  background:linear-gradient(135deg,#8a2be2,#a855f7);
+  border-radius:16px;
   text-decoration:none;
-  box-shadow:0 8px 20px rgba(168,85,247,0.4);
-  transition:transform .25s ease, box-shadow .25s ease, background .25s ease;
+  box-shadow:0 10px 30px rgba(168,85,247,.35);
+  transition:transform .25s ease, box-shadow .25s ease;
 }
 
 .download-btn:hover{
-  transform:translateY(-3px);
-  box-shadow:0 12px 28px rgba(168,85,247,0.6);
-  background:linear-gradient(135deg, #a855f7, #8a2be2);
+  transform:translateY(-4px);
+  box-shadow:0 18px 45px rgba(168,85,247,.55);
 }
 
-/* ================= ANIMATIONS ================= */
-@keyframes beat{
-  0%,100%{transform:scale(1);}
-  50%{transform:scale(1.08);}
+/* ================= ANIMATION ================= */
+@keyframes fadeUp{
+  from{opacity:0; transform:translateY(25px);}
+  to{opacity:1; transform:none;}
 }
 
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(20px);}
-  to{opacity:1; transform:translateY(0);}
+/* ================= TABLET ================= */
+@media(max-width:1024px){
+  .container{
+    padding:70px 60px;
+  }
+  h1{font-size:2.2rem;}
 }
 
-/* ================= RESPONSIVE ================= */
-@media(max-width:480px){
-  .container{padding:40px 20px;}
-  .logo{width:100px; height:100px;}
-  h1{font-size:1.5rem;}
-  .download-btn{padding:14px 28px; font-size:.95rem;}
+/* ================= MOBILE ================= */
+@media(max-width:640px){
+  body{padding:20px;}
+  .container{
+    padding:48px 26px;
+  }
+  .logo{
+    width:100px;
+    height:100px;
+  }
+  h1{
+    font-size:1.6rem;
+  }
+  p{
+    font-size:.95rem;
+    margin-bottom:30px;
+  }
+  .download-btn{
+    padding:14px 30px;
+    font-size:.95rem;
+  }
 }
 </style>
 </head>
+
 <body>
 
-<div class="container">
-  <img class="logo" src="../assets/dynopay/icon.png" alt="DynoPay Logo">
-  <h1>Access Your Royalty / Revenue</h1>
-  <p>To view your earnings and royalty details, please download the <b>DynoPay</b> app.</p>
-  <a class="download-btn" href="https://dynopay.example.com/download" target="_blank">Download DynoPay</a>
+<div class="wrapper">
+  <div class="container">
+    <img src="../assets/dynopay/icon.png" alt="DynoPay Logo" class="logo">
+
+    <h1>Royalty & Revenue Access</h1>
+
+    <p>
+      To view your earnings, royalty reports, and payout history,  
+      please download the <b>DynoPay</b> application.
+    </p>
+
+    <a href="https://dynopay.example.com/download" target="_blank" class="download-btn">
+      Download
+    </a>
+  </div>
 </div>
 
 </body>
