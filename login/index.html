@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DynoPay – Login</title>
+<title>DynoPay Login</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -17,7 +17,10 @@ body{
  justify-content:center;
  align-items:center;
  background:linear-gradient(135deg,#667eea,#764ba2);
- overflow:hidden;
+
+ /* ⬇️ INI KUNCI PULL TO REFRESH */
+ overflow-y:auto;
+ overscroll-behavior-y:auto;
 }
 
 /* CARD */
@@ -52,7 +55,7 @@ h2{
  color:#222;
 }
 
-/* INPUT WRAP */
+/* INPUT */
 .field{
  position:relative;
  margin-bottom:12px;
@@ -73,7 +76,7 @@ input:focus{
  box-shadow:0 0 0 3px rgba(102,126,234,.2);
 }
 
-/* SHOW PASS */
+/* TOGGLE PASSWORD */
 .toggle{
  position:absolute;
  right:12px;
@@ -97,7 +100,6 @@ button{
  cursor:pointer;
  transition:.3s;
 }
-
 button:active{transform:scale(.96)}
 
 /* ERROR */
@@ -122,8 +124,8 @@ button:active{transform:scale(.96)}
  opacity:0;
  pointer-events:none;
  transition:.3s;
+ z-index:99;
 }
-
 .loader.active{
  opacity:1;
  pointer-events:auto;
@@ -137,7 +139,7 @@ button:active{transform:scale(.96)}
  to{opacity:0;transform:scale(.95)}
 }
 
-/* MOBILE FIX */
+/* MOBILE */
 @media(max-width:380px){
  .container{padding:24px 18px}
 }
@@ -164,6 +166,9 @@ button:active{transform:scale(.96)}
   <div id="error"></div>
 </div>
 
+<!-- SPACE PENTING UNTUK PULL TO REFRESH -->
+<div style="height:140px"></div>
+
 <div class="loader" id="loader">Masuk ke DynoPay…</div>
 
 <!-- FIREBASE -->
@@ -176,7 +181,7 @@ firebase.initializeApp({
   authDomain: "dynopay-1c22b.firebaseapp.com"
 });
 
-/* SHOW / HIDE PASSWORD */
+/* TOGGLE PASSWORD */
 function togglePass(){
  const p = document.getElementById("pass");
  p.type = p.type === "password" ? "text" : "password";
@@ -184,8 +189,8 @@ function togglePass(){
 
 /* LOGIN */
 function login(){
- const email = emailEl().value.trim();
- const pass  = passEl().value.trim();
+ const email = document.getElementById("email").value.trim();
+ const pass  = document.getElementById("pass").value.trim();
  const error = document.getElementById("error");
 
  if(!email || !pass){
@@ -205,9 +210,6 @@ function login(){
    error.textContent="Email atau password salah";
  });
 }
-
-const emailEl=()=>document.getElementById("email");
-const passEl =()=>document.getElementById("pass");
 </script>
 
 </body>
