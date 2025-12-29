@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saldo DynoPay</title>
+<title>DynoPay | Dynotic Collective</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -29,14 +29,16 @@ body{
 
 /* HEADER */
 header{
-  padding:18px 20px;
+  padding:12px 20px;
   display:flex;
-  justify-content:space-between;
+  justify-content:flex-start; /* icon ke kiri */
   align-items:center;
   background:white;
   border-bottom:1px solid #eee;
-  font-size:20px;
-  font-weight:600;
+}
+
+header img{
+  height:32px;
 }
 
 /* CARD */
@@ -81,7 +83,7 @@ header{
   border-radius:12px;
   box-shadow:0 6px 18px rgba(0,0,0,.12);
   display:none;
-  width:160px;
+  width:180px;
   z-index:10;
 }
 
@@ -141,7 +143,7 @@ header{
 <body>
 
 <header>
-  <div>DynoPay</div>
+  <img src="../assets/dynopay2.png" alt="DynoPay">
 </header>
 
 <!-- CARD -->
@@ -150,7 +152,6 @@ header{
     Saldo Dompet Utama
   </div>    
   <div id="saldo" class="card-value">Rp 0</div>
-  <!-- tombol logout dihapus -->
 </div>
 
 <div style="height:120px"></div>
@@ -194,32 +195,34 @@ firebase.initializeApp({
 
 const db = firebase.database();
 let targetSaldo = 0;
-let lastLoginTime = '--';
 
 /* PROTEKSI LOGIN */
 firebase.auth().onAuthStateChanged(user => {
   if(!user){
     window.location.href = "../login";
   }else{
-    db.ref("users/" + user.uid).once("value").then(snapshot=>{
+    const userRef = db.ref("users/" + user.uid);
+    userRef.on("value", snapshot=>{
       if(snapshot.exists()){
         const data = snapshot.val();
         targetSaldo = Number(data.saldo || 0);
-        lastLoginTime = data.lastLogin || '--';
         animateSaldo();
-        updateLastLogin();
+        updateLastLogin(data.lastLogin || '--');
       }else{
         document.getElementById("saldo").textContent = "User not found";
       }
     });
+
+    // Update last login setiap login
+    const now = new Date().toLocaleString();
+    userRef.update({lastLogin: now});
   }
 });
 
 /* ANIMASI SALDO */
 function animateSaldo(){
   let angka = 0;
-  const step = Math.ceil(targetSaldo / 50);
-
+  const step = Math.ceil(targetSaldo / 25); // lebih cepat
   const interval = setInterval(()=>{
     if(angka < targetSaldo){
       angka += step;
@@ -229,7 +232,7 @@ function animateSaldo(){
     }else{
       clearInterval(interval);
     }
-  },20);
+  },10); // lebih cepat
 }
 
 /* LOGOUT */
@@ -251,8 +254,8 @@ function toggleProfileMenu(){
 }
 
 /* UPDATE LAST LOGIN */
-function updateLastLogin(){
-  document.getElementById("lastLogin").textContent = "Last login: " + lastLoginTime;
+function updateLastLogin(time){
+  document.getElementById("lastLogin").textContent = "Last login: " + time;
 }
 </script>
 
