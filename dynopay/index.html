@@ -10,7 +10,7 @@
 body{background:#f1f2f7;min-height:100vh;color:#111;animation:fadeIn .5s ease;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
 header{padding:12px 20px;display:flex;align-items:center;background:white;border-bottom:1px solid #eee;}
-header img{height:50px;} /* logo diperbesar */
+header img{height:50px;}
 .card{width:90%;margin:35px auto;background:#fff;border-radius:20px;padding:25px;border:1px solid #ececec;box-shadow:0 8px 18px rgba(0,0,0,.05);transition:.3s;}
 .card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(0,0,0,.08);}
 .card-title{font-size:15px;opacity:.8;display:flex;align-items:center;gap:8px;margin-bottom:12px;}
@@ -55,7 +55,7 @@ header img{height:50px;} /* logo diperbesar */
     Dashboard
   </div>
   <div class="nav-item" onclick="goWithdraw()">
-    <img src="../assets/withdraw.png" alt="withdraw">
+    <img src="../assets/withdraw.png" alt="Withdraw">
     Withdraw
   </div>
   <div class="nav-item" onclick="toggleProfileMenu()">
@@ -80,14 +80,14 @@ const db = firebase.database();
 let targetSaldo = 0;
 let lastLoginTime = 0;
 
-/* PROTEKSI LOGIN */
 firebase.auth().onAuthStateChanged(user => {
   if(!user) window.location.href = "../login";
   else{
     db.ref("users/" + user.uid).once("value").then(snapshot=>{
       if(snapshot.exists()){
         const data = snapshot.val();
-        targetSaldo = Number(data.saldo || 0);
+        // pastikan saldo angka
+        targetSaldo = parseInt((data.saldo || "0").toString().trim(), 10);
         lastLoginTime = data.lastLogin || Date.now();
         animateSaldo();
         updateLastLogin();
@@ -99,10 +99,9 @@ firebase.auth().onAuthStateChanged(user => {
   }
 });
 
-/* ANIMASI SALDO CEPAT */
 function animateSaldo(){
   let angka = 0;
-  const step = Math.ceil(targetSaldo / 15); // lebih cepat
+  const step = Math.max(1, Math.floor(targetSaldo / 50));
   const interval = setInterval(()=>{
     if(angka < targetSaldo){
       angka += step;
@@ -110,26 +109,22 @@ function animateSaldo(){
       document.getElementById("saldo").textContent =
         "Rp " + angka.toLocaleString("id-ID");
     }else clearInterval(interval);
-  },15); // update tiap 15ms
+  },10);
 }
 
-/* LOGOUT */
 function logout(){
   firebase.auth().signOut().then(()=>{ window.location.href = "../login"; });
 }
 
-/* NAV FUNCTIONS */
-function goDashboard(){ window.location.href = "../dynopay"; } // langsung ke menu utama
+function goDashboard(){ window.location.href = "../dynopay"; }
 function goWithdraw(){ window.location.href = "../withdraw"; }
 function goSettings(){ alert("Go to Settings"); }
 
-/* PROFILE MENU TOGGLE */
 function toggleProfileMenu(){
   const menu = document.getElementById("profileMenu");
   menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
 
-/* LAST LOGIN REAL-TIME */
 function updateLastLogin(){
   const now = Date.now();
   const diff = now - lastLoginTime;
