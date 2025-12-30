@@ -1,286 +1,262 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dynotic Member</title>
+<title>Dynotic Collective</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:"Outfit",sans-serif;
-}
-
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif}
 body{
-  min-height:100vh;
   background:
-    radial-gradient(circle at 20% 20%, rgba(138,43,226,0.12), transparent 60%),
-    radial-gradient(circle at 80% 80%, rgba(168,85,247,0.10), transparent 60%),
+    radial-gradient(circle at 20% 20%, rgba(138,43,226,.18), transparent 60%),
+    radial-gradient(circle at 80% 80%, rgba(59,130,246,.18), transparent 60%),
     #000;
   color:#fff;
+  overflow-x:hidden;
 }
 
-/* ================= HEADER ================= */
+/* ===== ANIMATION ===== */
+.animate{
+  opacity:0;
+  transform:translateY(26px);
+  transition:opacity .9s ease, transform .9s ease;
+}
+.animate.show{
+  opacity:1;
+  transform:translateY(0);
+}
+.delay-1{transition-delay:.1s}
+.delay-2{transition-delay:.2s}
+.delay-3{transition-delay:.3s}
+.delay-4{transition-delay:.4s}
+.delay-5{transition-delay:.5s}
+
+/* ===== HEADER ===== */
 header{
-  position:fixed;
-  top:0; left:0;
-  width:100%;
-  padding:16px 20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:rgba(0,0,0,0.65);
-  border-bottom:1px solid rgba(255,255,255,0.08);
-  z-index:100;
+  padding:22px 32px;
+}
+header img{
+  height:36px;
+  width:auto;
+  display:block;
 }
 
-@media(min-width:769px){
-  header{ backdrop-filter: blur(14px); }
+/* ===== HERO ===== */
+.hero{
+  padding:90px 20px 70px;
+  text-align:center;
+  max-width:900px;
+  margin:auto;
 }
-
-header h1{
-  font-size:1.5rem;
+.hero h2{
+  font-size:3rem;
   font-weight:700;
+  margin-bottom:18px;
 }
-
-#search-input{
-  width:260px;
-  padding:10px 14px;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,0.15);
-  background:rgba(255,255,255,0.06);
+.hero p{
+  font-size:1.05rem;
+  opacity:.85;
+  line-height:1.6;
+}
+.hero button{
+  margin-top:34px;
+  padding:16px 42px;
+  border-radius:999px;
+  border:none;
+  cursor:pointer;
   color:#fff;
-  outline:none;
+  font-weight:600;
+  background:linear-gradient(135deg,#8b5cf6,#3b82f6);
+  box-shadow:0 0 30px rgba(139,92,246,.45);
 }
-#search-input::placeholder{color:#aaa;}
+.hero button:hover{
+  box-shadow:0 0 45px rgba(139,92,246,.7);
+}
 
-/* ================= MAIN ================= */
-main{
-  padding:110px 36px 130px;
+/* ===== SECTION ===== */
+section{
+  padding:80px 24px;
+  max-width:1200px;
+  margin:auto;
+}
+section h3{
+  text-align:center;
+  font-size:2.2rem;
+  margin-bottom:50px;
+}
+
+/* ===== FEATURES ===== */
+.features{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:20px;
+  gap:24px;
 }
-
-/* ================= CARD ================= */
-.menu-card{
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.14);
+.feature{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
   border-radius:22px;
-  padding:24px;
+  padding:26px;
+}
+.feature h4{margin-bottom:10px;font-size:1.2rem}
+.feature p{font-size:.95rem;opacity:.8;line-height:1.5}
+
+/* ===== REVIEWS ===== */
+.reviews{
+  position:relative;
+  overflow:hidden;
+  padding:0 10px;
+  mask-image:linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+}
+.review-track{
   display:flex;
-  gap:20px;
-  align-items:center;
-  cursor:pointer;
-  transition:transform .25s ease, background .25s ease;
-  will-change:transform;
-  animation:fadeUp .35s ease both;
+  gap:18px;
+  padding:20px 0;
+  scroll-snap-type:x mandatory;
+  overflow-x:auto;
+  scroll-behavior:smooth;
 }
+.review-track::-webkit-scrollbar{display:none}
+.review{
+  scroll-snap-align:center;
+  min-width:280px;
+  max-width:280px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:20px;
+  padding:20px;
+  transform:translateY(20px) scale(.96);
+}
+.review.show{transform:translateY(0) scale(1)}
+.review h5{font-size:1rem;margin-bottom:8px}
+.review span{font-size:.85rem;opacity:.75;line-height:1.5;display:block}
 
-@keyframes fadeUp{
-  from{opacity:0; transform:translateY(10px)}
-  to{opacity:1; transform:none}
-}
+/* ===== DOTS ===== */
+.dots{display:flex;justify-content:center;gap:8px;margin-top:18px}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3)}
+.dot.active{background:#8b5cf6}
 
-/* hover DESKTOP only */
-@media(min-width:769px){
-  .menu-card:hover{
-    background:rgba(168,85,247,0.16);
-    transform:translateY(-4px);
-  }
+/* ===== CONTACT ===== */
+.contact{text-align:center}
+.contact p{opacity:.8;margin-bottom:26px}
+.contact a{
+  display:inline-block;
+  padding:14px 36px;
+  border-radius:999px;
+  border:2px solid #8b5cf6;
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
 }
+.contact a:hover{background:#8b5cf6}
 
-/* ================= ICON ================= */
-.menu-icon{
-  width:64px;
-  height:64px;
-  border-radius:16px;
-  background:rgba(255,255,255,0.12);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-shrink:0;
-}
-.menu-icon img{
-  width:36px;
-  height:36px;
-}
-
-/* ================= TEXT ================= */
-.menu-details h2{
-  font-size:1.2rem;
-  margin-bottom:6px;
-}
-.menu-details p{
-  font-size:.9rem;
-  opacity:.75;
-}
-
-/* ================= FOOTER ================= */
+/* ===== FOOTER ===== */
 footer{
-  position:fixed;
-  bottom:0; left:0;
-  width:100%;
-  padding:12px 18px;
-  display:flex;
-  justify-content:space-around;
-  background:rgba(0,0,0,0.65);
-  border-top:1px solid rgba(255,255,255,0.08);
+  padding:30px 20px;
+  text-align:center;
+  opacity:.6;
+  font-size:.85rem;
 }
 
-@media(min-width:769px){
-  footer{ backdrop-filter: blur(14px); }
-}
-
-.footer-icon{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:4px;
-  font-size:.72rem;
-  opacity:.75;
-}
-
-.footer-icon img{
-  width:26px;
-  height:26px;
-  border-radius:50%;
-  background:rgba(255,255,255,0.1);
-  padding:6px;
-}
-
-.footer-icon.active{
-  opacity:1;
-}
-
-/* ================= MOBILE ================= */
-@media(max-width:768px){
-  main{
-    padding:110px 14px 150px;
-    gap:14px;
-  }
-  #search-input{width:160px}
-}
-
-@media(max-width:480px){
-  .menu-card{
-    padding:18px;
-    gap:14px;
-  }
-  .menu-icon{
-    width:50px;
-    height:50px;
-  }
-  .menu-icon img{
-    width:28px;
-    height:28px;
-  }
-  .menu-details h2{font-size:1rem}
-  .menu-details p{font-size:.8rem}
+/* ===== MOBILE ===== */
+@media(max-width:600px){
+  .hero h2{font-size:2.2rem}
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <h1>Dynotic Member</h1>
-  <input type="text" id="search-input" placeholder="Cari menu...">
+<header class="animate">
+  <img src="assets/dynoticlogo.png" alt="Dynotic Logo">
 </header>
 
-<main>
+<div class="hero animate delay-1">
+  <h2>Dynotic Collective</h2>
+  <p>
+    Unlock your potential, allow yourself to be heard and
+monetize your creativity
+  </p>
+  <button onclick="location.href='apply'">Apply Now</button>
+</div>
 
-  <div class="menu-card" onclick="location.href='https://forms.gle/BRm3MCgcQTN4DpAo6'">
-    <div class="menu-icon">
-      <img src="https://i.imgur.com/kZJHK5w.png">
-    </div>
-    <div class="menu-details">
-      <h2>Rilis Original</h2>
-      <p>Distribusi lagu original</p>
-    </div>
+<section class="animate">
+  <h3>What We Offer</h3>
+  <div class="features">
+    <div class="feature animate delay-1"><h4>Personal Manager</h4><p>We provide a personal manager who guides your growth and handles release planning.</p></div>
+    <div class="feature animate delay-2"><h4>Free Track Promotion</h4><p>High-quality organic promotion without cutting your royalties.</p></div>
+    <div class="feature animate delay-3"><h4>Help In Finishing Tracks</h4><p>Professional feedback and refinement to maximize your track’s results.</p></div>
+    <div class="feature animate delay-4"><h4>Development And Support</h4><p>Join a supportive artist community focused on long-term growth.</p></div>
+    <div class="feature animate delay-5"><h4>Free Cover Design</h4><p>Artwork and visuals provided 100% free by our design team.</p></div>
+    <div class="feature animate delay-3"><h4>Pitch a Release to Playlists</h4><p>Two-stage pitching: distribution-level and direct playlist editors.</p></div>
   </div>
+</section>
 
-  <div class="menu-card" onclick="location.href='https://forms.gle/1BJNzjs5yVjQLotD9'">
-    <div class="menu-icon">
-      <img src="https://i.imgur.com/6wLUh0j.png">
-    </div>
-    <div class="menu-details">
-      <h2>Rilis Katalog</h2>
-      <p>Cover & katalog publisher</p>
-    </div>
-  </div>
+<section class="animate">
+  <h3>What Artists Say</h3>
+  <div class="reviews">
+    <div class="review-track" id="track">
 
-  <div class="menu-card" onclick="location.href='login'">
-    <div class="menu-icon">
-      <img src="assets/dollars.png"> <!-- icon Royalti / DynoPay -->
-    </div>
-    <div class="menu-details">
-      <h2>Royalti / Revenue</h2>
-      <p>Lihat pendapatan & royalti musikmu</p>
-    </div>
-  </div>
+      <div class="review animate"><h5>Dryzz</h5><span>Dynotic really helped my music reach new listeners organically. The growth feels natural and transparent.</span></div>
+      <div class="review animate"><h5>heyDarryl</h5><span>The promotion feels real and consistent. I can focus fully on creating music.</span></div>
+      <div class="review animate"><h5>XDYNZ</h5><span>The support team actually listens and helps improve tracks before release.</span></div>
+      <div class="review animate"><h5>riruu</h5><span>Release process is smooth, clear, and stress-free from start to finish.</span></div>
+      <div class="review animate"><h5>Nozeki</h5><span>A good environment for indie artists who want to grow seriously.</span></div>
+      <div class="review animate"><h5>Rinawa</h5><span>Dynotic helped me understand branding, timing, and release strategy better.</span></div>
+      <div class="review animate"><h5>Lee</h5><span>Exposure increased gradually and consistently with real listeners.</span></div>
+      <div class="review animate"><h5>Ch1ppi</h5><span>Feels like working with people who actually care about the music.</span></div>
+      <div class="review animate"><h5>Bulan Anatasya</h5><span>The community is supportive and very welcoming for new artists.</span></div>
+      <div class="review animate"><h5>Catmood</h5><span>Professional, responsive, and transparent. A real label experience.</span></div>
 
-  <div class="menu-card" onclick="location.href='catalog'">
-    <div class="menu-icon">
-      <img src="https://i.imgur.com/eBRVJ8r.png">
-    </div>
-    <div class="menu-details">
-      <h2>Katalog</h2>
-      <p>Daftar publisher & skema</p>
     </div>
   </div>
+  <div class="dots" id="dots"></div>
+</section>
 
-  <div class="menu-card" onclick="location.href='holiday'">
-    <div class="menu-icon">
-      <img src="https://i.imgur.com/hYvP4vp.png">
-    </div>
-    <div class="menu-details">
-      <h2>Text to Music</h2>
-      <p>Generate musik AI</p>
-    </div>
-  </div>
+<section class="contact animate">
+  <h3>Contact</h3>
+  <p>Need more info or ready to work with Dynotic?</p>
+  <a href="faq2">Contact</a>
+</section>
 
-  <div class="menu-card" onclick="location.href='games'">
-    <div class="menu-icon">
-      <img src="https://i.imgur.com/Kn38R0c.png">
-    </div>
-    <div class="menu-details">
-      <h2>Games</h2>
-      <p>Mini games & fun</p>
-    </div>
-  </div>
-
-</main>
-
-<footer>
-  <div class="footer-icon active">
-    <img src="https://i.imgur.com/EoomL6q.png">
-    <span>Home</span>
-  </div>
-  <div class="footer-icon" onclick="location.href='faq2'">
-    <img src="https://i.imgur.com/texxYa0.gif">
-    <span>Nana</span>
-  </div>
-  <div class="footer-icon" onclick="location.href='maintenance'">
-    <img src="https://i.imgur.com/6hVaWxq.png">
-    <span>Profile</span>
-  </div>
+<footer class="animate">
+  © Dynotic Collective 2025
 </footer>
 
 <script>
-const cards = document.querySelectorAll('.menu-card');
-const search = document.getElementById('search-input');
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('show')}
+  })
+},{threshold:.15});
+document.querySelectorAll('.animate').forEach(el=>observer.observe(el));
 
-search.addEventListener('input', e=>{
-  const q = e.target.value.toLowerCase();
-  cards.forEach(c=>{
-    c.style.display = c.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
-  });
+const track=document.getElementById('track');
+const cards=document.querySelectorAll('.review');
+const dotsWrap=document.getElementById('dots');
+let index=0;
+
+cards.forEach((_,i)=>{
+  const d=document.createElement('div');
+  d.className='dot'+(i===0?' active':'');
+  dotsWrap.appendChild(d);
 });
+const dots=[...document.querySelectorAll('.dot')];
+
+function goTo(i){
+  track.scrollTo({
+    left:cards[i].offsetLeft-track.offsetWidth/2+cards[i].offsetWidth/2,
+    behavior:'smooth'
+  });
+  dots.forEach(d=>d.classList.remove('active'));
+  dots[i].classList.add('active');
+  index=i;
+}
+let auto=setInterval(()=>goTo((index+1)%cards.length),2800);
+track.addEventListener('touchstart',()=>clearInterval(auto));
+track.addEventListener('mousedown',()=>clearInterval(auto));
 </script>
 
 </body>
