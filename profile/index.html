@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile - DynoPay</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif;}
+body{background:#f1f2f7;min-height:100vh;color:#111;animation:fadeIn .5s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
+header{padding:12px 20px;display:flex;align-items:center;background:white;border-bottom:1px solid #eee;}
+header img{height:50px;}
+.profile-card{width:90%;margin:35px auto;background:#fff;border-radius:20px;padding:25px;border:1px solid #ececec;box-shadow:0 8px 18px rgba(0,0,0,.05);transition:.3s;}
+.profile-card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(0,0,0,.08);}
+.profile-photo{width:120px;height:120px;border-radius:50%;object-fit:cover;margin-bottom:20px;border:2px solid #111;cursor:pointer;}
+.profile-field{margin-bottom:15px;}
+.profile-field label{display:block;font-size:13px;color:#555;margin-bottom:4px;}
+.profile-field input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #ddd;background:#f7f7f7;color:#111;outline:none;}
+.profile-field input:focus{border-color:#111;}
+button.save-btn{background:#111;color:#fff;padding:12px 18px;border-radius:8px;border:none;cursor:pointer;font-weight:600;width:100%;}
+button.save-btn:hover{opacity:0.9;}
+#msg{margin-top:10px;font-weight:600;text-align:center;}
+.bottom-nav{background:#fff;border-top:1px solid #eee;padding:10px 0;display:flex;justify-content:space-around;align-items:center;position:fixed;bottom:0;left:0;width:100%;}
+.nav-item{text-align:center;font-size:13px;opacity:.75;cursor:pointer;padding:4px 14px;border-radius:12px;transition:.25s;}
+.nav-item img{width:28px;display:block;margin:auto;margin-bottom:4px;}
+.nav-item:active{background:#e9ebf3;transform:scale(.95);}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="../assets/dynopay2.png" alt="DynoPay">
+</header>
+
+<div class="profile-card">
+  <img id="profilePhoto" class="profile-photo" src="../assets/profile.png" alt="Profile Photo">
+
+  <div class="profile-field">
+    <label>Nama Artis</label>
+    <input type="text" id="profileName" readonly>
+  </div>
+
+  <div class="profile-field">
+    <label>Email</label>
+    <input type="text" id="profileEmail" readonly>
+  </div>
+
+  <div class="profile-field">
+    <label>Label</label>
+    <input type="text" id="profileLabel" value="Dynotic" readonly>
+  </div>
+
+  <input type="file" id="photoInput" accept="image/*" style="display:none;">
+  <button class="save-btn" onclick="savePhoto()">Simpan Profile</button>
+  <div id="msg"></div>
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item" onclick="goDashboard()">
+    <img id="iconDashboard" src="../assets/dasboard.png" alt="Dashboard">
+    Dashboard
+  </div>
+  <div class="nav-item" onclick="goWithdraw()">
+    <img id="iconWithdraw" src="../assets/withdraw.png" alt="Withdraw">
+    Withdraw
+  </div>
+  <div class="nav-item" onclick="goProfile()">
+    <img id="iconProfile" src="../assets/profile.png" alt="Profile">
+    Profile
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain: "dynopay-2513c.firebaseapp.com",
+  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app",
+  storageBucket: "dynopay-2513c.appspot.com"
+});
+
+const auth = firebase.auth();
+const db = firebase.database();
+const storage = firebase.storage();
+
+let selectedFile = null;
+
+/* LOAD PROFILE */
+auth.onAuthStateChanged(user => {
+  if(!user) window.location.href = "../login";
+  else {
+    db.ref("users/" + user.uid).once("value").then(snapshot=>{
+      if(snapshot.exists()){
+        const data = snapshot.val();
+        document.getElementById("profileName").value = data.nama;
+        document.getElementById("profileEmail").value = data.email;
+        if(data.photoURL) {
+          document.getElementById("profilePhoto").src = data.photoURL;
+          document.getElementById("iconProfile").src = data.photoURL;
+        }
+      }
+    });
+  }
+});
+
+/* PILIH FOTO LANGSUNG KLIK FOTO */
+document.getElementById("profilePhoto").addEventListener("click", () => {
+  document.getElementById("photoInput").click();
+});
+
+document.getElementById("photoInput").addEventListener("change", e => {
+  if(e.target.files[0]) {
+    selectedFile = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      document.getElementById("profilePhoto").src = ev.target.result;
+    }
+    reader.readAsDataURL(selectedFile);
+  }
+});
+
+/* SIMPAN FOTO KE FIREBASE */
+function savePhoto(){
+  if(!selectedFile){
+    document.getElementById("msg").textContent = "⚠ Pilih foto dulu!";
+    document.getElementById("msg").style.color = "red";
+    return;
+  }
+  const user = auth.currentUser;
+  const storageRef = storage.ref('profilePhotos/' + user.uid + '.png');
+  storageRef.put(selectedFile).then(()=> storageRef.getDownloadURL())
+  .then(url=>{
+    return db.ref("users/" + user.uid + "/photoURL").set(url).then(()=>url);
+  })
+  .then(url=>{
+    document.getElementById("iconProfile").src = url;
+    document.getElementById("msg").textContent = "✔ Profile berhasil disimpan!";
+    document.getElementById("msg").style.color = "green";
+  })
+  .catch(err=>{
+    document.getElementById("msg").textContent = "⚠ " + err.message;
+    document.getElementById("msg").style.color = "red";
+  });
+}
+
+/* NAVIGATION */
+function goDashboard(){ window.location.href = "../dynopay"; }
+function goWithdraw(){ window.location.href = "../withdraw"; }
+function goProfile(){ window.location.href = "../profile"; }
+</script>
+
+</body>
+</html>
