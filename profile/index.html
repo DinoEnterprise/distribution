@@ -17,8 +17,8 @@ header img{height:50px;}
 .input-group label{display:block;font-size:13px;margin-bottom:4px;opacity:.8;}
 .input-group input{width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;font-size:14px;outline:none;background:#f9f9f9;}
 .input-group input:focus{border-color:#111;background:#fff;}
-.profile-photo{width:120px;height:120px;border-radius:50%;object-fit:cover;cursor:pointer;border:2px solid #ddd;margin-bottom:12px;display:block;margin-left:auto;margin-right:auto;}
-button.save-btn{width:100%;padding:12px;background:#111;color:#fff;border:none;border-radius:10px;font-weight:600;cursor:pointer;margin-top:15px;}
+.profile-photo{width:120px;height:120px;border-radius:50%;object-fit:cover;cursor:pointer;border:2px solid #ddd;margin-bottom:12px;}
+button.save-btn{width:100%;padding:12px;background:#111;color:#fff;border:none;border-radius:10px;font-weight:600;cursor:pointer;margin-top:12px;}
 button.save-btn:hover{opacity:.9;}
 .bottom-nav{background:#fff;border-top:1px solid #eee;padding:10px 0;display:flex;justify-content:space-around;align-items:center;position:fixed;bottom:0;left:0;width:100%;}
 .nav-item{text-align:center;font-size:13px;opacity:.75;cursor:pointer;padding:4px 14px;border-radius:12px;transition:.25s;}
@@ -31,11 +31,13 @@ button.save-btn:hover{opacity:.9;}
   <img src="../assets/dynopay2.png" alt="DynoPay">
 </header>
 
+<!-- FOTO PROFIL -->
 <div class="card" style="text-align:center;">
   <img id="profilePhoto" class="profile-photo" src="../assets/profile.png" alt="Profile Photo" title="Klik untuk ganti foto">
   <input type="file" id="photoInput" style="display:none;">
 </div>
 
+<!-- INFO ARTIS -->
 <div class="card">
   <div class="card-title">Nama Artis</div>
   <div class="input-group">
@@ -52,6 +54,7 @@ button.save-btn:hover{opacity:.9;}
   <button class="save-btn" onclick="saveProfile()">Simpan Profile</button>
 </div>
 
+<!-- NAV BAWAH -->
 <div class="bottom-nav">
   <div class="nav-item" onclick="goDashboard()">
     <img src="../assets/dasboard.png" alt="Dashboard">
@@ -67,6 +70,7 @@ button.save-btn:hover{opacity:.9;}
   </div>
 </div>
 
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -91,6 +95,7 @@ auth.onAuthStateChanged(user=>{
   else loadProfile(user.uid);
 });
 
+// Load profile
 function loadProfile(uid){
   db.ref("users/"+uid).once("value").then(snap=>{
     if(snap.exists()){
@@ -129,12 +134,19 @@ function saveProfile(){
   const ext = selectedFile.name.split('.').pop();
   const storageRef = storage.ref("profilePhotos/"+user.uid+"."+ext);
 
-  storageRef.put(selectedFile).then(()=> storageRef.getDownloadURL()).then(url=>{
-    db.ref("users/"+user.uid+"/photoURL").set(url);
-    document.getElementById("navProfile").src = url;
-    alert("✔ Profile berhasil disimpan!");
-    selectedFile = null;
-  }).catch(err=>{
+  storageRef.put(selectedFile).then(() => storageRef.getDownloadURL())
+  .then(url => {
+    // tambahkan timestamp supaya browser refresh gambar
+    const newUrl = url + "?t=" + Date.now();
+    db.ref("users/"+user.uid+"/photoURL").set(url)
+    .then(()=>{
+      document.getElementById("profilePhoto").src = newUrl; // update foto utama
+      document.getElementById("navProfile").src = newUrl;    // update icon bawah
+      alert("✔ Profile berhasil disimpan!");
+      selectedFile = null;
+    });
+  })
+  .catch(err=>{
     alert("⚠ "+err.message);
   });
 }
