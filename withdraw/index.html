@@ -3,152 +3,192 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DynoPay | Withdraw</title>
+<title>Withdraw | DynoPay</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif;}
-body{background:#f1f2f7;min-height:100vh;color:#111;padding-bottom:120px;}
-header{height:60px; display:flex; align-items:center; background:#fff; border-bottom:1px solid #eee; padding:0 20px;}
-header img{height:36px;}
-.container{width:90%; max-width:400px; margin:20px auto;}
-.card{background:#fff; border-radius:20px; padding:25px; box-shadow:0 8px 18px rgba(0,0,0,.05); margin-bottom:20px;}
-h2{margin-bottom:10px;}
-.saldo-display{font-size:20px; font-weight:600; margin-bottom:15px;}
-input{width:100%;padding:14px 16px;margin-bottom:14px;border-radius:12px;border:1px solid #ddd;font-size:14px;}
-button{width:100%;padding:14px;border:none;border-radius:14px;background:linear-gradient(90deg,#667eea,#764ba2);color:#fff;font-weight:700;cursor:pointer;transition:.2s;}
-button:active{transform:scale(.97);}
-#message{margin-top:12px;font-size:14px;color:#111;text-align:center;}
-.bottom-nav{background:#fff;border-top:1px solid #eee; padding:10px 0; display:flex; justify-content:space-around; align-items:center; position:fixed; bottom:0; left:0; width:100%;}
-.nav-item{text-align:center;font-size:13px;opacity:.75;cursor:pointer;padding:4px 14px;border-radius:12px;transition:.25s;}
-.nav-item img{width:28px; display:block; margin:auto; margin-bottom:4px;}
-.nav-item:active{background:#e9ebf3;transform:scale(.95);}
-.profile-menu{position:fixed;bottom:60px;right:20px;width:160px;background:#fff;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.12);display:none;z-index:10;}
-.profile-menu div{padding:12px 14px;cursor:pointer;border-bottom:1px solid #eee;font-size:14px;}
-.profile-menu div:last-child{border-bottom:none;}
-.profile-menu div:hover{background:#f1f2f7;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
+body{background:#f1f2f7;min-height:100vh;color:#111;animation:fadeIn .5s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
+
+header{padding:12px 20px;display:flex;align-items:center;background:white;border-bottom:1px solid #eee;}
+header img{height:50px;}
+
+.card{
+width:90%;
+margin:20px auto;
+background:#fff;
+border-radius:20px;
+padding:25px;
+border:1px solid #ececec;
+box-shadow:0 8px 18px rgba(0,0,0,.05);
+}
+
+input,button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:12px;
+border:1px solid #ddd;
+font-size:14px;
+}
+
+button{
+background:#111;
+color:#fff;
+border:none;
+font-weight:600;
+cursor:pointer;
+}
+
+.badge{
+padding:4px 10px;
+border-radius:20px;
+font-size:12px;
+color:#fff;
+}
+
+.pending{background:#f59e0b;}
+.approved{background:#10b981;}
+
+.item{
+border-bottom:1px solid #eee;
+padding:12px 0;
+}
+
+.bottom-nav{
+background:#fff;
+border-top:1px solid #eee;
+padding:10px 0;
+display:flex;
+justify-content:space-around;
+align-items:center;
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+}
+
+.nav-item{text-align:center;font-size:13px;opacity:.75;cursor:pointer;}
+.nav-item img{width:28px;display:block;margin:auto;margin-bottom:4px;}
 </style>
 </head>
+
 <body>
 
 <header>
-  <img src="../assets/dynopay2.png" alt="DynoPay">
+<img src="../assets/dynopay2.png">
 </header>
 
-<div class="container">
-  <div class="card">
-    <div class="saldo-display" id="saldo">Saldo: Rp 0</div>
-    <h2>Withdraw Request</h2>
-    <input type="text" id="name" placeholder="Name">
-    <input type="text" id="bank" placeholder="Bank / E-Wallet">
-    <input type="text" id="account" placeholder="Account Number">
-    <input type="number" id="amount" placeholder="Amount (Min 50.000)">
-    <button onclick="submitWithdraw()">Request</button>
-    <div id="message"></div>
-  </div>
+<!-- FORM -->
+<div class="card">
+<h3>Withdraw</h3>
+<small>Minimal Rp 50.000</small>
+
+<div id="saldoText" style="margin-top:10px;font-weight:600"></div>
+
+<input id="bank" placeholder="Nama Bank / E-Wallet">
+<input id="rek" placeholder="Nomor Rekening">
+<input id="nama" placeholder="Nama Pemilik Rekening">
+
+<input id="jumlah" disabled>
+
+<button onclick="requestWD()">Request Withdraw</button>
 </div>
 
-<!-- BOTTOM NAV -->
+<!-- RIWAYAT -->
+<div class="card">
+<h3>Riwayat Withdraw</h3>
+<div id="list"></div>
+</div>
+
+<div style="height:120px"></div>
+
+<!-- NAV -->
 <div class="bottom-nav">
-  <div class="nav-item" onclick="goDashboard()">
-    <img src="../assets/dasboard.png" alt="Dashboard">
-    Dashboard
-  </div>
-  <div class="nav-item" onclick="goWithdraw()">
-    <img src="../assets/withdraw.png" alt="Withdraw">
-    Withdraw
-  </div>
-  <div class="nav-item" onclick="toggleProfileMenu()">
-    <img src="../assets/profile.png" alt="Profile">
-    Profile
-  </div>
+<div class="nav-item" onclick="goDashboard()">
+<img src="../assets/dasboard.png">Dashboard
+</div>
+<div class="nav-item">
+<img src="../assets/withdraw.png">Withdraw
+</div>
+<div class="nav-item">
+<img src="../assets/profile.png">Profile
+</div>
 </div>
 
-<!-- PROFILE MENU -->
-<div id="profileMenu" class="profile-menu">
-  <div onclick="goSettings()">Settings</div>
-  <div onclick="logout()">Log Out</div>
-</div>
-
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <script>
 firebase.initializeApp({
-  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain: "dynopay-2513c.firebaseapp.com",
-  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+authDomain:"dynopay-2513c.firebaseapp.com",
+databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 
 const db = firebase.database();
-let userSaldo = 0;
+let saldo=0,uid="";
 
-// proteksi login
 firebase.auth().onAuthStateChanged(user=>{
-  if(!user) window.location.href="../login";
-  else{
-    db.ref("users/" + user.uid).once("value").then(snap=>{
-      if(snap.exists()) userSaldo = Number(snap.val().saldo || 0);
-      updateSaldoDisplay();
-    });
-  }
+if(!user) location.href="../login";
+uid=user.uid;
+
+db.ref("users/"+uid).on("value",s=>{
+saldo=Number(s.val().saldo||0);
+saldoText.innerText="Saldo tersedia: Rp "+saldo.toLocaleString("id-ID");
+jumlah.value="Rp "+saldo.toLocaleString("id-ID");
 });
 
-// update saldo di layar
-function updateSaldoDisplay(){
-  document.getElementById("saldo").textContent = "Saldo: Rp " + userSaldo.toLocaleString("id-ID");
+loadHistory();
+});
+
+function requestWD(){
+if(saldo<50000){
+alert("Minimal withdraw Rp 50.000");
+return;
 }
 
-// submit withdraw
-function submitWithdraw(){
-  const name = document.getElementById("name").value.trim();
-  const bank = document.getElementById("bank").value.trim();
-  const account = document.getElementById("account").value.trim();
-  const amount = Number(document.getElementById("amount").value);
-  const message = document.getElementById("message");
-
-  if(!name || !bank || !account || !amount){
-    message.textContent="All fields are required.";
-    return;
-  }
-  if(amount < 50000){
-    message.textContent="Minimum withdrawal is 50.000";
-    return;
-  }
-  if(amount > userSaldo){
-    message.textContent="Insufficient balance";
-    return;
-  }
-
-  const user = firebase.auth().currentUser;
-  if(!user) return;
-
-  db.ref("withdrawals").push({
-    userId: user.uid,
-    name:name,
-    bank:bank,
-    accountNumber:account,
-    amount:amount,
-    status:"pending",
-    timestamp:Date.now()
-  }).then(()=>{
-    message.textContent="Withdraw request submitted!";
-    document.getElementById("name").value="";
-    document.getElementById("bank").value="";
-    document.getElementById("account").value="";
-    document.getElementById("amount").value="";
-  }).catch(err=>message.textContent="Error: "+err.message);
+if(!bank.value||!rek.value||!nama.value){
+alert("Lengkapi semua data!");
+return;
 }
 
-// nav functions
-function goDashboard(){ window.location.href="../dynopay"; }
-function goWithdraw(){ window.location.href="./"; }
-function goSettings(){ alert("Go to Settings"); }
-function toggleProfileMenu(){
-  const menu = document.getElementById("profileMenu");
-  menu.style.display = menu.style.display==="block"?"none":"block";
+const id=Date.now();
+
+db.ref("withdraws/"+uid+"/"+id).set({
+bank:bank.value,
+rekening:rek.value,
+nama:nama.value,
+jumlah:saldo,
+status:"pending",
+waktu:Date.now()
+});
+
+alert("Request withdraw dikirim!");
 }
-function logout(){ firebase.auth().signOut().then(()=>{window.location.href="../login";}); }
+
+function loadHistory(){
+db.ref("withdraws/"+uid).on("value",s=>{
+list.innerHTML="";
+s.forEach(x=>{
+const d=x.val();
+list.innerHTML+=`
+<div class="item">
+<b>${d.bank}</b><br>
+Rp ${d.jumlah.toLocaleString("id-ID")}
+<span class="badge ${d.status}">
+${d.status.toUpperCase()}
+</span>
+</div>`;
+});
+});
+}
+
+function goDashboard(){location.href="../dynopay";}
 </script>
 
 </body>
