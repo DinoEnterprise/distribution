@@ -14,12 +14,9 @@ header img{height:50px;}
 .card{width:90%;margin:25px auto;background:#fff;border-radius:20px;padding:25px;border:1px solid #ececec;box-shadow:0 8px 18px rgba(0,0,0,.05);}
 .card-title{font-size:16px;font-weight:600;opacity:.8;margin-bottom:12px;}
 .input-group{margin-bottom:15px;}
-.input-group label{display:block;font-size:13px;margin-bottom:4px;opacity:.8;}
 .input-group input{width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;font-size:14px;outline:none;background:#f9f9f9;}
-.input-group input:focus{border-color:#111;background:#fff;}
-.profile-photo{width:120px;height:120px;border-radius:50%;object-fit:cover;cursor:pointer;border:2px solid #ddd;margin-bottom:12px;}
-button.save-btn{width:100%;padding:12px;background:#111;color:#fff;border:none;border-radius:10px;font-weight:600;cursor:pointer;margin-top:12px;}
-button.save-btn:hover{opacity:.9;}
+.input-group input:focus{border-color:#111;background:#f9f9f9;}
+.profile-photo{width:120px;height:120px;border-radius:50%;object-fit:cover;border:2px solid #ddd;margin-bottom:12px;pointer-events:none;}
 .bottom-nav{background:#fff;border-top:1px solid #eee;padding:10px 0;display:flex;justify-content:space-around;align-items:center;position:fixed;bottom:0;left:0;width:100%;}
 .nav-item{text-align:center;font-size:13px;opacity:.75;cursor:pointer;padding:4px 14px;border-radius:12px;transition:.25s;}
 .nav-item img{width:28px;display:block;margin:auto;margin-bottom:4px;border-radius:50%;}
@@ -31,13 +28,12 @@ button.save-btn:hover{opacity:.9;}
   <img src="../assets/dynopay2.png" alt="DynoPay">
 </header>
 
-<!-- FOTO PROFIL -->
+<!-- FOTO PROFIL READ-ONLY -->
 <div class="card" style="text-align:center;">
-  <img id="profilePhoto" class="profile-photo" src="../assets/profile.png" alt="Profile Photo" title="Klik untuk ganti foto">
-  <input type="file" id="photoInput" style="display:none;">
+  <img id="profilePhoto" class="profile-photo" src="../assets/profile.png" alt="Profile Photo">
 </div>
 
-<!-- INFO ARTIS -->
+<!-- INFO ARTIS READ-ONLY -->
 <div class="card">
   <div class="card-title">Nama Artis</div>
   <div class="input-group">
@@ -51,7 +47,6 @@ button.save-btn:hover{opacity:.9;}
   <div class="input-group">
     <input type="text" id="label" readonly value="Dynotic">
   </div>
-  <button class="save-btn" onclick="saveProfile()">Simpan Profile</button>
 </div>
 
 <!-- NAV BAWAH -->
@@ -64,7 +59,7 @@ button.save-btn:hover{opacity:.9;}
     <img src="../assets/withdraw.png" alt="Withdraw">
     Withdraw
   </div>
-  <div class="nav-item" onclick="goProfile()">
+  <div class="nav-item">
     <img id="navProfile" src="../assets/profile.png" alt="Profile">
     Profile
   </div>
@@ -74,20 +69,16 @@ button.save-btn:hover{opacity:.9;}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
 <script>
 firebase.initializeApp({
   apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
   authDomain:"dynopay-2513c.firebaseapp.com",
-  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app",
-  storageBucket:"dynopay-2513c.appspot.com"
+  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 
 const auth = firebase.auth();
 const db = firebase.database();
-const storage = firebase.storage();
-let selectedFile = null;
 
 // Proteksi login
 auth.onAuthStateChanged(user=>{
@@ -108,53 +99,9 @@ function loadProfile(uid){
   });
 }
 
-// Klik foto untuk ganti
-document.getElementById("profilePhoto").addEventListener("click", ()=>{
-  document.getElementById("photoInput").click();
-});
-
-document.getElementById("photoInput").addEventListener("change", e=>{
-  selectedFile = e.target.files[0];
-  if(selectedFile){
-    const reader = new FileReader();
-    reader.onload = function(ev){
-      document.getElementById("profilePhoto").src = ev.target.result;
-    }
-    reader.readAsDataURL(selectedFile);
-  }
-});
-
-// Simpan profile (upload foto)
-function saveProfile(){
-  if(!selectedFile){
-    alert("⚠ Tidak ada foto yang dipilih!");
-    return;
-  }
-  const user = auth.currentUser;
-  const ext = selectedFile.name.split('.').pop();
-  const storageRef = storage.ref("profilePhotos/"+user.uid+"."+ext);
-
-  storageRef.put(selectedFile).then(() => storageRef.getDownloadURL())
-  .then(url => {
-    // tambahkan timestamp supaya browser refresh gambar
-    const newUrl = url + "?t=" + Date.now();
-    db.ref("users/"+user.uid+"/photoURL").set(url)
-    .then(()=>{
-      document.getElementById("profilePhoto").src = newUrl; // update foto utama
-      document.getElementById("navProfile").src = newUrl;    // update icon bawah
-      alert("✔ Profile berhasil disimpan!");
-      selectedFile = null;
-    });
-  })
-  .catch(err=>{
-    alert("⚠ "+err.message);
-  });
-}
-
 // Navigasi
 function goDashboard(){ window.location.href="../dynopay"; }
 function goWithdraw(){ window.location.href="../withdraw"; }
-function goProfile(){ window.location.href="../profile"; }
 </script>
 </body>
 </html>
