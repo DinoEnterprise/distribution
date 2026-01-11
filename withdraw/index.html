@@ -4,116 +4,171 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Withdraw | DynoPay</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
-body{background:#f1f2f7;min-height:100vh;color:#111;animation:fadeIn .5s ease;}
+body{background:#f1f2f7;min-height:100vh;color:#111;animation:fadeIn .5s ease;-webkit-tap-highlight-color:transparent;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
 
 header{padding:12px 20px;display:flex;align-items:center;background:white;border-bottom:1px solid #eee;}
 header img{height:50px;}
 
 .card{
-width:90%;
-margin:20px auto;
-background:#fff;
-border-radius:20px;
-padding:25px;
-border:1px solid #ececec;
-box-shadow:0 8px 18px rgba(0,0,0,.05);
+  width:90%;
+  margin:20px auto;
+  background:#fff;
+  border-radius:20px;
+  padding:25px;
+  border:1px solid #ececec;
+  box-shadow:0 8px 18px rgba(0,0,0,.05);
+  transition:.3s;
 }
+.card:hover{transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,.07);}
 
 input,button{
-width:100%;
-padding:12px;
-margin-top:10px;
-border-radius:12px;
-border:1px solid #ddd;
-font-size:14px;
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  font-size:14px;
+  outline:none;
+  -webkit-tap-highlight-color:transparent;
+  transition:.15s ease;
 }
+input:active, input:focus{border-color:#667eea; filter:brightness(95%);}
 
 button{
-background:#111;
-color:#fff;
-border:none;
-font-weight:600;
-cursor:pointer;
+  background:#111;
+  color:#fff;
+  border:none;
+  font-weight:600;
+  cursor:pointer;
 }
+button:hover{filter:brightness(90%);}
+button:active{transform:scale(0.94); filter:brightness(70%); box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);}
 
+/* Badge */
 .badge{
-padding:4px 10px;
-border-radius:20px;
-font-size:12px;
-color:#fff;
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:12px;
+  color:#fff;
 }
-
 .pending{background:#f59e0b;}
 .approved{background:#10b981;}
 
+/* Withdraw history */
 .item{
-border-bottom:1px solid #eee;
-padding:12px 0;
+  border-bottom:1px solid #eee;
+  padding:12px 0;
 }
 
+/* NAV */
 .bottom-nav{
-background:#fff;
-border-top:1px solid #eee;
-padding:10px 0;
-display:flex;
-justify-content:space-around;
-align-items:center;
-position:fixed;
-bottom:0;
-left:0;
-width:100%;
+  background:#fff;
+  border-top:1px solid #eee;
+  padding:10px 0;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  position:fixed;
+  bottom:0; left:0; width:100%;
+}
+.nav-item{
+  text-align:center;
+  font-size:13px;
+  opacity:.75;
+  cursor:pointer;
+  padding:4px 14px;
+  border-radius:12px;
+  transition:.12s ease;
+  outline:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.nav-item img{width:28px;display:block;margin:auto;margin-bottom:4px;}
+.nav-item:hover{opacity:1;}
+.nav-item:active{
+  transform:scale(0.94);
+  filter:brightness(85%);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);
 }
 
-.nav-item{text-align:center;font-size:13px;opacity:.75;cursor:pointer;}
-.nav-item img{width:28px;display:block;margin:auto;margin-bottom:4px;}
+/* General clickable class */
+.clickable{
+  cursor:pointer;
+  transition: transform 0.12s, filter 0.12s, box-shadow 0.12s;
+}
+.clickable:active{
+  transform:scale(0.94);
+  filter:brightness(85%);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Profile menu */
+.profile-menu{
+  position:fixed;
+  bottom:60px;
+  right:20px;
+  width:180px;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 6px 18px rgba(0,0,0,.12);
+  z-index:10;
+  display:none;
+}
+.profile-menu div{
+  padding:12px 14px;
+  border-bottom:1px solid #eee;
+  font-size:14px;
+}
+.profile-menu div:last-child{border-bottom:none;}
+.profile-menu div:hover{background:#f1f2f7;}
 </style>
 </head>
-
 <body>
 
 <header>
-<img src="../assets/dynopay2.png">
+<img src="../assets/dynopay2.png" alt="DynoPay">
 </header>
 
-<!-- FORM -->
-<div class="card">
+<!-- Withdraw Form -->
+<div class="card clickable">
 <h3>Withdraw</h3>
 <small>Minimal Rp 50.000</small>
-
 <div id="saldoText" style="margin-top:10px;font-weight:600"></div>
 
-<input id="bank" placeholder="Nama Bank / E-Wallet">
-<input id="rek" placeholder="Nomor Rekening">
-<input id="nama" placeholder="Nama Pemilik Rekening">
-
+<input id="bank" placeholder="Nama Bank / E-Wallet" class="clickable">
+<input id="rek" placeholder="Nomor Rekening" class="clickable">
+<input id="nama" placeholder="Nama Pemilik Rekening" class="clickable">
 <input id="jumlah" disabled>
 
-<button onclick="requestWD()">Request Withdraw</button>
+<button onclick="requestWD()" class="clickable">Request Withdraw</button>
 </div>
 
-<!-- RIWAYAT -->
-<div class="card">
+<!-- Withdraw History -->
+<div class="card clickable">
 <h3>Riwayat Withdraw</h3>
 <div id="list"></div>
 </div>
 
 <div style="height:120px"></div>
 
-<!-- NAV -->
+<!-- Profile Menu -->
+<div id="profileMenu" class="profile-menu clickable">
+  <div onclick="goProfile()" class="clickable">Profile</div>
+  <div onclick="logout()" class="clickable">Log Out</div>
+</div>
+
+<!-- Bottom Nav -->
 <div class="bottom-nav">
-<div class="nav-item" onclick="goDashboard()">
+<div class="nav-item clickable" onclick="goDashboard()">
 <img src="../assets/dasboard.png">Dashboard
 </div>
-<div class="nav-item">
+<div class="nav-item clickable">
 <img src="../assets/withdraw.png">Withdraw
 </div>
-<div class="nav-item">
+<div class="nav-item clickable" onclick="toggleProfileMenu()">
 <img src="../assets/profile.png">Profile
 </div>
 </div>
@@ -122,7 +177,6 @@ width:100%;
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <script>
 firebase.initializeApp({
 apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
@@ -137,28 +191,22 @@ firebase.auth().onAuthStateChanged(user=>{
 if(!user) location.href="../login";
 uid=user.uid;
 
+// load saldo
 db.ref("users/"+uid).on("value",s=>{
 saldo=Number(s.val().saldo||0);
 saldoText.innerText="Saldo tersedia: Rp "+saldo.toLocaleString("id-ID");
 jumlah.value="Rp "+saldo.toLocaleString("id-ID");
 });
 
+// load history
 loadHistory();
 });
 
 function requestWD(){
-if(saldo<50000){
-alert("Minimal withdraw Rp 50.000");
-return;
-}
-
-if(!bank.value||!rek.value||!nama.value){
-alert("Lengkapi semua data!");
-return;
-}
+if(saldo<50000){alert("Minimal withdraw Rp 50.000"); return;}
+if(!bank.value||!rek.value||!nama.value){alert("Lengkapi semua data!"); return;}
 
 const id=Date.now();
-
 db.ref("withdraws/"+uid+"/"+id).set({
 bank:bank.value,
 rekening:rek.value,
@@ -167,7 +215,6 @@ jumlah:saldo,
 status:"pending",
 waktu:Date.now()
 });
-
 alert("Request withdraw dikirim!");
 }
 
@@ -177,7 +224,7 @@ list.innerHTML="";
 s.forEach(x=>{
 const d=x.val();
 list.innerHTML+=`
-<div class="item">
+<div class="item clickable">
 <b>${d.bank}</b><br>
 Rp ${d.jumlah.toLocaleString("id-ID")}
 <span class="badge ${d.status}">
@@ -188,6 +235,15 @@ ${d.status.toUpperCase()}
 });
 }
 
+// Profile menu functions
+function toggleProfileMenu(){
+const menu = document.getElementById("profileMenu");
+menu.style.display = menu.style.display==="block" ? "none" : "block";
+}
+function goProfile(){location.href="../profile";}
+function logout(){firebase.auth().signOut().then(()=>location.href="../login");}
+
+// Go dashboard
 function goDashboard(){location.href="../dynopay";}
 </script>
 
