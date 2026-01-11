@@ -252,7 +252,8 @@ function toggleProfileMenu(){
 const menu = document.getElementById("profileMenu");
 menu.classList.toggle("show");
 }
-function goProfile(){ /* tetap di halaman Withdraw */ }
+function goProfile(){location.href = "../profile";
+}
 function logout(){firebase.auth().signOut().then(()=>location.href="../login");}
 
 // Go dashboard
