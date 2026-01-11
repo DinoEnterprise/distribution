@@ -39,13 +39,12 @@ header img{height:50px;}
   border-bottom:1px solid #eee;
   font-size:14px;
   transition:.2s;
-  outline:none; /* hilangkan outline default */
+  outline:none; /* hapus outline biru browser */
 }
 .profile-menu div:last-child{border-bottom:none;}
 .profile-menu div:hover{background:#f1f2f7;}
 .profile-menu div:active{
-  outline:1px solid #667eea;
-  outline-offset:2px;
+  border:1px solid #667eea; /* stroke tipis biru */
   transform:scale(.97);
 }
 
@@ -71,8 +70,8 @@ header img{height:50px;}
 }
 .nav-item img{width:28px;display:block;margin:auto;margin-bottom:4px;}
 .nav-item:active{
-  outline:1px solid #667eea;
-  outline-offset:2px;
+  border:1px solid #667eea; /* stroke tipis biru */
+  border-radius:12px;
   transform:scale(.97);
 }
 
@@ -90,8 +89,8 @@ button{
   outline:none; /* hilangkan outline default */
 }
 button:active{
-  outline:1px solid #667eea;
-  outline-offset:2px;
+  border:1px solid #667eea; /* stroke tipis biru */
+  border-radius:14px;
   transform:scale(.97);
 }
 </style>
@@ -181,23 +180,13 @@ function logout(){
   });
 }
 
-function goDashboard(){
-  window.location.href = "../dynopay";
-}
-
-function goWithdraw(){
-  window.location.href = "../withdraw";
-}
-
-function goProfile(){
-  window.location.href = "../profile";
-}
-
+function goDashboard(){window.location.href = "../dynopay";}
+function goWithdraw(){window.location.href = "../withdraw";}
+function goProfile(){window.location.href = "../profile";}
 function toggleProfileMenu(){
   const menu = document.getElementById("profileMenu");
   menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
 </script>
-
 </body>
 </html>
