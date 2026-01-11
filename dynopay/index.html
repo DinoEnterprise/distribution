@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DynoPay | Dynotic Collective</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
 body{background:#f1f2f7;min-height:100vh;color:#111;animation:fadeIn .5s ease;}
@@ -14,43 +13,99 @@ body{background:#f1f2f7;min-height:100vh;color:#111;animation:fadeIn .5s ease;}
 header{padding:12px 20px;display:flex;align-items:center;background:white;border-bottom:1px solid #eee;}
 header img{height:50px;}
 
-.card{width:90%;margin:35px auto;background:#fff;border-radius:20px;padding:25px;border:1px solid #ececec;box-shadow:0 8px 18px rgba(0,0,0,.05);transition:.3s;}
+.card{
+  width:90%;
+  margin:35px auto;
+  background:#fff;
+  border-radius:20px;
+  padding:25px;
+  border:1px solid #ececec;
+  box-shadow:0 8px 18px rgba(0,0,0,.05);
+  transition:.3s;
+}
 .card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(0,0,0,.08);}
 
 .artist-name{font-size:15px;font-weight:500;color:#555;margin-bottom:6px;}
 .balance-title{font-size:15px;font-weight:600;color:#222;margin-bottom:10px;}
 .card-value{font-size:33px;font-weight:700;color:#111;margin-bottom:15px;}
 
-.profile-menu{position:fixed;bottom:60px;right:20px;background:#fff;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.12);display:none;width:180px;z-index:10;}
-.profile-menu div{padding:12px 14px;cursor:pointer;border-bottom:1px solid #eee;font-size:14px;transition:.2s;}
+.profile-menu{
+  position:fixed;bottom:60px;right:20px;background:#fff;border-radius:12px;
+  box-shadow:0 6px 18px rgba(0,0,0,.12);display:none;width:180px;z-index:10;
+}
+.profile-menu div{
+  padding:12px 14px;
+  cursor:pointer;
+  border-bottom:1px solid #eee;
+  font-size:14px;
+  transition:.2s;
+  outline:none; /* hilangkan outline default */
+}
 .profile-menu div:last-child{border-bottom:none;}
 .profile-menu div:hover{background:#f1f2f7;}
+.profile-menu div:active{
+  outline:1px solid #667eea;
+  outline-offset:2px;
+  transform:scale(.97);
+}
 
-.bottom-nav{background:#fff;border-top:1px solid #eee;padding:10px 0;display:flex;justify-content:space-around;align-items:center;position:fixed;bottom:0;left:0;width:100%;}
-.nav-item{text-align:center;font-size:13px;opacity:.75;cursor:pointer;padding:4px 14px;border-radius:12px;transition:.25s;}
+.bottom-nav{
+  background:#fff;
+  border-top:1px solid #eee;
+  padding:10px 0;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  position:fixed;
+  bottom:0;left:0;width:100%;
+}
+.nav-item{
+  text-align:center;
+  font-size:13px;
+  opacity:.75;
+  cursor:pointer;
+  padding:4px 14px;
+  border-radius:12px;
+  transition:.25s;
+  outline:none; /* hilangkan outline default */
+}
 .nav-item img{width:28px;display:block;margin:auto;margin-bottom:4px;}
+.nav-item:active{
+  outline:1px solid #667eea;
+  outline-offset:2px;
+  transform:scale(.97);
+}
 
-/* STROKE EFFECT ON FOCUS / ACTIVE */
-.nav-item:focus, .nav-item:active,
-.profile-menu div:focus, .profile-menu div:active {
-  outline: 2px solid #667eea;
-  outline-offset: 2px;
-  transform: scale(.97);
-  background:transparent;
+button{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:14px;
+  font-size:16px;
+  font-weight:700;
+  color:#fff;
+  background:linear-gradient(90deg,#667eea,#764ba2);
+  cursor:pointer;
+  transition:.2s;
+  outline:none; /* hilangkan outline default */
+}
+button:active{
+  outline:1px solid #667eea;
+  outline-offset:2px;
+  transform:scale(.97);
 }
 </style>
 </head>
-
 <body>
 
 <header>
   <img src="../assets/dynopay2.png" alt="DynoPay">
 </header>
 
-<!-- DASHBOARD CARD -->
+<!-- CARD -->
 <div class="card">
   <div id="namaArtis" class="artist-name">Hi, --</div>
-  <div class="balance-title">Main Wallet Balance</div>
+  <div class="balance-title">Main Wallet Balance</div>      
   <div id="saldo" class="card-value">Rp 0</div>
 </div>
 
@@ -82,7 +137,6 @@ header img{height:50px;}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <script>
 firebase.initializeApp({
   apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
@@ -93,47 +147,56 @@ firebase.initializeApp({
 const db = firebase.database();
 let targetSaldo = 0;
 
-/* DASHBOARD AUTOFILL */
-firebase.auth().onAuthStateChanged(user=>{
-  if(!user) return window.location.href="../login"; // redirect kalau belum login
-  db.ref("users/" + user.uid).once("value").then(snapshot=>{
-    if(snapshot.exists()){
-      const data = snapshot.val();
-      targetSaldo = Number(data.saldo || 0);
-      document.getElementById("namaArtis").textContent = "Hi, " + (data.nama || "Artist");
-      animateSaldo();
-    }
-  });
+firebase.auth().onAuthStateChanged(user => {
+  if(!user) window.location.href = "../login";
+  else{
+    db.ref("users/" + user.uid).once("value").then(snapshot=>{
+      if(snapshot.exists()){
+        const data = snapshot.val();
+        targetSaldo = Number(data.saldo || 0);
+        document.getElementById("namaArtis").textContent =
+          "Hi, " + (data.nama || "Artist");
+        animateSaldo();
+      }
+    });
+  }
 });
 
-/* ANIMATE SALDO */
 function animateSaldo(){
   let angka = 0;
-  const step = Math.ceil(targetSaldo/15);
+  const step = Math.ceil(targetSaldo / 15);
   const interval = setInterval(()=>{
     if(angka < targetSaldo){
       angka += step;
-      if(angka>targetSaldo) angka = targetSaldo;
-      document.getElementById("saldo").textContent = "Rp " + angka.toLocaleString("id-ID");
+      if(angka > targetSaldo) angka = targetSaldo;
+      document.getElementById("saldo").textContent =
+        "Rp " + angka.toLocaleString("id-ID");
     }else clearInterval(interval);
   },15);
 }
 
-/* PROFILE MENU TOGGLE */
+function logout(){
+  firebase.auth().signOut().then(()=>{
+    window.location.href = "../login";
+  });
+}
+
+function goDashboard(){
+  window.location.href = "../dynopay";
+}
+
+function goWithdraw(){
+  window.location.href = "../withdraw";
+}
+
+function goProfile(){
+  window.location.href = "../profile";
+}
+
 function toggleProfileMenu(){
   const menu = document.getElementById("profileMenu");
-  menu.style.display = menu.style.display==="block"?"none":"block";
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
-
-/* LOGOUT */
-function logout(){
-  firebase.auth().signOut().then(()=>window.location.href="../login");
-}
-
-/* NAVIGATION */
-function goDashboard(){ window.location.href="../dynopay"; }
-function goWithdraw(){ window.location.href="../withdraw"; }
-function goProfile(){ window.location.href="../profile"; }
 </script>
 
 </body>
