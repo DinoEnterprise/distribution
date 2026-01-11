@@ -23,7 +23,10 @@ header img{height:50px;}
   box-shadow:0 8px 18px rgba(0,0,0,.05);
   transition:.3s;
 }
-.card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(0,0,0,.08);}
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 22px rgba(0,0,0,.08);
+}
 
 .artist-name{font-size:15px;font-weight:500;color:#555;margin-bottom:6px;}
 .balance-title{font-size:15px;font-weight:600;color:#222;margin-bottom:10px;}
@@ -38,14 +41,14 @@ header img{height:50px;}
   cursor:pointer;
   border-bottom:1px solid #eee;
   font-size:14px;
-  transition:.2s;
-  outline:none; /* hapus outline biru browser */
+  transition:.15s ease;
+  outline:none;
 }
 .profile-menu div:last-child{border-bottom:none;}
 .profile-menu div:hover{background:#f1f2f7;}
 .profile-menu div:active{
-  border:1px solid #667eea; /* stroke tipis biru */
-  transform:scale(.97);
+  filter: brightness(70%);
+  transform: scale(0.95);
 }
 
 .bottom-nav{
@@ -65,14 +68,14 @@ header img{height:50px;}
   cursor:pointer;
   padding:4px 14px;
   border-radius:12px;
-  transition:.25s;
-  outline:none; /* hilangkan outline default */
+  transition:.15s ease;
+  outline:none;
 }
 .nav-item img{width:28px;display:block;margin:auto;margin-bottom:4px;}
+.nav-item:hover{opacity:1;}
 .nav-item:active{
-  border:1px solid #667eea; /* stroke tipis biru */
-  border-radius:12px;
-  transform:scale(.97);
+  filter: brightness(70%);
+  transform: scale(0.95);
 }
 
 button{
@@ -85,13 +88,13 @@ button{
   color:#fff;
   background:linear-gradient(90deg,#667eea,#764ba2);
   cursor:pointer;
-  transition:.2s;
-  outline:none; /* hilangkan outline default */
+  transition:.15s ease;
+  outline:none;
 }
+button:hover{filter: brightness(90%);}
 button:active{
-  border:1px solid #667eea; /* stroke tipis biru */
-  border-radius:14px;
-  transform:scale(.97);
+  filter: brightness(70%);
+  transform: scale(0.95);
 }
 </style>
 </head>
