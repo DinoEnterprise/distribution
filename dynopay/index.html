@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DynoPay | Dynotic Collective</title>
+<title>Dashboard | DynoPay</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
@@ -43,7 +43,7 @@ header img{height:50px;}
   font-size:14px;
   transition:.15s ease;
   outline:none;
-  -webkit-tap-highlight-color: transparent; /* hilangkan biru di mobile */
+  -webkit-tap-highlight-color: transparent;
 }
 .profile-menu div:last-child{border-bottom:none;}
 
@@ -52,7 +52,7 @@ header img{height:50px;}
   cursor:pointer;
   transition: transform 0.12s cubic-bezier(0.4,0,0.2,1), box-shadow 0.12s, filter 0.12s;
   outline:none;
-  -webkit-tap-highlight-color: transparent; /* hilangkan biru di mobile */
+  -webkit-tap-highlight-color: transparent;
 }
 .clickable:active{
   transform: scale(0.94);
@@ -78,7 +78,7 @@ header img{height:50px;}
   border-radius:12px;
   outline:none;
   transition:.15s ease;
-  -webkit-tap-highlight-color: transparent; /* hilangkan biru */
+  -webkit-tap-highlight-color: transparent;
 }
 .nav-item img{width:28px;display:block;margin:auto;margin-bottom:4px;}
 .nav-item:hover{opacity:1;}
@@ -95,7 +95,7 @@ button{
   cursor:pointer;
   transition:.15s ease;
   outline:none;
-  -webkit-tap-highlight-color: transparent; /* hilangkan biru */
+  -webkit-tap-highlight-color: transparent;
 }
 button:hover{filter: brightness(90%);}
 button:active{
@@ -110,7 +110,7 @@ button:active{
   <img src="../assets/dynopay2.png" alt="DynoPay">
 </header>
 
-<!-- CARD -->
+<!-- MAIN CARD -->
 <div class="card clickable">
   <div id="namaArtis" class="artist-name">Hi, --</div>
   <div class="balance-title">Main Wallet Balance</div>      
@@ -125,9 +125,9 @@ button:active{
   <div class="clickable" onclick="logout()">Log Out</div>
 </div>
 
-<!-- NAV -->
+<!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <div class="nav-item clickable" onclick="goDashboard()">
+  <div class="nav-item clickable" style="opacity:1; cursor:default;">
     <img src="../assets/dasboard.png">
     Dashboard
   </div>
@@ -189,9 +189,8 @@ function logout(){
   });
 }
 
-function goDashboard(){window.location.href = "../dynopay";}
 function goWithdraw(){window.location.href = "../withdraw";}
-function goProfile(){window.location.href = "../profile";}
+function goProfile(){ /* tetap di dashboard */ }
 function toggleProfileMenu(){
   const menu = document.getElementById("profileMenu");
   menu.style.display = menu.style.display === "block" ? "none" : "block";
