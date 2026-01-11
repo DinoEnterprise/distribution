@@ -5,121 +5,164 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">  
 <title>DynoPay | Dynotic Collective</title>  
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">  
+
 <style>  
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}  
 body{background:#f1f2f7;min-height:100vh;color:#111;animation:fadeIn .5s ease;}  
 @keyframes fadeIn{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}  
+
 header{padding:12px 20px;display:flex;align-items:center;background:white;border-bottom:1px solid #eee;}  
-header img{height:50px;} /* logo diperbesar */  
+header img{height:50px;}  
+
 .card{width:90%;margin:35px auto;background:#fff;border-radius:20px;padding:25px;border:1px solid #ececec;box-shadow:0 8px 18px rgba(0,0,0,.05);transition:.3s;}  
 .card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(0,0,0,.08);}  
+
 .card-title{font-size:15px;opacity:.8;display:flex;align-items:center;gap:8px;margin-bottom:12px;}  
 .card-value{font-size:33px;font-weight:700;color:#111;margin-bottom:15px;}  
+
 .profile-menu{position:fixed;bottom:60px;right:20px;background:#fff;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.12);display:none;width:180px;z-index:10;}  
 .profile-menu div{padding:12px 14px;cursor:pointer;border-bottom:1px solid #eee;font-size:14px;}  
 .profile-menu div:last-child{border-bottom:none;}  
 .profile-menu div:hover{background:#f1f2f7;}  
 .profile-menu #lastLogin{font-size:12px;color:#555;cursor:default;border:none;padding:8px 14px;}  
+
 .bottom-nav{background:#fff;border-top:1px solid #eee;padding:10px 0;display:flex;justify-content:space-around;align-items:center;position:fixed;bottom:0;left:0;width:100%;}  
 .nav-item{text-align:center;font-size:13px;opacity:.75;cursor:pointer;padding:4px 14px;border-radius:12px;transition:.25s;}  
 .nav-item img{width:28px;display:block;margin:auto;margin-bottom:4px;}  
 .nav-item:active{background:#e9ebf3;transform:scale(.95);}  
 </style>  
-</head>  <body>  <header>  
+</head>  
+
+<body>  
+
+<header>  
   <img src="../assets/dynopay2.png" alt="DynoPay">  
-</header>  <!-- CARD -->  <div class="card">  
+</header>  
+
+<!-- CARD -->
+<div class="card">  
+  <div id="namaArtis" class="card-title">Hi, --</div>
   <div class="card-title">Saldo Dompet Utama</div>      
   <div id="saldo" class="card-value">Rp 0</div>  
-</div>  <div style="height:120px"></div>  <!-- PROFILE MENU -->  <div id="profileMenu" class="profile-menu">  
-  <div onclick="goSettings()">Settings</div>  
+</div>  
+
+<div style="height:120px"></div>  
+
+<!-- PROFILE MENU -->
+<div id="profileMenu" class="profile-menu">  
+  <div onclick="goProfile()">Profile</div>  
   <div onclick="logout()">Log Out</div>  
   <div id="lastLogin">Last login: --</div>  
-</div>  <!-- NAV -->  <div class="bottom-nav">  
+</div>  
+
+<!-- NAV -->
+<div class="bottom-nav">  
   <div class="nav-item" onclick="goDashboard()">  
-    <img src="../assets/dasboard.png" alt="Dashboard">  
+    <img src="../assets/dasboard.png">  
     Dashboard  
   </div>  
+
   <div class="nav-item" onclick="goWithdraw()">  
-    <img src="../assets/withdraw.png" alt="withdraw">  
+    <img src="../assets/withdraw.png">  
     Withdraw  
   </div>  
+
   <div class="nav-item" onclick="toggleProfileMenu()">  
-    <img src="../assets/profile.png" alt="Profile">  
+    <img src="../assets/profile.png">  
     Profile  
   </div>  
-</div>  <!-- FIREBASE -->  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>  <script>  
+</div>  
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>  
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>  
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>  
+
+<script>  
 firebase.initializeApp({  
   apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",  
   authDomain: "dynopay-2513c.firebaseapp.com",  
   databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"  
 });  
-  
+
 const db = firebase.database();  
 let targetSaldo = 0;  
 let lastLoginTime = 0;  
-  
-/* PROTEKSI LOGIN */  
+
 firebase.auth().onAuthStateChanged(user => {  
   if(!user) window.location.href = "../login";  
   else{  
     db.ref("users/" + user.uid).once("value").then(snapshot=>{  
       if(snapshot.exists()){  
         const data = snapshot.val();  
+
         targetSaldo = Number(data.saldo || 0);  
         lastLoginTime = data.lastLogin || Date.now();  
+
+        document.getElementById("namaArtis").textContent =
+        "Hi, " + (data.nama || "Artis");
+
         animateSaldo();  
         updateLastLogin();  
-        setInterval(updateLastLogin, 60000); // update tiap menit  
-      }else{  
-        document.getElementById("saldo").textContent = "User not found";  
+        setInterval(updateLastLogin, 60000);  
       }  
     });  
   }  
 });  
-  
-/* ANIMASI SALDO CEPAT */  
+
 function animateSaldo(){  
   let angka = 0;  
-  const step = Math.ceil(targetSaldo / 15); // lebih cepat  
+  const step = Math.ceil(targetSaldo / 15);  
   const interval = setInterval(()=>{  
     if(angka < targetSaldo){  
       angka += step;  
       if(angka > targetSaldo) angka = targetSaldo;  
-      document.getElementById("saldo").textContent =  
-        "Rp " + angka.toLocaleString("id-ID");  
+      document.getElementById("saldo").textContent =
+      "Rp " + angka.toLocaleString("id-ID");  
     }else clearInterval(interval);  
-  },15); // update tiap 15ms  
+  },15);  
 }  
-  
-/* LOGOUT */  
+
 function logout(){  
-  firebase.auth().signOut().then(()=>{ window.location.href = "../login"; });  
+firebase.auth().signOut().then(()=>{  
+window.location.href = "../login";  
+});  
 }  
-  
-/* NAV FUNCTIONS */  
-function goDashboard(){ window.location.href = "../dynopay"; } // langsung ke menu utama  
-function goWithdraw(){ window.location.href = "../withdraw"; }
-function goSettings(){ alert("Go to Settings"); }  
-  
-/* PROFILE MENU TOGGLE */  
+
+function goDashboard(){  
+window.location.href = "../dynopay";  
+}  
+
+function goWithdraw(){  
+window.location.href = "../withdraw";  
+}  
+
+function goProfile(){  
+window.location.href = "../profile";  
+}  
+
 function toggleProfileMenu(){  
-  const menu = document.getElementById("profileMenu");  
-  menu.style.display = menu.style.display === "block" ? "none" : "block";  
+const menu = document.getElementById("profileMenu");  
+menu.style.display = menu.style.display === "block" ? "none" : "block";  
 }  
-  
-/* LAST LOGIN REAL-TIME */  
+
 function updateLastLogin(){  
-  const now = Date.now();  
-  const diff = now - lastLoginTime;  
-  const mins = Math.floor(diff/60000);  
-  const hours = Math.floor(diff/3600000);  
-  const days = Math.floor(diff/86400000);  
-  let text = '';  
-  if(days>0) text = days + ' day(s) ago';  
-  else if(hours>0) text = hours + ' hour(s) ago';  
-  else text = mins>0 ? mins + ' min(s) ago' : 'Just now';  
-  document.getElementById("lastLogin").textContent = "Last login: " + text;  
+const now = Date.now();  
+const diff = now - lastLoginTime;  
+
+const mins = Math.floor(diff/60000);  
+const hours = Math.floor(diff/3600000);  
+const days = Math.floor(diff/86400000);  
+
+let text = '';  
+if(days>0) text = days + ' day(s) ago';  
+else if(hours>0) text = hours + ' hour(s) ago';  
+else text = mins>0 ? mins + ' min(s) ago' : 'Just now';  
+
+document.getElementById("lastLogin").textContent =
+"Last login: " + text;  
 }  
 </script>  
+
 </body>  
-</html>  
+</html>
