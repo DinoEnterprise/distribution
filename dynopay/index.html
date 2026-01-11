@@ -203,7 +203,9 @@ function logout(){
 }
 
 function goWithdraw(){window.location.href = "../withdraw";}
-function goProfile(){ /* tetap di dashboard */ }
+function goProfile(){
+  window.location.href = "../profile";
+}
 function toggleProfileMenu(){
   const menu = document.getElementById("profileMenu");
   menu.classList.toggle("show");
