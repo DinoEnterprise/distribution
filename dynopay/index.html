@@ -7,8 +7,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
-body{background:#f1f2f7;min-height:100vh;color:#111;animation:fadeIn .5s ease;-webkit-tap-highlight-color:transparent;}
+body{background:#f1f2f7;min-height:100vh;color:#111;animation:fadeIn 0.5s ease;-webkit-tap-highlight-color:transparent;}
+
 @keyframes fadeIn{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
+@keyframes slideUpFade{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes bounceIn{0%{transform:translateY(-20px);opacity:0;}50%{transform:translateY(10px);opacity:1;}70%{transform:translateY(-5px);}100%{transform:translateY(0);opacity:1;}}
 
 header{padding:12px 20px;display:flex;align-items:center;background:white;border-bottom:1px solid #eee;}
 header img{height:50px;}
@@ -22,6 +25,7 @@ header img{height:50px;}
   border:1px solid #ececec;
   box-shadow:0 8px 18px rgba(0,0,0,.05);
   transition:.3s;
+  animation:bounceIn 0.6s ease;
 }
 .card:hover{
   transform:translateY(-3px);
@@ -30,22 +34,31 @@ header img{height:50px;}
 
 .artist-name{font-size:15px;font-weight:500;color:#555;margin-bottom:6px;}
 .balance-title{font-size:15px;font-weight:600;color:#222;margin-bottom:10px;}
-.card-value{font-size:33px;font-weight:700;color:#111;margin-bottom:15px;}
+.card-value{font-size:33px;font-weight:700;color:#111;margin-bottom:15px;transition: all 0.3s ease;}
 
+/* PROFILE MENU */
 .profile-menu{
   position:fixed;bottom:60px;right:20px;background:#fff;border-radius:12px;
-  box-shadow:0 6px 18px rgba(0,0,0,.12);display:none;width:180px;z-index:10;
+  box-shadow:0 6px 18px rgba(0,0,0,.12);
+  display:none;width:180px;z-index:10;
+  opacity:0;
+  transform:translateY(20px);
+  transition:opacity 0.25s ease, transform 0.25s ease;
+}
+.profile-menu.show{
+  display:block;
+  opacity:1;
+  transform:translateY(0);
 }
 .profile-menu div{
   padding:12px 14px;
   cursor:pointer;
   border-bottom:1px solid #eee;
   font-size:14px;
-  transition:.15s ease;
-  outline:none;
-  -webkit-tap-highlight-color: transparent;
+  transition:.15s ease, background 0.15s ease;
 }
 .profile-menu div:last-child{border-bottom:none;}
+.profile-menu div:hover{background:#f1f2f7;}
 
 /* CLICK EFFECT */
 .clickable{
@@ -193,7 +206,7 @@ function goWithdraw(){window.location.href = "../withdraw";}
 function goProfile(){ /* tetap di dashboard */ }
 function toggleProfileMenu(){
   const menu = document.getElementById("profileMenu");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
+  menu.classList.toggle("show");
 }
 </script>
 </body>
