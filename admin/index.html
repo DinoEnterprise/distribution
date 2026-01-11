@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Admin Panel - DynoPay</title>
+<title>Admin Panel</title>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -13,7 +12,7 @@
 body{font-family:Outfit,sans-serif;background:#f1f2f7;margin:0;padding:15px}
 h3{margin-bottom:8px;font-size:18px}
 .card{background:#fff;padding:15px;border-radius:12px;margin-bottom:15px;box-shadow:0 3px 10px rgba(0,0,0,.05)}
-input,button{width:100%;padding:12px;margin-top:8px;border-radius:10px;border:1px solid #ddd;font-size:14px}
+input,button,select{width:100%;padding:12px;margin-top:8px;border-radius:10px;border:1px solid #ddd;font-size:14px}
 button{cursor:pointer;font-weight:600}
 .register{background:#111;color:#fff}
 .action-btn{background:#fff;border:1px solid #000;font-size:12px;padding:6px 10px;margin-right:4px}
@@ -27,11 +26,21 @@ th{background:#f9f9f9}
 <body>
 
 <div class="card">
-<h3>Register Artist</h3>
+<h3>Register User</h3>
+
 <input id="email" placeholder="Email">
 <input id="password" placeholder="Password">
-<input id="nama" placeholder="Nama Artis">
+<input id="nama" placeholder="Nama">
+
+<select id="role">
+ <option value="">-- Pilih Role --</option>
+ <option value="admin">Admin</option>
+ <option value="member">Member</option>
+ <option value="reuploader">Reuploader</option>
+</select>
+
 <input id="saldo" placeholder="Saldo awal">
+
 <button class="register" onclick="register()">CREATE ACCOUNT</button>
 <p id="msg"></p>
 </div>
@@ -64,6 +73,7 @@ th{background:#f9f9f9}
 <tr>
 <th>Nama</th>
 <th>Email</th>
+<th>Role</th>
 <th>Saldo</th>
 <th>Aksi</th>
 </tr>
@@ -86,26 +96,28 @@ const db=firebase.database();
 /* ADMIN GUARD */
 auth.onAuthStateChanged(user=>{
  if(!user){
-  location.href="../login";
+  location.href="../admin-login";
   return;
  }
- db.ref("admins/"+user.uid).once("value").then(s=>{
-  if(!s.exists()){
+
+ db.ref("users/"+user.uid+"/role").once("value").then(s=>{
+  if(s.val()!=="admin"){
     alert("Access denied!");
-    location.href="../dynopay";
+    location.href="../admin";
   }
  });
 });
 
 /* REGISTER */
 function register(){
- let email=emailVal();
+ let email=val("email");
  let pass=val("password");
  let nama=val("nama");
+ let role=val("role");
  let saldo=Number(val("saldo"));
  const msg=document.getElementById("msg");
 
- if(!email||!pass||!nama||isNaN(saldo)){
+ if(!email||!pass||!nama||!role||isNaN(saldo)){
   msg.style.color="red";
   msg.innerHTML="⚠ Semua field wajib!";
   return;
@@ -115,12 +127,18 @@ function register(){
  .then(res=>{
    const uid=res.user.uid;
    db.ref("users/"+uid).set({
-     email,nama,saldo,
+     email,
+     nama,
+     role,
+     saldo,
      createdAt:Date.now()
    });
+
    msg.style.color="green";
    msg.innerHTML="✔ Akun berhasil dibuat!";
-   ["email","password","nama","saldo"].forEach(i=>document.getElementById(i).value="");
+
+   ["email","password","nama","role","saldo"]
+   .forEach(i=>document.getElementById(i).value="");
  })
  .catch(e=>{
   msg.style.color="red";
@@ -128,56 +146,7 @@ function register(){
  });
 }
 
-/* LOAD WITHDRAW */
-function loadWithdraws(){
- db.ref("withdraws").on("value",snap=>{
-  const tbody=document.querySelector("#withdrawTable tbody");
-  tbody.innerHTML="";
-  snap.forEach(user=>{
-   user.forEach(w=>{
-    const d=w.val();
-    tbody.innerHTML+=`
-    <tr>
-     <td>${d.nama}</td>
-     <td>${d.email||"-"}</td>
-     <td>${d.bank}</td>
-     <td>${d.rekening}</td>
-     <td>Rp ${Number(d.jumlah).toLocaleString()}</td>
-     <td>${d.status}</td>
-     <td>
-      <button class="action-btn" onclick="approve('${user.key}','${w.key}',${d.jumlah})">Approve</button>
-      <button class="action-btn" onclick="setStatus('${user.key}','${w.key}','reject')">Reject</button>
-      <button class="action-btn" onclick="delWithdraw('${user.key}','${w.key}')">Delete</button>
-     </td>
-    </tr>`;
-   });
-  });
- });
-}
-
-/* APPROVE FIX */
-function approve(uid,key,amount){
- db.ref(`users/${uid}/saldo`).once("value").then(s=>{
-  let current=Number(s.val()||0);
-  let sisa=current-Number(amount);
-  if(sisa<0) sisa=0;
-
-  db.ref(`users/${uid}/saldo`).set(sisa);
-  db.ref(`withdraws/${uid}/${key}/status`).set("approved");
- });
-}
-
-function setStatus(uid,key,status){
- db.ref(`withdraws/${uid}/${key}/status`).set(status);
-}
-
-function delWithdraw(uid,key){
- if(confirm("Hapus data?")){
-  db.ref(`withdraws/${uid}/${key}`).remove();
- }
-}
-
-/* MEMBERS */
+/* LOAD MEMBERS */
 function loadMembers(){
  db.ref("users").on("value",snap=>{
   const tbody=document.querySelector("#memberTable tbody");
@@ -188,6 +157,7 @@ function loadMembers(){
    <tr>
     <td>${d.nama}</td>
     <td>${d.email||"-"}</td>
+    <td><b>${d.role||"-"}</b></td>
     <td>Rp ${(d.saldo||0).toLocaleString()}</td>
     <td>
      <button class="action-btn" onclick="editSaldo('${u.key}')">Edit</button>
@@ -198,6 +168,7 @@ function loadMembers(){
  });
 }
 
+/* UTIL */
 function editSaldo(uid){
  let v=prompt("Saldo baru:");
  if(v!==null){
@@ -213,12 +184,12 @@ function delMember(uid){
  }
 }
 
-function val(id){return document.getElementById(id).value.trim()}
-function emailVal(){return document.getElementById("email").value.trim()}
+function val(id){
+ return document.getElementById(id).value.trim()
+}
 
-loadWithdraws();
 loadMembers();
 </script>
 
 </body>
-</html>
+ </html>
