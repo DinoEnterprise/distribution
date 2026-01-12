@@ -7,10 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
-body{background:#f1f2f7;min-height:100vh;color:#111;animation:fadeIn 0.5s ease;-webkit-tap-highlight-color:transparent;}
-
+body{background:#f1f2f7;min-height:100vh;color:#111;animation:fadeIn 0.5s ease;-webkit-tap-highlight-color:transparent;user-select:none;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
-@keyframes slideUpFade{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
 @keyframes bounceIn{0%{transform:translateY(-20px);opacity:0;}50%{transform:translateY(10px);opacity:1;}70%{transform:translateY(-5px);}100%{transform:translateY(0);opacity:1;}}
 
 header{padding:12px 20px;display:flex;align-items:center;background:white;border-bottom:1px solid #eee;}
@@ -73,6 +71,7 @@ header img{height:50px;}
   box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);
 }
 
+/* BOTTOM NAV */
 .bottom-nav{
   background:#fff;
   border-top:1px solid #eee;
@@ -89,13 +88,14 @@ header img{height:50px;}
   opacity:.75;
   padding:4px 14px;
   border-radius:12px;
-  outline:none;
   transition:.15s ease;
-  -webkit-tap-highlight-color: transparent;
 }
 .nav-item img{width:28px;display:block;margin:auto;margin-bottom:4px;}
 .nav-item:hover{opacity:1;}
+.nav-item.active{opacity:1;color:#667eea;}
+.nav-item.active img{filter:brightness(1.2);}
 
+/* BUTTON */
 button{
   width:100%;
   padding:15px;
@@ -108,7 +108,6 @@ button{
   cursor:pointer;
   transition:.15s ease;
   outline:none;
-  -webkit-tap-highlight-color: transparent;
 }
 button:hover{filter: brightness(90%);}
 button:active{
@@ -126,7 +125,7 @@ button:active{
 <!-- MAIN CARD -->
 <div class="card clickable">
   <div id="namaArtis" class="artist-name">Hi, --</div>
-  <div class="balance-title">Main Wallet Balance</div>      
+  <div class="balance-title">Main Wallet Balance</div>
   <div id="saldo" class="card-value">Rp 0</div>
 </div>
 
@@ -140,7 +139,7 @@ button:active{
 
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <div class="nav-item clickable" style="opacity:1; cursor:default;">
+  <div class="nav-item clickable active" onclick="dashboardClick()">
     <img src="../assets/dasboard.png">
     Dashboard
   </div>
@@ -168,6 +167,7 @@ firebase.initializeApp({
 const db = firebase.database();
 let targetSaldo = 0;
 
+// FIREBASE AUTH
 firebase.auth().onAuthStateChanged(user => {
   if(!user) window.location.href = "../login";
   else{
@@ -202,13 +202,17 @@ function logout(){
   });
 }
 
-function goWithdraw(){window.location.href = "../withdraw";}
-function goProfile(){
-  window.location.href = "../profile";
-}
+function goWithdraw(){ window.location.href = "../withdraw"; }
+function goProfile(){ window.location.href = "../profile"; }
 function toggleProfileMenu(){
   const menu = document.getElementById("profileMenu");
   menu.classList.toggle("show");
+}
+
+// DASHBOARD CLICK (tidak reload)
+function dashboardClick(){
+  console.log("Dashboard active — tidak reload");
+  // bisa kasih efek klik jika mau
 }
 </script>
 </body>
