@@ -218,10 +218,9 @@ function loadProfile(uid){
 // Logout
 function logout(){ auth.signOut().then(()=>console.log("Logged out — tidak reload")); }
 
-// Nav clicks (tidak reload)
-function dashboardClick(){console.log("Dashboard click — tidak reload");}
-function withdrawClick(){console.log("Withdraw click — tidak reload");}
-
+// Nav clicks 
+function goDashboard(){ window.location.href="../dasboard"; }
+function goWithdraw(){ window.location.href="../withdraw"; }
 // Change Password
 function changePassword(){
   const newPass = prompt("Masukkan password baru:");
