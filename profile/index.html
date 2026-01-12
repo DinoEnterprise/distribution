@@ -172,10 +172,10 @@ button:active{transform:scale(0.94); filter:brightness(70%);}
 
 <!-- Bottom nav -->
 <div class="bottom-nav">
-  <div class="nav-item clickable" onclick="dashboardClick()">
+  <div class="nav-item clickable" onclick="window.location.href='../dynopay'">
     <img src="../assets/dasboard.png" alt="Dashboard">Dashboard
   </div>
-  <div class="nav-item clickable" onclick="withdrawClick()">
+  <div class="nav-item clickable" onclick="window.location.href='../withdraw'">
     <img src="../assets/withdraw.png" alt="Withdraw">Withdraw
   </div>
   <div class="nav-item clickable active">
@@ -218,9 +218,6 @@ function loadProfile(uid){
 // Logout
 function logout(){ auth.signOut().then(()=>console.log("Logged out — tidak reload")); }
 
-// Nav clicks 
-function goDashboard(){ window.location.href="../dasboard"; }
-function goWithdraw(){ window.location.href="../withdraw"; }
 // Change Password
 function changePassword(){
   const newPass = prompt("Masukkan password baru:");
