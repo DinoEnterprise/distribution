@@ -6,15 +6,15 @@
 <title>Withdraw | DynoPay</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;user-select:none;}
 body{background:#f1f2f7;min-height:100vh;color:#111;animation:fadeIn .5s ease;-webkit-tap-highlight-color:transparent;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
+@keyframes bounceIn{0%{transform:translateY(-20px);opacity:0;}50%{transform:translateY(10px);opacity:1;}70%{transform:translateY(-5px);}100%{transform:translateY(0);opacity:1;}}
+@keyframes fadeSlideUp{from{opacity:0; transform:translateY(10px);}to{opacity:1; transform:translateY(0);}}
 
-/* HEADER */
 header{padding:12px 20px;display:flex;align-items:center;background:white;border-bottom:1px solid #eee;}
 header img{height:50px;}
 
-/* CARD */
 .card{
   width:90%;
   margin:20px auto;
@@ -24,16 +24,11 @@ header img{height:50px;}
   border:1px solid #ececec;
   box-shadow:0 8px 18px rgba(0,0,0,.05);
   transition:.3s, transform 0.3s ease;
-  animation:cardEntry 0.5s ease forwards;
+  animation:bounceIn 0.5s ease forwards;
 }
 .card:hover{transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,.07);}
-@keyframes cardEntry{
-  from{opacity:0; transform:translateY(15px);}
-  to{opacity:1; transform:translateY(0);}
-}
 
-/* INPUT & BUTTON */
-input,button{
+input, button{
   width:100%;
   padding:12px;
   margin-top:10px;
@@ -46,7 +41,7 @@ input,button{
 }
 input:active, input:focus{border-color:#667eea; filter:brightness(95%);}
 button{
-  background:#111;
+  background:linear-gradient(90deg,#667eea,#764ba2);
   color:#fff;
   border:none;
   font-weight:600;
@@ -69,10 +64,6 @@ button:active{transform:scale(0.94); filter:brightness(70%); box-shadow: inset 0
   transform:translateY(10px);
   animation:fadeSlideUp 0.3s forwards;
 }
-@keyframes fadeSlideUp{
-  from{opacity:0; transform:translateY(10px);}
-  to{opacity:1; transform:translateY(0);}
-}
 
 /* NAV */
 .bottom-nav{
@@ -92,13 +83,12 @@ button:active{transform:scale(0.94); filter:brightness(70%); box-shadow: inset 0
   cursor:pointer;
   padding:4px 14px;
   border-radius:12px;
-  transition:.12s ease;
-  outline:none;
-  -webkit-tap-highlight-color:transparent;
+  transition:.15s ease;
 }
 .nav-item img{width:28px;display:block;margin:auto;margin-bottom:4px;}
 .nav-item:hover{opacity:1;}
-.nav-item:active{transform:scale(0.94); filter:brightness(85%); box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);}
+.nav-item.active{opacity:1;color:#667eea;}
+.nav-item.active img{filter:brightness(1.2);}
 
 /* clickable */
 .clickable{cursor:pointer; transition: transform 0.12s, filter 0.12s, box-shadow 0.12s;}
@@ -173,7 +163,7 @@ button:active{transform:scale(0.94); filter:brightness(70%); box-shadow: inset 0
 <div class="nav-item clickable" onclick="goDashboard()">
 <img src="../assets/dasboard.png">Dashboard
 </div>
-<div class="nav-item clickable" onclick="goWithdraw()">
+<div class="nav-item clickable active" onclick="withdrawClick()">
 <img src="../assets/withdraw.png">Withdraw
 </div>
 <div class="nav-item clickable" onclick="toggleProfileMenu()">
@@ -196,70 +186,69 @@ const db = firebase.database();
 let saldo=0,uid="";
 
 firebase.auth().onAuthStateChanged(user=>{
-if(!user) location.href="../login";
-uid=user.uid;
+  if(!user) location.href="../login";
+  uid=user.uid;
 
-// load saldo
-db.ref("users/"+uid).on("value",s=>{
-saldo=Number(s.val().saldo||0);
-saldoText.innerText="Saldo tersedia: Rp "+saldo.toLocaleString("id-ID");
-jumlah.value="Rp "+saldo.toLocaleString("id-ID");
-});
+  // load saldo
+  db.ref("users/"+uid).on("value",s=>{
+    saldo=Number(s.val().saldo||0);
+    saldoText.innerText="Saldo tersedia: Rp "+saldo.toLocaleString("id-ID");
+    jumlah.value="Rp "+saldo.toLocaleString("id-ID");
+  });
 
-// load history
-loadHistory();
+  // load history
+  loadHistory();
 });
 
 function requestWD(){
-if(saldo<50000){alert("Minimal withdraw Rp 50.000"); return;}
-if(!bank.value||!rek.value||!nama.value){alert("Lengkapi semua data!"); return;}
+  if(saldo<50000){alert("Minimal withdraw Rp 50.000"); return;}
+  if(!bank.value||!rek.value||!nama.value){alert("Lengkapi semua data!"); return;}
 
-const id=Date.now();
-db.ref("withdraws/"+uid+"/"+id).set({
-bank:bank.value,
-rekening:rek.value,
-nama:nama.value,
-jumlah:saldo,
-status:"pending",
-waktu:Date.now()
-});
-alert("Request withdraw dikirim!");
+  const id=Date.now();
+  db.ref("withdraws/"+uid+"/"+id).set({
+    bank:bank.value,
+    rekening:rek.value,
+    nama:nama.value,
+    jumlah:saldo,
+    status:"pending",
+    waktu:Date.now()
+  });
+  alert("Request withdraw dikirim!");
 }
 
 function loadHistory(){
-db.ref("withdraws/"+uid).on("value",s=>{
-list.innerHTML="";
-let delay=0;
-s.forEach(x=>{
-const d=x.val();
-const item = document.createElement("div");
-item.className="item clickable";
-item.style.animationDelay = delay+"s"; // stagger
-item.innerHTML=`
+  db.ref("withdraws/"+uid).on("value",s=>{
+    list.innerHTML="";
+    let delay=0;
+    s.forEach(x=>{
+      const d=x.val();
+      const item = document.createElement("div");
+      item.className="item clickable";
+      item.style.animationDelay = delay+"s"; // stagger
+      item.innerHTML=`
 <b>${d.bank}</b><br>
 Rp ${d.jumlah.toLocaleString("id-ID")}
 <span class="badge ${d.status}">
 ${d.status.toUpperCase()}
 </span>`;
-list.appendChild(item);
-delay += 0.05;
-});
-});
+      list.appendChild(item);
+      delay += 0.05;
+    });
+  });
 }
 
-// Profile menu functions
+// Profile menu
 function toggleProfileMenu(){
-const menu = document.getElementById("profileMenu");
-menu.classList.toggle("show");
+  const menu = document.getElementById("profileMenu");
+  menu.classList.toggle("show");
 }
-function goProfile(){location.href = "../profile";
-}
+function goProfile(){location.href = "../profile";}
 function logout(){firebase.auth().signOut().then(()=>location.href="../login");}
 
-// Go dashboard
+// Nav clicks
 function goDashboard(){location.href="../dynopay";}
-function goWithdraw(){location.href="../withdraw";}
+function goWithdraw(){console.log("Withdraw click — tidak reload");}
+function withdrawClick(){console.log("Anda di menu Withdraw — tidak reload");}
 </script>
-
 </body>
 </html>
