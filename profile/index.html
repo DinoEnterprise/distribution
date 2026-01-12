@@ -3,16 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Profile - DynoPay</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+<title>Profile | DynoPay</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;user-select:none;}
 body{background:#f1f2f7;min-height:100vh;color:#111;animation:fadeIn .5s ease;-webkit-tap-highlight-color:transparent;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
+@keyframes bounceIn{0%{transform:translateY(-20px);opacity:0;}50%{transform:translateY(10px);opacity:1;}70%{transform:translateY(-5px);}100%{transform:translateY(0);opacity:1;}}
+@keyframes fadeSlideUp{from{opacity:0; transform:translateY(10px);}to{opacity:1; transform:translateY(0);}}
 
+/* HEADER */
 header{padding:12px 20px;display:flex;align-items:center;background:white;border-bottom:1px solid #eee;}
 header img{height:50px;}
 
+/* CARD */
 .card{
   width:90%;
   margin:20px auto;
@@ -21,25 +25,28 @@ header img{height:50px;}
   padding:25px;
   border:1px solid #ececec;
   box-shadow:0 8px 18px rgba(0,0,0,.05);
-  transition:.3s;
+  transition:.3s, transform 0.3s ease;
+  animation:bounceIn 0.5s ease forwards;
 }
 .card:hover{transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,.07);}
 
 .card-title{font-size:14px;font-weight:600;margin-bottom:6px;}
 .input-group{margin-bottom:15px;}
-.input-group input{width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;font-size:14px;outline:none;background:#f9f9f9;}
-.input-group input:focus{border-color:#111;background:#f9f9f9;}
+.input-group input{width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;font-size:14px;outline:none;background:#f9f9f9;}
+.input-group input:focus{border-color:#667eea;}
 
+/* Buttons */
 button{
   border:none;
   border-radius:14px;
-  font-weight:700;
+  font-weight:600;
   cursor:pointer;
   transition:.15s ease;
 }
 button:hover{filter:brightness(90%);}
-button:active{transform:scale(0.95); filter:brightness(70%);}
+button:active{transform:scale(0.94); filter:brightness(70%);}
 
+/* Buttons spesifik */
 .logout-btn{
   width:100%;
   padding:14px;
@@ -47,17 +54,17 @@ button:active{transform:scale(0.95); filter:brightness(70%);}
   background:#111;
   color:#fff;
 }
-
 .change-pass-btn{
   padding:10px 14px;
-  background:#667eea;
+  background:#111;
   color:#fff;
   font-size:14px;
 }
 
+/* Profile photo */
 .profile-photo{width:120px;height:120px;border-radius:50%;object-fit:cover;border:2px solid #ddd;margin-bottom:12px;pointer-events:none;}
 
-/* Bottom nav */
+/* NAV */
 .bottom-nav{
   background:#fff;
   border-top:1px solid #eee;
@@ -75,20 +82,53 @@ button:active{transform:scale(0.95); filter:brightness(70%);}
   cursor:pointer;
   padding:4px 14px;
   border-radius:12px;
-  transition:.12s ease;
+  transition:.15s ease;
+  user-select:none;
 }
 .nav-item img{width:28px;display:block;margin:auto;margin-bottom:4px;}
+.nav-item.active{opacity:1;color:#667eea;}
+.nav-item.active img{filter:brightness(1.2);}
 .nav-item:hover{opacity:1;}
-.nav-item:active{
-  transform:scale(0.94);
-  filter:brightness(85%);
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);
+.nav-item:active{transform:scale(0.94);filter:brightness(85%);box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);}
+
+/* clickable */
+.clickable{cursor:pointer; transition: transform 0.12s, filter 0.12s, box-shadow 0.12s;}
+.clickable:active{transform:scale(0.94); filter:brightness(85%); box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);}
+
+/* Profile menu */
+.profile-menu{
+  position:fixed;
+  bottom:60px;
+  right:20px;
+  width:180px;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 6px 18px rgba(0,0,0,.12);
+  z-index:10;
+  display:none;
+  opacity:0;
+  transform:translateY(20px);
+  transition:opacity 0.25s ease, transform 0.25s ease;
 }
+.profile-menu.show{
+  display:block;
+  opacity:1;
+  transform:translateY(0);
+}
+.profile-menu div{
+  padding:12px 14px;
+  border-bottom:1px solid #eee;
+  font-size:14px;
+  cursor:pointer;
+}
+.profile-menu div:last-child{border-bottom:none;}
+.profile-menu div:hover{background:#f1f2f7;}
 </style>
 </head>
 <body>
+
 <header>
-  <img src="../assets/dynopay2.png" alt="DynoPay">
+<img src="../assets/dynopay2.png" alt="DynoPay">
 </header>
 
 <!-- FOTO PROFIL -->
@@ -115,26 +155,31 @@ button:active{transform:scale(0.95); filter:brightness(70%);}
   <div class="card-title">Password</div>
   <div class="input-group" style="display:flex;align-items:center;gap:10px;">
     <input type="password" value="********" readonly style="flex:1;">
-    <button class="change-pass-btn" onclick="changePassword()">Ganti</button>
+    <button class="change-pass-btn clickable" onclick="changePassword()">Ganti</button>
   </div>
 
   <!-- LOGOUT -->
-  <button class="logout-btn" onclick="logout()">Logout</button>
+  <button class="logout-btn clickable" onclick="logout()">Logout</button>
 </div>
 
-<!-- NAV BAWAH -->
+<div style="height:120px"></div>
+
+<!-- Profile Menu -->
+<div id="profileMenu" class="profile-menu clickable">
+  <div onclick="goProfile()" class="clickable">Profile</div>
+  <div onclick="logout()" class="clickable">Log Out</div>
+</div>
+
+<!-- Bottom nav -->
 <div class="bottom-nav">
-  <div class="nav-item clickable" onclick="goDashboard()">
-    <img src="../assets/dasboard.png" alt="Dashboard">
-    Dashboard
+  <div class="nav-item clickable" onclick="dashboardClick()">
+    <img src="../assets/dasboard.png" alt="Dashboard">Dashboard
   </div>
-  <div class="nav-item clickable" onclick="goWithdraw()">
-    <img src="../assets/withdraw.png" alt="Withdraw">
-    Withdraw
+  <div class="nav-item clickable" onclick="withdrawClick()">
+    <img src="../assets/withdraw.png" alt="Withdraw">Withdraw
   </div>
-  <div class="nav-item clickable">
-    <img src="../assets/profile.png" alt="Profile">
-    Profile
+  <div class="nav-item clickable active">
+    <img src="../assets/profile.png" alt="Profile">Profile
   </div>
 </div>
 
@@ -142,7 +187,6 @@ button:active{transform:scale(0.95); filter:brightness(70%);}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <script>
 firebase.initializeApp({
   apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
@@ -155,7 +199,7 @@ const db = firebase.database();
 
 // Proteksi login
 auth.onAuthStateChanged(user=>{
-  if(!user) window.location.href="../login";
+  if(!user) location.href="../login";
   else loadProfile(user.uid);
 });
 
@@ -172,11 +216,11 @@ function loadProfile(uid){
 }
 
 // Logout
-function logout(){ auth.signOut().then(()=>window.location.href="../login"); }
+function logout(){ auth.signOut().then(()=>console.log("Logged out — tidak reload")); }
 
-// Navigasi
-function goDashboard(){ window.location.href="../dynopay"; }
-function goWithdraw(){ window.location.href="../withdraw"; }
+// Nav clicks (tidak reload)
+function dashboardClick(){console.log("Dashboard click — tidak reload");}
+function withdrawClick(){console.log("Withdraw click — tidak reload");}
 
 // Change Password
 function changePassword(){
@@ -196,6 +240,13 @@ function changePassword(){
     });
   }
 }
+
+// Profile menu
+function toggleProfileMenu(){
+  const menu = document.getElementById("profileMenu");
+  menu.classList.toggle("show");
+}
+function goProfile(){console.log("Profile click — tidak reload");}
 </script>
 </body>
 </html>
