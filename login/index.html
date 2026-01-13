@@ -7,9 +7,6 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 
-<!-- reCAPTCHA -->
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
 <style>
 *{
   box-sizing:border-box;
@@ -75,7 +72,8 @@ input{
 }
 
 input:focus{
-  border:2px solid #667eea;
+  border:2px solid #667eea; /* stroke saat fokus */
+  box-shadow:none; /* hilangkan glow */
 }
 
 /* TOGGLE PASSWORD */
@@ -90,12 +88,12 @@ input:focus{
   padding:4px;
   border-radius:6px;
   transition:.2s;
-  -webkit-tap-highlight-color:transparent;
+  -webkit-tap-highlight-color:transparent; /* hilangkan highlight biru */
 }
 
 .toggle:active,
 .toggle:focus{
-  outline:2px solid #667eea;
+  outline:2px solid #667eea; /* stroke saat tap */
 }
 
 /* BUTTON */
@@ -113,23 +111,13 @@ button{
   -webkit-tap-highlight-color:transparent;
 }
 
-/* HILANGKAN GARIS BIRU */
 button:focus,
 button:active{
-  outline:none;
-  box-shadow:none;
+  outline:2px solid #667eea;
 }
 
 button:active{
   transform:scale(.96);
-}
-
-/* CAPTCHA */
-.captcha-wrap{
-  display:flex;
-  justify-content:center;
-  margin:15px 0;
-  transform:scale(.85);
 }
 
 /* ERROR */
@@ -161,7 +149,7 @@ button:active{
   pointer-events:auto;
 }
 
-/* EXIT */
+/* ANIMATION EXIT */
 .fade-out{
   animation:exit .5s ease forwards;
 }
@@ -184,17 +172,10 @@ button:active{
 
   <div class="field">
     <input id="pass" type="password" placeholder="Password">
-    <div class="toggle" id="eye" onclick="togglePass()">𖠂</div>
-  </div>
-
-  <!-- CAPTCHA -->
-  <div class="captcha-wrap">
+    <div class="toggle" id="eye" tabindex="0" onclick="togglePass()">𖠂</div>
   </div>
 
   <button onclick="login()">Login</button>
-  <div class="g-recaptcha"
-      data-sitekey="6LeGJkksAAAAACI7I4J2nUd979ZhFY8aSfQVEA2H">
-    </div>
   <div id="error"></div>
 </div>
 
@@ -221,8 +202,8 @@ firebase.auth().onAuthStateChanged(user=>{
 
 /* TOGGLE PASSWORD */
 function togglePass(){
-  const p=document.getElementById("pass");
-  const eye=document.getElementById("eye");
+  const p = document.getElementById("pass");
+  const eye = document.getElementById("eye");
 
   if(p.type==="password"){
     p.type="text";
@@ -238,15 +219,9 @@ function login(){
   const email=document.getElementById("email").value.trim();
   const pass=document.getElementById("pass").value.trim();
   const errorEl=document.getElementById("error");
-  const captcha = grecaptcha.getResponse();
 
   if(!email||!pass){
     errorEl.textContent="Email dan password wajib diisi";
-    return;
-  }
-
-  if(!captcha){
-    errorEl.textContent="Silakan verifikasi captcha";
     return;
   }
 
@@ -263,8 +238,6 @@ function login(){
     setTimeout(()=>window.location.replace("../dynopay"),600);
   })
   .catch(error=>{
-    grecaptcha.reset();
-
     switch(error.code){
       case "auth/user-not-found":
         errorEl.textContent="User tidak ditemukan";
