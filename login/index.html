@@ -4,7 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DynoPay Login</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- reCAPTCHA -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
 <style>
 *{box-sizing:border-box;font-family:'Outfit',sans-serif;margin:0;padding:0}
 body{
@@ -48,8 +53,7 @@ input{
  transition:.2s;
 }
 input:focus{
- border:2px solid #667eea; /* stroke saat fokus */
- box-shadow:none; /* hilangkan glow */
+ border:2px solid #667eea;
 }
 
 /* TOGGLE */
@@ -64,10 +68,10 @@ input:focus{
  padding:4px;
  border-radius:6px;
  transition:.2s;
- -webkit-tap-highlight-color: transparent; /* hilangkan highlight biru */
+ -webkit-tap-highlight-color: transparent;
 }
-.toggle:active, .toggle:focus{
- outline:2px solid #667eea; /* stroke saat tap/fokus */
+.toggle:active,.toggle:focus{
+ outline:2px solid #667eea;
 }
 
 /* BUTTON */
@@ -82,14 +86,8 @@ button{
  background:linear-gradient(90deg,#667eea,#764ba2);
  cursor:pointer;
  transition:.2s;
- -webkit-tap-highlight-color: transparent; /* hilangkan highlight biru */
 }
-button:focus, button:active{
- outline:2px solid #667eea; /* stroke biru saat tap/fokus */
-}
-button:active{
- transform:scale(.96);
-}
+button:active{transform:scale(.96);}
 
 #error{
  margin-top:10px;
@@ -138,7 +136,12 @@ button:active{
 
   <div class="field">
     <input id="pass" type="password" placeholder="Password">
-    <div class="toggle" id="eye" tabindex="0" onclick="togglePass()">𖠂</div>
+    <div class="toggle" id="eye" onclick="togglePass()">𖠂</div>
+  </div>
+
+  <!-- CAPTCHA -->
+  <div style="margin-bottom:15px;">
+    <div class="g-recaptcha" data-sitekey="6LeGJkksAAAAACI7I4J2nUd979ZhFY8aSfQVEA2H"></div>
   </div>
 
   <button onclick="login()">Login</button>
@@ -154,29 +157,29 @@ button:active{
 
 <script>
 firebase.initializeApp({
-  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain: "dynopay-2513c.firebaseapp.com",
-  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+ apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+ authDomain:"dynopay-2513c.firebaseapp.com",
+ databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 
 const db = firebase.database();
 
 /* AUTO REDIRECT */
 firebase.auth().onAuthStateChanged(user=>{
-  if(user) window.location.replace("../dynopay");
+ if(user) window.location.replace("../dynopay");
 });
 
 /* TOGGLE PASSWORD */
 function togglePass(){
- const p = document.getElementById("pass");
- const eye = document.getElementById("eye");
+ const p=document.getElementById("pass");
+ const eye=document.getElementById("eye");
 
  if(p.type==="password"){
-   p.type="text";
-   eye.textContent="⌒"; // sembunyikan
+  p.type="text";
+  eye.textContent="⌒";
  }else{
-   p.type="password";
-   eye.textContent="𖠂"; // perlihatkan
+  p.type="password";
+  eye.textContent="𖠂";
  }
 }
 
@@ -185,29 +188,37 @@ function login(){
  const email=document.getElementById("email").value.trim();
  const pass=document.getElementById("pass").value.trim();
  const errorEl=document.getElementById("error");
+ const captcha = grecaptcha.getResponse();
 
  if(!email||!pass){
   errorEl.textContent="Email dan password wajib diisi";
   return;
  }
 
+ if(!captcha){
+  errorEl.textContent="Silakan verifikasi captcha";
+  return;
+ }
+
  firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
  .then(()=> firebase.auth().signInWithEmailAndPassword(email,pass))
  .then(userCredential=>{
-   const user=userCredential.user;
-   db.ref("users/"+user.uid+"/lastLogin").set(Date.now());
+  const user=userCredential.user;
+  db.ref("users/"+user.uid+"/lastLogin").set(Date.now());
 
-   document.getElementById("loader").classList.add("active");
-   document.getElementById("card").classList.add("fade-out");
-   setTimeout(()=>window.location.replace("../dynopay"),600);
+  document.getElementById("loader").classList.add("active");
+  document.getElementById("card").classList.add("fade-out");
+  setTimeout(()=>window.location.replace("../dynopay"),600);
  })
  .catch(error=>{
-   switch(error.code){
-     case "auth/user-not-found": errorEl.textContent="User tidak ditemukan"; break;
-     case "auth/wrong-password": errorEl.textContent="Password salah"; break;
-     case "auth/invalid-email": errorEl.textContent="Email tidak valid"; break;
-     default: errorEl.textContent="Terjadi kesalahan, coba lagi";
-   }
+  grecaptcha.reset();
+
+  switch(error.code){
+   case "auth/user-not-found": errorEl.textContent="User tidak ditemukan"; break;
+   case "auth/wrong-password": errorEl.textContent="Password salah"; break;
+   case "auth/invalid-email": errorEl.textContent="Email tidak valid"; break;
+   default: errorEl.textContent="Terjadi kesalahan, coba lagi";
+  }
  });
 }
 </script>
