@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Invoice Withdraw</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+
+<style>
+body{
+background:#f1f2f7;
+padding:20px;
+font-family:Outfit,Arial;
+}
+.invoice{
+background:#fff;
+max-width:700px;
+margin:auto;
+padding:30px;
+border-radius:18px;
+box-shadow:0 10px 25px rgba(0,0,0,.1);
+position:relative;
+overflow:hidden;
+}
+.watermark{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+font-size:80px;
+opacity:.04;
+font-weight:900;
+}
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+.logo{height:45px}
+.title{
+font-size:22px;
+font-weight:800;
+}
+.info{
+margin-top:20px;
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+}
+.row{
+display:flex;
+justify-content:space-between;
+font-size:14px;
+}
+.line{border-top:1px dashed #ddd;margin:15px 0}
+.total{
+font-size:20px;
+font-weight:800;
+}
+.status{
+padding:6px 14px;
+border-radius:20px;
+background:#e6fff1;
+color:#0f9d58;
+font-weight:700;
+}
+.footer{
+margin-top:25px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+.ttd{
+text-align:center;
+}
+.ttd img{
+height:60px;
+}
+.btn{
+margin-top:20px;
+width:100%;
+padding:14px;
+background:#111;
+color:#fff;
+border:none;
+border-radius:12px;
+font-weight:800;
+}
+</style>
+</head>
+
+<body>
+
+<div class="invoice" id="invoice">
+
+<div class="watermark">DYNOPAY</div>
+
+<div class="header">
+  <img src="../assets/dynopay2.png" class="logo">
+  <div>
+    <div class="title">INVOICE WITHDRAW</div>
+    <small id="invoiceNo"></small>
+  </div>
+</div>
+
+<div class="info">
+  <div class="row"><span>Nama</span><b id="nama"></b></div>
+  <div class="row"><span>Email</span><b id="email"></b></div>
+  <div class="row"><span>Tanggal</span><b id="date"></b></div>
+  <div class="row"><span>Status</span><span class="status">APPROVED</span></div>
+</div>
+
+<div class="line"></div>
+
+<div class="row total">
+  <span>Total Withdraw</span>
+  <span id="amount"></span>
+</div>
+
+<div class="footer">
+  <div id="qrcode"></div>
+
+  <div class="ttd">
+    <img src="../assets/ttd.png">
+    <div>Finance Manager</div>
+  </div>
+</div>
+
+</div>
+
+<button class="btn" onclick="downloadPDF()">Download PDF</button>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+ apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+ databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db = firebase.database();
+const params = new URLSearchParams(location.search);
+const id = params.get("id");
+
+db.ref("withdraws/"+id).once("value").then(s=>{
+ if(!s.exists()) return alert("Invoice tidak ditemukan");
+ const d = s.val();
+ if(d.status!=="APPROVED") return alert("Belum approve");
+
+ document.getElementById("invoiceNo").innerText="INV-"+id;
+ document.getElementById("nama").innerText=d.nama;
+ document.getElementById("email").innerText=d.email;
+ document.getElementById("date").innerText=new Date(d.createdAt).toLocaleString();
+ document.getElementById("amount").innerText="Rp "+d.amount.toLocaleString();
+
+ new QRCode(document.getElementById("qrcode"),{
+  text:location.href,
+  width:90,
+  height:90
+ });
+});
+
+function downloadPDF(){
+ html2pdf()
+ .set({
+   margin:5,
+   filename:"Invoice-"+id+".pdf",
+   html2canvas:{scale:2},
+   jsPDF:{unit:'mm',format:'a4'}
+ })
+ .from(document.getElementById("invoice"))
+ .save();
+}
+</script>
+
+</body>
+</html>
