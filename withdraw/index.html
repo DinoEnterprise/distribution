@@ -236,7 +236,7 @@ Rp ${d.jumlah.toLocaleString("id-ID")}
 ${d.status.toUpperCase()}
 </span>
 
-${d.status=="approved" ? `
+${["approve","approved"].includes(d.status.toLowerCase()) ? `
 <div style="margin-top:8px">
 <button
 style="
