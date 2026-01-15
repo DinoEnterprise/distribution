@@ -197,27 +197,8 @@ firebase.auth().onAuthStateChanged(user=>{
   });
 
   // load history
-  loadHistory();
-});
-
-function requestWD(){
-  if(saldo<50000){alert("Minimal withdraw Rp 50.000"); return;}
-  if(!bank.value||!rek.value||!nama.value){alert("Lengkapi semua data!"); return;}
-
-  const id=Date.now();
-  db.ref("withdraws/"+uid+"/"+id).set({
-    bank:bank.value,
-    rekening:rek.value,
-    nama:nama.value,
-    jumlah:saldo,
-    status:"pending",
-    waktu:Date.now()
-  });
-  alert("Request withdraw dikirim!");
-}
-
-function loadHistory(){
-  db.ref("withdraws/"+uid).on("value",s=>{
+  function loadHistory(){
+  db.ref("withdraws/"+uid).on("value", s=>{
     list.innerHTML="";
     let delay=0;
 
@@ -225,31 +206,36 @@ function loadHistory(){
       const d = x.val();
       const id = x.key;
 
+      // Tentukan badge warna
+      const statusClass = d.status.toLowerCase() === "approve" || d.status.toLowerCase() === "approved" ? "approved" : "pending";
+      
       const item = document.createElement("div");
       item.className="item clickable";
       item.style.animationDelay = delay+"s";
 
       item.innerHTML = `
-<b>${d.bank}</b><br>
-Rp ${d.jumlah.toLocaleString("id-ID")}
-<span class="badge ${d.status}">
+<b>Nama Pemilik:</b> ${d.nama}<br>
+<b>Bank:</b> ${d.bank}<br>
+<b>No. Rekening:</b> ${d.rekening}<br>
+<b>Jumlah:</b> Rp ${d.jumlah.toLocaleString("id-ID")}<br>
+<b>Tanggal:</b> ${new Date(d.waktu).toLocaleString("id-ID")}<br>
+<span class="badge ${statusClass}">
 ${d.status.toUpperCase()}
 </span>
-
 ${["approve","approved"].includes(d.status.toLowerCase()) ? `
 <div style="margin-top:8px">
-<button
-style="
-background:#000;
-color:#fff;
-border:none;
-padding:8px 12px;
-border-radius:10px;
-font-size:12px;
-"
-onclick="openInvoice('${id}')">
-Download Invoice
-</button>
+  <button
+    style="
+    background:#000;
+    color:#fff;
+    border:none;
+    padding:8px 12px;
+    border-radius:10px;
+    font-size:12px;
+    "
+    onclick="openInvoice('${id}')">
+    Invoice
+  </button>
 </div>
 ` : ``}
 `;
