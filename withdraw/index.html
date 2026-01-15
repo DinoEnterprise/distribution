@@ -197,7 +197,26 @@ firebase.auth().onAuthStateChanged(user=>{
   });
 
   // load history
-  function loadHistory(){
+  loadHistory();
+});
+
+function requestWD(){
+  if(saldo<50000){alert("Minimal withdraw Rp 50.000"); return;}
+  if(!bank.value||!rek.value||!nama.value){alert("Lengkapi semua data!"); return;}
+
+  const id=Date.now();
+  db.ref("withdraws/"+uid+"/"+id).set({
+    bank:bank.value,
+    rekening:rek.value,
+    nama:nama.value,
+    jumlah:saldo,
+    status:"pending",
+    waktu:Date.now()
+  });
+  alert("Request withdraw dikirim!");
+}
+
+function loadHistory(){
   db.ref("withdraws/"+uid).on("value", s=>{
     list.innerHTML="";
     let delay=0;
