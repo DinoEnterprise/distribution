@@ -231,18 +231,20 @@ function loadHistory(){
       const item = document.createElement("div");
       item.className="item clickable";
       item.style.animationDelay = delay+"s";
+      item.style.display = "grid";
+      item.style.gridTemplateColumns = "1fr 1fr";
+      item.style.gap = "6px 12px";
+      item.style.alignItems = "center";
 
       item.innerHTML = `
-<b>Nama Pemilik:</b> ${d.nama}<br>
-<b>Bank:</b> ${d.bank}<br>
-<b>No. Rekening:</b> ${d.rekening}<br>
-<b>Jumlah:</b> Rp ${d.jumlah.toLocaleString("id-ID")}<br>
-<b>Tanggal:</b> ${new Date(d.waktu).toLocaleString("id-ID")}<br>
-<span class="badge ${statusClass}">
-${d.status.toUpperCase()}
-</span>
+<div><b>Nama Pemilik:</b> ${d.nama}</div>
+<div><b>Bank:</b> ${d.bank}</div>
+<div><b>No. Rekening:</b> ${d.rekening}</div>
+<div><b>Jumlah:</b> Rp ${d.jumlah.toLocaleString("id-ID")}</div>
+<div><b>Tanggal:</b> ${new Date(d.waktu).toLocaleString("id-ID")}</div>
+<div><span class="badge ${statusClass}">${d.status.toUpperCase()}</span></div>
 ${["approve","approved"].includes(d.status.toLowerCase()) ? `
-<div style="margin-top:8px">
+<div style="grid-column: span 2; margin-top:8px;">
   <button
     style="
     background:#000;
@@ -253,7 +255,7 @@ ${["approve","approved"].includes(d.status.toLowerCase()) ? `
     font-size:12px;
     "
     onclick="openInvoice('${id}')">
-    Invoice
+    Download Invoice
   </button>
 </div>
 ` : ``}
