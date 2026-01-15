@@ -4,88 +4,131 @@
 <meta charset="UTF-8">
 <title>Invoice Withdraw</title>
 
+<!-- Library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
 
 <style>
-body{
-  background:#f1f2f7;
-  padding:20px;
-  font-family:Outfit,Arial;
+body {
+  background: #f1f2f7;
+  font-family: 'Outfit', Arial, sans-serif;
+  margin: 0;
+  padding: 30px 10px;
 }
-.invoice{
-  background:#fff;
-  max-width:700px;
-  margin:auto;
-  padding:30px;
-  border-radius:18px;
-  box-shadow:0 10px 25px rgba(0,0,0,.1);
-  position:relative;
-  overflow:hidden;
+
+.invoice {
+  background: #fff;
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 30px 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
 }
-.watermark{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  font-size:80px;
-  opacity:.04;
-  font-weight:900;
+
+.watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 100px;
+  font-weight: 900;
+  color: #000;
+  opacity: 0.04;
+  pointer-events: none;
 }
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-.logo{height:45px}
-.title{
-  font-size:22px;
-  font-weight:800;
+
+.logo {
+  height: 50px;
 }
-.info{
-  margin-top:25px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+
+.title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 1px;
 }
-.row{
-  display:flex;
-  justify-content:space-between;
-  font-size:14px;
+
+.info {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
-.line{border-top:1px dashed #ddd;margin:15px 0}
-.total{
-  font-size:20px;
-  font-weight:800;
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
 }
-.status{
-  padding:6px 14px;
-  border-radius:20px;
-  background:#e6fff1;
-  color:#0f9d58;
-  font-weight:700;
+
+.line {
+  border-top: 1px dashed #ddd;
+  margin: 25px 0;
 }
-.footer{
-  margin-top:25px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+
+.total {
+  font-size: 20px;
+  font-weight: 800;
+  display: flex;
+  justify-content: space-between;
 }
-.ttd{
-  text-align:center;
+
+.status {
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: #e6fff1;
+  color: #0f9d58;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 13px;
 }
-.ttd img{
-  height:60px;
+
+.footer {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
 }
-.btn{
-  margin-top:20px;
-  width:100%;
-  padding:14px;
-  background:#111;
-  color:#fff;
-  border:none;
-  border-radius:12px;
-  font-weight:800;
+
+#qrcode {
+  flex-shrink: 0;
+}
+
+.ttd {
+  text-align: center;
+}
+
+.ttd img {
+  height: 60px;
+  display: block;
+  margin: 0 auto 5px;
+}
+
+.btn {
+  margin-top: 25px;
+  width: 100%;
+  padding: 14px;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  filter: brightness(90%);
 }
 </style>
 </head>
@@ -103,6 +146,7 @@ body{
     </div>
   </div>
 
+  <!-- Susunan info diperbaiki jadi 1 kolom vertikal -->
   <div class="info">
     <div class="row"><span>Nama</span><b id="nama"></b></div>
     <div class="row"><span>Tanggal</span><b id="date"></b></div>
@@ -148,7 +192,6 @@ firebase.auth().onAuthStateChanged(user=>{
   if(!user) location.href="../login"; // redirect kalau belum login
   const uid = user.uid;
 
-  // ambil data withdraw milik user
   db.ref("withdraws/"+uid+"/"+withdrawId).once("value").then(s=>{
     if(!s.exists()) return alert("Invoice tidak ditemukan");
     const d = s.val();
@@ -167,8 +210,8 @@ firebase.auth().onAuthStateChanged(user=>{
       height:90
     });
 
-    // otomatis download PDF setelah load
-    setTimeout(downloadPDF, 500);
+    // langsung download otomatis setelah load
+    setTimeout(downloadPDF, 300); 
   }).catch(err=>{
     console.error(err);
     alert("Gagal load data invoice");
