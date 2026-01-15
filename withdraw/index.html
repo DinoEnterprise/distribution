@@ -218,10 +218,9 @@ function requestWD(){
 
 function loadHistory(){
   db.ref("withdraws/"+uid).on("value", s=>{
-    list.innerHTML="";
-    let delay=0;
+    list.innerHTML = "";
+    let delay = 0;
 
-    // Ambil nama pengguna dari Firebase
     db.ref("users/"+uid+"/nama").once("value").then(n=>{
       const namaUser = n.val() || "-";
 
@@ -229,11 +228,10 @@ function loadHistory(){
         const d = x.val();
         const id = x.key;
 
-        // Tentukan badge warna
-        const statusClass = d.status.toLowerCase() === "approve" || d.status.toLowerCase() === "approved" ? "approved" : "pending";
+        const statusClass = ["approve","approved"].includes(d.status.toLowerCase()) ? "approved" : "pending";
 
         const item = document.createElement("div");
-        item.className="item clickable";
+        item.className = "item clickable";
         item.style.animationDelay = delay+"s";
         item.style.display = "flex";
         item.style.justifyContent = "space-between";
@@ -242,37 +240,41 @@ function loadHistory(){
         item.style.rowGap = "4px";
 
         item.innerHTML = `
-<div style="flex:1; min-width:120px;">
-  <div><b>${namaUser}</b></div>
-  <div style="font-size:12px; color:#555;">${new Date(d.waktu).toLocaleString("id-ID")}</div>
+<div style="flex:2; min-width:120px;">
+  <div style="font-weight:600; font-size:14px;">${namaUser}</div>
 </div>
-<div style="text-align:right; min-width:80px;">
-  <div style="font-weight:600;">Rp ${d.jumlah.toLocaleString("id-ID")}</div>
+<div style="flex:2; min-width:120px; font-size:12px; color:#555;">
+  ${new Date(d.waktu).toLocaleString("id-ID")}
+</div>
+<div style="flex:1; min-width:100px; text-align:right; font-weight:600;">
+  Rp ${d.jumlah.toLocaleString("id-ID")}
+</div>
+<div style="flex:1; min-width:80px; text-align:center;">
   <span class="badge ${statusClass}" style="
-    display:inline-block;
-    padding:4px 8px;
-    border-radius:12px;
-    font-size:12px;
+    padding:2px 6px;
+    font-size:11px;
     font-weight:700;
-    letter-spacing:0.5px;
+    border-radius:10px;
+    display:inline-block;
+    letter-spacing:0.3px;
   ">
     ${d.status.toUpperCase()}
   </span>
 </div>
 ${["approve","approved"].includes(d.status.toLowerCase()) ? `
-<div style="width:100%; margin-top:6px; text-align:right;">
+<div style="width:100%; margin-top:4px; text-align:right;">
   <button
     style="
       background:#000;
       color:#fff;
       border:none;
-      padding:6px 10px;
-      border-radius:8px;
-      font-size:12px;
+      padding:4px 8px;
+      border-radius:6px;
+      font-size:11px;
       cursor:pointer;
     "
     onclick="openInvoice('${id}')">
-    Download Invoice
+    Download
   </button>
 </div>
 ` : ``}
