@@ -228,50 +228,56 @@ function loadHistory(){
         const d = x.val();
         const id = x.key;
 
-        const statusClass = ["approve","approved"].includes(d.status.toLowerCase()) ? "approved" : "pending";
+        const approved = ["approve","approved"].includes(d.status.toLowerCase());
+        const statusClass = approved ? "approved" : "pending";
 
         const item = document.createElement("div");
         item.className = "item clickable";
         item.style.animationDelay = delay + "s";
-        item.style.padding = "10px 12px";
         item.style.display = "flex";
-        item.style.flexDirection = "column";
-        item.style.rowGap = "4px";
+        item.style.justifyContent = "space-between";
+        item.style.alignItems = "center";
+        item.style.padding = "10px 12px";
+        item.style.position = "relative"; // penting buat tombol invoice
 
         item.innerHTML = `
-<div style="display:flex; justify-content:space-between; align-items:center;">
-  <div style="display:flex; flex-direction:column;">
-    <div style="font-weight:600;">Withdraw</div>
-    <div style="font-size:11px; color:#888;">${new Date(d.waktu).toLocaleString("id-ID")}</div>
-  </div>
-  <div style="text-align:right;">
-    <div style="font-weight:600;">- Rp ${d.jumlah.toLocaleString("id-ID")}</div>
-    <span class="badge ${statusClass}" style="
-      font-size:10px;
-      padding:2px 6px;
-      border-radius:10px;
-      display:inline-block;
-      margin-top:2px;
-    ">${d.status.toUpperCase()}</span>
+<div style="display:flex; flex-direction:column;">
+  <div style="font-weight:600;">Withdraw</div>
+  <div style="font-size:11px; color:#888; margin-top:2px;">
+    ${new Date(d.waktu).toLocaleString("id-ID")}
   </div>
 </div>
 
-${["approve","approved"].includes(d.status.toLowerCase()) ? `
-<div style="text-align:right; margin-top:4px;">
-  <button
-    style="
-      font-size:11px;
-      padding:4px 8px;
-      border-radius:6px;
-      background:#000;
-      color:#fff;
-      border:none;
-      cursor:pointer;
-    "
-    onclick="openInvoice('${id}')">
-    Download Invoice
-  </button>
+<div style="text-align:right;">
+  <div style="font-weight:600;">- Rp ${d.jumlah.toLocaleString("id-ID")}</div>
+  <span class="badge ${statusClass}" style="
+    font-size:10px;
+    padding:2px 6px;
+    border-radius:10px;
+    margin-top:2px;
+    display:inline-block;
+  ">
+    ${d.status.toUpperCase()}
+  </span>
 </div>
+
+${approved ? `
+<button
+  onclick="openInvoice('${id}')"
+  style="
+    position:absolute;
+    right:12px;
+    bottom:6px;
+    font-size:10px;
+    padding:3px 6px;
+    border-radius:6px;
+    background:#000;
+    color:#fff;
+    border:none;
+    opacity:0.7;
+  ">
+  Invoice
+</button>
 ` : ``}
 `;
 
