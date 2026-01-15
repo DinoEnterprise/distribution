@@ -43,9 +43,9 @@ body{
   font-weight:800;
 }
 .info{
-  margin-top:20px;
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
+  margin-top:25px;
+  display:flex;
+  flex-direction:column;
   gap:10px;
 }
 .row{
@@ -105,8 +105,8 @@ body{
 
   <div class="info">
     <div class="row"><span>Nama</span><b id="nama"></b></div>
-    <div class="row"><span>Email</span><b id="email"></b></div>
     <div class="row"><span>Tanggal</span><b id="date"></b></div>
+    <div class="row"><span>Email</span><b id="email"></b></div>
     <div class="row"><span>Status</span><span class="status">APPROVED</span></div>
   </div>
 
@@ -166,6 +166,9 @@ firebase.auth().onAuthStateChanged(user=>{
       width:90,
       height:90
     });
+
+    // otomatis download PDF setelah load
+    setTimeout(downloadPDF, 500);
   }).catch(err=>{
     console.error(err);
     alert("Gagal load data invoice");
