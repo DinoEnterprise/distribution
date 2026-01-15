@@ -232,40 +232,28 @@ function loadHistory(){
 
         const item = document.createElement("div");
         item.className = "item clickable";
-        item.style.animationDelay = delay+"s";
+        item.style.animationDelay = delay + "s";
         item.style.display = "flex";
-        item.style.flexDirection = "column";
+        item.style.justifyContent = "space-between";
+        item.style.alignItems = "center";
         item.style.padding = "10px 12px";
-        item.style.borderBottom = "1px solid #eee";
 
         item.innerHTML = `
-<div style="display:flex; justify-content:space-between; flex-wrap:wrap; row-gap:4px;">
-  <div style="flex:2; min-width:120px; font-weight:600;">${namaUser}</div>
-  <div style="flex:2; min-width:120px; font-size:12px; color:#555;">${new Date(d.waktu).toLocaleString("id-ID")}</div>
+<div style="display:flex; flex-direction:column;">
+  <div style="font-weight:600;">Withdraw</div>
+  <div style="font-size:11px; color:#888; margin-top:2px;">${new Date(d.waktu).toLocaleString("id-ID")}</div>
 </div>
-<div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
-  <div style="font-weight:600;">Rp ${d.jumlah.toLocaleString("id-ID")}</div>
+
+<div style="text-align:right;">
+  <div style="font-weight:600;">- Rp ${d.jumlah.toLocaleString("id-ID")}</div>
   <span class="badge ${statusClass}" style="
+    font-size:10px;
     padding:2px 6px;
-    font-size:11px;
-    font-weight:700;
-    border-radius:12px;
-    letter-spacing:0.3px;
+    border-radius:10px;
+    margin-top:2px;
+    display:inline-block;
   ">${d.status.toUpperCase()}</span>
 </div>
-${statusClass === "approved" ? `
-<div style="margin-top:6px; text-align:right;">
-  <button style="
-    background:#000;
-    color:#fff;
-    border:none;
-    padding:4px 8px;
-    border-radius:6px;
-    font-size:11px;
-    cursor:pointer;
-  " onclick="openInvoice('${id}')">Download</button>
-</div>
-` : ``}
 `;
 
         list.appendChild(item);
