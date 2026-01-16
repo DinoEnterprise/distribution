@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel - DynoPay</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<style>
+body {
+  font-family: 'Outfit', sans-serif;
+  background: #f1f2f7;
+  margin: 0;
+  padding: 15px;
+}
+h3 {
+  margin-bottom: 8px;
+  font-size: 18px;
+  color: #111;
+}
+.card {
+  background: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 10px rgba(0,0,0,.05);
+}
+input, button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+input:focus { border-color: #111; box-shadow: 0 0 6px rgba(0,0,0,.1); }
+
+button {
+  cursor: pointer;
+  transition: 0.25s;
+  font-weight: 600;
+  border-radius: 6px;
+  outline: none;
+}
+button.register { background: #111; color: #fff; }
+button.register:hover { opacity: 0.9; }
+
+/* Tombol aksi putih + border hitam */
+button.action-btn {
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+  font-size: 12px;
+  margin-right: 4px;
+  padding: 6px 10px;
+}
+button.action-btn:hover { background: #f0f0f0; }
+
+/* Table style */
+.table-container {
+  overflow-x: auto;
+  max-height: 400px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 600px;
+}
+th, td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;
+}
+th {
+  background: #f9f9f9;
+  font-weight: 600;
+}
+tr:hover {
+  background: #f5f5f5;
+}
+
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 12px;
+}
+#msg {margin-top:6px;font-weight:600;}
+</style>
+</head>
+
+<body>
+
+<!-- ADD MEMBER -->
+<div class="card">
+<h3>Register Artist</h3>
+<input id="email" placeholder="Email">
+<input id="password" placeholder="Password">
+<input id="nama" placeholder="Nama Artis">
+<input id="saldo" placeholder="Saldo awal">
+<button class="register" onclick="register()">CREATE ACCOUNT</button>
+<p id="msg"></p>
+</div>
+
+<!-- WITHDRAW REQUESTS -->
+<div class="card">
+<h3>Withdraw Requests</h3>
+<div class="table-container">
+<table id="withdrawTable">
+  <thead>
+    <tr>
+      <th>Nama</th>
+      <th>Email</th>
+      <th>Bank</th>
+      <th>Rek</th>
+      <th>Jumlah</th>
+      <th>Status</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+</div>
+</div>
+
+<!-- MEMBERS -->
+<div class="card">
+<h3>Members</h3>
+<div class="table-container">
+<table id="memberTable">
+  <thead>
+    <tr>
+      <th>Nama</th>
+      <th>Email</th>
+      <th>Saldo</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+</div>
+</div>
+
+<!-- RELEASES -->
+<div class="card">
+<h3>Releases</h3>
+<div class="table-container">
+<table id="releaseTable">
+  <thead>
+    <tr>
+      <th>Artist</th>
+      <th>Title</th>
+      <th>Genre</th>
+      <th>Status</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+</div>
+</div>
+
+<script>
+firebase.initializeApp({
+ apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+ authDomain:"dynopay-2513c.firebaseapp.com",
+ databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const auth=firebase.auth();
+const db=firebase.database();
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) {
+    // Belum login → redirect ke halaman login admin
+    location.href = "../admin";
+    return;
+  }
+
+  const uid = user.uid;
+
+  // Cek apakah UID ada di node admins
+  db.ref(`admins/${uid}`).get().then(snapshot => {
+    if (!snapshot.exists()) {
+      // Kalau bukan admin → logout dan redirect
+      alert("⚠ Anda bukan admin!");
+      firebase.auth().signOut().then(() => location.href="../admin");
+    }
+  }).catch(err => {
+    console.error("Error cek admin:", err);
+    alert("Terjadi kesalahan. Coba lagi.");
+    firebase.auth().signOut().then(() => location.href="../admin");
+  });
+});
+// REGISTER ARTIST
+function register(){
+ let email=document.getElementById("email").value.trim();
+ let pass=document.getElementById("password").value.trim();
+ let nama=document.getElementById("nama").value.trim();
+ let saldo=document.getElementById("saldo").value.trim();
+ const msg=document.getElementById("msg");
+
+ if(!email||!pass||!nama||!saldo){
+   msg.style.color="red"; 
+   msg.innerHTML="⚠ Semua field harus diisi!"; 
+   return;
+ }
+
+ auth.createUserWithEmailAndPassword(email,pass)
+ .then(res=>{
+   let uid=res.user.uid;
+   db.ref("users/"+uid).set({
+     email: email,
+     nama: nama,
+     saldo:Number(saldo),
+     createdAt:Date.now()
+   });
+   msg.style.color="green";
+   msg.innerHTML="✔ Akun berhasil dibuat!";
+   ["email","password","nama","saldo"].forEach(id=>document.getElementById(id).value="");
+   loadMembers();
+ })
+ .catch(err=>{
+   msg.style.color="red";
+   msg.innerHTML=err.message;
+ });
+}
+
+// LOAD WITHDRAWS
+function loadWithdraws(){
+ db.ref("withdraws").on("value",snap=>{
+   const tbody = document.querySelector("#withdrawTable tbody");
+   tbody.innerHTML="";
+   snap.forEach(user=>{
+     user.forEach(w=>{
+       const d=w.val();
+       const tr = document.createElement("tr");
+       tr.innerHTML = `
+         <td>${d.nama}</td>
+         <td>${d.email||"-"}</td>
+         <td>${d.bank}</td>
+         <td>${d.rekening}</td>
+         <td>Rp ${Number(d.jumlah).toLocaleString()}</td>
+         <td>
+           <span class="status-badge" style="border:1px solid ${getStatusColor(d.status)}; color:${getStatusColor(d.status)}">
+             ${(d.status||"pending").toUpperCase()}
+           </span>
+         </td>
+         <td>
+           <button class="action-btn" onclick="setWithdrawStatus('${user.key}','${w.key}','approve')">Approve</button>
+           <button class="action-btn" onclick="setWithdrawStatus('${user.key}','${w.key}','reject')">Reject</button>
+           <button class="action-btn" onclick="deleteWithdraw('${user.key}','${w.key}')">Delete</button>
+         </td>
+       `;
+       tbody.appendChild(tr);
+     });
+   });
+ });
+}
+
+// LOAD MEMBERS
+function loadMembers(){
+  const tbody = document.querySelector("#memberTable tbody");
+  db.ref("users").on("value", snap=>{
+    tbody.innerHTML="";
+    snap.forEach(u=>{
+      const d = u.val();
+      const saldoFormatted = "Rp " + (d.saldo||0).toLocaleString();
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${d.nama}</td>
+        <td>${d.email||"-"}</td>
+        <td>${saldoFormatted}</td>
+        <td>
+          <button class="action-btn" onclick="editMember('${u.key}')">Edit</button>
+          <button class="action-btn" onclick="deleteMember('${u.key}')">Hapus</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  });
+}
+
+// LOAD RELEASES
+function loadReleases(){
+  const tbody = document.querySelector("#releaseTable tbody");
+  db.ref("releases").on("value", snap=>{
+    tbody.innerHTML="";
+    snap.forEach(u=>{
+      u.forEach(r=>{
+        const d = r.val();
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${d.artist||"-"}</td>
+          <td>${d.title||"-"}</td>
+          <td>${d.genre||"-"}</td>
+          <td>
+            <span class="status-badge" style="border:1px solid ${getStatusColor(d.status)}; color:${getStatusColor(d.status)}">
+              ${(d.status||"pending").toUpperCase()}
+            </span>
+          </td>
+          <td>
+            <button class="action-btn" onclick="setReleaseStatus('${u.key}','${r.key}','approved')">Approve</button>
+            <button class="action-btn" onclick="setReleaseStatus('${u.key}','${r.key}','rejected')">Reject</button>
+            <button class="action-btn" onclick="deleteRelease('${u.key}','${r.key}')">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    });
+  });
+}
+
+// UTILS
+function getStatusColor(status){
+  if(status=="approved") return "#10b981";
+  if(status=="rejected") return "#ef4444";
+  return "#f59e0b"; // pending
+}
+
+// ACTION FUNCTIONS
+function setWithdrawStatus(uid,key,status){
+ db.ref(`withdraws/${uid}/${key}/status`).set(status)
+ .then(()=>{
+   if(status==="approve") db.ref(`users/${uid}/saldo`).set(0);
+   loadWithdraws(); loadMembers();
+ });
+}
+function deleteWithdraw(uid,key){
+ if(confirm("Apakah yakin ingin menghapus riwayat ini?")){
+   db.ref(`withdraws/${uid}/${key}`).remove().then(()=>loadWithdraws());
+ }
+}
+
+function editMember(uid){
+  let newSaldo = prompt("Masukkan saldo baru:");
+  if(newSaldo!==null){
+    newSaldo = Number(newSaldo);
+    if(isNaN(newSaldo)){ alert("⚠ Harus angka!"); return; }
+    db.ref(`users/${uid}/saldo`).set(newSaldo);
+  }
+  let newPass = prompt("Masukkan password baru (kosongkan jika tidak ingin ganti):");
+  if(newPass){
+    auth.currentUser.updatePassword(newPass).catch(err=>alert(err.message));
+    // NOTE: update password via Admin SDK di server sebenarnya
+  }
+  loadMembers();
+}
+
+function deleteMember(uid){
+ if(confirm("Apakah yakin ingin menghapus member ini?")){
+   db.ref(`users/${uid}`).remove().then(()=>loadMembers());
+ }
+}
+
+function setReleaseStatus(uid,rid,status){
+  db.ref(`releases/${uid}/${rid}/status`).set(status).then(()=>loadReleases());
+}
+function deleteRelease(uid,rid){
+  if(confirm("Apakah yakin ingin menghapus rilisan ini?")){
+    db.ref(`releases/${uid}/${rid}`).remove().then(()=>loadReleases());
+  }
+}
+
+// INITIAL LOAD
+loadWithdraws();
+loadMembers();
+loadReleases();
+</script>
+
+</body>
+</html>
