@@ -7,13 +7,34 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;user-select:none;}
-body{background:#f1f2f7;min-height:100vh;color:#111;animation:fadeIn .5s ease;-webkit-tap-highlight-color:transparent;}
+body{
+  background:#f1f2f7;
+  min-height:100vh;
+  color:#111;
+  animation:fadeIn .5s ease;
+  -webkit-tap-highlight-color:transparent;
+  padding-top: 74px; 
+  padding-bottom: 70px;
+  box-sizing: border-box;
+}
 @keyframes fadeIn{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
 @keyframes bounceIn{0%{transform:translateY(-20px);opacity:0;}50%{transform:translateY(10px);opacity:1;}70%{transform:translateY(-5px);}100%{transform:translateY(0);opacity:1;}}
 @keyframes fadeSlideUp{from{opacity:0; transform:translateY(10px);}to{opacity:1; transform:translateY(0);}}
 
 /* HEADER */
-header{padding:12px 20px;display:flex;align-items:center;background:white;border-bottom:1px solid #eee;}
+header {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  background: white;
+  border-bottom: 1px solid #eee;
+
+  position: fixed;   /* nempel di atas */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; 
+}
 header img{height:50px;}
 
 /* CARD */
