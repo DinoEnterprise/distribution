@@ -257,56 +257,98 @@ function goCreateRelease(){
 </script>   <!-- WAJIB ADA -->
 
 <script>
-function loadReleases(uid){
+let currentPage = 1;
+const releasesPerPage = 5;
+
+function loadReleases(uid) {
   const list = document.getElementById("releaseList");
   list.innerHTML = "<div style='color:#888;font-size:13px'>Loading...</div>";
 
-  db.ref("releases/" + uid).on("value", snap=>{
-    list.innerHTML = "";
+  db.ref("releases/" + uid).once("value").then(snap => {
+    const allReleases = [];
+    snap.forEach(item => {
+      const r = item.val();
+      r._key = item.key;
+      allReleases.push(r);
+    });
 
-    if(!snap.exists()){
-      list.innerHTML = `
-        <div style="text-align:center;color:#888;font-size:13px">
-          Belum ada rilisan
-        </div>`;
-      return;
+    // Urutkan berdasarkan waktu terbaru dulu
+    allReleases.sort((a,b) => (b.time||0) - (a.time||0));
+
+    const totalPages = Math.ceil(allReleases.length / releasesPerPage);
+
+    function renderPage(page) {
+      list.innerHTML = "";
+      if(allReleases.length === 0){
+        list.innerHTML = `<div style="text-align:center;color:#888;font-size:13px">Belum ada rilisan</div>`;
+        return;
+      }
+
+      const start = (page - 1) * releasesPerPage;
+      const end = start + releasesPerPage;
+      const pageItems = allReleases.slice(start, end);
+
+      pageItems.forEach(r => {
+        let statusColor = "#f59e0b"; // pending
+        if(r.status=="approved") statusColor="#10b981";
+        if(r.status=="rejected") statusColor="#ef4444";
+
+        list.innerHTML += `
+          <div style="
+            padding:12px;
+            border:1px solid #eee;
+            border-radius:12px;
+            margin-bottom:10px">
+
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:600">${r.title || "-"}</div>
+              <div style="
+                font-size:11px;
+                padding:4px 10px;
+                border-radius:999px;
+                border:1px solid ${statusColor};
+                color:${statusColor};
+                background:transparent;
+                font-weight:600">
+                ${(r.status||"pending").toUpperCase()}
+              </div>
+            </div>
+
+            <div style="font-size:12px;color:#777;margin-top:4px">
+              ${r.artist || "-"} • ${r.genre || "-"}
+            </div>
+          </div>`;
+      });
+
+      // Pagination buttons
+      list.innerHTML += `<div style="display:flex;justify-content:center;margin-top:10px;gap:10px">
+        <button onclick="prevPage()" ${page===1?'disabled':''}>Prev</button>
+        <span style="align-self:center">Page ${page} / ${totalPages}</span>
+        <button onclick="nextPage()" ${page===totalPages?'disabled':''}>Next</button>
+      </div>`;
     }
 
-    snap.forEach(item=>{
-      const r = item.val();
+    function nextPage() {
+      if(currentPage < totalPages) {
+        currentPage++;
+        renderPage(currentPage);
+      }
+    }
 
-      let statusColor = "#f59e0b"; // pending
-if(r.status=="approved") statusColor="#10b981";
-if(r.status=="rejected") statusColor="#ef4444";
+    function prevPage() {
+      if(currentPage > 1) {
+        currentPage--;
+        renderPage(currentPage);
+      }
+    }
 
-list.innerHTML += `
-  <div style="
-    padding:12px;
-    border:1px solid #eee;
-    border-radius:12px;
-    margin-bottom:10px">
+    // Supaya tombol bisa akses
+    window.nextPage = nextPage;
+    window.prevPage = prevPage;
 
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <div style="font-weight:600">${r.title || "-"}</div>
-
-      <div style="
-        font-size:11px;
-        padding:4px 10px;
-        border-radius:999px;
-        border:1px solid ${statusColor};
-        color:${statusColor};
-        background:transparent;
-        font-weight:600">
-        ${(r.status||"pending").toUpperCase()}
-      </div>
-    </div>
-
-    <div style="font-size:12px;color:#777;margin-top:4px">
-      ${r.artist || "-"} • ${r.genre || "-"}
-    </div>
-
-  </div>`;
-    });
+    // Render halaman pertama
+    currentPage = 1;
+    renderPage(currentPage);
   });
 }
 </script>
