@@ -293,31 +293,32 @@ function loadReleases(uid) {
         if(r.status=="approved") statusColor="#10b981";
         if(r.status=="rejected") statusColor="#ef4444";
 
-        list.innerHTML += `
-          <div style="
-            padding:12px;
-            border:1px solid #eee;
-            border-radius:12px;
-            margin-bottom:10px">
+        // Pagination buttons
+list.innerHTML += `<div style="display:flex;justify-content:center;margin-top:10px;gap:8px">
+  <button style="
+    font-size:11px;
+    padding:3px 8px;
+    border-radius:999px;
+    border:1px solid #111;
+    background:transparent;
+    color:#111;
+    font-weight:600;
+    cursor:pointer;"
+    onclick="prevPage()" ${page===1?'disabled':''}>Prev</button>
 
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div style="font-weight:600">${r.title || "-"}</div>
-              <div style="
-                font-size:11px;
-                padding:4px 10px;
-                border-radius:999px;
-                border:1px solid ${statusColor};
-                color:${statusColor};
-                background:transparent;
-                font-weight:600">
-                ${(r.status||"pending").toUpperCase()}
-              </div>
-            </div>
+  <span style="align-self:center;font-size:12px;color:#555">Page ${page} / ${totalPages}</span>
 
-            <div style="font-size:12px;color:#777;margin-top:4px">
-              ${r.artist || "-"} • ${r.genre || "-"}
-            </div>
-          </div>`;
+  <button style="
+    font-size:11px;
+    padding:3px 8px;
+    border-radius:999px;
+    border:1px solid #111;
+    background:transparent;
+    color:#111;
+    font-weight:600;
+    cursor:pointer;"
+    onclick="nextPage()" ${page===totalPages?'disabled':''}>Next</button>
+</div>`;
       });
 
       // Pagination buttons
