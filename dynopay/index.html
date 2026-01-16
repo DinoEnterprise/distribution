@@ -20,7 +20,8 @@
       animation: fadeIn 0.5s ease;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
-    }
+  padding-top: 74px;
+}
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(15px); }
@@ -35,12 +36,18 @@
     }
 
     header {
-      padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      background: white;
-      border-bottom: 1px solid #eee;
-    }
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  background: white;
+  border-bottom: 1px solid #eee;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
 
     header img { height: 50px; }
 
