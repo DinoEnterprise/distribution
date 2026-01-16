@@ -238,7 +238,7 @@ function loadHistory(){
         const id = x.key;
 
         let statusClass = '';
-if(d.status.toLowerCase() === 'approved') statusClass = 'approved';
+if(d.status.toLowerCase() === 'approved' || d.status.toLowerCase() === 'approve') statusClass = 'approved';
 else if(d.status.toLowerCase() === 'rejected') statusClass = 'rejected';
 else statusClass = 'pending';
 
