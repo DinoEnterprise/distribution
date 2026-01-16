@@ -52,9 +52,18 @@ button:hover{filter:brightness(90%);}
 button:active{transform:scale(0.94); filter:brightness(70%); box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);}
 
 /* Badge */
-.badge{padding:4px 10px;border-radius:20px;font-size:12px;color:#fff;}
-.pending{background:#f59e0b;}
-.approved{background:#10b981;}
+.badge {
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:12px;
+  background:transparent; /* jadi transparan */
+  border:1px solid;       /* garis stroke */
+  display:inline-block;
+}
+
+.pending { color:#f59e0b; border-color:#f59e0b; }
+.approved { color:#10b981; border-color:#10b981; }
+.rejected { color:#ef4444; border-color:#ef4444; }
 
 /* Withdraw history items */
 .item{
@@ -228,8 +237,10 @@ function loadHistory(){
         const d = x.val();
         const id = x.key;
 
-        const approved = ["approve","approved"].includes(d.status.toLowerCase());
-        const statusClass = approved ? "approved" : "pending";
+        let statusClass = '';
+if(d.status.toLowerCase() === 'approved') statusClass = 'approved';
+else if(d.status.toLowerCase() === 'rejected') statusClass = 'rejected';
+else statusClass = 'pending';
 
         const item = document.createElement("div");
         item.className = "item clickable";
@@ -265,7 +276,7 @@ function loadHistory(){
   </div>
 </div>
 
-${approved ? `
+${statusClass === 'approved' ? `
 <div style="display:flex; justify-content:flex-end;">
   <button
     onclick="openInvoice('${id}')"
