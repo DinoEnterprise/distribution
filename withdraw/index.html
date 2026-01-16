@@ -194,6 +194,20 @@ firebase.initializeApp({
 const db = firebase.database();
 let saldo=0,uid="";
 
+function formatStatus(status) {
+  const s = status.toLowerCase();
+  if (s === "approve" || s === "approved") return "APPROVED"; // tulisannya jadi APPROVED
+  if (s === "rejected") return "REJECTED";
+  return "PENDING";
+}
+
+function getStatusClass(status){
+  const s = status.toLowerCase();
+  if (s === "approve" || s === "approved") return "approved"; // badge hijau
+  if (s === "rejected") return "rejected"; // badge merah
+  return "pending"; // badge oranye
+}
+
 firebase.auth().onAuthStateChanged(user=>{
   if(!user) location.href="../login";
   uid=user.uid;
@@ -237,10 +251,8 @@ function loadHistory(){
         const d = x.val();
         const id = x.key;
 
-        let statusClass = '';
-if(d.status.toLowerCase() === 'approved' || d.status.toLowerCase() === 'approve') statusClass = 'approved';
-else if(d.status.toLowerCase() === 'rejected') statusClass = 'rejected';
-else statusClass = 'pending';
+        const statusClass = getStatusClass(d.status);
+        const statusText = formatStatus(d.status);
 
         const item = document.createElement("div");
         item.className = "item clickable";
@@ -271,13 +283,13 @@ else statusClass = 'pending';
       display:inline-block;
       margin-top:4px;
     ">
-      ${d.status.toUpperCase()}
+      ${statusText}
     </span>
   </div>
 </div>
 
 ${statusClass === 'approved' ? `
-<div style="display:flex; justify-content:flex-end;">
+<div style="display:flex; justify-content:flex-end; margin-top:4px;">
   <button
     onclick="openInvoice('${id}')"
     style="
