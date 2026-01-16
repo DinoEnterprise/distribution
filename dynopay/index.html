@@ -1,262 +1,288 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard | DynoPay</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
-body{background:#f1f2f7;min-height:100vh;color:#111;animation:fadeIn 0.5s ease;-webkit-tap-highlight-color:transparent;user-select:none;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
-@keyframes bounceIn{0%{transform:translateY(-20px);opacity:0;}50%{transform:translateY(10px);opacity:1;}70%{transform:translateY(-5px);}100%{transform:translateY(0);opacity:1;}}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | DynoPay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Outfit", sans-serif;
+    }
 
-header{padding:12px 20px;display:flex;align-items:center;background:white;border-bottom:1px solid #eee;}
-header img{height:50px;}
+    body {
+      background: #f1f2f7;
+      min-height: 100vh;
+      color: #111;
+      animation: fadeIn 0.5s ease;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
 
-.card{
-  width:90%;
-  margin:35px auto;
-  background:#fff;
-  border-radius:20px;
-  padding:25px;
-  border:1px solid #ececec;
-  box-shadow:0 8px 18px rgba(0,0,0,.05);
-  transition:.3s;
-  animation:bounceIn 0.6s ease;
-}
-.card:hover{
-  transform:translateY(-3px);
-  box-shadow:0 10px 22px rgba(0,0,0,.08);
-}
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-.artist-name{font-size:15px;font-weight:500;color:#555;margin-bottom:6px;}
-.balance-title{font-size:15px;font-weight:600;color:#222;margin-bottom:10px;}
-.card-value{font-size:33px;font-weight:700;color:#111;margin-bottom:15px;transition: all 0.3s ease;}
+    @keyframes bounceIn {
+      0% { transform: translateY(-20px); opacity: 0; }
+      50% { transform: translateY(10px); opacity: 1; }
+      70% { transform: translateY(-5px); }
+      100% { transform: translateY(0); opacity: 1; }
+    }
 
-/* PROFILE MENU */
-.profile-menu{
-  position:fixed;bottom:60px;right:20px;background:#fff;border-radius:12px;
-  box-shadow:0 6px 18px rgba(0,0,0,.12);
-  display:none;width:180px;z-index:10;
-  opacity:0;
-  transform:translateY(20px);
-  transition:opacity 0.25s ease, transform 0.25s ease;
-}
-.profile-menu.show{
-  display:block;
-  opacity:1;
-  transform:translateY(0);
-}
-.profile-menu div{
-  padding:12px 14px;
-  cursor:pointer;
-  border-bottom:1px solid #eee;
-  font-size:14px;
-  transition:.15s ease, background 0.15s ease;
-}
-.profile-menu div:last-child{border-bottom:none;}
-.profile-menu div:hover{background:#f1f2f7;}
+    header {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      background: white;
+      border-bottom: 1px solid #eee;
+    }
 
-/* CLICK EFFECT */
-.clickable{
-  cursor:pointer;
-  transition: transform 0.12s cubic-bezier(0.4,0,0.2,1), box-shadow 0.12s, filter 0.12s;
-  outline:none;
-  -webkit-tap-highlight-color: transparent;
-}
-.clickable:active{
-  transform: scale(0.94);
-  filter: brightness(85%);
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);
-}
+    header img { height: 50px; }
 
-/* BOTTOM NAV */
-.bottom-nav{
-  background:#fff;
-  border-top:1px solid #eee;
-  padding:10px 0;
-  display:flex;
-  justify-content:space-around;
-  align-items:center;
-  position:fixed;
-  bottom:0;left:0;width:100%;
-}
-.nav-item{
-  text-align:center;
-  font-size:13px;
-  opacity:.75;
-  padding:4px 14px;
-  border-radius:12px;
-  transition:.15s ease;
-}
-.nav-item img{width:28px;display:block;margin:auto;margin-bottom:4px;}
-.nav-item:hover{opacity:1;}
-.nav-item.active{opacity:1;color:#667eea;}
-.nav-item.active img{filter:brightness(1.2);}
+    .card {
+      width: 90%;
+      margin: 35px auto;
+      background: #fff;
+      border-radius: 20px;
+      padding: 25px;
+      border: 1px solid #ececec;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
+      transition: 0.3s;
+      animation: bounceIn 0.6s ease;
+    }
 
-/* BUTTON */
-button{
-  width:100%;
-  padding:15px;
-  border:none;
-  border-radius:14px;
-  font-size:16px;
-  font-weight:700;
-  color:#fff;
-  background:linear-gradient(90deg,#667eea,#764ba2);
-  cursor:pointer;
-  transition:.15s ease;
-  outline:none;
-}
-button:hover{filter: brightness(90%);}
-button:active{
-  filter: brightness(70%);
-  transform: scale(0.95);
-}
-</style>
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+    }
+
+    .artist-name { font-size: 15px; font-weight: 500; color: #555; margin-bottom: 6px; }
+    .balance-title { font-size: 15px; font-weight: 600; color: #222; margin-bottom: 10px; }
+    .card-value { font-size: 33px; font-weight: 700; color: #111; margin-bottom: 15px; transition: all 0.3s ease; }
+
+    /* PROFILE MENU */
+    .profile-menu {
+      position: fixed;
+      bottom: 60px;
+      right: 20px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+      display: none;
+      width: 180px;
+      z-index: 10;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .profile-menu.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .profile-menu div {
+      padding: 12px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+      transition: 0.15s ease, background 0.15s ease;
+    }
+
+    .profile-menu div:last-child { border-bottom: none; }
+    .profile-menu div:hover { background: #f1f2f7; }
+
+    /* CLICK EFFECT */
+    .clickable {
+      cursor: pointer;
+      transition: transform 0.12s cubic-bezier(0.4,0,0.2,1), box-shadow 0.12s, filter 0.12s;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .clickable:active {
+      transform: scale(0.94);
+      filter: brightness(85%);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    /* BOTTOM NAV */
+    .bottom-nav {
+      background: #fff;
+      border-top: 1px solid #eee;
+      padding: 10px 0;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
+
+    .nav-item {
+      text-align: center;
+      font-size: 13px;
+      opacity: 0.75;
+      padding: 4px 14px;
+      border-radius: 12px;
+      transition: 0.15s ease;
+    }
+
+    .nav-item img {
+      width: 28px;
+      display: block;
+      margin: auto;
+      margin-bottom: 4px;
+    }
+
+    .nav-item:hover { opacity: 1; }
+    .nav-item.active { opacity: 1; color: #667eea; }
+    .nav-item.active img { filter: brightness(1.2); }
+
+    /* BUTTON */
+    button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(90deg,#667eea,#764ba2);
+      cursor: pointer;
+      transition: 0.15s ease;
+      outline: none;
+    }
+
+    button:hover { filter: brightness(90%); }
+    button:active {
+      filter: brightness(70%);
+      transform: scale(0.95);
+    }
+  </style>
 </head>
+
 <body>
 
-<header>
-  <img src="../assets/dynopay2.png" alt="DynoPay">
-</header>
+  <header>
+    <img src="../assets/dynopay2.png" alt="DynoPay">
+  </header>
 
-<!-- MAIN CARD -->
-<div class="card clickable">
-  <div id="namaArtis" class="artist-name">Hi, --</div>
-  <div class="balance-title">Main Wallet Balance</div>
-  <div id="saldo" class="card-value">Rp 0</div>
-</div>
+  <!-- MAIN CARD -->
+  <div class="card clickable">
+    <div id="namaArtis" class="artist-name">Hi, --</div>
+    <div class="balance-title">Main Wallet Balance</div>
+    <div id="saldo" class="card-value">Rp 0</div>
+  </div>
 
-<!-- CREATE RELEASE CARD -->
-<div class="card clickable" onclick="goCreateRelease()">
-  <div style="display:flex;align-items:center;justify-content:space-between;">
-    <div>
-      <div style="font-weight:700;font-size:16px;">Create New Release</div>
-      <div style="font-size:12px;color:#666;margin-top:4px;">
-        Upload & kelola rilisanmu
+  <!-- CREATE RELEASE CARD -->
+  <div class="card clickable" onclick="goCreateRelease()">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-weight:700;font-size:16px;">Create New Release</div>
+        <div style="font-size:12px;color:#666;margin-top:4px;">Upload & kelola rilisanmu</div>
+      </div>
+      <div style="width:42px;height:42px;border-radius:12px;background:#111;color:#fff;
+                  display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;">
+        +
       </div>
     </div>
-
-    <div style="
-      width:42px;
-      height:42px;
-      border-radius:12px;
-      background:#111;
-      color:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:22px;
-      font-weight:700;
-    ">+</div>
-  </div>
-</div>
-
-<!-- MY RELEASE -->
-<div class="card">
-  <div style="font-weight:700;font-size:16px;margin-bottom:12px">
-    My Releases
   </div>
 
-  <div id="releaseList"></div>
-</div>
-<div style="height:120px"></div>
-
-<!-- PROFILE MENU -->
-<div id="profileMenu" class="profile-menu">
-  <div class="clickable" onclick="goProfile()">Profile</div>
-  <div class="clickable" onclick="logout()">Log Out</div>
-</div>
-
-<!-- BOTTOM NAV -->
-<div class="bottom-nav">
-  <div class="nav-item clickable active" onclick="dashboardClick()">
-    <img src="../assets/dasboard.png">
-    Dashboard
+  <!-- MY RELEASE -->
+  <div class="card">
+    <div style="font-weight:700;font-size:16px;margin-bottom:12px">My Releases</div>
+    <div id="releaseList"></div>
   </div>
-  <div class="nav-item clickable" onclick="goWithdraw()">
-    <img src="../assets/withdraw.png">
-    Withdraw
+
+  <div style="height:120px"></div>
+
+  <!-- PROFILE MENU -->
+  <div id="profileMenu" class="profile-menu">
+    <div class="clickable" onclick="goProfile()">Profile</div>
+    <div class="clickable" onclick="logout()">Log Out</div>
   </div>
-  <div class="nav-item clickable" onclick="toggleProfileMenu()">
-    <img src="../assets/profile.png">
-    Profile
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item clickable active" onclick="dashboardClick()">
+      <img src="../assets/dasboard.png">
+      Dashboard
+    </div>
+    <div class="nav-item clickable" onclick="goWithdraw()">
+      <img src="../assets/withdraw.png">
+      Withdraw
+    </div>
+    <div class="nav-item clickable" onclick="toggleProfileMenu()">
+      <img src="../assets/profile.png">
+      Profile
+    </div>
   </div>
-</div>
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script>
-firebase.initializeApp({
-  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain: "dynopay-2513c.firebaseapp.com",
-  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
+  <!-- FIREBASE -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+      authDomain: "dynopay-2513c.firebaseapp.com",
+      databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+    });
 
-const db = firebase.database();
-let targetSaldo = 0;
+    const db = firebase.database();
+    let targetSaldo = 0;
 
-// FIREBASE AUTH
-firebase.auth().onAuthStateChanged(user => {
-  if(!user) window.location.href = "../login";
-  else{
+    firebase.auth().onAuthStateChanged(user => {
+      if(!user) window.location.href = "../login";
+      else {
+        loadReleases(user.uid);
 
-    loadReleases(user.uid);
-
-    db.ref("users/" + user.uid).once("value").then(snapshot=>{
-      if(snapshot.exists()){
-        const data = snapshot.val();
-        targetSaldo = Number(data.saldo || 0);
-        document.getElementById("namaArtis").textContent =
-          "Hi, " + (data.nama || "Artist");
-        animateSaldo();
+        db.ref("users/" + user.uid).once("value").then(snapshot => {
+          if(snapshot.exists()) {
+            const data = snapshot.val();
+            targetSaldo = Number(data.saldo || 0);
+            document.getElementById("namaArtis").textContent = "Hi, " + (data.nama || "Artist");
+            animateSaldo();
+          }
+        });
       }
     });
-  }
-});
 
-function animateSaldo(){
-  let angka = 0;
-  const step = Math.ceil(targetSaldo / 15);
-  const interval = setInterval(()=>{
-    if(angka < targetSaldo){
-      angka += step;
-      if(angka > targetSaldo) angka = targetSaldo;
-      document.getElementById("saldo").textContent =
-        "Rp " + angka.toLocaleString("id-ID");
-    }else clearInterval(interval);
-  },15);
-}
+    function animateSaldo() {
+      let angka = 0;
+      const step = Math.ceil(targetSaldo / 15);
+      const interval = setInterval(() => {
+        if(angka < targetSaldo) {
+          angka += step;
+          if(angka > targetSaldo) angka = targetSaldo;
+          document.getElementById("saldo").textContent = "Rp " + angka.toLocaleString("id-ID");
+        } else clearInterval(interval);
+      }, 15);
+    }
 
-function logout(){
-  firebase.auth().signOut().then(()=>{
-    window.location.href = "../login";
-  });
-}
+    function logout() {
+      firebase.auth().signOut().then(() => { window.location.href = "../login"; });
+    }
 
-function goWithdraw(){ window.location.href = "../withdraw"; }
-function goProfile(){ window.location.href = "../profile"; }
-function toggleProfileMenu(){
-  const menu = document.getElementById("profileMenu");
-  menu.classList.toggle("show");
-}
+    function goWithdraw() { window.location.href = "../withdraw"; }
+    function goProfile() { window.location.href = "../profile"; }
+    function toggleProfileMenu() {
+      document.getElementById("profileMenu").classList.toggle("show");
+    }
 
-// DASHBOARD CLICK (tidak reload)
-function dashboardClick(){
-  console.log("Dashboard active — tidak reload");
-}
+    function dashboardClick() { console.log("Dashboard active — tidak reload"); }
+    function goCreateRelease() { window.location.href = "../create-release"; }
+  </script>
 
-// CREATE RELEASE
-function goCreateRelease(){
-  window.location.href = "../create-release";
-}
-</script>   <!-- WAJIB ADA -->
-
-<script>
+ <script>
 let currentPage = 1;
 const releasesPerPage = 5;
 
@@ -272,7 +298,7 @@ function loadReleases(uid) {
       allReleases.push(r);
     });
 
-    // Urutkan berdasarkan waktu terbaru dulu
+    // Urutkan berdasarkan waktu terbaru
     allReleases.sort((a,b) => (b.time||0) - (a.time||0));
 
     const totalPages = Math.ceil(allReleases.length / releasesPerPage);
@@ -293,40 +319,49 @@ function loadReleases(uid) {
         if(r.status=="approved") statusColor="#10b981";
         if(r.status=="rejected") statusColor="#ef4444";
 
-        // Pagination buttons
-list.innerHTML += `<div style="display:flex;justify-content:center;margin-top:10px;gap:8px">
-  <button style="
-    font-size:11px;
-    padding:3px 8px;
-    border-radius:999px;
-    border:1px solid #111;
-    background:transparent;
-    color:#111;
-    font-weight:600;
-    cursor:pointer;"
-    onclick="prevPage()" ${page===1?'disabled':''}>Prev</button>
-
-  <span style="align-self:center;font-size:12px;color:#555">Page ${page} / ${totalPages}</span>
-
-  <button style="
-    font-size:11px;
-    padding:3px 8px;
-    border-radius:999px;
-    border:1px solid #111;
-    background:transparent;
-    color:#111;
-    font-weight:600;
-    cursor:pointer;"
-    onclick="nextPage()" ${page===totalPages?'disabled':''}>Next</button>
-</div>`;
+        list.innerHTML += `
+          <div style="padding:12px;border:1px solid #eee;border-radius:12px;margin-bottom:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:600">${r.title || "-"}</div>
+              <div style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid ${statusColor};
+                          color:${statusColor};background:transparent;font-weight:600">
+                ${(r.status||"pending").toUpperCase()}
+              </div>
+            </div>
+            <div style="font-size:12px;color:#777;margin-top:4px">
+              ${r.artist || "-"} • ${r.genre || "-"}
+            </div>
+          </div>`;
       });
 
-      // Pagination buttons
-      list.innerHTML += `<div style="display:flex;justify-content:center;margin-top:10px;gap:10px">
-        <button onclick="prevPage()" ${page===1?'disabled':''}>Prev</button>
-        <span style="align-self:center">Page ${page} / ${totalPages}</span>
-        <button onclick="nextPage()" ${page===totalPages?'disabled':''}>Next</button>
-      </div>`;
+      // Pagination kecil di bawah list
+      list.innerHTML += `
+        <div style="display:flex;justify-content:center;margin-top:8px;gap:6px">
+          <button onclick="prevPage()" ${page===1?'disabled':''} style="
+            font-size:11px;
+            padding:2px 6px;
+            border-radius:999px;
+            border:1px solid #111;
+            background:transparent;
+            color:#111;
+            font-weight:600;
+            cursor:pointer;">
+            Prev
+          </button>
+          <span style="align-self:center;font-size:12px;color:#555">Page ${page} / ${totalPages}</span>
+          <button onclick="nextPage()" ${page===totalPages?'disabled':''} style="
+            font-size:11px;
+            padding:2px 6px;
+            border-radius:999px;
+            border:1px solid #111;
+            background:transparent;
+            color:#111;
+            font-weight:600;
+            cursor:pointer;">
+            Next
+          </button>
+        </div>
+      `;
     }
 
     function nextPage() {
@@ -343,7 +378,7 @@ list.innerHTML += `<div style="display:flex;justify-content:center;margin-top:10
       }
     }
 
-    // Supaya tombol bisa akses
+    // Supaya tombol bisa diakses
     window.nextPage = nextPage;
     window.prevPage = prevPage;
 
@@ -353,5 +388,6 @@ list.innerHTML += `<div style="display:flex;justify-content:center;margin-top:10
   });
 }
 </script>
+
 </body>
 </html>
