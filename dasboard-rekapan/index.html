@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rekapan | DynoPay</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Outfit',sans-serif;
+}
+
+body{
+  background:#f1f2f7;
+  padding-top:74px; /* biar konten ga ketutup header */
+}
+
+/* HEADER */
+header {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  background: white;
+  border-bottom: 1px solid #eee;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+header img { height: 50px; }
+
+/* CARD */
+.card{
+  width:90%;
+  margin:16px auto;
+  background:#fff;
+  border-radius:18px;
+  padding:18px;
+  border:1px solid #ececec;
+  box-shadow:0 6px 16px rgba(0,0,0,.05);
+}
+
+/* ROYALTY */
+.row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  cursor:pointer;
+}
+
+.icon{
+  font-size:16px;
+  width:20px;
+}
+
+.title{
+  font-weight:700;
+  font-size:14px;
+}
+
+.total{
+  font-size:12px;
+  color:#666;
+  margin-top:4px;
+}
+
+.detail{
+  display:none;
+  margin-top:12px;
+  border-top:1px dashed #ddd;
+  padding-top:10px;
+}
+
+.platform{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  margin-bottom:6px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+  <img src="../assets/dynopay2.png" alt="DynoPay">
+</header>
+
+<div class="card">
+  <b>📊 Rekapan Pendapatan</b>
+</div>
+
+<div id="royaltyList"></div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain: "dynopay-2513c.firebaseapp.com",
+  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db=firebase.database();
+
+firebase.auth().onAuthStateChanged(user=>{
+  if(!user) window.location.href="../login";
+  else loadData(user.uid);
+});
+
+function loadData(uid){
+  const list=document.getElementById("royaltyList");
+  list.innerHTML="";
+
+  db.ref("royalties/"+uid).once("value").then(snap=>{
+    if(!snap.exists()){
+      list.innerHTML=`<div class="card" style="text-align:center;color:#777">
+      Belum ada data</div>`;
+      return;
+    }
+
+    snap.forEach(item=>{
+      const id=item.key;
+      const d=item.val();
+
+      list.innerHTML+=`
+      <div class="card">
+
+        <div class="row" onclick="toggle('${id}')">
+          <div class="icon" id="ic-${id}">▶</div>
+          <div>
+            <div class="title">${id}</div>
+            <div class="total">
+              Total: Rp ${Number(d.total).toLocaleString("id-ID")}
+            </div>
+          </div>
+        </div>
+
+        <div class="detail" id="dt-${id}">
+          ${render(d.detail)}
+        </div>
+
+      </div>`;
+    });
+  });
+}
+
+function render(obj){
+  let h="";
+  for(let p in obj){
+    h+=`
+    <div class="platform">
+      ${p.toUpperCase()}
+      <span>Rp ${Number(obj[p]).toLocaleString("id-ID")}</span>
+    </div>`;
+  }
+  return h;
+}
+
+function toggle(id){
+  const d=document.getElementById("dt-"+id);
+  const i=document.getElementById("ic-"+id);
+
+  if(d.style.display=="block"){
+    d.style.display="none";
+    i.textContent="▶";
+  }else{
+    d.style.display="block";
+    i.textContent="▼";
+  }
+}
+</script>
+
+</body>
+</html>
