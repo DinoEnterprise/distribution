@@ -19,6 +19,17 @@ h3 {
   font-size: 18px;
   color: #111;
 }
+.btn-green{
+  background:#10b981 !important;
+  color:#fff !important;
+  border:none !important;
+}
+
+.btn-red{
+  background:#ef4444 !important;
+  color:#fff !important;
+  border:none !important;
+}
 .card {
   background: #fff;
   padding: 15px;
@@ -126,7 +137,23 @@ tr:hover {
 </table>
 </div>
 </div>
-
+<!-- REKAPAN LIST -->
+<div class="card">
+  <h3>Daftar Rekapan</h3>
+  <div class="table-container">
+    <table id="rekapTable">
+      <thead>
+        <tr>
+          <th>Nama Artis</th>
+          <th>Tanggal</th>
+          <th>Total</th>
+          <th>Detail</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
 <!-- MEMBERS -->
 <div class="card">
 <h3>Members</h3>
@@ -266,7 +293,35 @@ function register(){
   isRegistering = false;
 });
 }
+function loadRoyalties(){
+  const tbody = document.querySelector("#rekapTable tbody");
+  tbody.innerHTML = "";
 
+  db.ref("users").once("value").then(usersSnap=>{
+    usersSnap.forEach(u=>{
+      const user = u.val();
+      const uid = u.key;
+
+      db.ref(`royalties/${uid}`).once("value").then(roySnap=>{
+        roySnap.forEach(dateSnap=>{
+          const data = dateSnap.val();
+          const detailStr = Object.entries(data.detail || {})
+                                .map(([plat,nom]) => `${plat}: Rp ${nom.toLocaleString()}`)
+                                .join(", ");
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${user.nama}</td>
+            <td>${dateSnap.key}</td>
+            <td>Rp ${Number(data.total).toLocaleString()}</td>
+            <td>${detailStr}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+    });
+  });
+}
 // LOAD WITHDRAWS
 function loadWithdraws(){
  db.ref("withdraws").on("value",snap=>{
@@ -288,8 +343,15 @@ function loadWithdraws(){
            </span>
          </td>
          <td>
-           <button class="action-btn" onclick="setWithdrawStatus('${user.key}','${w.key}','approve')">Approve</button>
-           <button class="action-btn" onclick="setWithdrawStatus('${user.key}','${w.key}','reject')">Reject</button>
+           <button class="action-btn btn-green" 
+ onclick="setWithdrawStatus('${user.key}','${w.key}','approved')">
+ Approve
+</button>
+
+<button class="action-btn btn-red" 
+ onclick="setWithdrawStatus('${user.key}','${w.key}','rejected')">
+ Reject
+</button>
            <button class="action-btn" onclick="deleteWithdraw('${user.key}','${w.key}')">Delete</button>
          </td>
        `;
@@ -325,45 +387,64 @@ function loadMembers(){
 // LOAD RELEASES
 function loadReleases(){
   const tbody = document.querySelector("#releaseTable tbody");
+
   db.ref("releases").on("value", snap=>{
     tbody.innerHTML="";
+    let rows=[];
+
     snap.forEach(u=>{
       u.forEach(r=>{
         const d = r.val();
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${d.artist||"-"}</td>
-          <td>${d.title||"-"}</td>
-          <td>${d.genre||"-"}</td>
-          <td>
-            <span class="status-badge" style="border:1px solid ${getStatusColor(d.status)}; color:${getStatusColor(d.status)}">
-              ${(d.status||"pending").toUpperCase()}
-            </span>
-          </td>
-          <td>
-            <button class="action-btn" onclick="setReleaseStatus('${u.key}','${r.key}','approved')">Approve</button>
-            <button class="action-btn" onclick="setReleaseStatus('${u.key}','${r.key}','rejected')">Reject</button>
-            <button class="action-btn" onclick="deleteRelease('${u.key}','${r.key}')">Delete</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
+
+        rows.push(`
+          <tr>
+            <td>${d.artist||"-"}</td>
+            <td>${d.title||"-"}</td>
+            <td>${d.genre||"-"}</td>
+            <td>
+              <span class="status-badge" 
+                style="border:1px solid ${getStatusColor(d.status)}; 
+                color:${getStatusColor(d.status)}">
+                ${(d.status||"pending").toUpperCase()}
+              </span>
+            </td>
+            <td>
+              <button class="action-btn" 
+                onclick="setReleaseStatus('${u.key}','${r.key}','approved')">
+                Approve
+              </button>
+              <button class="action-btn" 
+                onclick="setReleaseStatus('${u.key}','${r.key}','rejected')">
+                Reject
+              </button>
+              <button class="action-btn" 
+                onclick="deleteRelease('${u.key}','${r.key}')">
+                Delete
+              </button>
+            </td>
+          </tr>
+        `);
       });
+    });
+
+    rows.reverse().forEach(r=>{
+      tbody.innerHTML += r;
     });
   });
 }
 
 // UTILS
 function getStatusColor(status){
-  if(status=="approved") return "#10b981";
-  if(status=="rejected") return "#ef4444";
-  return "#f59e0b"; // pending
+  if(status=="approved" || status=="approve") return "#10b981";
+  if(status=="rejected" || status=="reject") return "#ef4444";
+  return "#f59e0b";
 }
 
 // ACTION FUNCTIONS
 function setWithdrawStatus(uid,key,status){
  db.ref(`withdraws/${uid}/${key}/status`).set(status)
  .then(()=>{
-   if(status==="approve") db.ref(`users/${uid}/saldo`).set(0);
+   if(status==="approved") db.ref(`users/${uid}/saldo`).set(0);
    loadWithdraws(); loadMembers();
  });
 }
@@ -407,6 +488,7 @@ function deleteRelease(uid,rid){
 loadWithdraws();
 loadMembers();
 loadReleases();
+loadRoyalties();    
 // ===== REKAPAN FEATURE =====
 
 let userMap = {};
@@ -472,6 +554,7 @@ function saveRekapan(){
   }).then(()=>{
     msg.style.color="green";
     msg.innerHTML="✔ Rekapan tersimpan!";
+loadRoyalties();    
   });
 }
 
