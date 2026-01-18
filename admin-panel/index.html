@@ -182,6 +182,7 @@ tr:hover {
 </div>
 
 <script>
+let isRegistering = false;
 firebase.initializeApp({
  apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
  authDomain:"dynopay-2513c.firebaseapp.com",
@@ -190,30 +191,39 @@ firebase.initializeApp({
 
 const auth=firebase.auth();
 const db=firebase.database();
-firebase.auth().onAuthStateChanged(user => {
+const secondaryApp = firebase.initializeApp(
+  firebase.app().options,
+  "Secondary"
+);
+const secondaryAuth = secondaryApp.auth();
+auth.onAuthStateChanged(user => {
+
+  if(isRegistering) return;
+
   if (!user) {
-    // Belum login → redirect ke halaman login admin
     location.href = "../admin";
     return;
   }
 
   const uid = user.uid;
 
-  // Cek apakah UID ada di node admins
-  db.ref(`admins/${uid}`).get().then(snapshot => {
+  db.ref("admins/"+uid).once("value")
+  .then(snapshot=>{
     if (!snapshot.exists()) {
-      // Kalau bukan admin → logout dan redirect
       alert("⚠ Anda bukan admin!");
-      firebase.auth().signOut().then(() => location.href="../admin");
+      auth.signOut().then(()=>location.href="../admin");
     }
-  }).catch(err => {
-    console.error("Error cek admin:", err);
-    alert("Terjadi kesalahan. Coba lagi.");
-    firebase.auth().signOut().then(() => location.href="../admin");
+  })
+  .catch(err=>{
+    console.error(err);
+    auth.signOut().then(()=>location.href="../admin");
   });
 });
 // REGISTER ARTIST
 function register(){
+
+ isRegistering = true;
+
  let email=document.getElementById("email").value.trim();
  let pass=document.getElementById("password").value.trim();
  let nama=document.getElementById("nama").value.trim();
@@ -223,27 +233,38 @@ function register(){
  if(!email||!pass||!nama||!saldo){
    msg.style.color="red"; 
    msg.innerHTML="⚠ Semua field harus diisi!"; 
+   isRegistering = false;
    return;
  }
 
- auth.createUserWithEmailAndPassword(email,pass)
- .then(res=>{
-   let uid=res.user.uid;
-   db.ref("users/"+uid).set({
-     email: email,
-     nama: nama,
-     saldo:Number(saldo),
-     createdAt:Date.now()
-   });
-   msg.style.color="green";
-   msg.innerHTML="✔ Akun berhasil dibuat!";
-   ["email","password","nama","saldo"].forEach(id=>document.getElementById(id).value="");
-   loadMembers();
- })
- .catch(err=>{
-   msg.style.color="red";
-   msg.innerHTML=err.message;
- });
+ secondaryAuth.createUserWithEmailAndPassword(email,pass)
+.then(res=>{
+  let uid=res.user.uid;
+
+  return db.ref("users/"+uid).set({
+    email: email,
+    nama: nama,
+    saldo:Number(saldo),
+    createdAt:Date.now()
+  });
+})
+.then(()=>{
+  msg.style.color="green";
+  msg.innerHTML="✔ Akun berhasil dibuat!";
+
+  ["email","password","nama","saldo"].forEach(id=>
+    document.getElementById(id).value=""
+  );
+
+  secondaryAuth.signOut();
+  loadMembers();
+  isRegistering = false;
+})
+.catch(err=>{
+  msg.style.color="red";
+  msg.innerHTML=err.message;
+  isRegistering = false;
+});
 }
 
 // LOAD WITHDRAWS
