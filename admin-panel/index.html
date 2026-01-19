@@ -328,53 +328,58 @@ function loadMembers(){
 function loadReleases(){
   const tbody = document.querySelector("#releaseTable tbody");
 
-  db.ref("releases").on("value", snap=>{
+  db.ref("releases").once("value").then(snap=>{
     tbody.innerHTML="";
-    let rows=[];
+    let all=[];
 
     snap.forEach(u=>{
       u.forEach(r=>{
         const d = r.val();
-
-        rows.push(`
-          <tr>
-            <td>${d.artist||"-"}</td>
-            <td>${d.title||"-"}</td>
-            <td>${d.genre||"-"}</td>
-            <td>${d.cover ? `<a href="${d.cover}" target="_blank">Cover</a>` : "-"}</td>
-            <td>${d.audio ? `<a href="${d.audio}" target="_blank">Play / Download</a>` : "-"}</td>
-            <td>
-              <span class="status-badge" 
-                style="border:1px solid ${getStatusColor(d.status)}; 
-                color:${getStatusColor(d.status)}">
-                ${(d.status||"pending").toUpperCase()}
-              </span>
-            </td>
-            <td>
-              <button class="action-btn" 
-                onclick="setReleaseStatus('${u.key}','${r.key}','approved')">
-                Approve
-              </button>
-              <button class="action-btn" 
-                onclick="setReleaseStatus('${u.key}','${r.key}','rejected')">
-                Reject
-              </button>
-              <button class="action-btn" 
-                onclick="deleteRelease('${u.key}','${r.key}')">
-                Delete
-              </button>
-            </td>
-          </tr>
-        `);
+        all.push({
+          uid:u.key,
+          rid:r.key,
+          ...d
+        });
       });
     });
 
-    rows.reverse().forEach(r=>{
-      tbody.innerHTML += r;
+    // SORT: TERBARU PALING ATAS
+    all.sort((a,b)=>(b.time||0)-(a.time||0));
+
+    all.forEach(d=>{
+      tbody.innerHTML+=`
+        <tr>
+          <td>${d.artist||"-"}</td>
+          <td>${d.title||"-"}</td>
+          <td>${d.genre||"-"}</td>
+          <td>${d.cover?`<a href="${d.cover}" target="_blank">Cover</a>`:"-"}</td>
+          <td>${d.audio?`<a href="${d.audio}" target="_blank">Play</a>`:"-"}</td>
+          <td>
+            <span class="status-badge"
+              style="border:1px solid ${getStatusColor(d.status)};
+              color:${getStatusColor(d.status)}">
+              ${(d.status||"pending").toUpperCase()}
+            </span>
+          </td>
+          <td>
+            <button class="action-btn"
+              onclick="setReleaseStatus('${d.uid}','${d.rid}','approved')">
+              Approve
+            </button>
+            <button class="action-btn"
+              onclick="setReleaseStatus('${d.uid}','${d.rid}','rejected')">
+              Reject
+            </button>
+            <button class="action-btn"
+              onclick="deleteRelease('${d.uid}','${d.rid}')">
+              Delete
+            </button>
+          </td>
+        </tr>
+      `;
     });
   });
 }
-
 // UTILS
 function getStatusColor(status){
   if(status=="approved") return "#10b981";
