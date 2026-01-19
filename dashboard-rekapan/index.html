@@ -157,18 +157,49 @@ function loadData(uid){
   });
 }
 
-function render(obj){
-  let h="";
-  for(let p in obj){
-    h+=`
-    <div class="platform">
-      ${p.toUpperCase()}
-      <span>Rp ${Number(obj[p]).toLocaleString("id-ID")}</span>
+function render(detailObj){
+  let h = "";
+  for(let artis in detailObj){
+    const artisData = detailObj[artis];
+    const platforms = artisData.platforms;
+
+    h += `
+    <div class="artis">
+      <div class="row" onclick="toggleArtis(this)">
+        <div class="icon">▶</div>
+        <div>
+          <div class="title">${artis}</div>
+          <div class="total">Total: Rp ${Number(artisData.total).toLocaleString("id-ID")}</div>
+        </div>
+      </div>
+      <div class="detail platform-list" style="display:none; margin-top:6px;">
+        ${renderPlatforms(platforms)}
+      </div>
     </div>`;
   }
   return h;
 }
-
+function renderPlatforms(platforms){
+  let h = "";
+  for(let p in platforms){
+    h += `<div class="platform">
+            ${p.toUpperCase()} 
+            <span>Rp ${Number(platforms[p]).toLocaleString("id-ID")}</span>
+          </div>`;
+  }
+  return h;
+}
+function toggleArtis(row){
+  const platDiv = row.nextElementSibling;
+  const icon = row.querySelector(".icon");
+  if(platDiv.style.display === "block"){
+    platDiv.style.display = "none";
+    icon.textContent = "▶";
+  } else {
+    platDiv.style.display = "block";
+    icon.textContent = "▼";
+  }
+}
 function toggle(id){
   const d=document.getElementById("dt-"+id);
   const i=document.getElementById("ic-"+id);
