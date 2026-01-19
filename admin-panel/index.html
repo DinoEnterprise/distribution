@@ -351,8 +351,13 @@ function loadMembers(){
         <td>${d.email||"-"}</td>
         <td>${saldoFormatted}</td>
         <td>
-          <button class="action-btn" onclick="editMember('${u.key}')">Edit</button>
-          <button class="action-btn" onclick="deleteMember('${u.key}')">Hapus</button>
+          <div class="menu-wrap">
+            <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
+            <div class="menu-dropdown">
+              <button onclick="editMember('${u.key}')">Edit</button>
+              <button onclick="deleteMember('${u.key}')">Hapus</button>
+            </div>
+          </div>
         </td>
       `;
       tbody.appendChild(tr);
