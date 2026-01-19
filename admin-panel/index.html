@@ -214,6 +214,7 @@ tr:hover {
 <div id="platformWrap"></div>
 
 <button class="action-btn" onclick="addPlatform()">+ Tambah Platform</button>
+<button class="action-btn" onclick="saveArtist()">Simpan Artis</button>
 <button class="register" onclick="saveRekapan()">SIMPAN REKAPAN</button>
 
 <p id="rekapMsg"></p>
@@ -221,6 +222,7 @@ tr:hover {
 
 <script>
 let isRegistering = false;
+let tempArtists = [];
 firebase.initializeApp({
  apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
  authDomain:"dynopay-2513c.firebaseapp.com",
@@ -304,7 +306,34 @@ function register(){
   isRegistering = false;
 });
 }
+function saveArtist() {
+  const artistName = document.getElementById("artistName").value.trim();
+  if(!artistName){
+    alert("Masukkan nama artis!");
+    return;
+  }
 
+  let platforms = {};
+  let total = 0;
+  document.querySelectorAll(".plat").forEach((p,i)=>{
+    const n = document.querySelectorAll(".nom")[i];
+    if(p.value && n.value){
+      platforms[p.value] = Number(n.value);
+      total += Number(n.value);
+    }
+  });
+
+  tempArtists.push({
+    name: artistName,
+    total: total,
+    platforms: platforms
+  });
+  document.getElementById("artistName").value = "";
+  document.getElementById("platformWrap").innerHTML = "";
+  addPlatform();
+
+  alert(`✔ Artis "${artistName}" berhasil disimpan sementara!`);
+}
 // LOAD WITHDRAWS
 function loadWithdraws(){
  db.ref("withdraws").on("value",snap=>{
@@ -540,17 +569,18 @@ if(!artistName){
   return;
 }
 
+if(tempArtists.length===0){
+  msg.style.color="red";
+  msg.innerHTML="Tambahkan minimal 1 artis!";
+  return;
+}
+
 let detail = {};
 let total = 0;
 
-document.querySelectorAll(".plat").forEach((p,i)=>{
-  const n=document.querySelectorAll(".nom")[i];
-  if(p.value && n.value){
-    if(!detail[artistName]) detail[artistName] = { total:0, platforms:{} };
-    detail[artistName].platforms[p.value] = Number(n.value);
-    detail[artistName].total += Number(n.value);
-    total += Number(n.value);
-  }
+tempArtists.forEach(a=>{
+  detail[a.name] = { total: a.total, platforms: a.platforms };
+  total += a.total;
 });
 
 db.ref(`royalties/${uid}/${date}`).set({
@@ -560,6 +590,10 @@ db.ref(`royalties/${uid}/${date}`).set({
 }).then(()=>{
   msg.style.color="green";
   msg.innerHTML="✔ Rekapan tersimpan!";
+  tempArtists = []; // reset array artis
+document.getElementById("artistName").value = "";
+document.getElementById("platformWrap").innerHTML = "";
+addPlatform();
 });
 }
 
