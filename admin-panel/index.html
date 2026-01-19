@@ -90,6 +90,42 @@ tr:hover {
   font-size: 12px;
 }
 #msg {margin-top:6px;font-weight:600;}
+.menu-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.menu-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  min-width: 120px;
+  z-index: 99;
+  box-shadow: 0 4px 10px rgba(0,0,0,.1);
+}
+
+.menu-dropdown button {
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 8px;
+  font-size: 12px;
+  text-align: left;
+}
+
+.menu-dropdown button:hover {
+  background: #f5f5f5;
+}
 </style>
 </head>
 
@@ -361,20 +397,25 @@ function loadReleases(){
               ${(d.status||"pending").toUpperCase()}
             </span>
           </td>
-          <td>
-            <button class="action-btn"
-              onclick="setReleaseStatus('${d.uid}','${d.rid}','approved')">
-              Approve
-            </button>
-            <button class="action-btn"
-              onclick="setReleaseStatus('${d.uid}','${d.rid}','rejected')">
-              Reject
-            </button>
-            <button class="action-btn"
-              onclick="deleteRelease('${d.uid}','${d.rid}')">
-              Delete
-            </button>
-          </td>
+         <td>
+  <div class="menu-wrap">
+    <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
+
+    <div class="menu-dropdown">
+      <button onclick="setReleaseStatus('${d.uid}','${d.rid}','approved')">
+        Approve
+      </button>
+
+      <button onclick="setReleaseStatus('${d.uid}','${d.rid}','rejected')">
+        Reject
+      </button>
+
+      <button onclick="deleteRelease('${d.uid}','${d.rid}')">
+        Delete
+      </button>
+    </div>
+  </div>
+</td>
         </tr>
       `;
     });
@@ -438,7 +479,16 @@ loadReleases();
 // ===== REKAPAN FEATURE =====
 
 let userMap = {};
+function toggleMenu(btn){
+  document.querySelectorAll(".menu-dropdown").forEach(m=>{
+    if(m!==btn.nextElementSibling){
+      m.style.display="none";
+    }
+  });
 
+  const menu = btn.nextElementSibling;
+  menu.style.display = menu.style.display==="block" ? "none" : "block";
+}
 function loadUserDropdown(){
   const sel = document.getElementById("emailSelect");
   sel.innerHTML = `<option value="">Pilih Email</option>`;
@@ -504,6 +554,7 @@ function saveRekapan(){
 }
 
 loadUserDropdown();
+
 </script>
 
 </body>
