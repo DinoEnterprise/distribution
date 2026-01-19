@@ -330,37 +330,37 @@ let currentPage=1;
 const releasesPerPage=5;
 
 function loadReleases(uid){
-  const list=releaseList;
-  list.innerHTML="<div style='color:#888;font-size:13px'>Loading...</div>";
+  const list = releaseList;
+  list.innerHTML = "<div style='color:#888;font-size:13px'>Loading...</div>";
 
-  db.ref("releases/"+uid).once("value").then(snap=>{
-    const all=[];
+  db.ref("releases/" + uid).once("value").then(snap => {
+    const all = [];
 
-    snap.forEach(i=>{
-      const r=i.val();
-      r._key=i.key;
+    snap.forEach(i => {
+      const r = i.val();
+      r._key = i.key;
       all.push(r);
     });
 
     all.sort((a,b)=>(b.time||0)-(a.time||0));
-    const totalPages=Math.ceil(all.length/releasesPerPage);
+    const totalPages = Math.ceil(all.length / releasesPerPage);
 
     function render(p){
-      list.innerHTML="";
-      if(all.length===0){
-        list.innerHTML="<div style='text-align:center;color:#888;font-size:13px'>Belum ada rilisan</div>";
+      list.innerHTML = "";
+      if(all.length === 0){
+        list.innerHTML = "<div style='text-align:center;color:#888;font-size:13px'>Belum ada rilisan</div>";
         return;
       }
 
-      const start=(p-1)*releasesPerPage;
-      const pageItems=all.slice(start,start+releasesPerPage);
+      const start = (p-1)*releasesPerPage;
+      const pageItems = all.slice(start, start+releasesPerPage);
 
       pageItems.forEach(r=>{
         let c="#f59e0b";
         if(r.status=="approved") c="#10b981";
         if(r.status=="rejected") c="#ef4444";
 
-        list.innerHTML+=`
+        list.innerHTML += `
           <div style="padding:12px;border:1px solid #eee;border-radius:12px;margin-bottom:10px">
             <div style="display:flex;justify-content:space-between">
               <div style="font-weight:600">${r.title||"-"}</div>
@@ -374,29 +374,32 @@ function loadReleases(uid){
           </div>`;
       });
 
-      list.innerHTML+=`
+      // Pagination
+      list.innerHTML += `
         <div style="display:flex;justify-content:center;margin-top:8px;gap:6px">
-          <button onclick="prevPage()" ${p===1?'disabled':''}>&lt;</button>
+          <button onclick="prevPage()" ${p===1?'disabled':''} 
+            style="padding:4px 8px;border:1px solid #000;background:transparent;color:#000;border-radius:6px;font-size:12px">&lt;</button>
           <span style="align-self:center;font-size:12px">Page ${p}/${totalPages}</span>
-          <button onclick="nextPage()" ${p===totalPages?'disabled':''}>&gt;</button>
+          <button onclick="nextPage()" ${p===totalPages?'disabled':''} 
+            style="padding:4px 8px;border:1px solid #000;background:transparent;color:#000;border-radius:6px;font-size:12px">&gt;</button>
         </div>`;
     }
 
-    window.nextPage=()=>{
-      if(currentPage<totalPages){
+    window.nextPage = ()=>{
+      if(currentPage < totalPages){
         currentPage++;
         render(currentPage);
       }
     }
 
-    window.prevPage=()=>{
-      if(currentPage>1){
+    window.prevPage = ()=>{
+      if(currentPage > 1){
         currentPage--;
         render(currentPage);
       }
     }
 
-    currentPage=1;
+    currentPage = 1;
     render(currentPage);
   });
 }
