@@ -436,11 +436,11 @@ function loadReleases(){
     <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
 
     <div class="menu-dropdown">
-      <button onclick="setReleaseStatus('${d.uid}','${d.rid}','approved')">
+      <button onclick="openApprove('${d.uid}','${d.rid}')">
         Approve
       </button>
 
-      <button onclick="setReleaseStatus('${d.uid}','${d.rid}','rejected')">
+      <button onclick="openReject('${d.uid}','${d.rid}')">
         Reject
       </button>
 
@@ -448,6 +448,7 @@ function loadReleases(){
         Delete
       </button>
     </div>
+
   </div>
 </td>
         </tr>
@@ -522,6 +523,52 @@ function toggleMenu(btn){
 
   const menu = btn.nextElementSibling;
   menu.style.display = menu.style.display==="block" ? "none" : "block";
+}
+function openApprove(uid,rid){
+
+let platforms = prompt(
+"Masukkan platform yg diproses\n" +
+"pisahkan dengan koma\n\n" +
+"contoh:\nSpotify,YouTube,TikTok"
+);
+
+if(!platforms) return;
+
+let list = platforms.split(",").map(p=>p.trim());
+
+let obj = {};
+list.forEach(p=>{
+  obj[p.toLowerCase()] = true;
+});
+
+db.ref(`releases/${uid}/${rid}`).update({
+  status:"approved",
+  platforms: obj,
+  approvedAt: Date.now()
+}).then(()=>{
+  alert("✔ Release approved!");
+  loadReleases();
+});
+}
+function openReject(uid,rid){
+
+let reason = prompt(
+"Masukkan alasan reject:\n\n" +
+"- Audio rusak\n" +
+"- Metadata salah\n" +
+"- Cover tidak sesuai"
+);
+
+if(!reason) return;
+
+db.ref(`releases/${uid}/${rid}`).update({
+  status:"rejected",
+  reason: reason,
+  rejectedAt: Date.now()
+}).then(()=>{
+  alert("❌Release rejected!");
+  loadReleases();
+});
 }
 function loadUserDropdown(){
   const sel = document.getElementById("emailSelect");
