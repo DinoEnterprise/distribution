@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Platform Detail</title>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<style>
+body{
+  font-family:Outfit,sans-serif;
+  background:#f1f2f7;
+  padding:15px;
+}
+.card{
+  background:#fff;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:15px;
+}
+h3{margin-bottom:6px}
+.platform{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:8px 0;
+  border-bottom:1px solid #eee;
+}
+select{
+  padding:6px;
+  border-radius:6px;
+}
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  background:#111;
+  color:#fff;
+  border-radius:8px;
+  font-weight:600;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h3 id="title">Loading...</h3>
+  <small id="artist"></small>
+</div>
+
+<div class="card" id="platformWrap"></div>
+
+<button onclick="savePlatform()">SIMPAN STATUS</button>
+
+<script>
+firebase.initializeApp({
+ apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+ authDomain:"dynopay-2513c.firebaseapp.com",
+ databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const auth=firebase.auth();
+const db=firebase.database();
+
+const params=new URLSearchParams(location.search);
+const uid=params.get("uid");
+const rid=params.get("rid");
+
+const platforms=[
+ "Spotify","Tidal","Amazon","Apple Music",
+ "Tiktok","YouTube Music","YouTube Content ID",
+ "META","SoundCloud","Tencent"
+];
+
+/* ===== SECURITY CHECK ===== */
+auth.onAuthStateChanged(user=>{
+ if(!user){
+   location.href="../admin"; // login admin
+   return;
+ }
+
+ db.ref("admins/"+user.uid).once("value")
+ .then(s=>{
+   if(!s.exists()){
+     alert("⚠ Bukan admin!");
+     auth.signOut().then(()=>location.href="../admin");
+   }else{
+     loadRelease(); // SAFE
+   }
+ });
+});
+
+/* ===== LOAD RELEASE ===== */
+function loadRelease(){
+ db.ref(`releases/${uid}/${rid}`).once("value")
+ .then(s=>{
+   const d=s.val();
+   if(!d){ alert("Rilisan tidak ditemukan"); return; }
+
+   document.getElementById("title").innerText=d.title;
+   document.getElementById("artist").innerText=d.artist;
+
+   renderPlatform(d.platformStatus||{});
+ });
+}
+
+/* ===== RENDER ===== */
+function renderPlatform(data){
+ const wrap=document.getElementById("platformWrap");
+ wrap.innerHTML="";
+
+ platforms.forEach(p=>{
+   wrap.innerHTML+=`
+   <div class="platform">
+     <b>${p}</b>
+     <select data-name="${p}">
+       <option value="process">Process</option>
+       <option value="approved">Approved</option>
+       <option value="unavailable">Unavailable</option>
+     </select>
+   </div>`;
+ });
+
+ document.querySelectorAll("select").forEach(s=>{
+   if(data[s.dataset.name])
+     s.value=data[s.dataset.name];
+ });
+}
+
+/* ===== SAVE ===== */
+function savePlatform(){
+ let result={};
+ document.querySelectorAll("select").forEach(s=>{
+   result[s.dataset.name]=s.value;
+ });
+
+ db.ref(`releases/${uid}/${rid}/platformStatus`)
+ .set(result)
+ .then(()=>alert("✔ Platform updated"));
+}
+</script>
+</body>
+</html>
