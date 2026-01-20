@@ -435,19 +435,25 @@ function loadReleases(){
   <div class="menu-wrap">
     <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
 
-    <div class="menu-dropdown">
-      <button onclick="setReleaseStatus('${d.uid}','${d.rid}','approved')">
-        Approve
-      </button>
+   <div class="menu-dropdown">
 
-      <button onclick="setReleaseStatus('${d.uid}','${d.rid}','rejected')">
-        Reject
-      </button>
+  <button onclick="setReleaseStatus('${d.uid}','${d.rid}','approved')">
+    Approve
+  </button>
 
-      <button onclick="deleteRelease('${d.uid}','${d.rid}')">
-        Delete
-      </button>
-    </div>
+  <button onclick="setReleaseStatus('${d.uid}','${d.rid}','rejected')">
+    Reject
+  </button>
+
+  <button onclick="openPlatform('${d.uid}','${d.rid}')">
+    Platform
+  </button>
+
+  <button onclick="deleteRelease('${d.uid}','${d.rid}')">
+    Delete
+  </button>
+
+</div>
   </div>
 </td>
         </tr>
@@ -539,7 +545,9 @@ function loadUserDropdown(){
 document.getElementById("emailSelect").addEventListener("change", function() {
   document.getElementById("artistName").value = "";
 });
-
+function openPlatform(uid,rid){
+  location.href = `../admin-platform?uid=${uid}&rid=${rid}`;
+}
 function addPlatform(){
   document.getElementById("platformWrap").innerHTML += `
   <div style="display:flex;gap:6px;margin-top:6px">
