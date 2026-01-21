@@ -396,13 +396,13 @@ style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid ${c}
 
       // Pagination
       list.innerHTML += `
-        <div style="display:flex;justify-content:center;margin-top:8px;gap:6px">
-          <button onclick="prevPage()" ${p===1?'disabled':''} 
-            style="padding:4px 8px;border:1px solid #000;background:transparent;color:#000;border-radius:6px;font-size:12px">&lt;</button>
-          <span style="align-self:center;font-size:12px">Page ${p}/${totalPages}</span>
-          <button onclick="nextPage()" ${p===totalPages?'disabled':''} 
-            style="padding:4px 8px;border:1px solid #000;background:transparent;color:#000;border-radius:6px;font-size:12px">&gt;</button>
-        </div>`;
+  <div style="display:flex;justify-content:center;margin-top:8px;gap:6px;align-items:center">
+    <button onclick="prevPage()" ${p===1?'disabled':''} 
+      style="padding:2px 6px;border:1px solid #333;background:transparent;color:#333;border-radius:12px;font-size:11px;font-weight:600">&lt;</button>
+    <span style="align-self:center;font-size:12px;margin:0 4px">Page ${p}/${totalPages}</span>
+    <button onclick="nextPage()" ${p===totalPages?'disabled':''} 
+      style="padding:2px 6px;border:1px solid #333;background:transparent;color:#333;border-radius:12px;font-size:11px;font-weight:600">&gt;</button>
+  </div>`;
     }
 
     window.nextPage = ()=>{
