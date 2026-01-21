@@ -52,12 +52,22 @@ button{
 </div>
 
 <div class="card" id="platformWrap"></div>
-<div class="card">
+<<div class="card">
   <label for="releaseDate"><b>Release Date</b></label>
-  <input type="date" id="releaseDate" style="width:100%;padding:8px;border-radius:6px;margin-bottom:10px;">
+  <input type="date" id="releaseDate"
+    style="width:100%;padding:8px;border-radius:6px;margin-bottom:10px;">
 
   <label for="smartlink"><b>Smartlink</b></label>
-  <input type="text" id="smartlink" placeholder="https://..." style="width:100%;padding:8px;border-radius:6px;">
+  <input type="text" id="smartlink"
+    placeholder="https://..."
+    style="width:100%;padding:8px;border-radius:6px;margin-bottom:10px;">
+
+  <!-- EAN -->
+  <label for="ean"><b>EAN Code</b></label>
+  <input type="text" id="ean"
+    placeholder="Masukkan EAN"
+    style="width:100%;padding:8px;border-radius:6px;">
+</div>
 </div>
 <button onclick="savePlatform()">SIMPAN STATUS</button>
 
@@ -117,6 +127,8 @@ function loadRelease(){
 
     const smartlinkInput = document.getElementById("smartlink");
     smartlinkInput.value = d.smartlink || "";
+    const eanInput = document.getElementById("ean");
+eanInput.value = d.ean || "";
   });
 }
 
@@ -154,13 +166,14 @@ function savePlatform(){
   // ambil input release date & smartlink
   const releaseDate = document.getElementById("releaseDate").value;
   const smartlink = document.getElementById("smartlink").value;
+  const ean = document.getElementById("ean").value;
 
-  // simpan semua ke Firebase
-  const updates = {
-    platformStatus: result,
-    date: releaseDate || null,
-    smartlink: smartlink || null
-  };
+const updates = {
+  platformStatus: result,
+  date: releaseDate || null,
+  smartlink: smartlink || null,
+  ean: ean || null
+};
 
   db.ref(`releases/${uid}/${rid}`).update(updates)
     .then(()=>alert("✔ Data updated"));
