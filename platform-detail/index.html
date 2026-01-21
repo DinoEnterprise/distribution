@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Release Detail | DynoPay</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
+body{background:#f1f2f7;color:#111;min-height:100vh;padding-top:74px;animation:fadeIn .5s ease;-webkit-tap-highlight-color:transparent;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+
+/* HEADER */
+header{
+  padding:12px 20px;
+  display:flex;
+  align-items:center;
+  background:#fff;
+  border-bottom:1px solid #eee;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:1000;
+}
+header img{height:50px;margin-right:10px;}
+header h2{font-size:18px;color:#111;}
+
+/* CARD */
+.card{
+  width:90%;
+  margin:15px auto;
+  background:#fff;
+  border-radius:20px;
+  padding:20px;
+  border:1px solid #ececec;
+  box-shadow:0 8px 18px rgba(0,0,0,.05);
+  animation:bounceIn .6s ease;
+}
+@keyframes bounceIn{0%{transform:translateY(-20px);opacity:0}50%{transform:translateY(10px);opacity:1}70%{transform:translateY(-5px)}100%{transform:translateY(0);opacity:1}}
+
+/* RELEASE INFO */
+.release-header{display:flex;gap:15px;align-items:center;margin-bottom:15px;}
+.release-header img{width:80px;height:80px;border-radius:12px;object-fit:cover;border:1px solid #ddd;}
+.release-info{flex:1;}
+.release-info div{margin-bottom:6px;}
+.release-info .title{font-weight:700;font-size:18px;}
+.release-info .artist,.release-info .label,.release-info .genre,.release-info .date,.release-info .status{font-size:14px;color:#555;}
+
+/* PLATFORM LIST */
+.platform-list{margin-top:15px;}
+.platform-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 12px;
+  border-bottom:1px solid #eee;
+}
+.platform-item img{width:28px;height:28px;margin-right:8px;border-radius:6px;}
+.platform-item b{flex:1;font-size:14px;}
+.platform-status{
+  font-size:12px;
+  font-weight:600;
+  padding:4px 10px;
+  border-radius:999px;
+  border:1px solid #f59e0b;
+  color:#f59e0b;
+}
+
+/* CLICKABLE */
+.clickable{cursor:pointer;transition:.12s;}
+.clickable:active{transform:scale(.96);filter:brightness(85%);}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="../assets/dynopay2.png" alt="DynoPay Logo">
+</header>
+
+<!-- RELEASE INFO CARD -->
+<div class="card">
+  <div class="release-header">
+    <img id="coverArt" src="../assets/profile.png" alt="Cover Art">
+    <div class="release-info">
+      <div class="title" id="releaseTitle">Loading...</div>
+      <div class="artist" id="releaseArtist">--</div>
+      <div class="label" id="releaseLabel">Label: --</div>
+      <div class="genre" id="releaseGenre">Genre: --</div>
+      <div class="date" id="releaseDate">Release Date: --</div>
+      <div class="status" id="releaseStatus">Status: --</div>
+    </div>
+  </div>
+</div>
+
+<!-- PLATFORM LIST CARD -->
+<div class="card">
+  <div style="font-weight:700;margin-bottom:10px;">Platforms</div>
+  <div id="platformList" class="platform-list"></div>
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+ apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+ authDomain:"dynopay-2513c.firebaseapp.com",
+ databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db = firebase.database();
+const params = new URLSearchParams(location.search);
+const uid = params.get("uid");
+const rid = params.get("rid");
+
+const platforms = ["Spotify","Tidal","Amazon","Apple Music","Tiktok","YouTube Music","YouTube Content ID","META","SoundCloud","Tencent"];
+
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) {
+
+    location.href = "../login";
+  } else {
+
+    if (user.uid !== uid) {
+
+      alert("⚠ Anda tidak berhak mengakses rilisan ini");
+      location.href = "../dashboard"; // 
+      return;
+    }
+
+    loadRelease();
+  }
+});
+
+function loadRelease(){
+  db.ref(`releases/${uid}/${rid}`).once("value").then(snap=>{
+    const d = snap.val();
+    if(!d){ alert("Rilisan tidak ditemukan"); return; }
+
+    // release info
+    document.getElementById("releaseTitle").innerText = d.title || "-";
+    document.getElementById("releaseArtist").innerText = d.artist || "-";
+    document.getElementById("releaseLabel").innerText = "Label: "+(d.label||"-");
+    document.getElementById("releaseGenre").innerText = "Genre: "+(d.genre||"-");
+    document.getElementById("releaseDate").innerText = "Release Date: "+(d.date||"-");
+    document.getElementById("releaseStatus").innerText = "Status: "+((d.status||"pending").toUpperCase());
+
+
+if((d.status||"pending").toLowerCase() !== "pending"){
+  renderPlatforms(d.platformStatus||{});
+}else{
+  document.getElementById("platformList").innerHTML = "<div style='color:#888;font-size:13px;text-align:center;'>Platform belum tersedia</div>";
+}
+  });
+}
+
+function renderPlatforms(data){
+  const wrap = document.getElementById("platformList");
+  wrap.innerHTML = "";
+  platforms.forEach(p=>{
+    let st = data[p] || "process";
+    let color = "#f59e0b";
+    if(st==="approved") color="#10b981";
+    if(st==="unavailable") color="#ef4444";
+
+    wrap.innerHTML += `
+      <div class="platform-item clickable">
+        <img src="../assets/profile.png" alt="${p} Logo">
+        <b>${p}</b>
+        <div class="platform-status" style="border-color:${color};color:${color};">${st.toUpperCase()}</div>
+      </div>`;
+  });
+}
+</script>
+</body>
+</html>
