@@ -16,20 +16,33 @@
     }
 
     body{
-      background:linear-gradient(135deg,#667eea,#764ba2);
-      min-height:100vh;
-    }
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  min-height:100vh;
+  padding-top:72px;
+}
 
-    /* HEADER */
-    .app-header{
-      padding:14px 20px;
-      background:#fff;
-      display:flex;
-      align-items:center;
-      box-shadow:0 4px 12px rgba(0,0,0,.08);
-    }
 
-    .app-header img{height:42px}
+header{
+  padding:12px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:#fff;
+  border-bottom:1px solid #eee;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:9999;
+}
+
+header img{
+  height:42px;
+}
+
+header.scrolled{
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
 
     /* CONTAINER */
     .wrap{
@@ -148,7 +161,7 @@
 
 <body>
 
-<header class="app-header">
+<header id="mainHeader">
   <img src="../assets/dynopay2.png">
 </header>
 
@@ -426,6 +439,15 @@ function submitRelease(){
  db.ref("releases/"+user.uid).push(data)
  .then(()=>location.href="../dynopay");
 }
+
+window.addEventListener("scroll",()=>{
+  const h=document.getElementById("mainHeader");
+  if(window.scrollY>5){
+    h.classList.add("scrolled");
+  }else{
+    h.classList.remove("scrolled");
+  }
+});
 </script>
 
 </body>
