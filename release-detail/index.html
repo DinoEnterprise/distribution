@@ -43,11 +43,16 @@ header h2{font-size:18px;color:#111;}
 /* RELEASE INFO */
 .release-header{display:flex;gap:15px;align-items:center;margin-bottom:15px;}
 .release-header img{width:80px;height:80px;border-radius:12px;object-fit:cover;border:1px solid #ddd;}
-.release-info{flex:1;}
-.release-info div{margin-bottom:6px;}
-.release-info .title{font-weight:700;font-size:18px;}
-.release-info .artist,.release-info .label,.release-info .genre,.release-info .date,.release-info .status{font-size:14px;color:#555;}
-
+.release-info .artist,
+.release-info .label,
+.release-info .genre,
+.release-info .date,
+.release-info .status,
+.release-info .type,
+.release-info .featuring {
+  font-size: 14px;
+  color: #555;
+}
 /* PLATFORM LIST */
 .platform-list{margin-top:15px;}
 .platform-item{
@@ -83,14 +88,15 @@ header h2{font-size:18px;color:#111;}
 <div class="card">
   <div class="release-header">
     <img id="coverArt" src="../assets/profile.png" alt="Cover Art">
-    <div class="release-info">
-      <div class="title" id="releaseTitle">Loading...</div>
-      <div class="artist" id="releaseArtist">--</div>
-      <div class="label" id="releaseLabel">Label: --</div>
-      <div class="ean" id="releaseEAN">EAN: --</div>
-      <div class="genre" id="releaseGenre">Genre: --</div>
-      <div class="date" id="releaseDate">Release Date: --</div>
-      <div class="status" id="releaseStatus">Status: --</div>
+    <div class="title" id="releaseTitle">Loading...</div>
+<div class="type" id="releaseType">Release Type: --</div>
+<div class="ean" id="releaseEAN">EAN: --</div>
+<div class="genre" id="releaseGenre">Genre: --</div>
+<div class="artist" id="releaseArtist">--</div>
+<div class="featuring" id="releaseFeaturing">Featuring: --</div>
+<div class="label" id="releaseLabel">Label: --</div>
+<div class="status" id="releaseStatus">Status: --</div>
+<div class="date" id="releaseDate">Release Date: --</div>
     </div>
   </div>
 </div>
@@ -176,13 +182,45 @@ function loadRelease(uid, rid){
     }
 
     // release info
-    document.getElementById("releaseTitle").innerText = d.title || "-";
-    document.getElementById("releaseArtist").innerText = d.artist || "-";
-    document.getElementById("releaseLabel").innerText = "Label: "+(d.label||"-");
-    document.getElementById("releaseEAN").innerText = "EAN: " + (d.ean || "-");
-    document.getElementById("releaseGenre").innerText = "Genre: "+(d.genre||"-");
-    document.getElementById("releaseDate").innerText = "Release Date: "+(d.date||"-");
-    document.getElementById("releaseStatus").innerText = "Status: "+((d.status||"pending").toUpperCase());
+    let version = d.version ? ` (${d.version})` : "";
+// Title
+document.getElementById("releaseTitle").innerText = (d.title || "-") + version;
+
+// Type
+const typeEl = document.getElementById("releaseType");
+if(d.typeRelease){
+  typeEl.innerText = "Release Type: " + d.typeRelease;
+  typeEl.style.display = "block";
+} else {
+  typeEl.style.display = "none";
+}
+
+// EAN
+document.getElementById("releaseEAN").innerText = "EAN: " + (d.ean || "-");
+
+// Genre
+document.getElementById("releaseGenre").innerText = "Genre: "+(d.genre||"-");
+
+// Artist
+document.getElementById("releaseArtist").innerText = d.artist || "--";
+
+// Featuring
+const featEl = document.getElementById("releaseFeaturing");
+if(d.featuring){
+  featEl.innerText = "Featuring: " + d.featuring;
+  featEl.style.display = "block";
+} else {
+  featEl.style.display = "none";
+}
+
+// Label
+document.getElementById("releaseLabel").innerText = "Label: "+(d.label||"-");
+
+// Status
+document.getElementById("releaseStatus").innerText = "Status: "+((d.status||"pending").toUpperCase());
+
+// Release Date
+document.getElementById("releaseDate").innerText = "Release Date: "+(d.date||"-");
 const input = document.getElementById("smartlinkInput");
 const copyBtn = document.getElementById("copyBtn");
 const empty = document.getElementById("emptySmartlink");
