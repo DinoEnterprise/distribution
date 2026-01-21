@@ -206,7 +206,10 @@ header.scrolled{
     <div class="preview" id="previewBox"></div><br>
 
     <button class="btn gray" onclick="back(4)">Edit</button><br><br>
-    <button class="btn" onclick="submitRelease()">Submit Release</button>
+<button class="btn" id="submitBtn" onclick="submitRelease()">
+  <span id="btnText">Submit Release</span>
+  <span id="btnLoader" style="display:none;">Loading...</span>
+</button>
   </div>
 
 </div>
@@ -409,6 +412,16 @@ firebase.auth().onAuthStateChanged(user=>{
 });
 
 function submitRelease(){
+
+ const btn = document.getElementById("submitBtn");
+ const text = document.getElementById("btnText");
+ const loader = document.getElementById("btnLoader");
+
+ // LOCK BUTTON
+ btn.disabled = true;
+ text.style.display = "none";
+ loader.style.display = "inline";
+
  const user=firebase.auth().currentUser;
  if(!user) return;
 
@@ -424,11 +437,11 @@ function submitRelease(){
  };
 
  if(type.value==="original"){
- data.releaseType = releaseType.value;
- data.version = version.value;
- data.fullname = fullname.value;
- data.label = label.value;
- data.release = release.value;
+  data.releaseType = releaseType.value;
+  data.version = version.value;
+  data.fullname = fullname.value;
+  data.label = label.value;
+  data.release = release.value;
  }
 
  if(type.value==="cover"){
@@ -437,7 +450,14 @@ function submitRelease(){
  }
 
  db.ref("releases/"+user.uid).push(data)
- .then(()=>location.href="../dynopay");
+ .then(()=>{
+   location.href="../dynopay";
+ })
+ .catch(()=>{
+   btn.disabled = false;
+   text.style.display = "inline";
+   loader.style.display = "none";
+ });
 }
 
 window.addEventListener("scroll",()=>{
