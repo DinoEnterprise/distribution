@@ -241,34 +241,30 @@ const stepsData={
 
 /* LOAD STEP 2 FIELD */
 function loadStep2Fields(){
-  const s=document.getElementById("step2");
-  s.innerHTML="";
+  const s = document.getElementById("step2");
+  s.innerHTML = "";
 
-  s.innerHTML+=`
-    <div class="label">Song Title *</div>
-    <input id="title">
+  if(type.value === "original"){
+    s.innerHTML += `
+      <!-- SONG INFO -->
+      <div class="label">Song Title *</div>
+      <input id="title">
 
-    <div class="label">Artist Name *</div>
-    <input id="artist">
+      <div class="label">Version</div>
+      <small style="font-size:11px;color:#777;">Contoh: Remix, Remastered, Live, dll</small>
+      <input id="version" placeholder="Optional">
 
-    <div class="label">Featuring</div>
-    <input id="featuring" placeholder="Optional">
+      <div class="label">Genre *</div>
+      <select id="genre">
+        <option value="">Select</option>
+        <option>Blues</option><option>Dangdut</option>
+        <option>Electronic</option><option>Hip-hop</option>
+        <option>Instrumental</option><option>Jazz</option>
+        <option>Metal</option><option>Pop</option>
+        <option>R&B</option><option>Reggae</option>
+        <option>Rock</option>
+      </select>
 
-    <div class="label">Genre *</div>
-    <select id="genre">
-      <option value="">Select</option>
-      <option>Blues</option><option>Dangdut</option>
-      <option>Electronic</option><option>Hip-hop</option>
-      <option>Instrumental</option><option>Jazz</option>
-      <option>Metal</option><option>Pop</option>
-      <option>R&B</option><option>Reggae</option>
-      <option>Rock</option>
-    </select>
-  `;
-
-  if(type.value==="original"){
-    s.innerHTML+=`
-      <!-- RELEASE TYPE -->
       <div class="label">Release Type *</div>
       <select id="releaseType">
         <option value="">Pilih</option>
@@ -277,26 +273,66 @@ function loadStep2Fields(){
         <option>Album</option>
       </select>
 
-      <!-- VERSION -->
-      <div class="label">Version</div>
-      <small style="font-size:11px;color:#777;">
-        Contoh: Remix, Remastered, Live, dll
-      </small>
-      <input id="version" placeholder="Optional">
+      <!-- ARTIST INFO -->
+      <div class="label">Artist Name *</div>
+      <input id="artist">
 
       <div class="label">Full Name *</div>
       <input id="fullname">
 
+      <div class="label">Featuring</div>
+      <input id="featuring" placeholder="Optional">
+
+      <!-- LABEL & DATE -->
       <div class="label">Label *</div>
       <input id="label">
 
       <div class="label">Release Date *</div>
       <input type="date" id="release">
     `;
-  }
 
-  if(type.value==="cover"){
-    s.innerHTML+=`
+    // Set min date 7 hari dari sekarang
+    setTimeout(() => {
+      let r = document.getElementById("release");
+      let d = new Date();
+      d.setDate(d.getDate() + 7);
+      r.min = d.toISOString().split("T")[0];
+    }, 50);
+
+  } else if(type.value === "cover") {
+    s.innerHTML += `
+      <!-- SONG INFO -->
+      <div class="label">Song Title *</div>
+      <input id="title">
+
+      <div class="label">Version</div>
+      <select id="version">
+        <option value="">Pilih</option>
+        <option>Remix</option>
+        <option>Cover</option>
+      </select>
+
+      <div class="label">Genre *</div>
+      <select id="genre">
+        <option value="">Select</option>
+        <option>Blues</option><option>Dangdut</option>
+        <option>Electronic</option><option>Hip-hop</option>
+        <option>Instrumental</option><option>Jazz</option>
+        <option>Metal</option><option>Pop</option>
+        <option>R&B</option><option>Reggae</option>
+        <option>Rock</option>
+      </select>
+
+      <!-- ARTIST INFO -->
+      <div class="label">Artist Name *</div>
+      <input id="artist">
+
+      <div class="label">Featuring</div>
+      <input id="featuring" placeholder="Optional">
+
+      <div class="label">Composer *</div>
+      <input id="composer">
+
       <div class="label">Publisher *</div>
       <select id="publisher">
         <option value="">Select</option>
@@ -304,21 +340,10 @@ function loadStep2Fields(){
         <option>G2B Production</option>
         <option>Mahar Pustaka Nusantara</option>
       </select>
-
-      <div class="label">Composer *</div>
-      <input id="composer">
-
-      <!-- VERSION khusus Cover -->
-      <div class="label">Version</div>
-      <select id="version">
-        <option value="">Pilih</option>
-        <option>Remix</option>
-        <option>Cover</option>
-      </select>
     `;
   }
 
-  s.innerHTML+=`
+  s.innerHTML += `
     <button class="btn gray" onclick="back(2)">Back</button><br><br>
     <button class="btn" onclick="next(2)">Continue</button>
   `;
