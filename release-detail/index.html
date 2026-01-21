@@ -117,7 +117,18 @@ const params = new URLSearchParams(location.search);
 const uid = params.get("uid");
 const rid = params.get("rid");
 
-const platforms = ["Spotify","Tidal","Amazon","Apple Music","Tiktok","YouTube Music","YouTube Content ID","META","SoundCloud","Tencent"];
+const platformIcons = {
+  "Spotify": "../assets/spotify.png",
+  "Tidal": "../assets/tidal.png",
+  "Amazon": "../assets/amazon.png",
+  "Apple Music": "../assets/apple.png",
+  "Tiktok": "../assets/tiktok.png",
+  "YouTube Music": "../assets/youtube.png",
+  "YouTube Content ID": "../assets/contentid.png",
+  "META": "../assets/meta.png",
+  "SoundCloud": "../assets/soundcloud.png",
+  "Tencent": "../assets/tencent.png"
+};
 
     firebase.auth().onAuthStateChanged(user => {
   if (!user) {
@@ -163,7 +174,7 @@ function renderPlatforms(data){
 
     wrap.innerHTML += `
       <div class="platform-item clickable">
-        <img src="../assets/profile.png" alt="${p} Logo">
+<img src="${platformIcons[p]}" alt="${p} Logo">
         <b>${p}</b>
         <div class="platform-status" style="border-color:${color};color:${color};">${st.toUpperCase()}</div>
       </div>`;
