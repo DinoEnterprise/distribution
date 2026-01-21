@@ -183,7 +183,7 @@ header.scrolled{
       <option value="original">Original Asset</option>
       <option value="cover">Cover Asset</option>
     </select>
-    <button class="btn" onclick="next(1)">Continue</button>
+<button type="button" class="btn" onclick="next(1)">Continue</button>
   </div>
 
   <!-- STEP 2 -->
@@ -197,8 +197,8 @@ header.scrolled{
     <div class="label">Link GDrive Cover Art *</div>
     <input id="cover">
 
-    <button class="btn gray" onclick="back(3)">Back</button><br><br>
-    <button class="btn" onclick="next(3)">Preview</button>
+    <button type="button" class="btn gray" onclick="back(3)">Back</button><br><br>
+<button type="button" class="btn" onclick="next(3)">Preview</button>
   </div>
 
   <!-- STEP 4 -->
@@ -344,8 +344,8 @@ function loadStep2Fields(){
   }
 
   s.innerHTML += `
-    <button class="btn gray" onclick="back(2)">Back</button><br><br>
-    <button class="btn" onclick="next(2)">Continue</button>
+    <<button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
+<button type="button" class="btn" onclick="next(2)">Continue</button>
   `;
 }
 
