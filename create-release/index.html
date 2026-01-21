@@ -210,7 +210,8 @@ const stepsData={
   2:()=>{
     if(type.value==="original"){
       return title.value && artist.value && genre.value &&
-             fullname.value && label.value && release.value;
+       releaseType.value && fullname.value &&
+       label.value && release.value;
     }
 
     if(type.value==="cover"){
@@ -248,6 +249,23 @@ function loadStep2Fields(){
 
   if(type.value==="original"){
  s.innerHTML+=`
+
+  <!-- RELEASE TYPE -->
+  <div class="label">Release Type *</div>
+  <select id="releaseType">
+    <option value="">Pilih</option>
+    <option>Single</option>
+    <option>EP</option>
+    <option>Album</option>
+  </select>
+
+  <!-- VERSION -->
+  <div class="label">Version</div>
+  <small style="font-size:11px;color:#777;">
+    Contoh: Remix, Remastered, Live, dll
+  </small>
+  <input id="version" placeholder="Optional">
+
   <div class="label">Full Name *</div>
   <input id="fullname">
 
@@ -328,7 +346,8 @@ function active(n){
 
 /* PREVIEW */
 function loadPreview(){
-  previewBox.innerHTML=`
+
+  let html = `
     <div><span>Type:</span> ${type.value}</div>
     <div><span>Title:</span> ${title.value}</div>
     <div><span>Artist:</span> ${artist.value}</div>
@@ -336,6 +355,25 @@ function loadPreview(){
     <div><span>Audio:</span> ${audio.value}</div>
     <div><span>Cover:</span> ${cover.value}</div>
   `;
+
+  if(type.value==="original"){
+    html += `
+      <div><span>Release Type:</span> ${releaseType.value}</div>
+      <div><span>Version:</span> ${version.value || "-"}</div>
+      <div><span>Full Name:</span> ${fullname.value}</div>
+      <div><span>Label:</span> ${label.value}</div>
+      <div><span>Release Date:</span> ${release.value}</div>
+    `;
+  }
+
+  if(type.value==="cover"){
+    html += `
+      <div><span>Publisher:</span> ${publisher.value}</div>
+      <div><span>Composer:</span> ${composer.value}</div>
+    `;
+  }
+
+  previewBox.innerHTML = html;
 }
 </script>
 
@@ -373,10 +411,12 @@ function submitRelease(){
  };
 
  if(type.value==="original"){
-  data.fullname=fullname.value;
-  data.label=label.value;
-  data.release=release.value;
- }
+ data.releaseType = releaseType.value;
+ data.version = version.value;
+ data.fullname = fullname.value;
+ data.label = label.value;
+ data.release = release.value;
+}
 
  if(type.value==="cover"){
   data.publisher=publisher.value;
