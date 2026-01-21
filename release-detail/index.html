@@ -87,6 +87,7 @@ header h2{font-size:18px;color:#111;}
       <div class="title" id="releaseTitle">Loading...</div>
       <div class="artist" id="releaseArtist">--</div>
       <div class="label" id="releaseLabel">Label: --</div>
+      <div class="ean" id="releaseEAN">EAN: --</div>
       <div class="genre" id="releaseGenre">Genre: --</div>
       <div class="date" id="releaseDate">Release Date: --</div>
       <div class="status" id="releaseStatus">Status: --</div>
@@ -153,6 +154,7 @@ function loadRelease(uid, rid){
     document.getElementById("releaseTitle").innerText = d.title || "-";
     document.getElementById("releaseArtist").innerText = d.artist || "-";
     document.getElementById("releaseLabel").innerText = "Label: "+(d.label||"-");
+    document.getElementById("releaseEAN").innerText = "EAN: " + (d.ean || "-");
     document.getElementById("releaseGenre").innerText = "Genre: "+(d.genre||"-");
     document.getElementById("releaseDate").innerText = "Release Date: "+(d.date||"-");
     document.getElementById("releaseStatus").innerText = "Status: "+((d.status||"pending").toUpperCase());
