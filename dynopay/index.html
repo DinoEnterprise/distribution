@@ -376,7 +376,9 @@ function loadReleases(uid){
         if(r.status=="rejected") c="#ef4444";
 
         list.innerHTML += `
-          <div style="padding:12px;border:1px solid #eee;border-radius:12px;margin-bottom:10px">
+  <div onclick="goReleaseDetail('${r._key}')"
+  class="clickable"
+  style="padding:12px;border:1px solid #eee;border-radius:12px;margin-bottom:10px">
 <div class="release-row">
               <div class="release-title" style="font-weight:600">
   ${r.title||"-"}
@@ -421,7 +423,9 @@ style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid ${c}
     render(currentPage);
   });
 }
+function goReleaseDetail(rid){
+  location.href="../release-detail?rid="+rid;
+}
 </script>
-
 </body>
 </html>
