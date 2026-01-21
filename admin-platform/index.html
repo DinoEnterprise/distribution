@@ -116,12 +116,40 @@ function loadRelease(){
     const d = s.val();
     if(!d){ alert("Rilisan tidak ditemukan"); return; }
 
-    document.getElementById("title").innerText = d.title;
-    document.getElementById("artist").innerText = d.artist;
+    // Tampilkan data lengkap keterangan
+// Tampilkan judul & nama artis tetap di atas
+document.getElementById("title").innerText = d.title || "";
+document.getElementById("artist").innerText = d.artist || "";
+
+// Buat div baru untuk keterangan lengkap
+let infoDiv = document.createElement("div");
+infoDiv.style.marginTop = "12px"; // spasi sedikit
+infoDiv.innerHTML = `
+<b>Original Asset*</b><br>
+Song Title: ${d.title || ""}<br>
+Version: ${d.version || ""}<br>
+Genre: ${d.genre || ""}<br>
+Type Release: ${d.typeRelease || ""}<br>
+Artist Name: ${d.artist || ""}<br>
+Full Name: ${d.fullName || ""}<br>
+Featuring: ${d.featuring || ""}<br>
+Label: ${d.label || ""}<br><br>
+
+<b>Cover Asset*</b><br>
+Song Title: ${d.coverTitle || ""}<br>
+Version: ${d.coverVersion || ""}<br>
+Genre: ${d.coverGenre || ""}<br>
+Artist Name: ${d.coverArtist || ""}<br>
+Featuring: ${d.coverFeaturing || ""}<br>
+Composer: ${d.composer || ""}<br>
+Publisher: ${d.publisher || ""}
+`;
+
+// tambahkan info lengkap di bawah element artist
+document.getElementById("artist").insertAdjacentElement("afterend", infoDiv);
 
     renderPlatform(d.platformStatus || {});
 
-    // ===== Set Release Date & Smartlink =====
     const releaseInput = document.getElementById("releaseDate");
     releaseInput.value = d.date || "";  // kosong kalau belum ada / remix
 
