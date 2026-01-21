@@ -52,7 +52,13 @@ button{
 </div>
 
 <div class="card" id="platformWrap"></div>
+<div class="card">
+  <label for="releaseDate"><b>Release Date</b></label>
+  <input type="date" id="releaseDate" style="width:100%;padding:8px;border-radius:6px;margin-bottom:10px;">
 
+  <label for="smartlink"><b>Smartlink</b></label>
+  <input type="text" id="smartlink" placeholder="https://..." style="width:100%;padding:8px;border-radius:6px;">
+</div>
 <button onclick="savePlatform()">SIMPAN STATUS</button>
 
 <script>
@@ -95,16 +101,23 @@ auth.onAuthStateChanged(user=>{
 
 /* ===== LOAD RELEASE ===== */
 function loadRelease(){
- db.ref(`releases/${uid}/${rid}`).once("value")
- .then(s=>{
-   const d=s.val();
-   if(!d){ alert("Rilisan tidak ditemukan"); return; }
+  db.ref(`releases/${uid}/${rid}`).once("value")
+  .then(s=>{
+    const d = s.val();
+    if(!d){ alert("Rilisan tidak ditemukan"); return; }
 
-   document.getElementById("title").innerText=d.title;
-   document.getElementById("artist").innerText=d.artist;
+    document.getElementById("title").innerText = d.title;
+    document.getElementById("artist").innerText = d.artist;
 
-   renderPlatform(d.platformStatus||{});
- });
+    renderPlatform(d.platformStatus || {});
+
+    // ===== Set Release Date & Smartlink =====
+    const releaseInput = document.getElementById("releaseDate");
+    releaseInput.value = d.date || "";  // kosong kalau belum ada / remix
+
+    const smartlinkInput = document.getElementById("smartlink");
+    smartlinkInput.value = d.smartlink || "";
+  });
 }
 
 /* ===== RENDER ===== */
@@ -132,14 +145,25 @@ function renderPlatform(data){
 
 /* ===== SAVE ===== */
 function savePlatform(){
- let result={};
- document.querySelectorAll("select").forEach(s=>{
-   result[s.dataset.name]=s.value;
- });
+  // ambil status platform
+  let result = {};
+  document.querySelectorAll("select").forEach(s=>{
+    result[s.dataset.name] = s.value;
+  });
 
- db.ref(`releases/${uid}/${rid}/platformStatus`)
- .set(result)
- .then(()=>alert("✔ Platform updated"));
+  // ambil input release date & smartlink
+  const releaseDate = document.getElementById("releaseDate").value;
+  const smartlink = document.getElementById("smartlink").value;
+
+  // simpan semua ke Firebase
+  const updates = {
+    platformStatus: result,
+    date: releaseDate || null,
+    smartlink: smartlink || null
+  };
+
+  db.ref(`releases/${uid}/${rid}`).update(updates)
+    .then(()=>alert("✔ Data updated"));
 }
 </script>
 </body>
