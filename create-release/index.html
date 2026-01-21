@@ -251,6 +251,9 @@ function loadStep2Fields(){
     <div class="label">Artist Name *</div>
     <input id="artist">
 
+    <div class="label">Featuring</div>
+    <input id="featuring" placeholder="Optional">
+
     <div class="label">Genre *</div>
     <select id="genre">
       <option value="">Select</option>
@@ -264,41 +267,33 @@ function loadStep2Fields(){
   `;
 
   if(type.value==="original"){
- s.innerHTML+=`
+    s.innerHTML+=`
+      <!-- RELEASE TYPE -->
+      <div class="label">Release Type *</div>
+      <select id="releaseType">
+        <option value="">Pilih</option>
+        <option>Single</option>
+        <option>EP</option>
+        <option>Album</option>
+      </select>
 
-  <!-- RELEASE TYPE -->
-  <div class="label">Release Type *</div>
-  <select id="releaseType">
-    <option value="">Pilih</option>
-    <option>Single</option>
-    <option>EP</option>
-    <option>Album</option>
-  </select>
+      <!-- VERSION -->
+      <div class="label">Version</div>
+      <small style="font-size:11px;color:#777;">
+        Contoh: Remix, Remastered, Live, dll
+      </small>
+      <input id="version" placeholder="Optional">
 
-  <!-- VERSION -->
-  <div class="label">Version</div>
-  <small style="font-size:11px;color:#777;">
-    Contoh: Remix, Remastered, Live, dll
-  </small>
-  <input id="version" placeholder="Optional">
+      <div class="label">Full Name *</div>
+      <input id="fullname">
 
-  <div class="label">Full Name *</div>
-  <input id="fullname">
+      <div class="label">Label *</div>
+      <input id="label">
 
-  <div class="label">Label *</div>
-  <input id="label">
-
-  <div class="label">Release Date *</div>
-  <input type="date" id="release">
- `;
-
- setTimeout(()=>{
-  let r=document.getElementById("release");
-  let d=new Date();
-  d.setDate(d.getDate()+7);
-  r.min=d.toISOString().split("T")[0];
- },50);
-}
+      <div class="label">Release Date *</div>
+      <input type="date" id="release">
+    `;
+  }
 
   if(type.value==="cover"){
     s.innerHTML+=`
@@ -312,6 +307,14 @@ function loadStep2Fields(){
 
       <div class="label">Composer *</div>
       <input id="composer">
+
+      <!-- VERSION khusus Cover -->
+      <div class="label">Version</div>
+      <select id="version">
+        <option value="">Pilih</option>
+        <option>Remix</option>
+        <option>Cover</option>
+      </select>
     `;
   }
 
@@ -362,11 +365,16 @@ function active(n){
 
 /* PREVIEW */
 function loadPreview(){
-
   let html = `
     <div><span>Type:</span> ${type.value}</div>
     <div><span>Title:</span> ${title.value}</div>
     <div><span>Artist:</span> ${artist.value}</div>
+  `;
+
+  if(document.getElementById("featuring") && featuring.value)
+    html += `<div><span>Featuring:</span> ${featuring.value}</div>`;
+
+  html += `
     <div><span>Genre:</span> ${genre.value}</div>
     <div><span>Audio:</span> ${audio.value}</div>
     <div><span>Cover:</span> ${cover.value}</div>
@@ -386,6 +394,7 @@ function loadPreview(){
     html += `
       <div><span>Publisher:</span> ${publisher.value}</div>
       <div><span>Composer:</span> ${composer.value}</div>
+      <div><span>Version:</span> ${version.value || "-"}</div>
     `;
   }
 
@@ -436,6 +445,11 @@ function submitRelease(){
   time:Date.now()
  };
 
+ // Tambahin Featuring
+ if(document.getElementById("featuring") && featuring.value){
+   data.featuring = featuring.value;
+ }
+
  if(type.value==="original"){
   data.releaseType = releaseType.value;
   data.version = version.value;
@@ -459,7 +473,6 @@ function submitRelease(){
    loader.style.display = "none";
  });
 }
-
 window.addEventListener("scroll",()=>{
   const h=document.getElementById("mainHeader");
   if(window.scrollY>5){
