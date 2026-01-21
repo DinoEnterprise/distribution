@@ -119,27 +119,23 @@ const rid = params.get("rid");
 
 const platforms = ["Spotify","Tidal","Amazon","Apple Music","Tiktok","YouTube Music","YouTube Content ID","META","SoundCloud","Tencent"];
 
-firebase.auth().onAuthStateChanged(user => {
+    firebase.auth().onAuthStateChanged(user => {
   if (!user) {
-
     location.href = "../login";
   } else {
-
-    if (user.uid !== uid) {
-
-      alert("⚠ Anda tidak berhak mengakses rilisan ini");
-      location.href = "../dashboard"; // 
-      return;
-    }
-
-    loadRelease();
+    const uid = user.uid; // gunakan UID login
+    const rid = new URLSearchParams(location.search).get("rid"); // ambil rid dari URL
+    loadRelease(uid, rid);
   }
 });
 
-function loadRelease(){
+function loadRelease(uid, rid){
   db.ref(`releases/${uid}/${rid}`).once("value").then(snap=>{
     const d = snap.val();
-    if(!d){ alert("Rilisan tidak ditemukan"); return; }
+    if(!d){ 
+      alert("Rilisan tidak ditemukan"); 
+      return; 
+    }
 
     // release info
     document.getElementById("releaseTitle").innerText = d.title || "-";
@@ -149,15 +145,13 @@ function loadRelease(){
     document.getElementById("releaseDate").innerText = "Release Date: "+(d.date||"-");
     document.getElementById("releaseStatus").innerText = "Status: "+((d.status||"pending").toUpperCase());
 
-
-if((d.status||"pending").toLowerCase() !== "pending"){
-  renderPlatforms(d.platformStatus||{});
-}else{
-  document.getElementById("platformList").innerHTML = "<div style='color:#888;font-size:13px;text-align:center;'>Platform belum tersedia</div>";
-}
+    if((d.status||"pending").toLowerCase() !== "pending"){
+      renderPlatforms(d.platformStatus||{});
+    } else {
+      document.getElementById("platformList").innerHTML = "<div style='color:#888;font-size:13px;text-align:center;'>Platform belum tersedia</div>";
+    }
   });
 }
-
 function renderPlatforms(data){
   const wrap = document.getElementById("platformList");
   wrap.innerHTML = "";
