@@ -68,7 +68,6 @@ button{
     placeholder="Masukkan EAN"
     style="width:100%;padding:8px;border-radius:6px;">
 </div>
-</div>
 <button onclick="savePlatform()">SIMPAN STATUS</button>
 
 <script>
@@ -125,22 +124,15 @@ document.getElementById("artist").innerText = d.artist || "";
 let infoDiv = document.createElement("div");
 infoDiv.style.marginTop = "12px"; // spasi sedikit
 infoDiv.innerHTML = `
-<b>Original Asset*</b><br>
+<b>Asset*</b><br>
 Song Title: ${d.title || ""}<br>
 Version: ${d.version || ""}<br>
 Genre: ${d.genre || ""}<br>
-Type Release: ${d.typeRelease || ""}<br>
+Type Release: ${d.type || ""}<br>
 Artist Name: ${d.artist || ""}<br>
-Full Name: ${d.fullName || ""}<br>
+Full Name: ${d.fullname || ""}<br>
 Featuring: ${d.featuring || ""}<br>
 Label: ${d.label || ""}<br><br>
-
-<b>Cover Asset*</b><br>
-Song Title: ${d.coverTitle || ""}<br>
-Version: ${d.coverVersion || ""}<br>
-Genre: ${d.coverGenre || ""}<br>
-Artist Name: ${d.coverArtist || ""}<br>
-Featuring: ${d.coverFeaturing || ""}<br>
 Composer: ${d.composer || ""}<br>
 Publisher: ${d.publisher || ""}
 `;
