@@ -225,14 +225,21 @@ const stepsData={
 
   2:()=>{
     if(type.value==="original"){
-      return title.value && artist.value && genre.value &&
-       releaseType.value && fullname.value &&
-       label.value && release.value;
+      return document.getElementById("title").value &&
+             document.getElementById("artist").value &&
+             document.getElementById("genre").value &&
+             document.getElementById("releaseType").value &&
+             document.getElementById("fullname").value &&
+             document.getElementById("label").value &&
+             document.getElementById("release").value;
     }
 
     if(type.value==="cover"){
-      return title.value && artist.value && genre.value &&
-             publisher.value && composer.value;
+      return document.getElementById("title").value &&
+             document.getElementById("artist").value &&
+             document.getElementById("genre").value &&
+             document.getElementById("publisher").value &&
+             document.getElementById("composer").value;
     }
   },
 
@@ -475,18 +482,18 @@ function submitRelease(){
    data.featuring = featuring.value;
  }
 
- if(type.value==="original"){
-  data.releaseType = releaseType.value;
-  data.version = version.value;
-  data.fullname = fullname.value;
-  data.label = label.value;
-  data.release = release.value;
- }
+if(type.value==="original"){
+  data.releaseType = document.getElementById("releaseType").value;
+  data.version = document.getElementById("version").value;
+  data.fullname = document.getElementById("fullname").value;
+  data.label = document.getElementById("label").value;
+  data.release = document.getElementById("release").value;
+}
 
- if(type.value==="cover"){
-  data.publisher=publisher.value;
-  data.composer=composer.value;
- }
+if(type.value==="cover"){
+  data.publisher = document.getElementById("publisher").value;
+  data.composer = document.getElementById("composer").value;
+}
 
  db.ref("releases/"+user.uid).push(data)
  .then(()=>{
