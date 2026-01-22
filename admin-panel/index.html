@@ -188,13 +188,11 @@ tr:hover {
 <table id="releaseTable">
   <thead>
     <tr>
-      <th>Artist</th>
-      <th>Title</th>
-      <th>Genre</th>
-      <th>Cover Art</th>
-      <th>Song</th>
-      <th>Status</th>
-      <th>Aksi</th>
+<th>Email</th>
+<th>Artist</th>
+<th>Title</th>
+<th>Status</th>
+<th>Aksi</th>
     </tr>
   </thead>
   <tbody></tbody>
@@ -383,8 +381,9 @@ function loadMembers(){
           <div class="menu-wrap">
             <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
             <div class="menu-dropdown">
-              <button onclick="editMember('${u.key}')">Edit</button>
-              <button onclick="deleteMember('${u.key}')">Hapus</button>
+           <button onclick="resetPassword('${d.email}')">Reset Password</button>
+<button onclick="editSaldo('${u.key}')">Edit Saldo</button>
+<button onclick="deleteMember('${u.key}')">Hapus</button>
             </div>
           </div>
         </td>
@@ -397,69 +396,79 @@ function loadMembers(){
 // LOAD RELEASES
 function loadReleases(){
   const tbody = document.querySelector("#releaseTable tbody");
+  tbody.innerHTML = "";
 
-  db.ref("releases").once("value").then(snap=>{
-    tbody.innerHTML="";
-    let all=[];
+  Promise.all([
+    db.ref("users").once("value"),
+    db.ref("releases").once("value")
+  ]).then(([userSnap, releaseSnap])=>{
 
-    snap.forEach(u=>{
+    // mapping uid -> email
+    let userEmailMap = {};
+    userSnap.forEach(u=>{
+      userEmailMap[u.key] = u.val().email;
+    });
+
+    let all = [];
+    releaseSnap.forEach(u=>{
       u.forEach(r=>{
-        const d = r.val();
         all.push({
-          uid:u.key,
-          rid:r.key,
-          ...d
+          uid: u.key,
+          rid: r.key,
+          ...r.val()
         });
       });
     });
 
-    // SORT: TERBARU PALING ATAS
+    // terbaru di atas
     all.sort((a,b)=>(b.time||0)-(a.time||0));
 
     all.forEach(d=>{
-      tbody.innerHTML+=`
+      const email = userEmailMap[d.uid] || "-";
+
+      tbody.innerHTML += `
         <tr>
-          <td>${d.artist||"-"}</td>
-          <td>${d.title||"-"}</td>
-          <td>${d.genre||"-"}</td>
-          <td>${d.cover?`<a href="${d.cover}" target="_blank">Cover</a>`:"-"}</td>
-          <td>${d.audio?`<a href="${d.audio}" target="_blank">Play</a>`:"-"}</td>
+          <td>${email}</td>
+          <td>${d.artist || "-"}</td>
+          <td>${d.title || "-"}</td>
           <td>
             <span class="status-badge"
               style="border:1px solid ${getStatusColor(d.status)};
               color:${getStatusColor(d.status)}">
-              ${(d.status||"pending").toUpperCase()}
+              ${(d.status || "pending").toUpperCase()}
             </span>
           </td>
-         <td>
-  <div class="menu-wrap">
-    <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
-
-   <div class="menu-dropdown">
-
-  <button onclick="setReleaseStatus('${d.uid}','${d.rid}','approved')">
-    Approve
-  </button>
-
-  <button onclick="setReleaseStatus('${d.uid}','${d.rid}','rejected')">
-    Reject
-  </button>
-
-  <button onclick="openPlatform('${d.uid}','${d.rid}')">
-    Platform
-  </button>
-
-  <button onclick="deleteRelease('${d.uid}','${d.rid}')">
-    Delete
-  </button>
-
-</div>
-  </div>
-</td>
+          <td>
+            <div class="menu-wrap">
+              <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
+              <div class="menu-dropdown">
+                <button onclick="setReleaseStatus('${d.uid}','${d.rid}','approved')">Approve</button>
+                <button onclick="setReleaseStatus('${d.uid}','${d.rid}','rejected')">Reject</button>
+                <button onclick="openPlatform('${d.uid}','${d.rid}')">Platform</button>
+                <button onclick="deleteRelease('${d.uid}','${d.rid}')">Delete</button>
+              </div>
+            </div>
+          </td>
         </tr>
       `;
     });
   });
+}
+function resetPassword(email){
+  if(!email){
+    alert("Email tidak ditemukan");
+    return;
+  }
+
+  if(!confirm(`Kirim reset password ke:\n${email} ?`)) return;
+
+  firebase.auth().sendPasswordResetEmail(email)
+    .then(()=>{
+      alert("✔ Email reset password berhasil dikirim");
+    })
+    .catch(err=>{
+      alert("❌ " + err.message);
+    });
 }
 // UTILS
 function getStatusColor(status){
@@ -482,19 +491,21 @@ function deleteWithdraw(uid,key){
  }
 }
 
-function editMember(uid){
+function editSaldo(uid){
   let newSaldo = prompt("Masukkan saldo baru:");
-  if(newSaldo!==null){
-    newSaldo = Number(newSaldo);
-    if(isNaN(newSaldo)){ alert("⚠ Harus angka!"); return; }
-    db.ref(`users/${uid}/saldo`).set(newSaldo);
+  if(newSaldo === null) return;
+
+  newSaldo = Number(newSaldo);
+  if(isNaN(newSaldo)){
+    alert("⚠ Harus angka!");
+    return;
   }
-  let newPass = prompt("Masukkan password baru (kosongkan jika tidak ingin ganti):");
-  if(newPass){
-    auth.currentUser.updatePassword(newPass).catch(err=>alert(err.message));
-    // NOTE: update password via Admin SDK di server sebenarnya
-  }
-  loadMembers();
+
+  db.ref(`users/${uid}/saldo`).set(newSaldo)
+    .then(()=>{
+      alert("✔ Saldo diperbarui");
+      loadMembers(); // 🔥 penting
+    });
 }
 
 function deleteMember(uid){
