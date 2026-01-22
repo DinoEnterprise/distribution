@@ -186,7 +186,18 @@ infoDiv.innerHTML = `
 
 <div class="full">
   <span>Cover</span>
-  ${d.cover ? `<img src="${d.cover}" />` : "<i>Kosong</i>"}
+  ${
+    d.cover
+    ? `
+      <a href="${d.cover}" target="_blank">
+        <img 
+          src="https://drive.google.com/thumbnail?id=${extractDriveId(d.cover)}&sz=w400"
+          style="cursor:pointer"
+        />
+      </a>
+    `
+    : "<i>Kosong</i>"
+  }
 </div>
 `;
 
@@ -227,8 +238,10 @@ function renderPlatform(data){
      s.value=data[s.dataset.name];
  });
 }
-
-/* ===== SAVE ===== */
+function extractDriveId(url){
+  const match = url.match(/\/d\/([^\/]+)/);
+  return match ? match[1] : "";
+}
 function savePlatform(){
   // ambil status platform
   let result = {};
