@@ -11,7 +11,6 @@
 body{background:#f1f2f7;color:#111;min-height:100vh;padding-top:74px;animation:fadeIn .5s ease;-webkit-tap-highlight-color:transparent;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
 
-/* HEADER */
 header{
   padding:12px 20px;
   display:flex;
@@ -27,7 +26,6 @@ header{
 header img{height:50px;margin-right:10px;}
 header h2{font-size:18px;color:#111;}
 
-/* CARD */
 .card{
   width:90%;
   margin:15px auto;
@@ -40,7 +38,6 @@ header h2{font-size:18px;color:#111;}
 }
 @keyframes bounceIn{0%{transform:translateY(-20px);opacity:0}50%{transform:translateY(10px);opacity:1}70%{transform:translateY(-5px)}100%{transform:translateY(0);opacity:1}}
 
-/* RELEASE INFO */
 .release-header{display:flex;gap:15px;align-items:center;margin-bottom:15px;}
 .release-header img{width:80px;height:80px;border-radius:12px;object-fit:cover;border:1px solid #ddd;}
 .release-info{flex:1;}
@@ -48,7 +45,6 @@ header h2{font-size:18px;color:#111;}
 .release-info .title{font-weight:700;font-size:18px;}
 .release-info .artist,.release-info .label,.release-info .genre,.release-info .date,.release-info .status{font-size:14px;color:#555;}
 
-/* PLATFORM LIST */
 .platform-list{margin-top:15px;}
 .platform-item{
   display:flex;
@@ -68,7 +64,6 @@ header h2{font-size:18px;color:#111;}
   color:#f59e0b;
 }
 
-/* CLICKABLE */
 .clickable{cursor:pointer;transition:.12s;}
 .clickable:active{transform:scale(.96);filter:brightness(85%);}
 </style>
@@ -79,7 +74,6 @@ header h2{font-size:18px;color:#111;}
   <img src="../assets/dynopay2.png" alt="DynoPay Logo">
 </header>
 
-<!-- RELEASE INFO CARD -->
 <div class="card">
   <div class="release-header">
     <img id="coverArt" src="../assets/profile.png" alt="Cover Art">
@@ -95,12 +89,10 @@ header h2{font-size:18px;color:#111;}
   </div>
 </div>
 
-<!-- PLATFORM LIST CARD -->
 <div class="card">
   <div style="font-weight:700;margin-bottom:10px;">Platforms</div>
   <div id="platformList" class="platform-list"></div>
 </div>
-<!-- SMARTLINK CARD -->
 <div class="card">
   <div style="font-weight:700;margin-bottom:10px;">Smartlink</div>
 
@@ -113,7 +105,6 @@ header h2{font-size:18px;color:#111;}
   onclick="copySmartlink()"
   style="display:none;width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;background:#fff;">
 
-<!-- ICON COPY FULL HITAM -->
 <svg width="18" height="18" viewBox="0 0 24 24" fill="black"
 xmlns="http://www.w3.org/2000/svg">
 <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z"/>
@@ -126,7 +117,7 @@ xmlns="http://www.w3.org/2000/svg">
   Smartlink belum tersedia
   </div>
 </div>
-<!-- FIREBASE -->
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -161,8 +152,8 @@ const platforms = ["Spotify","Tidal","Amazon","Apple Music","Tiktok","YouTube Mu
   if (!user) {
     location.href = "../login";
   } else {
-    const uid = user.uid; // gunakan UID login
-    const rid = new URLSearchParams(location.search).get("rid"); // ambil rid dari URL
+    const uid = user.uid; 
+    const rid = new URLSearchParams(location.search).get("rid"); 
     loadRelease(uid, rid);
   }
 });
@@ -175,7 +166,6 @@ function loadRelease(uid, rid){
       return; 
     }
 
-    // release info
     document.getElementById("releaseTitle").innerText = d.title || "-";
     document.getElementById("releaseArtist").innerText = d.artist || "-";
     document.getElementById("releaseLabel").innerText = "Label: "+(d.label||"-");
@@ -193,7 +183,7 @@ if(d.smartlink){
   empty.style.display = "none";
   input.value = d.smartlink;
 }
-// ==== END SMARTLINK ====
+
     if((d.status||"pending").toLowerCase() !== "pending"){
       renderPlatforms(d.platformStatus||{});
     } else {
