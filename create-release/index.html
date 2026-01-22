@@ -44,7 +44,6 @@ header.scrolled{
   box-shadow:0 4px 12px rgba(0,0,0,.08);
 }
 
-    /* CONTAINER */
     .wrap{
       width:92%;
       margin:18px auto;
@@ -60,7 +59,6 @@ header.scrolled{
       to{opacity:1}
     }
 
-    /* STEPPER */
     .steps{
       display:flex;
       justify-content:space-between;
@@ -124,7 +122,6 @@ header.scrolled{
       box-shadow:0 0 0 3px rgba(102,126,234,.15);
     }
 
-    /* BUTTON */
     .btn{
       width:100%;
       padding:15px;
@@ -142,7 +139,6 @@ header.scrolled{
 
     .btn:active{transform:scale(.96)}
 
-    /* PREVIEW */
     .preview{
       background:#f9fafb;
       border-radius:16px;
@@ -167,7 +163,6 @@ header.scrolled{
 
 <div class="wrap">
 
-  <!-- STEPS -->
   <div class="steps">
     <div class="step active" id="s1">1</div>
     <div class="step" id="s2">2</div>
@@ -175,7 +170,6 @@ header.scrolled{
     <div class="step" id="s4">4</div>
   </div>
 
-  <!-- STEP 1 -->
   <div id="step1" class="section">
     <div class="label">Type Asset <span class="req">*</span></div>
     <select id="type">
@@ -186,10 +180,8 @@ header.scrolled{
 <button type="button" class="btn" onclick="next(1)">Continue</button>
   </div>
 
-  <!-- STEP 2 -->
   <div id="step2" class="section" hidden></div>
 
-  <!-- STEP 3 -->
   <div id="step3" class="section" hidden>
     <div class="label">Link GDrive Audio *</div>
     <input id="audio">
@@ -201,7 +193,6 @@ header.scrolled{
 <button type="button" class="btn" onclick="next(3)">Preview</button>
   </div>
 
-  <!-- STEP 4 -->
   <div id="step4" class="section" hidden>
     <div class="preview" id="previewBox"></div><br>
 
@@ -215,38 +206,37 @@ header.scrolled{
 </div>
 
 <script>
-/* MIN 7 HARI */
+
 let d=new Date();
 d.setDate(d.getDate()+7);
 
-/* VALIDATION */
 const stepsData={
   1:()=>type.value!="",
 
   2:()=>{
     if(type.value==="original"){
-      return document.getElementById("title").value &&
-             document.getElementById("artist").value &&
-             document.getElementById("genre").value &&
-             document.getElementById("releaseType").value &&
-             document.getElementById("fullname").value &&
-             document.getElementById("label").value &&
-             document.getElementById("release").value;
+      return document.getElementById("title")?.value &&
+             document.getElementById("artist")?.value &&
+             document.getElementById("genre")?.value &&
+             document.getElementById("releaseType")?.value &&
+             document.getElementById("fullname")?.value &&
+             document.getElementById("label")?.value &&
+             document.getElementById("release")?.value;
     }
 
     if(type.value==="cover"){
-      return document.getElementById("title").value &&
-             document.getElementById("artist").value &&
-             document.getElementById("genre").value &&
-             document.getElementById("publisher").value &&
-             document.getElementById("composer").value;
+      return document.getElementById("title")?.value &&
+             document.getElementById("artist")?.value &&
+             document.getElementById("genre")?.value &&
+             document.getElementById("publisher")?.value &&
+             document.getElementById("composer")?.value;
     }
   },
 
   3:()=>audio.value && cover.value
 }
 
-/* LOAD STEP 2 FIELD */
+
 function loadStep2Fields(){
   const s = document.getElementById("step2");
   s.innerHTML = "";
@@ -298,7 +288,7 @@ function loadStep2Fields(){
       <input type="date" id="release">
     `;
 
-    // Set min date 7 hari dari sekarang
+    
     setTimeout(() => {
       let r = document.getElementById("release");
       let d = new Date();
@@ -351,12 +341,11 @@ function loadStep2Fields(){
   }
 
   s.innerHTML += `
-    <<button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
+    <button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
 <button type="button" class="btn" onclick="next(2)">Continue</button>
   `;
 }
 
-/* STEP CONTROL */
 s1.onclick=()=>goto(1);
 s2.onclick=()=>goto(2);
 s3.onclick=()=>goto(3);
@@ -395,7 +384,7 @@ function active(n){
   document.getElementById("s"+n).classList.add("active");
 }
 
-/* PREVIEW */
+
 function loadPreview(){
   let html = `
     <div><span>Type:</span> ${type.value}</div>
@@ -406,11 +395,15 @@ function loadPreview(){
   if(document.getElementById("featuring") && featuring.value)
     html += `<div><span>Featuring:</span> ${featuring.value}</div>`;
 
-  html += `
-    <div><span>Genre:</span> ${genre.value}</div>
-    <div><span>Audio:</span> ${audio.value}</div>
-    <div><span>Cover:</span> ${cover.value}</div>
-  `;
+  function shorten(text, max=40){
+  if(text.length <= max) return text;
+  return text.slice(0, max) + "...";
+}
+
+html += `
+  <div><span>Audio:</span> ${audio.value ? `<a href="${audio.value}" target="_blank">${shorten(audio.value)}</a>` : '-'}</div>
+  <div><span>Cover:</span> ${cover.value ? `<a href="${cover.value}" target="_blank">${shorten(cover.value)}</a>` : '-'}</div>
+`;
 
   if(type.value==="original"){
     html += `
@@ -434,7 +427,6 @@ function loadPreview(){
 }
 </script>
 
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -458,7 +450,6 @@ function submitRelease(){
  const text = document.getElementById("btnText");
  const loader = document.getElementById("btnLoader");
 
- // LOCK BUTTON
  btn.disabled = true;
  text.style.display = "none";
  loader.style.display = "inline";
@@ -477,7 +468,6 @@ function submitRelease(){
   time:Date.now()
  };
 
- // Tambahin Featuring
  if(document.getElementById("featuring") && featuring.value){
    data.featuring = featuring.value;
  }
