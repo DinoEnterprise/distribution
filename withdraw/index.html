@@ -14,8 +14,8 @@ body{
   animation:fadeIn .5s ease;
   -webkit-tap-highlight-color:transparent;
 
-  padding-top: 74px;   /* tinggi header */
-  padding-bottom: 70px; /* tinggi bottom nav */
+  padding-top: 74px; 
+  padding-bottom: 70px; 
   box-sizing: border-box;
 }
 @keyframes fadeIn{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
@@ -29,11 +29,11 @@ header {
   background: white;
   border-bottom: 1px solid #eee;
 
-  position: fixed;   /* nempel di atas */
+  position: fixed;   
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1000;     /* selalu di atas konten */
+  z-index: 1000;     
 }
 header img{height:50px;}
 
@@ -73,13 +73,13 @@ button{
 button:hover{filter:brightness(90%);}
 button:active{transform:scale(0.94); filter:brightness(70%); box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);}
 
-/* Badge */
+
 .badge {
   padding:4px 10px;
   border-radius:20px;
   font-size:12px;
-  background:transparent; /* jadi transparan */
-  border:1px solid;       /* garis stroke */
+  background:transparent;
+  border:1px solid;      
   display:inline-block;
 }
 
@@ -87,7 +87,6 @@ button:active{transform:scale(0.94); filter:brightness(70%); box-shadow: inset 0
 .approved { color:#10b981; border-color:#10b981; }
 .rejected { color:#ef4444; border-color:#ef4444; }
 
-/* Withdraw history items */
 .item{
   border-bottom:1px solid #eee;
   padding:12px 0;
@@ -96,7 +95,6 @@ button:active{transform:scale(0.94); filter:brightness(70%); box-shadow: inset 0
   animation:fadeSlideUp 0.3s forwards;
 }
 
-/* NAV */
 .bottom-nav{
   background:#fff;
   border-top:1px solid #eee;
@@ -121,11 +119,9 @@ button:active{transform:scale(0.94); filter:brightness(70%); box-shadow: inset 0
 .nav-item.active{opacity:1;color:#667eea;}
 .nav-item.active img{filter:brightness(1.2);}
 
-/* clickable */
 .clickable{cursor:pointer; transition: transform 0.12s, filter 0.12s, box-shadow 0.12s;}
 .clickable:active{transform:scale(0.94); filter:brightness(85%); box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);}
 
-/* Profile menu */
 .profile-menu{
   position:fixed;
   bottom:60px;
@@ -161,7 +157,6 @@ button:active{transform:scale(0.94); filter:brightness(70%); box-shadow: inset 0
 <img src="../assets/dynopay2.png" alt="DynoPay">
 </header>
 
-<!-- Withdraw Form -->
 <div class="card clickable">
 <h3>Withdraw</h3>
 <small>Minimal Rp 50.000</small>
@@ -175,7 +170,6 @@ button:active{transform:scale(0.94); filter:brightness(70%); box-shadow: inset 0
 <button onclick="requestWD()" class="clickable">Request Withdraw</button>
 </div>
 
-<!-- Withdraw History -->
 <div class="card clickable">
 <h3>Riwayat Withdraw</h3>
 <div id="list"></div>
@@ -183,13 +177,11 @@ button:active{transform:scale(0.94); filter:brightness(70%); box-shadow: inset 0
 
 <div style="height:120px"></div>
 
-<!-- Profile Menu -->
 <div id="profileMenu" class="profile-menu clickable">
   <div onclick="goProfile()" class="clickable">Profile</div>
   <div onclick="logout()" class="clickable">Log Out</div>
 </div>
 
-<!-- Bottom Nav -->
 <div class="bottom-nav">
 <div class="nav-item clickable" onclick="goDashboard()">
 <img src="../assets/dasboard.png">Dashboard
@@ -202,7 +194,6 @@ button:active{transform:scale(0.94); filter:brightness(70%); box-shadow: inset 0
 </div>
 </div>
 
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -218,30 +209,28 @@ let saldo=0,uid="";
 
 function formatStatus(status) {
   const s = status.toLowerCase();
-  if (s === "approve" || s === "approved") return "APPROVED"; // tulisannya jadi APPROVED
+  if (s === "approve" || s === "approved") return "APPROVED"; 
   if (s === "rejected") return "REJECTED";
   return "PENDING";
 }
 
 function getStatusClass(status){
   const s = status.toLowerCase();
-  if (s === "approve" || s === "approved") return "approved"; // badge hijau
-  if (s === "rejected") return "rejected"; // badge merah
-  return "pending"; // badge oranye
+  if (s === "approve" || s === "approved") return "approved"; 
+  if (s === "rejected") return "rejected"; 
+  return "pending";
 }
 
 firebase.auth().onAuthStateChanged(user=>{
   if(!user) location.href="../login";
   uid=user.uid;
 
-  // load saldo
   db.ref("users/"+uid).on("value",s=>{
     saldo=Number(s.val().saldo||0);
     saldoText.innerText="Saldo tersedia: Rp "+saldo.toLocaleString("id-ID");
     jumlah.value="Rp "+saldo.toLocaleString("id-ID");
   });
 
-  // load history
   loadHistory();
 });
 
@@ -340,7 +329,6 @@ function openInvoice(id){
   window.location.href = "../invoice?id="+id;
 }
 
-// Profile menu
 function toggleProfileMenu(){
   const menu = document.getElementById("profileMenu");
   menu.classList.toggle("show");
@@ -348,7 +336,6 @@ function toggleProfileMenu(){
 function goProfile(){location.href = "../profile";}
 function logout(){firebase.auth().signOut().then(()=>location.href="../login");}
 
-// Nav clicks
 function goDashboard(){location.href="../dynopay";}
 function goWithdraw(){console.log("Withdraw click — tidak reload");}
 function withdrawClick(){console.log("Anda di menu Withdraw — tidak reload");}
