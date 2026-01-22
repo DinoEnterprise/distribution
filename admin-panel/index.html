@@ -118,9 +118,15 @@ tr:hover {
   width: 100%;
   border: none;
   background: none;
-  padding: 8px;
-  font-size: 12px;
+  padding: 12px;
+  font-size: 13px;
   text-align: left;
+}
+
+/* tombol ke-2 = Reject */
+.menu-dropdown button:nth-child(2){
+  color:#ef4444;
+  font-weight:700;
 }
 
 .menu-dropdown button:hover {
@@ -304,6 +310,15 @@ function register(){
   isRegistering = false;
 });
 }
+function confirmRelease(uid, rid, status){
+  const text = status === "approved"
+    ? "Yakin APPROVE rilis ini?"
+    : "⚠ Yakin REJECT rilis ini?\nAksi ini tidak bisa dibatalkan!";
+
+  if(!confirm(text)) return;
+
+  setReleaseStatus(uid, rid, status);
+}
 function saveArtist() {
   const artistName = document.getElementById("artistName").value.trim();
   if(!artistName){
@@ -354,7 +369,7 @@ function loadWithdraws(){
          </td>
          <td>
            <button class="action-btn" onclick="setWithdrawStatus('${user.key}','${w.key}','approve')">Approve</button>
-           <button class="action-btn" onclick="setWithdrawStatus('${user.key}','${w.key}','reject')">Reject</button>
+           <button class="action-btn" onclick="setWithdrawStatus('${user.key}','${w.key}','rejected')">Reject</button>
            <button class="action-btn" onclick="deleteWithdraw('${user.key}','${w.key}')">Delete</button>
          </td>
        `;
@@ -426,31 +441,45 @@ function loadReleases(){
     all.forEach(d=>{
       const email = userEmailMap[d.uid] || "-";
 
-      tbody.innerHTML += `
-        <tr>
-          <td>${email}</td>
-          <td>${d.artist || "-"}</td>
-          <td>${d.title || "-"}</td>
-          <td>
-            <span class="status-badge"
-              style="border:1px solid ${getStatusColor(d.status)};
-              color:${getStatusColor(d.status)}">
-              ${(d.status || "pending").toUpperCase()}
-            </span>
-          </td>
-          <td>
-            <div class="menu-wrap">
-              <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
-              <div class="menu-dropdown">
-                <button onclick="setReleaseStatus('${d.uid}','${d.rid}','approved')">Approve</button>
-                <button onclick="setReleaseStatus('${d.uid}','${d.rid}','rejected')">Reject</button>
-                <button onclick="openPlatform('${d.uid}','${d.rid}')">Platform</button>
-                <button onclick="deleteRelease('${d.uid}','${d.rid}')">Delete</button>
-              </div>
-            </div>
-          </td>
-        </tr>
-      `;
+tbody.innerHTML += `
+<tr>
+  <td>${email}</td>
+  <td>${d.artist || "-"}</td>
+  <td>${d.title || "-"}</td>
+  <td>
+    <span class="status-badge"
+      style="border:1px solid ${getStatusColor(d.status)};
+      color:${getStatusColor(d.status)}">
+      ${(d.status || "pending").toUpperCase()}
+    </span>
+  </td>
+  <td style="display:flex;gap:6px;align-items:center">
+
+    <!-- DETAIL -->
+    <button class="action-btn"
+      onclick="openPlatform('${d.uid}','${d.rid}')">
+      Detail
+    </button>
+
+    <!-- MENU -->
+    <div class="menu-wrap">
+      <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
+      <div class="menu-dropdown">
+        <button onclick="confirmRelease('${d.uid}','${d.rid}','approved')">
+          Approve
+        </button>
+        <button onclick="confirmRelease('${d.uid}','${d.rid}','rejected')">
+          Reject
+        </button>
+        <button onclick="deleteRelease('${d.uid}','${d.rid}')">
+          Delete
+        </button>
+      </div>
+    </div>
+
+  </td>
+</tr>
+`;
     });
   });
 }
