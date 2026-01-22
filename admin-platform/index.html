@@ -14,13 +14,18 @@ body{
   background:#f1f2f7;
   padding:15px;
 }
+
 .card{
   background:#fff;
   padding:15px;
   border-radius:12px;
   margin-bottom:15px;
 }
-h3{margin-bottom:6px}
+
+h3{
+  margin-bottom:6px;
+}
+
 .platform{
   display:flex;
   justify-content:space-between;
@@ -28,10 +33,12 @@ h3{margin-bottom:6px}
   padding:8px 0;
   border-bottom:1px solid #eee;
 }
+
 select{
   padding:6px;
   border-radius:6px;
 }
+
 button{
   width:100%;
   padding:12px;
@@ -40,6 +47,43 @@ button{
   color:#fff;
   border-radius:8px;
   font-weight:600;
+}
+
+/* ===== INFO GRID ===== */
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin-top:12px;
+  font-size:13px;
+}
+
+.info-grid div{
+  background:#f7f8fc;
+  padding:10px;
+  border-radius:8px;
+}
+
+.info-grid span{
+  display:block;
+  font-size:11px;
+  color:#666;
+  margin-bottom:2px;
+}
+
+.info-grid b{
+  font-size:13px;
+  font-weight:600;
+}
+
+.info-grid .full{
+  grid-column:1 / 3;
+}
+
+.info-grid img{
+  width:120px;
+  border-radius:8px;
+  margin-top:6px;
 }
 </style>
 </head>
@@ -120,21 +164,30 @@ function loadRelease(){
 document.getElementById("title").innerText = d.title || "";
 document.getElementById("artist").innerText = d.artist || "";
 
-// Buat div baru untuk keterangan lengkap
 let infoDiv = document.createElement("div");
-infoDiv.style.marginTop = "12px"; // spasi sedikit
+infoDiv.className = "info-grid";
 infoDiv.innerHTML = `
-<b>Asset*</b><br>
-Song Title: ${d.title || ""}<br>
-Version: ${d.version || ""}<br>
-Genre: ${d.genre || ""}<br>
-Type Release: ${d.type || ""}<br>
-Artist Name: ${d.artist || ""}<br>
-Full Name: ${d.fullname || ""}<br>
-Featuring: ${d.featuring || ""}<br>
-Label: ${d.label || ""}<br><br>
-Composer: ${d.composer || ""}<br>
-Publisher: ${d.publisher || ""}
+<div><span>Song Title</span><b>${d.title || "-"}</b></div>
+<div><span>Version</span><b>${d.version || "-"}</b></div>
+<div><span>Genre</span><b>${d.genre || "-"}</b></div>
+<div><span>Release Type</span><b>${d.releaseType || "-"}</b></div>
+<div><span>Artist</span><b>${d.artist || "-"}</b></div>
+<div><span>Full Name</span><b>${d.fullname || "-"}</b></div>
+<div><span>Featuring</span><b>${d.featuring || "-"}</b></div>
+<div><span>Label</span><b>${d.label || "-"}</b></div>
+
+<div><span>Composer</span><b>${d.composer || "-"}</b></div>
+<div><span>Publisher</span><b>${d.publisher || "-"}</b></div>
+
+<div class="full">
+  <span>Audio</span>
+  ${d.audio ? `<a href="${d.audio}" target="_blank">Preview Audio</a>` : "<i>Kosong</i>"}
+</div>
+
+<div class="full">
+  <span>Cover</span>
+  ${d.cover ? `<img src="${d.cover}" />` : "<i>Kosong</i>"}
+</div>
 `;
 
 // tambahkan info lengkap di bawah element artist
