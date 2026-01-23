@@ -4,52 +4,24 @@
 <meta charset="UTF-8">
 <title>Detail Member - DynoPay</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <style>
 body { font-family: 'Outfit', sans-serif; background:#f1f2f7; margin:0; padding:15px;}
 .card { background:#fff; padding:15px; border-radius:12px; margin-bottom:15px; box-shadow:0 3px 10px rgba(0,0,0,.05);}
 h3 { font-size:18px; margin-bottom:8px; }
-input, button { width:100%; padding:12px; margin-top:8px; border-radius:10px; border:1px solid #ddd; font-size:14px; outline:none; }
-button { cursor:pointer; font-weight:600; border-radius:6px; transition:.25s; }
-button.reset { background:#111; color:#fff; }
-button.reset:hover { opacity:.9; }
-
-.table-container { overflow-x:auto; max-height:400px; }
-table { width:100%; border-collapse:collapse; font-size:13px; min-width:600px; }
-th, td { text-align:left; padding:8px 10px; border-bottom:1px solid #eee; }
-th { background:#f9f9f9; font-weight:600; }
-tr:hover { background:#f5f5f5; }
-.status-badge { padding:2px 8px; border-radius:999px; font-weight:600; font-size:12px;}
+ul { list-style:none; padding-left:0; }
+li { padding:6px 0; border-bottom:1px solid #eee; }
 </style>
 </head>
 
 <body>
 
 <div class="card">
-<h3>Detail Member</h3>
-<p><strong>Email:</strong> <span id="email">-</span></p>
-<p><strong>Nama:</strong> <span id="nama">-</span></p>
-<p><strong>Terakhir Login / Update:</strong> <span id="lastLogin">-</span></p>
-<button class="reset" id="resetBtn">Kirim Reset Password</button>
-</div>
-
-<div class="card">
-<h3>Rilisan Artis</h3>
-<div class="table-container">
-<table id="releaseTable">
-<thead>
-<tr>
-<th>Title</th>
-<th>Artist</th>
-<th>Status</th>
-<th>Tanggal Rilis</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-</div>
+<h3>Nama Artis Terdaftar</h3>
+<ul id="artistList">
+<li>Loading...</li>
+</ul>
 </div>
 
 <script>
@@ -58,9 +30,6 @@ firebase.initializeApp({
  authDomain:"dynopay-2513c.firebaseapp.com",
  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
-
-const auth = firebase.auth();
-const db = firebase.database();
 
 // Ambil UID dari query string
 function getUID() {
@@ -74,52 +43,26 @@ if(!uid){
   window.location.href = "../admin";
 }
 
-// Load info member
-db.ref("users/"+uid).once("value").then(snap=>{
-  const data = snap.val();
-  if(!data) return alert("Member tidak ditemukan");
-
-  document.getElementById("email").innerText = data.email || "-";
-  document.getElementById("nama").innerText = data.nama || "-";
-  document.getElementById("lastLogin").innerText = data.lastLogin
-    ? new Date(data.lastLogin).toLocaleString()
-    : "-";
-
-  // Reset password
-  document.getElementById("resetBtn").onclick = ()=>{
-    if(confirm("Kirim email reset password ke "+data.email+"?")){
-      firebase.auth().sendPasswordResetEmail(data.email)
-      .then(()=> alert("✔ Email reset password berhasil dikirim"))
-      .catch(err=> alert("❌ "+err.message));
-    }
-  }
-});
-
-// Load rilisan member
-function getStatusColor(status){
-  if(status=="approved") return "#10b981";
-  if(status=="rejected") return "#ef4444";
-  return "#f59e0b"; // pending
-}
-
-db.ref("releases/"+uid).on("value", snap=>{
-  const tbody = document.querySelector("#releaseTable tbody");
-  tbody.innerHTML = "";
+// Load rilisan dan kumpulkan nama artis unik
+db.ref("releases/"+uid).once("value").then(snap=>{
+  const namesSet = new Set();
   snap.forEach(r=>{
-    const d = r.val();
-    tbody.innerHTML += `
-      <tr>
-        <td>${d.title || "-"}</td>
-        <td>${d.artist || "-"}</td>
-        <td>
-          <span class="status-badge" style="border:1px solid ${getStatusColor(d.status)}; color:${getStatusColor(d.status)}">
-            ${(d.status || "pending").toUpperCase()}
-          </span>
-        </td>
-        <td>${d.time ? new Date(d.time).toLocaleDateString() : "-"}</td>
-      </tr>
-    `;
+    const data = r.val();
+    if(data.artist) namesSet.add(data.artist);
   });
+
+  const listEl = document.getElementById("artistList");
+  listEl.innerHTML = "";
+
+  if(namesSet.size === 0){
+    listEl.innerHTML = "<li>Belum ada artis terdaftar</li>";
+  } else {
+    namesSet.forEach(name=>{
+      const li = document.createElement("li");
+      li.innerText = name;
+      listEl.appendChild(li);
+    });
+  }
 });
 </script>
 
