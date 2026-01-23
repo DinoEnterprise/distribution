@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Detail Member - DynoPay</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <style>
@@ -12,10 +13,22 @@ body { font-family: 'Outfit', sans-serif; background:#f1f2f7; margin:0; padding:
 h3 { font-size:18px; margin-bottom:8px; }
 ul { list-style:none; padding-left:0; }
 li { padding:6px 0; border-bottom:1px solid #eee; }
+input, button { width:100%; padding:12px; margin-top:8px; border-radius:10px; border:1px solid #ddd; font-size:14px; outline:none; }
+button { cursor:pointer; font-weight:600; border-radius:6px; transition:.25s; }
+button.reset { background:#111; color:#fff; }
+button.reset:hover { opacity:.9; }
 </style>
 </head>
 
 <body>
+
+<div class="card">
+<h3>Detail Member</h3>
+<p><strong>Email:</strong> <span id="email">-</span></p>
+<p><strong>Nama:</strong> <span id="nama">-</span></p>
+<p><strong>Terakhir Login / Update:</strong> <span id="lastLogin">-</span></p>
+<button class="reset" id="resetBtn">Kirim Reset Password</button>
+</div>
 
 <div class="card">
 <h3>Nama Artis Terdaftar</h3>
@@ -31,6 +44,9 @@ firebase.initializeApp({
  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 
+const auth = firebase.auth();
+const db = firebase.database();
+
 // Ambil UID dari query string
 function getUID() {
   const params = new URLSearchParams(window.location.search);
@@ -43,17 +59,37 @@ if(!uid){
   window.location.href = "../admin";
 }
 
-// Load rilisan dan kumpulkan nama artis unik
+// Load info member
+db.ref("users/"+uid).once("value").then(snap=>{
+  const data = snap.val();
+  if(!data) return alert("Member tidak ditemukan");
+
+  document.getElementById("email").innerText = data.email || "-";
+  document.getElementById("nama").innerText = data.nama || "-";
+  document.getElementById("lastLogin").innerText = data.lastLogin
+    ? new Date(data.lastLogin).toLocaleString()
+    : "-";
+
+  // Reset password
+  document.getElementById("resetBtn").onclick = ()=>{
+    if(confirm("Kirim email reset password ke "+data.email+"?")){
+      firebase.auth().sendPasswordResetEmail(data.email)
+      .then(()=> alert("✔ Email reset password berhasil dikirim"))
+      .catch(err=> alert("❌ "+err.message));
+    }
+  }
+});
+
+// Load rilisan member dan tampilkan **nama artis unik**
 db.ref("releases/"+uid).once("value").then(snap=>{
   const namesSet = new Set();
   snap.forEach(r=>{
-    const data = r.val();
-    if(data.artist) namesSet.add(data.artist);
+    const d = r.val();
+    if(d.artist) namesSet.add(d.artist);
   });
 
   const listEl = document.getElementById("artistList");
   listEl.innerHTML = "";
-
   if(namesSet.size === 0){
     listEl.innerHTML = "<li>Belum ada artis terdaftar</li>";
   } else {
