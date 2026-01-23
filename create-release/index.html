@@ -183,12 +183,11 @@ header.scrolled{
   <div id="step2" class="section" hidden></div>
 
   <div id="step3" class="section" hidden>
-    <div class="label">Link GDrive Audio *</div>
-    <input id="audio">
+<div class="label">Upload Audio *</div>
+<input type="file" id="audio" accept="audio/mpeg,audio/mp3,audio/wav">
 
-    <div class="label">Link GDrive Cover Art *</div>
-    <input id="cover">
-
+<div class="label">Upload Cover Art *</div>
+<input type="file" id="cover" accept="image/jpeg,image/png">
     <button type="button" class="btn gray" onclick="back(3)">Back</button><br><br>
 <button type="button" class="btn" onclick="next(3)">Preview</button>
   </div>
@@ -233,7 +232,7 @@ const stepsData={
     }
   },
 
-  3:()=>audio.value && cover.value
+  3:()=>audio.files.length && cover.files.length
 }
 
 
@@ -401,8 +400,8 @@ function loadPreview(){
 }
 
 html += `
-  <div><span>Audio:</span> ${audio.value ? `<a href="${audio.value}" target="_blank">${shorten(audio.value)}</a>` : '-'}</div>
-  <div><span>Cover:</span> ${cover.value ? `<a href="${cover.value}" target="_blank">${shorten(cover.value)}</a>` : '-'}</div>
+<div><span>Audio:</span> ${audio.files[0]?.name || "-"}</div>
+<div><span>Cover:</span> ${cover.files[0]?.name || "-"}</div>
 `;
 
   if(type.value==="original"){
@@ -426,7 +425,13 @@ html += `
   previewBox.innerHTML = html;
 }
 </script>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const supabase = supabase.createClient(
+  "https://PROJECT_ID.supabase.co",
+  "sb_publishable_SImKt0aB_-dcQCKFAoKCIQ_3RZNsEHJ"
+);
+</script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -443,8 +448,46 @@ const db=firebase.database();
 firebase.auth().onAuthStateChanged(user=>{
   if(!user) location.href="../login";
 });
+</script>
 
-function submitRelease(){
+<script>
+/* ===== FILE VALIDATION CONFIG ===== */
+const AUDIO_MAX_SIZE = 50 * 1024 * 1024; // 50MB
+const IMAGE_MAX_SIZE = 5 * 1024 * 1024; // 5MB
+
+const AUDIO_TYPES = [
+  "audio/mpeg",
+  "audio/wav",
+  "audio/x-wav"
+];
+
+const IMAGE_TYPES = [
+  "image/jpeg",
+  "image/png"
+];
+
+function validateFile(file, maxSize, allowedTypes, label){
+  if(!file){
+    alert(label + " wajib diupload");
+    return false;
+  }
+
+  if(file.size > maxSize){
+    alert(label + " terlalu besar (Max " + (maxSize/1024/1024) + " MB)");
+    return false;
+  }
+
+  if(!allowedTypes.includes(file.type)){
+    alert(label + " tidak valid");
+    return false;
+  }
+
+  return true;
+}
+</script>
+
+<script>
+async function submitRelease(){
 
  const btn = document.getElementById("submitBtn");
  const text = document.getElementById("btnText");
@@ -454,46 +497,87 @@ function submitRelease(){
  text.style.display = "none";
  loader.style.display = "inline";
 
- const user=firebase.auth().currentUser;
+ const user = firebase.auth().currentUser;
  if(!user) return;
 
- let data={
-  type:type.value,
-  title:title.value,
-  artist:artist.value,
-  genre:genre.value,
-  audio:audio.value,
-  cover:cover.value,
-  status:"pending",
-  time:Date.now()
- };
+ try{
+   const audioFile = audio.files[0];
+const coverFile = cover.files[0];
 
- if(document.getElementById("featuring") && featuring.value){
-   data.featuring = featuring.value;
- }
-
-if(type.value==="original"){
-  data.releaseType = document.getElementById("releaseType").value;
-  data.version = document.getElementById("version").value;
-  data.fullname = document.getElementById("fullname").value;
-  data.label = document.getElementById("label").value;
-  data.release = document.getElementById("release").value;
+// VALIDASI FILE
+if(
+  !validateFile(audioFile, AUDIO_MAX_SIZE, AUDIO_TYPES, "Audio") ||
+  !validateFile(coverFile, IMAGE_MAX_SIZE, IMAGE_TYPES, "Cover Art")
+){
+  btn.disabled = false;
+  text.style.display = "inline";
+  loader.style.display = "none";
+  return;
 }
 
-if(type.value==="cover"){
-  data.publisher = document.getElementById("publisher").value;
-  data.composer = document.getElementById("composer").value;
-}
+   const audioPath = `audio/${user.uid}_${Date.now()}_${audioFile.name}`;
+   const coverPath = `cover/${user.uid}_${Date.now()}_${coverFile.name}`;
 
- db.ref("releases/"+user.uid).push(data)
- .then(()=>{
+// ===== UPLOAD AUDIO =====
+const { error: audioErr } = await supabase.storage
+  .from("release-audio")
+  .upload(audioPath, audioFile);
+
+if (audioErr) throw audioErr;
+
+// ===== UPLOAD COVER =====
+const { error: coverErr } = await supabase.storage
+  .from("release-image")
+  .upload(coverPath, coverFile);
+
+if (coverErr) throw coverErr;
+
+// ===== GET PUBLIC URL =====
+const audioURL = supabase.storage
+  .from("release-audio")
+  .getPublicUrl(audioPath).data.publicUrl;
+
+const coverURL = supabase.storage
+  .from("release-image")
+  .getPublicUrl(coverPath).data.publicUrl;
+
+   let data={
+     type:type.value,
+     title:title.value,
+     artist:artist.value,
+     genre:genre.value,
+     audio: audioURL,
+     cover: coverURL,
+     status:"pending",
+     time:Date.now()
+   };
+
+   if(document.getElementById("featuring") && featuring.value){
+     data.featuring = featuring.value;
+   }
+
+   if(type.value==="original"){
+     data.releaseType = releaseType.value;
+     data.version = version.value;
+     data.fullname = fullname.value;
+     data.label = label.value;
+     data.release = release.value;
+   }
+
+   if(type.value==="cover"){
+     data.publisher = publisher.value;
+     data.composer = composer.value;
+   }
+
+   await db.ref("releases/"+user.uid).push(data);
    location.href="../dynopay";
- })
- .catch(()=>{
+
+ }catch(err){
+   alert("Upload gagal: " + err.message);
    btn.disabled = false;
    text.style.display = "inline";
    loader.style.display = "none";
- });
+ }
 }
 window.addEventListener("scroll",()=>{
   const h=document.getElementById("mainHeader");
