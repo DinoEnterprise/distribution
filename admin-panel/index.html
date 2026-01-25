@@ -224,6 +224,32 @@ tr:hover {
 <p id="rekapMsg"></p>
 </div>
 
+<div class="card">
+<h3>Data Rekapan</h3>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+  <select id="filterEmail"></select>
+  <input type="date" id="filterDate">
+  <button class="action-btn" onclick="loadRekapan()">Filter</button>
+  <button class="action-btn" onclick="resetFilter()">Reset</button>
+</div>
+
+<div class="table-container">
+<table id="rekapTable">
+<thead>
+<tr>
+  <th>Email</th>
+  <th>Tanggal</th>
+  <th>Artis</th>
+  <th>Total</th>
+  <th>Aksi</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+
 <script>
 let isRegistering = false;
 let tempArtists = [];
@@ -582,13 +608,23 @@ function toggleMenu(btn){
 }
 function loadUserDropdown(){
   const sel = document.getElementById("emailSelect");
+  const filterSel = document.getElementById("filterEmail");
+
   sel.innerHTML = `<option value="">Pilih Email</option>`;
+  filterSel.innerHTML = `<option value="">Semua Email</option>`;
 
   db.ref("users").once("value").then(snap=>{
     snap.forEach(u=>{
-      const d=u.val();
+      const d = u.val();
+      if(!d.email) return;
+
       userMap[d.email] = { uid:u.key, nama:d.nama };
-      sel.innerHTML += `<option>${d.email}</option>`;
+
+      // dropdown tambah rekapan
+      sel.innerHTML += `<option value="${d.email}">${d.email}</option>`;
+
+      // dropdown filter
+      filterSel.innerHTML += `<option value="${d.email}">${d.email}</option>`;
     });
   });
 }
@@ -655,10 +691,72 @@ document.getElementById("platformWrap").innerHTML = "";
 addPlatform();
 });
 }
+function loadRekapan(){
+  const fEmail = document.getElementById("filterEmail").value;
+const fDate  = document.getElementById("filterDate").value;
+  const tbody = document.querySelector("#rekapTable tbody");
+  tbody.innerHTML = "";
+
+  db.ref("users").once("value").then(userSnap=>{
+    let uidEmailMap = {};
+    userSnap.forEach(u=>{
+      uidEmailMap[u.key] = u.val().email;
+    });
+
+    db.ref("royalties").once("value").then(snap=>{
+      snap.forEach(user=>{
+        const uid = user.key;
+        const email = uidEmailMap[uid] || "-";
+if(fEmail && fEmail !== email) return;
+
+        user.forEach(dateSnap=>{
+  const date = dateSnap.key;
+  if(fDate && fDate !== date) return;
+
+  const d = dateSnap.val();
+
+          Object.keys(d.detail||{}).forEach(artist=>{
+            tbody.innerHTML += `
+              <tr>
+                <td>${email}</td>
+                <td>${date}</td>
+                <td>${artist}</td>
+                <td>Rp ${Number(d.detail[artist].total).toLocaleString()}</td>
+                <td>
+                  <button class="action-btn"
+                    onclick="deleteRekapan('${uid}','${date}')">
+                    Hapus
+                  </button>
+                </td>
+              </tr>
+            `;
+          });
+        });
+      });
+    });
+  });
+}
+function deleteRekapan(uid, date){
+  if(!confirm("Yakin hapus rekapan tanggal ini?")) return;
+
+  db.ref(`royalties/${uid}/${date}`)
+    .remove()
+    .then(()=>{
+      alert("✔ Rekapan dihapus");
+      loadRekapan();
+    })
+    .catch(err=>{
+      alert("❌ " + err.message);
+    });
+}
+function resetFilter(){
+  document.getElementById("filterEmail").value = "";
+  document.getElementById("filterDate").value = "";
+  loadRekapan();
+}
 
 loadUserDropdown();
 
 </script>
-
 </body>
 </html>
