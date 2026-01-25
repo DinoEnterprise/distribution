@@ -657,12 +657,6 @@ function saveRekapan(){
   }
 
   const uid=userMap[email].uid;
-  const artistName = document.getElementById("artistName").value.trim();
-if(!artistName){
-  msg.style.color="red";
-  msg.innerHTML="Masukkan nama artis!";
-  return;
-}
 
 if(tempArtists.length===0){
   msg.style.color="red";
@@ -685,10 +679,13 @@ db.ref(`royalties/${uid}/${date}`).set({
 }).then(()=>{
   msg.style.color="green";
   msg.innerHTML="✔ Rekapan tersimpan!";
-  tempArtists = []; // reset array artis
-document.getElementById("artistName").value = "";
-document.getElementById("platformWrap").innerHTML = "";
-addPlatform();
+
+  tempArtists = [];
+  document.getElementById("artistName").value = "";
+  document.getElementById("platformWrap").innerHTML = "";
+  addPlatform();
+
+  loadRekapan(); // 🔥 INI WAJIB
 });
 }
 function loadRekapan(){
