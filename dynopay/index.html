@@ -158,77 +158,14 @@ button:active{
   filter:brightness(70%);
   transform:scale(.95);
 }
-.filter-dropdown{
-  flex:1;
-  padding:8px 10px;
-  border-radius:10px;
-  border:1px solid #ccc;
-  font-size:14px;
-  outline:none;
-}
-.filter-dropdown-small{
-  flex:none;
-  width:90px;
-  padding:6px 8px;
-  font-size:13px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  outline:none;
-  text-align:center;
-}
-.analytics-card{
-  background:#fff;
-  padding:12px;
-  border-radius:12px;
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  font-size:14px;
-  box-shadow:0 2px 6px rgba(0,0,0,.05);
-  transition:.2s;
-}
-.analytics-card:hover{
-  transform:translateY(-2px);
-  box-shadow:0 4px 12px rgba(0,0,0,.08);
-}
-.analytics-card .top-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.analytics-card span{
-  font-weight:700;
-  font-size:15px;
-  color:#111;
-}
-.platform-badge{
-  padding:2px 8px;
-  border-radius:12px;
-  color:#fff;
-  font-size:11px;
-  font-weight:600;
-}
-.platform-Spotify{background:#1DB954;}
-.platform-Apple-Music{background:#FA57C1;}
-.platform-YouTube{background:#FF0000;}
-.progress-bar{
-  width:100%;
-  height:6px;
-  background:#eee;
-  border-radius:4px;
-  overflow:hidden;
-}
-.progress-fill{
-  height:100%;
-  background:linear-gradient(90deg,#667eea,#764ba2);
-  transition:width .3s;
-}
 </style>
 </head>
 <body>
 <header>
   <img src="../assets/dynopay2.png">
 </header>
+
+<!-- Main Wallet -->
 <div class="card clickable" onclick="goRekapan()">
   <div style="display:flex;justify-content:space-between;align-items:center">
     <div>
@@ -241,39 +178,22 @@ button:active{
     </div>
   </div>
 </div>
-<div id="releaseList" style="margin:15px auto 0; width:90%;"></div>
+
+<!-- Latest Releases -->
 <div class="card">
-  <div style="font-weight:700;font-size:16px;margin-bottom:12px">Analytics</div>
-
-  <!-- Filters kecil & rapih -->
-  <div style="display:flex;gap:6px;margin-bottom:15px;flex-wrap:wrap">
-    <select id="platformFilter" class="filter-dropdown-small">
-      <option value="Spotify">Spotify</option>
-      <option value="Apple Music">Apple Music</option>
-      <option value="YouTube">YouTube</option>
-    </select>
-    <select id="songFilter" class="filter-dropdown-small">
-      <option value="all">All Songs</option>
-    </select>
-    <select id="typeFilter" class="filter-dropdown-small">
-      <option value="views">Views</option>
-      <option value="listeners">Listeners</option>
-    </select>
-  </div>
-
-  <!-- Bar Analitik -->
-  <div id="analyticsBarContainer" style="position:relative;height:40px;background:#eee;border-radius:12px;overflow:hidden;">
-    <div id="analyticsBar" style="height:100%;width:0%;background:linear-gradient(90deg,#667eea,#764ba2);transition:width .5s;"></div>
-    <div id="analyticsBarText" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-weight:700;color:#fff;font-size:14px"></div>
-  </div>
+  <div style="font-weight:700;font-size:16px;margin-bottom:12px">Latest Releases</div>
+  <div id="releaseList"></div>
 </div>
-<div id="analyticsContainer" style="margin:15px auto 0; width:90%;"></div>
-<div id="analyticsTotal" style="margin:10px auto 0; width:90%; font-weight:700; font-size:14px"></div>
+
 <div style="height:120px"></div>
+
+<!-- Profile Menu -->
 <div id="profileMenu" class="profile-menu">
   <div class="clickable" onclick="goProfile()">Profile</div>
   <div class="clickable" onclick="logout()">Log Out</div>
 </div>
+
+<!-- Bottom Nav -->
 <div class="bottom-nav">
   <div class="nav-item clickable active" onclick="dashboardClick()">
     <img src="../assets/dasboard.png">
@@ -288,6 +208,7 @@ button:active{
     Profile
   </div>
 </div>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -329,21 +250,13 @@ function logout(){
     location.href="../login";
   });
 }
-function goContent(){
-  location.href="../content";
-}
-function goProfile(){location.href="../profile"}
-function toggleProfileMenu(){
-  profileMenu.classList.toggle("show");
-}
-function dashboardClick(){
-  console.log("Dashboard active — tidak reload");
-}
-function goRekapan(){
-  location.href="../dashboard-rekapan";
-}
-</script>
-<script>
+function goContent(){ location.href="../content"; }
+function goProfile(){ location.href="../profile"; }
+function toggleProfileMenu(){ profileMenu.classList.toggle("show"); }
+function dashboardClick(){ console.log("Dashboard active — tidak reload"); }
+function goRekapan(){ location.href="../dashboard-rekapan"; }
+
+// Releases
 let currentPage=1;
 const previewLimit = 3;
 function loadReleases(uid){
@@ -387,135 +300,7 @@ function loadReleases(uid){
     });
   });
 }
-function goReleaseDetail(rid){
-  location.href="../release-detail?rid="+rid;
-}
-</script>
-<script>
-const analyticsContainer = document.getElementById("analyticsContainer");
-const analyticsTotal = document.getElementById("analyticsTotal");
-const platformFilter = document.getElementById("platformFilter");
-const songFilter = document.getElementById("songFilter");
-const typeFilter = document.getElementById("typeFilter");
-let userReleases = [];
-firebase.auth().onAuthStateChanged(user=>{
-  if(user){
-    loadAnalytics(user.uid);
-  }
-});
-function loadAnalytics(uid){
-  db.ref("releases/" + uid).once("value").then(snap=>{
-    userReleases = [];
-    snap.forEach(i=>{
-      const r = i.val();
-      r._key = i.key;
-      userReleases.push(r);
-    });
-    populateSongFilter();
-    renderAnalytics();
-  });
-}
-function populateSongFilter(){
-  songFilter.innerHTML = '<option value="all">All Songs</option>';
-  userReleases.forEach(r=>{
-    const option = document.createElement("option");
-    option.value = r._key;
-    option.textContent = r.title || "-";
-    songFilter.appendChild(option);
-  });
-  songFilter.value = "all";
-}
-platformFilter.addEventListener("change", renderAnalytics);
-songFilter.addEventListener("change", renderAnalytics);
-typeFilter.addEventListener("change", renderAnalytics);
-function renderAnalytics(){
-  analyticsContainer.innerHTML = "";
-  let total = 0;
-  const platform = platformFilter.value;
-  const selectedSong = songFilter.value;
-  const type = typeFilter.value;
-  const filtered = userReleases.filter(r=>{
-    
-    return selectedSong === "all" || r._key === selectedSong;
-  });
-  if(filtered.length === 0){
-    analyticsContainer.innerHTML = "<div style='text-align:center;color:#888;font-size:13px'>Tidak ada data analytics</div>";
-    analyticsTotal.textContent = "";
-    return;
-  }
-  filtered.forEach(r=>{
-    const card = document.createElement("div");
-    card.className = "analytics-card";
-    const topRow = document.createElement("div");
-    topRow.className = "top-row";
-    const title = document.createElement("span");
-    title.textContent = r.title || "-";
-    topRow.appendChild(title);
-    const badge = document.createElement("div");
-    badge.className = "platform-badge platform-" + platform.replace(" ", "-");
-    badge.textContent = platform;
-    topRow.appendChild(badge);
-    card.appendChild(topRow);
-    const analyticsData = (r.analytics && r.analytics[platform]) || {views:0,listeners:0};
-    const value = analyticsData[type] || 0;
-    total += value;
-    const valueDiv = document.createElement("div");
-    valueDiv.textContent = `${type.charAt(0).toUpperCase()+type.slice(1)}: ${value.toLocaleString("id-ID")}`;
-    card.appendChild(valueDiv);
-    const progress = document.createElement("div");
-    progress.className = "progress-bar";
-    const fill = document.createElement("div");
-    fill.className = "progress-fill";
-    const maxValue = Math.max(...filtered.map(r => {
-      const data = (r.analytics && r.analytics[platform]) || {views:0,listeners:0};
-      return data[type] || 0;
-    }));
-    fill.style.width = maxValue ? (value/maxValue)*100 + "%" : "0%";
-    progress.appendChild(fill);
-    card.appendChild(progress);
-    analyticsContainer.appendChild(card);
-  });
-  analyticsTotal.textContent = `Total ${type.charAt(0).toUpperCase()+type.slice(1)}: ${total.toLocaleString("id-ID")}`;
-}
-const analyticsBar = document.getElementById("analyticsBar");
-const analyticsBarText = document.getElementById("analyticsBarText");
-
-platformFilter.addEventListener("change", updateAnalyticsBar);
-songFilter.addEventListener("change", updateAnalyticsBar);
-typeFilter.addEventListener("change", updateAnalyticsBar);
-
-function updateAnalyticsBar(){
-  const platform = platformFilter.value;
-  const selectedSong = songFilter.value;
-  const type = typeFilter.value;
-
-  let filtered = selectedSong === "all" ? userReleases : userReleases.filter(r=>r._key===selectedSong);
-
-  if(filtered.length === 0){
-    analyticsBar.style.width = "0%";
-    analyticsBarText.textContent = "No Data";
-    return;
-  }
-
-  let total = 0;
-  let maxVal = 0;
-  filtered.forEach(r=>{
-    const val = (r.analytics && r.analytics[platform] && r.analytics[platform][type])||0;
-    total += val;
-    if(val>maxVal) maxVal = val;
-  });
-
-  let widthPercent = maxVal ? Math.min((total/maxVal)*100,100) : 0;
-  analyticsBar.style.width = widthPercent + "%";
-  analyticsBarText.textContent = `${type.charAt(0).toUpperCase()+type.slice(1)}: ${total.toLocaleString("id-ID")}`;
-}
-
-// Update bar saat pertama kali load
-firebase.auth().onAuthStateChanged(user=>{
-  if(user){
-    updateAnalyticsBar();
-  }
-});
+function goReleaseDetail(rid){ location.href="../release-detail?rid="+rid; }
 </script>
 </body>
 </html>
