@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DynoPay Login</title>
+<title>Login | Dynotic Distribution</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -163,8 +163,8 @@ button:active{
 <body>
 
 <div class="container" id="card">
-  <img src="../assets/dyno2.png" class="logo">
-  <h2>Login DynoPay</h2>
+  <img src="../assets/dynotic-distribution" class="logo">
+  <h2>Login Dynotic</h2>
 
   <div class="field">
     <input id="email" type="email" placeholder="Email">
@@ -179,7 +179,7 @@ button:active{
   <div id="error"></div>
 </div>
 
-<div class="loader" id="loader">Masuk ke DynoPay…</div>
+<div class="loader" id="loader">Dynotic Distribution…</div>
 
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -235,7 +235,7 @@ function login(){
     document.getElementById("loader").classList.add("active");
     document.getElementById("card").classList.add("fade-out");
 
-    setTimeout(()=>window.location.replace("../dynopay"),600);
+    setTimeout(()=>window.location.replace("../home"),600);
   })
   .catch(error=>{
     switch(error.code){
