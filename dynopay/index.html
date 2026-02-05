@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard | DynoPay</title>
+<title>Home | DynoPay</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -206,38 +206,101 @@ button:active{
   </div>
 </div>
 
-<div class="card clickable" onclick="goCreateRelease()">
-  <div class="release-row">
 
-    <div>
-      <div style="font-weight:700;font-size:16px">Create New Release</div>
-      <div style="font-size:12px;color:#666;margin-top:4px">
-        Upload & kelola rilisanmu
-      </div>
-    </div>
-
-    <div style="
-      width:42px;
-      height:42px;
-      border-radius:12px;
-      background:#111;
-      color:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:22px;
-      font-weight:700">+</div>
-
-  </div>
-</div>
 
 <div class="card">
-  <div style="font-weight:700;font-size:16px;margin-bottom:12px">
-    My Releases
-  </div>
+<div style="font-weight:700;font-size:16px;margin-bottom:12px">
+  Latest Releases
+</div>
   <div id="releaseList"></div>
 </div>
+<div class="card">
+  <div style="font-weight:700;font-size:16px;margin-bottom:12px">
+    Analytics
+  </div>
 
+  <!-- Filter -->
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:15px">
+    <select id="platformFilter" class="filter-dropdown">
+      <option value="Spotify">Spotify</option>
+      <option value="Apple Music">Apple Music</option>
+      <option value="YouTube">YouTube</option>
+    </select>
+
+    <select id="songFilter" class="filter-dropdown">
+      <option value="all">All Songs</option>
+    </select>
+
+    <select id="typeFilter" class="filter-dropdown">
+      <option value="views">Views</option>
+      <option value="listeners">Listeners</option>
+    </select>
+  </div>
+
+  <!-- Analytics Cards -->
+  <div id="analyticsContainer" style="display:flex;flex-direction:column;gap:10px"></div>
+
+  <!-- Total -->
+  <div id="analyticsTotal" style="margin-top:12px;font-weight:700;font-size:14px;color:#111;padding:10px;background:#e0e7ff;border-radius:12px;text-align:center"></div>
+</div>
+
+<style>
+.filter-dropdown{
+  flex:1;
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  font-size:14px;
+  outline:none;
+}
+.analytics-card{
+  background:#fff;
+  padding:12px;
+  border-radius:12px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  font-size:14px;
+  box-shadow:0 2px 6px rgba(0,0,0,.05);
+  transition:.2s;
+}
+.analytics-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+.analytics-card .top-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.analytics-card span{
+  font-weight:700;
+  font-size:15px;
+  color:#111;
+}
+.platform-badge{
+  padding:2px 8px;
+  border-radius:12px;
+  color:#fff;
+  font-size:11px;
+  font-weight:600;
+}
+.platform-Spotify{background:#1DB954;}
+.platform-Apple-Music{background:#FA57C1;}
+.platform-YouTube{background:#FF0000;}
+.progress-bar{
+  width:100%;
+  height:6px;
+  background:#eee;
+  border-radius:4px;
+  overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,#667eea,#764ba2);
+  transition:width .3s;
+}
+</style>
 <div style="height:120px"></div>
 
 <div id="profileMenu" class="profile-menu">
@@ -248,12 +311,12 @@ button:active{
 <div class="bottom-nav">
   <div class="nav-item clickable active" onclick="dashboardClick()">
     <img src="../assets/dasboard.png">
-    Dashboard
+    Home
   </div>
 
-  <div class="nav-item clickable" onclick="goWithdraw()">
-    <img src="../assets/withdraw.png">
-    Withdraw
+  <div class="nav-item clickable" onclick="goContent()">
+    <img src="../assets/content.png">
+    Content
   </div>
 
   <div class="nav-item clickable" onclick="toggleProfileMenu()">
@@ -312,7 +375,9 @@ function logout(){
   });
 }
 
-function goWithdraw(){location.href="../withdraw"}
+function goContent(){
+  location.href="../content";
+}
 function goProfile(){location.href="../profile"}
 function toggleProfileMenu(){
   profileMenu.classList.toggle("show");
@@ -322,10 +387,6 @@ function dashboardClick(){
   console.log("Dashboard active — tidak reload");
 }
 
-function goCreateRelease(){
-  location.href="../create-release";
-}
-
 function goRekapan(){
   location.href="../dashboard-rekapan";
 }
@@ -333,11 +394,11 @@ function goRekapan(){
 
 <script>
 let currentPage=1;
-const releasesPerPage=5;
+const previewLimit = 3; // tampilkan 3 rilisan saja
 
 function loadReleases(uid){
-  const list = releaseList;
-  list.innerHTML = "<div style='color:#888;font-size:13px'>Loading...</div>";
+  const releaseList = document.getElementById("releaseList");
+releaseList.innerHTML = "<div style='color:#888;font-size:13px'>Loading...</div>";
 
   db.ref("releases/" + uid).once("value").then(snap => {
     const all = [];
@@ -349,72 +410,149 @@ function loadReleases(uid){
     });
 
     all.sort((a,b)=>(b.time||0)-(a.time||0));
-    const totalPages = Math.ceil(all.length / releasesPerPage);
 
-    function render(p){
-      list.innerHTML = "";
-      if(all.length === 0){
-        list.innerHTML = "<div style='text-align:center;color:#888;font-size:13px'>Belum ada rilisan</div>";
-        return;
-      }
-
-      const start = (p-1)*releasesPerPage;
-      const pageItems = all.slice(start, start+releasesPerPage);
-
-      pageItems.forEach(r=>{
-        let c="#f59e0b";
-        if(r.status=="approved") c="#10b981";
-        if(r.status=="rejected") c="#ef4444";
-
-        list.innerHTML += `
-  <div onclick="goReleaseDetail('${r._key}')"
-  class="clickable"
-  style="padding:12px;border:1px solid #eee;border-radius:12px;margin-bottom:10px">
-<div class="release-row">
-              <div class="release-title" style="font-weight:600">
-  ${r.title||"-"}
-</div>
-             <div class="release-status"
-style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid ${c};color:${c}">
-                ${(r.status||"pending").toUpperCase()}
-              </div>
-            </div>
-            <div style="font-size:12px;color:#777;margin-top:4px">
-              ${r.artist||"-"} • ${r.genre||"-"}
-            </div>
-          </div>`;
-      });
-
-      list.innerHTML += `
-  <div style="display:flex;justify-content:center;margin-top:8px;gap:6px;align-items:center">
-    <button onclick="prevPage()" ${p===1?'disabled':''} 
-      style="padding:2px 6px;border:1px solid #333;background:transparent;color:#333;border-radius:12px;font-size:11px;font-weight:600">&lt;</button>
-    <span style="align-self:center;font-size:12px;margin:0 4px">Page ${p}/${totalPages}</span>
-    <button onclick="nextPage()" ${p===totalPages?'disabled':''} 
-      style="padding:2px 6px;border:1px solid #333;background:transparent;color:#333;border-radius:12px;font-size:11px;font-weight:600">&gt;</button>
-  </div>`;
+    releaseList.innerHTML = "";
+    if(all.length === 0){
+      releaseList.innerHTML = "<div style='text-align:center;color:#888;font-size:13px'>Belum ada rilisan</div>";
+      return;
     }
 
-    window.nextPage = ()=>{
-      if(currentPage < totalPages){
-        currentPage++;
-        render(currentPage);
-      }
-    }
+    const pageItems = all.slice(0, previewLimit); // ambil 3 rilisan pertama
 
-    window.prevPage = ()=>{
-      if(currentPage > 1){
-        currentPage--;
-        render(currentPage);
-      }
-    }
+    pageItems.forEach(r=>{
+      let c="#f59e0b";
+      if(r.status=="approved") c="#10b981";
+      if(r.status=="rejected") c="#ef4444";
 
-    currentPage = 1;
-    render(currentPage);
+      releaseList.innerHTML += `
+      <div onclick="goReleaseDetail('${r._key}')"
+      class="clickable"
+      style="padding:12px;border:1px solid #eee;border-radius:12px;margin-bottom:10px">
+        <div class="release-row">
+          <div class="release-title" style="font-weight:600">
+            ${r.title||"-"}
+          </div>
+          <div class="release-status"
+            style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid ${c};color:${c}">
+            ${(r.status||"pending").toUpperCase()}
+          </div>
+        </div>
+        <div style="font-size:12px;color:#777;margin-top:4px">
+          ${r.artist||"-"} • ${r.genre||"-"}
+        </div>
+      </div>`;
+    });
   });
 }
 function goReleaseDetail(rid){
   location.href="../release-detail?rid="+rid;
+}
+</script>
+<script>
+const analyticsContainer = document.getElementById("analyticsContainer");
+const analyticsTotal = document.getElementById("analyticsTotal");
+const platformFilter = document.getElementById("platformFilter");
+const songFilter = document.getElementById("songFilter");
+const typeFilter = document.getElementById("typeFilter");
+
+let userReleases = []; // semua rilisan user
+
+firebase.auth().onAuthStateChanged(user=>{
+  if(user){
+    loadAnalytics(user.uid);
+  }
+});
+
+function loadAnalytics(uid){
+  db.ref("releases/" + uid).once("value").then(snap=>{
+    userReleases = [];
+    snap.forEach(i=>{
+      const r = i.val();
+      r._key = i.key;
+      userReleases.push(r);
+    });
+
+    populateSongFilter();
+    renderAnalytics();
+  });
+}
+
+function populateSongFilter(){
+  songFilter.innerHTML = '<option value="all">All Songs</option>';
+userReleases.forEach(r=>{
+  const option = document.createElement("option");
+  option.value = r._key;
+  option.textContent = r.title || "-";
+  songFilter.appendChild(option);
+});
+songFilter.value = "all";
+}
+
+// fungsi untuk filter
+platformFilter.addEventListener("change", renderAnalytics);
+songFilter.addEventListener("change", renderAnalytics);
+typeFilter.addEventListener("change", renderAnalytics);
+
+function renderAnalytics(){
+  analyticsContainer.innerHTML = "";
+  let total = 0;
+  const platform = platformFilter.value;
+  const selectedSong = songFilter.value;
+  const type = typeFilter.value; // views / listeners
+
+  const filtered = userReleases.filter(r=>{
+    return selectedSong === "all" || r._key === selectedSong;
+  });
+
+  if(filtered.length === 0){
+    analyticsContainer.innerHTML = "<div style='text-align:center;color:#888;font-size:13px'>Tidak ada data analytics</div>";
+    analyticsTotal.textContent = "";
+    return;
+  }
+
+  filtered.forEach(r=>{
+    const card = document.createElement("div");
+    card.className = "analytics-card";
+
+    const topRow = document.createElement("div");
+    topRow.className = "top-row";
+
+    const title = document.createElement("span");
+    title.textContent = r.title || "-";
+    topRow.appendChild(title);
+
+    const badge = document.createElement("div");
+    badge.className = "platform-badge platform-" + platform.replace(" ", "-");
+    badge.textContent = platform;
+    topRow.appendChild(badge);
+
+    card.appendChild(topRow);
+
+    const analyticsData = (r.analytics && r.analytics[platform]) || {views:0,listeners:0};
+    const value = analyticsData[type] || 0;
+    total += value;
+
+    const valueDiv = document.createElement("div");
+    valueDiv.textContent = `${type.charAt(0).toUpperCase()+type.slice(1)}: ${value.toLocaleString("id-ID")}`;
+    card.appendChild(valueDiv);
+
+    const progress = document.createElement("div");
+    progress.className = "progress-bar";
+    const fill = document.createElement("div");
+    fill.className = "progress-fill";
+    // buat progress relative ke max value di rilisan (opsional, bisa pakai total)
+    const maxValue = Math.max(...filtered.map(r => {
+  const data = (r.analytics && r.analytics[platform]) || {views:0,listeners:0};
+  return data[type] || 0;
+}));
+fill.style.width = maxValue ? (value/maxValue)*100 + "%" : "0%";
+    progress.appendChild(fill);
+    card.appendChild(progress);
+
+    analyticsContainer.appendChild(card);
+  });
+
+  analyticsTotal.textContent = `Total ${type.charAt(0).toUpperCase()+type.slice(1)}: ${total.toLocaleString("id-ID")}`;
 }
 </script>
 </body>
