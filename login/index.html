@@ -163,7 +163,7 @@ button:active{
 <body>
 
 <div class="container" id="card">
-  <img src="../assets/dynotic-distribution" class="logo">
+  <img src="../assets/dynotic-distribution.png" class="logo">
   <h2>Login Dynotic</h2>
 
   <div class="field">
@@ -197,7 +197,7 @@ const db = firebase.database();
 
 /* AUTO REDIRECT */
 firebase.auth().onAuthStateChanged(user=>{
-  if(user) window.location.replace("../dynopay");
+  if(user) window.location.replace("../home");
 });
 
 /* TOGGLE PASSWORD */
