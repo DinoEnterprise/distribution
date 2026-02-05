@@ -457,7 +457,7 @@ const typeFilter = document.getElementById("typeFilter");
 
 let userReleases = []; // semua rilisan user
 
-firebase.auth().onAuthStateChanged(user=>{
+firebase.auth().onAuthStateChanged(user => {
   if(user){
     loadAnalytics(user.uid);
   }
@@ -479,16 +479,16 @@ function loadAnalytics(uid){
 
 function populateSongFilter(){
   songFilter.innerHTML = '<option value="all">All Songs</option>';
-userReleases.forEach(r=>{
-  const option = document.createElement("option");
-  option.value = r._key;
-  option.textContent = r.title || "-";
-  songFilter.appendChild(option);
-});
-songFilter.value = "all";
+  userReleases.forEach(r=>{
+    const option = document.createElement("option");
+    option.value = r._key;
+    option.textContent = r.title || "-";
+    songFilter.appendChild(option);
+  });
+  songFilter.value = "all";
 }
 
-// fungsi untuk filter
+// filter listener
 platformFilter.addEventListener("change", renderAnalytics);
 songFilter.addEventListener("change", renderAnalytics);
 typeFilter.addEventListener("change", renderAnalytics);
@@ -500,10 +500,72 @@ function renderAnalytics(){
   const selectedSong = songFilter.value;
   const type = typeFilter.value; // views / listeners
 
-  const filtered = userReleases.filter(r=>{
-    return selectedSong === "all" || r._key === selectedSong;
-  });
+  // map platform ke ikon
+  const platformIcons = {
+    "Spotify": "/assets/as-spotify.png",
+    "YouTube": "/assets/as-youtube.png",
+    "Apple Music": "/assets/as-applemusic.png"
+  };
 
+  if(selectedSong === "all"){
+    // aggregate all songs
+    let aggregate = {views:0, listeners:0};
+    userReleases.forEach(r=>{
+      const data = (r.analytics && r.analytics[platform]) || {views:0,listeners:0};
+      aggregate.views += data.views || 0;
+      aggregate.listeners += data.listeners || 0;
+    });
+
+    total = aggregate[type] || 0;
+
+    const card = document.createElement("div");
+    card.className = "analytics-card";
+
+    const topRow = document.createElement("div");
+    topRow.className = "top-row";
+
+    const title = document.createElement("span");
+    title.textContent = "All Songs";
+    topRow.appendChild(title);
+
+    const badge = document.createElement("div");
+    badge.className = "platform-badge";
+    badge.style.display = "flex";
+    badge.style.alignItems = "center";
+    badge.style.gap = "6px";
+    badge.style.padding = "2px 6px";
+    badge.style.background = "#eee"; // bisa ganti warna
+    badge.style.borderRadius = "6px";
+
+    const img = document.createElement("img");
+    img.src = platformIcons[platform] || "";
+    img.style.height = "16px"; // bisa sesuaikan
+    img.style.width = "auto";
+
+    badge.appendChild(img);
+    topRow.appendChild(badge);
+
+    card.appendChild(topRow);
+
+    const valueDiv = document.createElement("div");
+    valueDiv.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)}: ${total.toLocaleString("id-ID")}`;
+    card.appendChild(valueDiv);
+
+    const progress = document.createElement("div");
+    progress.className = "progress-bar";
+    const fill = document.createElement("div");
+    fill.className = "progress-fill";
+    fill.style.width = "100%";
+    progress.appendChild(fill);
+    card.appendChild(progress);
+
+    analyticsContainer.appendChild(card);
+    analyticsTotal.textContent = `Total ${type.charAt(0).toUpperCase()+type.slice(1)}: ${total.toLocaleString("id-ID")}`;
+    return;
+  }
+
+  // per-song detail
+  const filtered = userReleases.filter(r => r._key === selectedSong);
   if(filtered.length === 0){
     analyticsContainer.innerHTML = "<div style='text-align:center;color:#888;font-size:13px'>Tidak ada data analytics</div>";
     analyticsTotal.textContent = "";
@@ -522,8 +584,20 @@ function renderAnalytics(){
     topRow.appendChild(title);
 
     const badge = document.createElement("div");
-    badge.className = "platform-badge platform-" + platform.replace(" ", "-");
-    badge.textContent = platform;
+    badge.className = "platform-badge";
+    badge.style.display = "flex";
+    badge.style.alignItems = "center";
+    badge.style.gap = "6px";
+    badge.style.padding = "2px 6px";
+    badge.style.background = "#eee"; // bisa ganti warna
+    badge.style.borderRadius = "6px";
+
+    const img = document.createElement("img");
+    img.src = platformIcons[platform] || "";
+    img.style.height = "16px";
+    img.style.width = "auto";
+
+    badge.appendChild(img);
     topRow.appendChild(badge);
 
     card.appendChild(topRow);
@@ -533,19 +607,14 @@ function renderAnalytics(){
     total += value;
 
     const valueDiv = document.createElement("div");
-    valueDiv.textContent = `${type.charAt(0).toUpperCase()+type.slice(1)}: ${value.toLocaleString("id-ID")}`;
+    valueDiv.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)}: ${value.toLocaleString("id-ID")}`;
     card.appendChild(valueDiv);
 
     const progress = document.createElement("div");
     progress.className = "progress-bar";
     const fill = document.createElement("div");
     fill.className = "progress-fill";
-    // buat progress relative ke max value di rilisan (opsional, bisa pakai total)
-    const maxValue = Math.max(...filtered.map(r => {
-  const data = (r.analytics && r.analytics[platform]) || {views:0,listeners:0};
-  return data[type] || 0;
-}));
-fill.style.width = maxValue ? (value/maxValue)*100 + "%" : "0%";
+    fill.style.width = "100%";
     progress.appendChild(fill);
     card.appendChild(progress);
 
