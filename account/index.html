@@ -208,20 +208,35 @@ button:active{transform:scale(0.94); filter:brightness(70%);}
 <div class="card">
   <div class="card-header">
     <span>Payment Detail</span>
-  <span class="clickable" onclick="goEditPayment()">
-  <img src="../assets/edit.png" alt="Edit" style="width:18px;">
-</span>
+    <span class="clickable" onclick="goEditPayment()">
+      <img src="../assets/edit.png" alt="Edit" style="width:18px;">
+    </span>
   </div>
 
-<div class="row">
-  <span id="paymentName"></span>
-</div>
+  <div class="row">
+    <span id="paymentName"></span>
+  </div>
 
-<div class="row">
-  <span id="paymentAccount"></span>
-</div>
-</div>
+  <div class="row">
+    <span id="paymentAccount"></span>
+  </div>
 
+  <!-- Logout langsung di sini -->
+  <button onclick="logout()" 
+    style="
+      width:100%;
+      padding:14px;
+      background:transparent;
+      border:none;
+      color:#ff3b3b;
+      font-weight:700;
+      font-size:15px;
+      cursor:pointer;
+      margin-top:12px;
+    ">
+    Log Out
+  </button>
+</div>
 <div class="bottom-nav">
   <div class="nav-item clickable" onclick="window.location.href='../home'">
     <img src="../assets/home.png" alt="Home">Home
@@ -267,26 +282,34 @@ function loadProfile(uid){
     const paymentNameEl = document.getElementById("paymentName");
 const paymentAccountEl = document.getElementById("paymentAccount");
 // default: kosong
-paymentNameEl.innerText = "";
-paymentAccountEl.innerText = "";
+paymentNameEl.parentElement.style.display = "none";
+paymentAccountEl.parentElement.style.display = "none";
 
 if(d.payment){
   // PAYPAL
   if(d.payment.paypal && d.payment.email){
     paymentNameEl.innerText = "PayPal";
     paymentAccountEl.innerText = d.payment.email;
+    paymentNameEl.parentElement.style.display = "flex";
+    paymentAccountEl.parentElement.style.display = "flex";
   }
 
   // BANK
   if(d.payment.bank && d.payment.account){
     paymentNameEl.innerText = d.payment.bank;
     paymentAccountEl.innerText = d.payment.account;
+    paymentNameEl.parentElement.style.display = "flex";
+    paymentAccountEl.parentElement.style.display = "flex";
   }
 }
   });
 }
 
-function logout(){ auth.signOut().then(()=>console.log("Logged out — tidak reload")); }
+function logout(){
+  auth.signOut().then(()=>{
+    location.href = "../login";
+  });
+}
 
 function goEditInfo(){
   location.href = "../edit-info";
