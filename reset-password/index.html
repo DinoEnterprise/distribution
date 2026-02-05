@@ -92,6 +92,11 @@ button:hover{filter:brightness(0.9);}
   <h2>Reset Password</h2>
 
   <div class="input-group">
+    <label for="currentPassword">Current Password</label>
+    <input type="password" id="currentPassword" placeholder="Enter current password">
+  </div>
+
+  <div class="input-group">
     <label for="newPassword">New Password</label>
     <input type="password" id="newPassword" placeholder="Enter new password">
   </div>
@@ -126,27 +131,26 @@ const resetBtn = document.getElementById("resetBtn");
 const successMsg = document.getElementById("successMsg");
 const errorMsg = document.getElementById("errorMsg");
 
-// Check login silently, redirect if not logged in
+// Silent login check
 auth.onAuthStateChanged(user=>{
   if(!user){
-    window.location.href="../login"; // redirect tanpa popup
+    window.location.href="../login";
   }
 });
 
-// Reset password function
-resetBtn.addEventListener("click",()=>{
+resetBtn.addEventListener("click", ()=>{
+  const currentPassword = document.getElementById("currentPassword").value.trim();
   const newPassword = document.getElementById("newPassword").value.trim();
   const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
-  errorMsg.style.display="none";
-  successMsg.style.display="none";
+  errorMsg.style.display = "none";
+  successMsg.style.display = "none";
 
-  if(!newPassword || !confirmPassword){
+  if(!currentPassword || !newPassword || !confirmPassword){
     errorMsg.innerText = "Please fill in all fields.";
     errorMsg.style.display="block";
     return;
   }
-
   if(newPassword !== confirmPassword){
     errorMsg.innerText = "Passwords do not match.";
     errorMsg.style.display="block";
@@ -155,7 +159,6 @@ resetBtn.addEventListener("click",()=>{
 
   const user = auth.currentUser;
   if(!user){
-    // hanya safety, biasanya sudah redirect di onAuthStateChanged
     window.location.href="../login";
     return;
   }
@@ -163,15 +166,26 @@ resetBtn.addEventListener("click",()=>{
   resetBtn.disabled = true;
   resetBtn.innerText = "Updating...";
 
-  user.updatePassword(newPassword).then(()=>{
-    resetBtn.style.display="none";
-    successMsg.style.display="block";
-  }).catch(err=>{
-    errorMsg.innerText = "Failed to update password: " + err.message;
-    errorMsg.style.display="block";
-    resetBtn.disabled = false;
-    resetBtn.innerText = "Change Password";
-  });
+  // Re-authenticate with current password
+  const credential = firebase.auth.EmailAuthProvider.credential(
+    user.email,
+    currentPassword
+  );
+
+  user.reauthenticateWithCredential(credential)
+    .then(()=>{
+      return user.updatePassword(newPassword);
+    })
+    .then(()=>{
+      resetBtn.style.display="none";
+      successMsg.style.display="block";
+    })
+    .catch(err=>{
+      errorMsg.innerText = "Failed: " + err.message;
+      errorMsg.style.display="block";
+      resetBtn.disabled = false;
+      resetBtn.innerText = "Change Password";
+    });
 });
 
 function goHome(){
