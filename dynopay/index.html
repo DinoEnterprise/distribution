@@ -278,24 +278,27 @@ button:active{
   text-align:center;
 }
 .analytics-card{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  width:80px;
-  height:80px;
-  border-radius:50%;
+  min-width:60px;       /* lebih kecil */
+  height:40px;          /* lebih kecil */
+  border-radius:12px; 
   background:#fff;
   font-weight:700;
   font-size:16px;
   color:#111;
-  box-shadow:0 4px 12px rgba(0,0,0,.08);
-  margin:5px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  margin:0;
+  padding:0 8px;
 }
 #analyticsContainer{
   display:flex;
-  flex-wrap:wrap;
+  justify-content:flex-end; /* card di kanan */
+  align-items:center;
   gap:10px;
-  justify-content:flex-start;
+  flex-wrap:nowrap;        /* satu baris */
+  padding:0;
 }
 .analytics-card:hover{
   transform:translateY(-2px);
@@ -551,22 +554,28 @@ populatePlatformFilterIcons();
 
 function renderAnalytics(){
   analyticsContainer.innerHTML = "";
+
   const platform = getSelectedPlatform();
   const selectedSong = songFilter.value;
   const type = typeFilter.value;
 
+  // Filter rilisan
   let filteredReleases = selectedSong === "all" ? userReleases : userReleases.filter(r => r._key === selectedSong);
-  if(filteredReleases.length === 0) return;
 
+  // Hitung total sesuai filter
+  let total = 0;
   filteredReleases.forEach(r=>{
-    const card = document.createElement("div");
-    card.className = "analytics-card";
-
-    const value = (r.analytics && r.analytics[platform] && r.analytics[platform][type]) || 0;
-    card.textContent = value.toLocaleString("id-ID");
-
-    analyticsContainer.appendChild(card);
+    total += (r.analytics && r.analytics[platform] && r.analytics[platform][type]) || 0;
   });
+
+  // Tampilkan satu card total
+  const card = document.createElement("div");
+  card.className = "analytics-card";
+  card.textContent = total.toLocaleString("id-ID");
+  analyticsContainer.appendChild(card);
+
+  // Update div total info
+  analyticsTotal.textContent = "Total " + type.charAt(0).toUpperCase() + type.slice(1) + ": " + total.toLocaleString("id-ID");
 }
 function getSelectedPlatform() {
   const selected = document.querySelector("#platformDropdown .selected span").textContent;
