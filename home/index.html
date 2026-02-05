@@ -256,7 +256,7 @@ function accountClick(){
 }
 function toggleProfileMenu(){ profileMenu.classList.toggle("show"); }
 function homeClick(){ console.log("Dashboard active — tidak reload"); }
-function goRekapan(){ location.href="../royalty-detail"; }
+function goRekapan(){ location.href="../income"; }
 
 // Releases
 let currentPage=1;
@@ -274,7 +274,7 @@ function loadReleases(uid){
     all.sort((a,b)=>(b.time||0)-(a.time||0));
     releaseList.innerHTML = "";
     if(all.length === 0){
-      releaseList.innerHTML = "<div style='text-align:center;color:#888;font-size:13px'>Belum ada rilisan</div>";
+      releaseList.innerHTML = "<div style='text-align:center;color:#888;font-size:13px'>No releases yet</div>";
       return;
     }
     const pageItems = all.slice(0, previewLimit);
