@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reset Password | Dynotic Distribution</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif;}
+body{
+  background:#f1f2f7;
+  min-height:100vh;
+  padding-top:74px;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding-bottom:50px;
+}
+header{
+  position:fixed; top:0; left:0; width:100%; background:#fff; border-bottom:1px solid #eee; padding:12px 20px; display:flex; align-items:center; z-index:1000;
+}
+header img{height:50px;}
+
+.card{
+  background:#fff;
+  width:90%;
+  max-width:400px;
+  margin-top:20px;
+  border-radius:20px;
+  padding:25px;
+  box-shadow:0 8px 18px rgba(0,0,0,.05);
+  text-align:center;
+}
+.card h2{margin-bottom:20px; font-size:20px;}
+.input-group{margin-bottom:15px; text-align:left;}
+.input-group label{display:block; font-size:14px; margin-bottom:4px;}
+.input-group input{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  font-size:14px;
+  outline:none;
+  background:#f9f9f9;
+}
+.input-group input:focus{border-color:#667eea;}
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  background:#111;
+  color:#fff;
+  font-weight:600;
+  font-size:15px;
+  cursor:pointer;
+  margin-top:10px;
+  transition:.2s ease;
+}
+button:hover{filter:brightness(0.9);}
+.success-message{
+  margin-top:15px;
+  color:green;
+  font-weight:600;
+  display:none;
+}
+.back-btn{
+  margin-top:20px;
+  background:#667eea;
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  color:#fff;
+  cursor:pointer;
+}
+.error-message{
+  margin-top:10px;
+  color:red;
+  font-weight:500;
+  display:none;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="../assets/dynotic-distribution.png" alt="Dynotic">
+</header>
+
+<div class="card">
+  <h2>Reset Password</h2>
+
+  <div class="input-group">
+    <label for="newPassword">New Password</label>
+    <input type="password" id="newPassword" placeholder="Enter new password">
+  </div>
+
+  <div class="input-group">
+    <label for="confirmPassword">Confirm Password</label>
+    <input type="password" id="confirmPassword" placeholder="Repeat new password">
+  </div>
+
+  <button id="resetBtn">Change Password</button>
+
+  <div class="success-message" id="successMsg">
+    Password updated successfully!
+    <button class="back-btn" onclick="goHome()">Back to Dynotic Distribution</button>
+  </div>
+
+  <div class="error-message" id="errorMsg"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+<script>
+// Firebase config
+firebase.initializeApp({
+  apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain:"dynopay-2513c.firebaseapp.com"
+});
+
+const auth = firebase.auth();
+const resetBtn = document.getElementById("resetBtn");
+const successMsg = document.getElementById("successMsg");
+const errorMsg = document.getElementById("errorMsg");
+
+// Check login silently, redirect if not logged in
+auth.onAuthStateChanged(user=>{
+  if(!user){
+    window.location.href="../login"; // redirect tanpa popup
+  }
+});
+
+// Reset password function
+resetBtn.addEventListener("click",()=>{
+  const newPassword = document.getElementById("newPassword").value.trim();
+  const confirmPassword = document.getElementById("confirmPassword").value.trim();
+
+  errorMsg.style.display="none";
+  successMsg.style.display="none";
+
+  if(!newPassword || !confirmPassword){
+    errorMsg.innerText = "Please fill in all fields.";
+    errorMsg.style.display="block";
+    return;
+  }
+
+  if(newPassword !== confirmPassword){
+    errorMsg.innerText = "Passwords do not match.";
+    errorMsg.style.display="block";
+    return;
+  }
+
+  const user = auth.currentUser;
+  if(!user){
+    // hanya safety, biasanya sudah redirect di onAuthStateChanged
+    window.location.href="../login";
+    return;
+  }
+
+  resetBtn.disabled = true;
+  resetBtn.innerText = "Updating...";
+
+  user.updatePassword(newPassword).then(()=>{
+    resetBtn.style.display="none";
+    successMsg.style.display="block";
+  }).catch(err=>{
+    errorMsg.innerText = "Failed to update password: " + err.message;
+    errorMsg.style.display="block";
+    resetBtn.disabled = false;
+    resetBtn.innerText = "Change Password";
+  });
+});
+
+function goHome(){
+  window.location.href = "../home";
+}
+</script>
+
+</body>
+</html>
