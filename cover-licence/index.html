@@ -216,47 +216,48 @@ header.scrolled{
 
 <script>
 
-const stepsData={
-  1:()=>type.value!="",
+const audioEl = document.getElementById("audio");
+const coverEl = document.getElementById("cover");
 
-  2:()=>{
-  if(type.value==="cover"){
-    const requiredFields = [
-      {el: document.getElementById("title"), msg: "Pilih Song Title"},
-      {el: document.getElementById("artist"), msg: "Artist wajib"},
-      {el: document.getElementById("genre"), msg: "Genre wajib"},
-      {el: document.getElementById("publisher"), msg: "Publisher wajib"},
-      {el: document.getElementById("composer"), msg: "Composer wajib"}
-    ];
-
-    for(const field of requiredFields){
-      if(!field.el || !field.el.value) {
-        alert(field.msg);
-        return false;
+const stepsData = {
+  1: () => typeEl.value != "",
+  2: () => {
+    if(typeEl.value === "cover"){
+      const requiredFields = [
+        {el: document.getElementById("title"), msg: "Pilih Song Title"},
+        {el: document.getElementById("artist"), msg: "Artist wajib"},
+        {el: document.getElementById("genre"), msg: "Genre wajib"},
+        {el: document.getElementById("publisher"), msg: "Publisher wajib"},
+        {el: document.getElementById("composer"), msg: "Composer wajib"}
+      ];
+      for(const field of requiredFields){
+        if(!field.el || !field.el.value){
+          alert(field.msg);
+          return false;
+        }
       }
+      return true;
+    }
+  },
+  3: () => {
+    if(!audioEl.value || !coverEl.value){
+      alert("Link Audio dan Cover wajib diisi");
+      return false;
+    }
+    if(!audioEl.value.includes("drive.google.com") || !coverEl.value.includes("drive.google.com")){
+      alert("Pastikan link GDrive valid");
+      return false;
     }
     return true;
   }
-}
-
-  3:()=>{
-  if(!audio.value || !cover.value){
-    alert("Link Audio dan Cover wajib diisi");
-    return false;
-  }
-  if(!audio.value.includes("drive.google.com") || !cover.value.includes("drive.google.com")){
-    alert("Pastikan link GDrive valid");
-    return false;
-  }
-  return true;
-}
+};
 
 
 function loadStep2Fields(){
   const s = document.getElementById("step2");
   s.innerHTML = "";
 
-  if(type.value === "cover") {
+  if(typeEl.value === "cover") {
     s.innerHTML += `
       <!-- SONG INFO -->
       <div class="label">Catalog ID *</div>
@@ -346,7 +347,7 @@ function active(n){
 
 function loadPreview(){
   let html = `
-    <div><span>Type:</span> ${type.value}</div>
+    <div><span>Type:</span> ${typeEl.value}</div>
     <div><span>Title:</span> ${title.value}</div>
     <div><span>Artist:</span> ${artist.value}</div>
   `;
@@ -360,11 +361,11 @@ function loadPreview(){
 }
 
 html += `
-  <div><span>Audio:</span> ${audio.value ? `<a href="${audio.value}" target="_blank">${shorten(audio.value)}</a>` : '-'}</div>
-  <div><span>Cover:</span> ${cover.value ? `<a href="${cover.value}" target="_blank">${shorten(cover.value)}</a>` : '-'}</div>
+<div><span>Audio:</span> ${audioEl.value ? `<a href="${audioEl.value}" target="_blank">${shorten(audioEl.value)}</a>` : '-'}</div>
+<div><span>Cover:</span> ${coverEl.value ? `<a href="${coverEl.value}" target="_blank">${shorten(coverEl.value)}</a>` : '-'}</div>
 `;
 
-  if(type.value==="cover"){
+  if(typeEl.value === "cover"){
     html += `
       <div><span>Publisher:</span> ${publisher.value}</div>
       <div><span>Composer:</span> ${composer.value}</div>
@@ -461,19 +462,19 @@ function submitRelease(){
  const featuringEl = document.getElementById("featuring");
 
  let data = {
-  type: type.value,
-  audio: audio.value,
-  cover: cover.value,
+  type: typeEl.value,
+  audio: audioEl.value,
+  cover: coverEl.value,
   status: "pending",
   time: Date.now()
- };
+};
 
  if(titleEl) data.title = titleEl.value;
  if(artistEl) data.artist = artistEl.value;
  if(genreEl) data.genre = genreEl.value;
  if(featuringEl && featuringEl.value) data.featuring = featuringEl.value;
 
- if(type.value === "cover"){
+ if(typeEl.value === "cover"){
   if(catalogEl) data.catalog = catalogEl.value;
   if(publisherEl) data.publisher = publisherEl.value;
   if(composerEl) data.composer = composerEl.value;
