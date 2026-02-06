@@ -158,7 +158,7 @@ header.scrolled{
 <body>
 
 <header id="mainHeader">
-  <img src="../assets/dynopay2.png">
+  <img src="../assets/dynotic-ditribution.png">
 </header>
 
 <div class="wrap">
@@ -220,16 +220,35 @@ const stepsData={
   1:()=>type.value!="",
 
   2:()=>{
-    if(type.value==="cover"){
-      return document.getElementById("title")?.value &&
-             document.getElementById("artist")?.value &&
-             document.getElementById("genre")?.value &&
-             document.getElementById("publisher")?.value &&
-             document.getElementById("composer")?.value;
-    }
-  },
+  if(type.value==="cover"){
+    const requiredFields = [
+      {el: document.getElementById("title"), msg: "Pilih Song Title"},
+      {el: document.getElementById("artist"), msg: "Artist wajib"},
+      {el: document.getElementById("genre"), msg: "Genre wajib"},
+      {el: document.getElementById("publisher"), msg: "Publisher wajib"},
+      {el: document.getElementById("composer"), msg: "Composer wajib"}
+    ];
 
-  3:()=>audio.value && cover.value
+    for(const field of requiredFields){
+      if(!field.el || !field.el.value) {
+        alert(field.msg);
+        return false;
+      }
+    }
+    return true;
+  }
+}
+
+  3:()=>{
+  if(!audio.value || !cover.value){
+    alert("Link Audio dan Cover wajib diisi");
+    return false;
+  }
+  if(!audio.value.includes("drive.google.com") || !cover.value.includes("drive.google.com")){
+    alert("Pastikan link GDrive valid");
+    return false;
+  }
+  return true;
 }
 
 
@@ -386,8 +405,8 @@ function openSongModal(){
 
   list.innerHTML = songs.map(song => `
   <div style="padding:6px 0;border-bottom:1px solid #eee;cursor:pointer;" 
-       onclick="selectSong('${song.no}','${song.title}','${song.singer}','${song.composer}')">
-    ${song.no} - ${song.title} (${song.singer})
+       onclick="selectSong('${song.No}','${song.Title}','${song.Singer}','${song.Composer}')">
+    ${song.No} - ${song.Title} (${song.Singer})
   </div>
 `).join('');
 
@@ -397,18 +416,14 @@ function openSongModal(){
   search.oninput = () => {
   const keyword = search.value.toLowerCase();
   list.innerHTML = songs
-    .filter(song => song.title.toLowerCase().includes(keyword) || song.singer.toLowerCase().includes(keyword))
+    .filter(song => song.Title.toLowerCase().includes(keyword) || song.Singer.toLowerCase().includes(keyword))
     .map(song => `
       <div style="padding:6px 0;border-bottom:1px solid #eee;cursor:pointer;" 
-           onclick="selectSong('${song.no}','${song.title}','${song.singer}','${song.composer}')">
-        ${song.no} - ${song.title} (${song.singer})
+           onclick="selectSong('${song.No}','${song.Title}','${song.Singer}','${song.Composer}')">
+        ${song.No} - ${song.Title} (${song.Singer})
       </div>
     `).join('');
   };
-}
-
-function closeSongModal(){
-  document.getElementById("songModal").style.display = "none";
 }
 
 function selectSong(no, title, singer, composer){
@@ -436,29 +451,37 @@ function submitRelease(){
  const user=firebase.auth().currentUser;
  if(!user) return;
 
- let data={
-  type:type.value,
-  title:title.value,
-  artist:artist.value,
-  genre:genre.value,
-  audio:audio.value,
-  cover:cover.value,
-  status:"pending",
-  time:Date.now()
+ // ambil elemen dengan aman
+ const titleEl = document.getElementById("title");
+ const artistEl = document.getElementById("artist");
+ const genreEl = document.getElementById("genre");
+ const catalogEl = document.getElementById("catalog");
+ const composerEl = document.getElementById("composer");
+ const publisherEl = document.getElementById("publisher");
+ const featuringEl = document.getElementById("featuring");
+
+ let data = {
+  type: type.value,
+  audio: audio.value,
+  cover: cover.value,
+  status: "pending",
+  time: Date.now()
  };
 
- if(document.getElementById("featuring") && featuring.value){
-   data.featuring = featuring.value;
+ if(titleEl) data.title = titleEl.value;
+ if(artistEl) data.artist = artistEl.value;
+ if(genreEl) data.genre = genreEl.value;
+ if(featuringEl && featuringEl.value) data.featuring = featuringEl.value;
+
+ if(type.value === "cover"){
+  if(catalogEl) data.catalog = catalogEl.value;
+  if(publisherEl) data.publisher = publisherEl.value;
+  if(composerEl) data.composer = composerEl.value;
  }
-if(type.value==="cover"){
-  data.catalog = document.getElementById("catalog").value;
-  data.publisher = document.getElementById("publisher").value;
-  data.composer = document.getElementById("composer").value;
-}
 
  db.ref("releases/"+user.uid).push(data)
  .then(()=>{
-   location.href="../dynopay";
+   location.href="../home";
  })
  .catch(()=>{
    btn.disabled = false;
