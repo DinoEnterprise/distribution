@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Release | DynoPay</title>
+  <title>Cover License | Dynotic Distribution</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -158,7 +158,7 @@ header.scrolled{
 <body>
 
 <header id="mainHeader">
-  <img src="../assets/dynopay2.png">
+  <img src="../assets/dynotic-ditribution.png">
 </header>
 
 <div class="wrap">
@@ -174,7 +174,6 @@ header.scrolled{
     <div class="label">Type Asset <span class="req">*</span></div>
     <select id="type">
       <option value="">Select</option>
-      <option value="original">Original Asset</option>
       <option value="cover">Cover Asset</option>
     </select>
 <button type="button" class="btn" onclick="next(1)">Continue</button>
@@ -203,153 +202,107 @@ header.scrolled{
 </button>
   </div>
 
+</div> 
+
+<!-- SONG MODAL -->
+<div id="songModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:99999;justify-content:center;align-items:center;">
+  <div style="background:#fff;border-radius:16px;width:90%;max-width:600px;padding:20px;position:relative;">
+<h3 style="margin-bottom:10px;font-size:16px;">Select Song</h3>
+    <input type="text" id="songSearch" placeholder="Search..." style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;">
+    <div id="songList" style="max-height:300px;overflow-y:auto;"></div>
+    <button class="btn gray" style="margin-top:10px;" onclick="closeSongModal()">Close</button>
+  </div>
 </div>
 
 <script>
+const typeEl = document.getElementById("type");
+const audioEl = document.getElementById("audio");
+const coverEl = document.getElementById("cover");
 
-let d=new Date();
-d.setDate(d.getDate()+7);
-
-const stepsData={
-  1:()=>type.value!="",
-
-  2:()=>{
-    if(type.value==="original"){
-      return document.getElementById("title")?.value &&
-             document.getElementById("artist")?.value &&
-             document.getElementById("genre")?.value &&
-             document.getElementById("releaseType")?.value &&
-             document.getElementById("fullname")?.value &&
-             document.getElementById("label")?.value &&
-             document.getElementById("release")?.value;
-    }
-
-    if(type.value==="cover"){
-      return document.getElementById("title")?.value &&
-             document.getElementById("artist")?.value &&
-             document.getElementById("genre")?.value &&
-             document.getElementById("publisher")?.value &&
-             document.getElementById("composer")?.value;
+const stepsData = {
+  1: () => typeEl.value != "",
+  2: () => {
+    if(typeEl.value === "cover"){
+      const requiredFields = [
+  {el: document.getElementById("title"), msg: "Pilih Song Title"},
+  {el: document.getElementById("singer"), msg: "Singer wajib diisi otomatis"}, // tambahkan ini
+  {el: document.getElementById("artist"), msg: "Artist wajib"},
+  {el: document.getElementById("genre"), msg: "Genre wajib"},
+  {el: document.getElementById("publisher"), msg: "Publisher wajib"},
+  {el: document.getElementById("composer"), msg: "Composer wajib"}
+];
+      for(const field of requiredFields){
+  if(!field.el?.value){
+    alert(field.msg);
+    return false;
+  }
+}
+return true;
     }
   },
-
-  3:()=>audio.value && cover.value
-}
-
-
-function loadStep2Fields(){
-  const s = document.getElementById("step2");
-  s.innerHTML = "";
-
-  if(type.value === "original"){
-    s.innerHTML += `
-      <!-- SONG INFO -->
-      <div class="label">Song Title *</div>
-      <input id="title">
-
-      <div class="label">Version</div>
-      <small style="font-size:11px;color:#777;">Contoh: Remix, Remastered, Live, dll</small>
-      <input id="version" placeholder="Optional">
-
-      <div class="label">Genre *</div>
-      <select id="genre">
-        <option value="">Select</option>
-        <option>Blues</option><option>Dangdut</option>
-        <option>Electronic</option><option>Hip-hop</option>
-        <option>Instrumental</option><option>Jazz</option>
-        <option>Metal</option><option>Pop</option>
-        <option>R&B</option><option>Reggae</option>
-        <option>Rock</option>
-      </select>
-
-      <div class="label">Release Type *</div>
-      <select id="releaseType">
-        <option value="">Pilih</option>
-        <option>Single</option>
-        <option>EP</option>
-        <option>Album</option>
-      </select>
-
-      <!-- ARTIST INFO -->
-      <div class="label">Artist Name *</div>
-      <input id="artist">
-
-      <div class="label">Full Name *</div>
-      <input id="fullname">
-
-      <div class="label">Featuring</div>
-      <input id="featuring" placeholder="Optional">
-
-      <!-- LABEL & DATE -->
-      <div class="label">Label *</div>
-      <input id="label">
-
-      <div class="label">Release Date *</div>
-      <input type="date" id="release">
-    `;
-
-    
-    setTimeout(() => {
-      let r = document.getElementById("release");
-      let d = new Date();
-      d.setDate(d.getDate() + 7);
-      r.min = d.toISOString().split("T")[0];
-    }, 50);
-
-  } else if(type.value === "cover") {
-    s.innerHTML += `
-      <!-- SONG INFO -->
-      <div class="label">Song Title *</div>
-      <input id="title">
-
-      <div class="label">Version</div>
-      <select id="version">
-        <option value="">Pilih</option>
-        <option>Remix</option>
-        <option>Cover</option>
-      </select>
-
-      <div class="label">Genre *</div>
-      <select id="genre">
-        <option value="">Select</option>
-        <option>Blues</option><option>Dangdut</option>
-        <option>Electronic</option><option>Hip-hop</option>
-        <option>Instrumental</option><option>Jazz</option>
-        <option>Metal</option><option>Pop</option>
-        <option>R&B</option><option>Reggae</option>
-        <option>Rock</option>
-      </select>
-
-      <!-- ARTIST INFO -->
-      <div class="label">Artist Name *</div>
-      <input id="artist">
-
-      <div class="label">Featuring</div>
-      <input id="featuring" placeholder="Optional">
-
-      <div class="label">Composer *</div>
-      <input id="composer">
-
-      <div class="label">Publisher *</div>
-      <select id="publisher">
-        <option value="">Select</option>
-        <option>Nagaswara Official</option>
-        <option>G2B Production</option>
-        <option>Mahar Pustaka Nusantara</option>
-      </select>
-    `;
+  3: () => {
+    if(!audioEl.value || !coverEl.value){
+      alert("Link Audio dan Cover wajib diisi");
+      return false;
+    }
+    if(!audioEl.value.includes("drive.google.com") || !coverEl.value.includes("drive.google.com")){
+      alert("Pastikan link GDrive valid");
+      return false;
+    }
+    return true;
   }
+};
 
-  s.innerHTML += `
-    <button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
-<button type="button" class="btn" onclick="next(2)">Continue</button>
+
+function loadStep2Fields() {
+  const s = document.getElementById("step2");
+
+  s.innerHTML = `
+  <!-- SONG INFO -->
+ <div class="label">Song Title *</div>
+  <input id="title" readonly placeholder="Pilih lagu...">
+
+  <div class="label">Catalog ID *</div>
+  <input id="catalog" readonly placeholder="Dari lagu..." style="background:#f0f0f0;">
+
+  <div class="label">Singer *</div>
+  <input id="singer" readonly placeholder="Dari lagu..." style="background:#f0f0f0;">
+
+  <div class="label">Artist Name *</div>
+<input id="artist" placeholder="Isi nama artis...">
+
+<div class="label">Featuring</div>
+<input id="featuring" placeholder="Optional">
+
+<div class="label">Composer *</div>
+  <input id="composer" readonly placeholder="Dari lagu..." style="background:#f0f0f0;">
+
+ <div class="label">Genre *</div>
+  <select id="genre">
+    <option value="">Select</option>
+    <option>Blues</option><option>Dangdut</option>
+    <option>Electronic</option><option>Hip-hop</option>
+    <option>Instrumental</option><option>Jazz</option>
+    <option>Metal</option><option>Pop</option>
+    <option>R&B</option><option>Reggae</option>
+    <option>Rock</option>
+  </select>
+
+  <div class="label">Publisher *</div>
+  <select id="publisher">
+    <option value="">Select</option>
+    <option>Nagaswara Official</option>
+    <option>Mahar Pustaka Nusantara</option>
+  </select>
+
+  <button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
+  <button type="button" class="btn" onclick="next(2)">Continue</button>
   `;
-}
 
-s1.onclick=()=>goto(1);
-s2.onclick=()=>goto(2);
-s3.onclick=()=>goto(3);
-s4.onclick=()=>goto(4);
+  // pasang event modal
+  document.getElementById("catalog").onclick = openSongModal;
+  document.getElementById("title").onclick = openSongModal;
+}
 
 function goto(n){
   if(n>1 && !stepsData[n-1]())
@@ -362,11 +315,20 @@ function goto(n){
 }
 
 function next(n){
-  if(n==1 && !stepsData[1]()) return alert("Type wajib");
-  if(n==1) loadStep2Fields();
+  if(n==1){
+    if(!stepsData[1]()) return alert("Type wajib");
+    loadStep2Fields();
+    goto(2);
+    return;
+  }
 
-  if(n==2 && !stepsData[2]()) return alert("Lengkapi master");
-  if(n==3 && !stepsData[3]()) return alert("Link wajib");
+  if(n==2){
+    if(!stepsData[2]()) return alert("Lengkapi master");
+  }
+  
+  if(n==3){
+    if(!stepsData[3]()) return alert("Link wajib");
+  }
 
   goto(n+1);
 }
@@ -386,14 +348,15 @@ function active(n){
 
 
 function loadPreview(){
-  let html = `
-    <div><span>Type:</span> ${type.value}</div>
-    <div><span>Title:</span> ${title.value}</div>
-    <div><span>Artist:</span> ${artist.value}</div>
-  `;
+ let html = `
+  <div><span>Type:</span> ${typeEl.value}</div>
+  <div><span>Title:</span> ${title.value}</div>
+  <div><span>Singer:</span> ${singer.value}</div>
+  <div><span>Artist:</span> ${artist.value}</div>
+`;
 
-  if(document.getElementById("featuring") && featuring.value)
-    html += `<div><span>Featuring:</span> ${featuring.value}</div>`;
+  const featuringEl = document.getElementById("featuring");
+html += `<div><span>Featuring:</span> ${featuringEl && featuringEl.value ? featuringEl.value : '-'}</div>`;
 
   function shorten(text, max=40){
   if(text.length <= max) return text;
@@ -401,25 +364,14 @@ function loadPreview(){
 }
 
 html += `
-  <div><span>Audio:</span> ${audio.value ? `<a href="${audio.value}" target="_blank">${shorten(audio.value)}</a>` : '-'}</div>
-  <div><span>Cover:</span> ${cover.value ? `<a href="${cover.value}" target="_blank">${shorten(cover.value)}</a>` : '-'}</div>
+<div><span>Audio:</span> ${audioEl.value ? `<a href="${audioEl.value}" target="_blank">${shorten(audioEl.value)}</a>` : '-'}</div>
+<div><span>Cover:</span> ${coverEl.value ? `<a href="${coverEl.value}" target="_blank">${shorten(coverEl.value)}</a>` : '-'}</div>
 `;
 
-  if(type.value==="original"){
-    html += `
-      <div><span>Release Type:</span> ${releaseType.value}</div>
-      <div><span>Version:</span> ${version.value || "-"}</div>
-      <div><span>Full Name:</span> ${fullname.value}</div>
-      <div><span>Label:</span> ${label.value}</div>
-      <div><span>Release Date:</span> ${release.value}</div>
-    `;
-  }
-
-  if(type.value==="cover"){
+  if(typeEl.value === "cover"){
     html += `
       <div><span>Publisher:</span> ${publisher.value}</div>
       <div><span>Composer:</span> ${composer.value}</div>
-      <div><span>Version:</span> ${version.value || "-"}</div>
     `;
   }
 
@@ -443,13 +395,83 @@ const db=firebase.database();
 firebase.auth().onAuthStateChanged(user=>{
   if(!user) location.href="../login";
 });
+let songs = [];
 
+fetch('../cover/songs.json')
+  .then(res => res.json())
+  .then(data => songs = data)
+  .catch(err => console.error("Gagal load songs.json:", err));
+
+function openSongModal() {
+  const modal = document.getElementById("songModal");
+  const list = document.getElementById("songList");
+  const search = document.getElementById("songSearch");
+songs.sort((a,b)=>a.Title.localeCompare(b.Title));
+
+  const renderList = (arr) => {
+  list.innerHTML = arr.map(song => `
+   <div 
+  onclick="
+    document.querySelectorAll('#songList > div')
+      .forEach(d=>d.style.background='transparent');
+    this.style.background='#eef2ff';
+    selectSong('${song.No}','${song.Title}','${song.Singer}','${song.Composer}')
+  "
+  style="
+  padding:8px 10px;
+  border-bottom:1px solid #eee;
+  cursor:pointer;
+  line-height:1.3;
+  "
+  onmouseover="this.style.background='#f9fafb'"
+  onmouseout="this.style.background='transparent'"
+>
+      <div style="font-size:12px;font-weight:700;color:#667eea;">
+        ${song.No}
+      </div>
+      <div style="font-size:14px;font-weight:600;color:#111;">
+        ${song.Title}
+      </div>
+      <div style="font-size:12px;color:#666;">
+        ${song.Singer}
+      </div>
+    </div>
+  `).join('');
+};
+
+  const searchHandler = () => {
+    const keyword = search.value.toLowerCase();
+    renderList(songs.filter(song =>
+      song.Title.toLowerCase().includes(keyword) ||
+      song.Singer.toLowerCase().includes(keyword)
+    ));
+  };
+
+  search.value = '';
+renderList(songs);
+modal.style.display = "flex";
+  
+  search.oninput = searchHandler;
+}
+
+function selectSong(no, title, singer, composer) {
+  document.getElementById("catalog").value = no;
+  document.getElementById("title").value = title;
+  document.getElementById("singer").value = singer;
+  document.getElementById("composer").value = composer;
+
+  setTimeout(closeSongModal, 200);
+}
+
+function closeSongModal() {
+  document.getElementById("songModal").style.display = "none";
+}
 function submitRelease(){
 
  const btn = document.getElementById("submitBtn");
  const text = document.getElementById("btnText");
  const loader = document.getElementById("btnLoader");
-
+ 
  btn.disabled = true;
  text.style.display = "none";
  loader.style.display = "inline";
@@ -457,33 +479,35 @@ function submitRelease(){
  const user=firebase.auth().currentUser;
  if(!user) return;
 
- let data={
-  type:type.value,
-  title:title.value,
-  artist:artist.value,
-  genre:genre.value,
-  audio:audio.value,
-  cover:cover.value,
-  status:"pending",
-  time:Date.now()
- };
+ // ambil elemen dengan aman
+ const titleEl = document.getElementById("title");
+ const artistEl = document.getElementById("artist");
+ const genreEl = document.getElementById("genre");
+ const catalogEl = document.getElementById("catalog");
+ const composerEl = document.getElementById("composer");
+ const publisherEl = document.getElementById("publisher");
+ const featuringEl = document.getElementById("featuring");
 
- if(document.getElementById("featuring") && featuring.value){
-   data.featuring = featuring.value;
+ let data = {
+  type: typeEl.value,
+  audio: audioEl.value,
+  cover: coverEl.value,
+  status: "pending",
+  time: Date.now()
+};
+const singerEl = document.getElementById("singer");
+if(singerEl) data.singer = singerEl.value;
+
+ if(titleEl) data.title = titleEl.value;
+ if(artistEl) data.artist = artistEl.value;
+ if(genreEl) data.genre = genreEl.value;
+ if(featuringEl && featuringEl.value) data.featuring = featuringEl.value;
+
+ if(typeEl.value === "cover"){
+  if(catalogEl) data.catalog = catalogEl.value;
+  if(publisherEl) data.publisher = publisherEl.value;
+  if(composerEl) data.composer = composerEl.value;
  }
-
-if(type.value==="original"){
-  data.releaseType = document.getElementById("releaseType").value;
-  data.version = document.getElementById("version").value;
-  data.fullname = document.getElementById("fullname").value;
-  data.label = document.getElementById("label").value;
-  data.release = document.getElementById("release").value;
-}
-
-if(type.value==="cover"){
-  data.publisher = document.getElementById("publisher").value;
-  data.composer = document.getElementById("composer").value;
-}
 
  db.ref("releases/"+user.uid).push(data)
  .then(()=>{
