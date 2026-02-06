@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Release | DynoPay</title>
+  <title>Cover License | Dynotic Distribution</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -395,15 +395,15 @@ function openSongModal(){
   modal.style.display = "flex";
 
   search.oninput = () => {
-    const keyword = search.value.toLowerCase();
-    list.innerHTML = songs
-      .filter(song => song.title.toLowerCase().includes(keyword) || song.singer.toLowerCase().includes(keyword))
-      .map(song => `
-        <div style="padding:6px 0;border-bottom:1px solid #eee;cursor:pointer;" 
-             onclick="selectSong('${song.title}','${song.singer}','${song.composer}')">
-          ${song.no} - ${song.title} (${song.singer})
-        </div>
-      `).join('');
+  const keyword = search.value.toLowerCase();
+  list.innerHTML = songs
+    .filter(song => song.title.toLowerCase().includes(keyword) || song.singer.toLowerCase().includes(keyword))
+    .map(song => `
+      <div style="padding:6px 0;border-bottom:1px solid #eee;cursor:pointer;" 
+           onclick="selectSong('${song.no}','${song.title}','${song.singer}','${song.composer}')">
+        ${song.no} - ${song.title} (${song.singer})
+      </div>
+    `).join('');
   };
 }
 
@@ -477,4 +477,4 @@ window.addEventListener("scroll",()=>{
 </script>
 
 </body>
-  </html>
+</html>
