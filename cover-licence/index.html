@@ -215,7 +215,7 @@ header.scrolled{
 </div>
 
 <script>
-
+const typeEl = document.getElementById("type");
 const audioEl = document.getElementById("audio");
 const coverEl = document.getElementById("cover");
 
@@ -322,11 +322,20 @@ function goto(n){
 }
 
 function next(n){
-  if(n==1 && !stepsData[1]()) return alert("Type wajib");
-  if(n==1) loadStep2Fields();
+  if(n==1){
+    if(!stepsData[1]()) return alert("Type wajib");
+    loadStep2Fields();
+    goto(2);
+    return;
+  }
 
-  if(n==2 && !stepsData[2]()) return alert("Lengkapi master");
-  if(n==3 && !stepsData[3]()) return alert("Link wajib");
+  if(n==2){
+    if(!stepsData[2]()) return alert("Lengkapi master");
+  }
+  
+  if(n==3){
+    if(!stepsData[3]()) return alert("Link wajib");
+  }
 
   goto(n+1);
 }
