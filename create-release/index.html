@@ -280,24 +280,26 @@ const coverEl = document.getElementById("cover");
 const stepsData = {
   1: () => typeEl.value != "",
   2: () => {
-    if(typeEl.value === "cover"){
-      const requiredFields = [
-  {el: document.getElementById("title"), msg: "Pilih Song Title"},
-  {el: document.getElementById("singer"), msg: "Singer wajib diisi otomatis"}, // tambahkan ini
-  {el: document.getElementById("artist"), msg: "Artist wajib"},
-  {el: document.getElementById("genre"), msg: "Genre wajib"},
-  {el: document.getElementById("publisher"), msg: "Publisher wajib"},
-  {el: document.getElementById("composer"), msg: "Composer wajib"}
-];
-      for(const field of requiredFields){
-  if(!field.el?.value){
-    alert(field.msg);
-    return false;
-  }
-}
-return true;
+  if(typeEl.value === "cover"){
+    const requiredFields = [
+      {el: document.getElementById("title"), msg: "Pilih Song Title"},
+      {el: document.getElementById("singer"), msg: "Singer wajib diisi otomatis"},
+      {el: document.getElementById("artist"), msg: "Artist wajib"},
+      {el: document.getElementById("genre"), msg: "Genre wajib"},
+      {el: document.getElementById("publisher"), msg: "Publisher wajib"},
+      {el: document.getElementById("composer"), msg: "Composer wajib"}
+    ];
+
+    for(const field of requiredFields){
+      if(!field.el || !field.el.value){
+        alert(field.msg);
+        return false;
+      }
     }
-  },
+    return true;
+  }
+  return false;
+},
   3: () => {
     if(!audioEl.value || !coverEl.value){
       alert("Link Audio dan Cover wajib diisi");
@@ -467,28 +469,20 @@ songs.sort((a,b)=>a.Title.localeCompare(b.Title));
 
   const renderList = (arr) => {
   list.innerHTML = arr.map(song => `
-   <div 
-  onclick="
-    document.querySelectorAll('#songList > div')
-      .forEach(d=>d.style.background='transparent');
-    this.style.background='#eef2ff';
-    selectSong(
-  "${song.No}",
-  "${song.Title.replace(/"/g,'&quot;')}",
-  "${song.Singer.replace(/"/g,'&quot;')}",
-  "${song.Composer.replace(/"/g,'&quot;')}"
-)
-  "
-  style="
-  padding:10px 12px;
-  border-bottom:1px solid #eee;
-  cursor:pointer;
-  display:grid;
-  gap:2px;
-"
-  onmouseover="this.style.background='#f9fafb'"
-  onmouseout="this.style.background='transparent'"
->
+    <div 
+      class="song-item"
+      data-no="${song.No}"
+      data-title="${song.Title.replace(/"/g,'&quot;')}"
+      data-singer="${song.Singer.replace(/"/g,'&quot;')}"
+      data-composer="${song.Composer.replace(/"/g,'&quot;')}"
+      style="
+        padding:10px 12px;
+        border-bottom:1px solid #eee;
+        cursor:pointer;
+        display:grid;
+        gap:2px;
+      "
+    >
       <div style="font-size:12px;font-weight:700;color:#667eea;">
         ${song.No}
       </div>
@@ -500,6 +494,23 @@ songs.sort((a,b)=>a.Title.localeCompare(b.Title));
       </div>
     </div>
   `).join('');
+
+  // PASANG EVENT SETELAH RENDER
+  document.querySelectorAll('.song-item').forEach(item=>{
+    item.onclick = () => {
+      document.querySelectorAll('.song-item')
+        .forEach(d=>d.style.background='transparent');
+
+      item.style.background = '#eef2ff';
+
+      selectSong(
+        item.dataset.no,
+        item.dataset.title,
+        item.dataset.singer,
+        item.dataset.composer
+      );
+    };
+  });
 };
 
   const searchHandler = () => {
