@@ -224,19 +224,20 @@ const stepsData = {
   2: () => {
     if(typeEl.value === "cover"){
       const requiredFields = [
-        {el: document.getElementById("title"), msg: "Pilih Song Title"},
-        {el: document.getElementById("artist"), msg: "Artist wajib"},
-        {el: document.getElementById("genre"), msg: "Genre wajib"},
-        {el: document.getElementById("publisher"), msg: "Publisher wajib"},
-        {el: document.getElementById("composer"), msg: "Composer wajib"}
-      ];
+  {el: document.getElementById("title"), msg: "Pilih Song Title"},
+  {el: document.getElementById("singer"), msg: "Singer wajib diisi otomatis"}, // tambahkan ini
+  {el: document.getElementById("artist"), msg: "Artist wajib"},
+  {el: document.getElementById("genre"), msg: "Genre wajib"},
+  {el: document.getElementById("publisher"), msg: "Publisher wajib"},
+  {el: document.getElementById("composer"), msg: "Composer wajib"}
+];
       for(const field of requiredFields){
-        if(!field.el || !field.el.value){
-          alert(field.msg);
-          return false;
-        }
-      }
-      return true;
+  if(!field.el?.value){
+    alert(field.msg);
+    return false;
+  }
+}
+return true;
     }
   },
   3: () => {
@@ -253,62 +254,61 @@ const stepsData = {
 };
 
 
-function loadStep2Fields(){
+function loadStep2Fields() {
   const s = document.getElementById("step2");
-  s.innerHTML = "";
 
-  if(typeEl.value === "cover") {
-    s.innerHTML += `
-      <!-- SONG INFO -->
-      <div class="label">Catalog ID *</div>
-<input id="catalog" readonly placeholder="Pilih lagu...">
+  s.innerHTML = `
+  <!-- SONG INFO -->
+  <div class="label">Catalog ID *</div>
+  <input id="catalog" readonly placeholder="Pilih lagu...">
+
   <div class="label">Song Title *</div>
-<div style="display:flex;gap:8px;">
-  <input id="title" readonly placeholder="Pilih lagu..." style="flex:1;">
-  <button type="button" class="btn gray" onclick="openSongModal()">Select</button>
-</div>
+  <input id="title" readonly placeholder="Pilih lagu...">
 
-      <div class="label">Version</div>
-      <select id="version">
-        <option value="">Pilih</option>
-        <option>Remix</option>
-        <option>Cover</option>
-      </select>
+  <div class="label">Singer *</div>
+  <input id="singer" readonly placeholder="Dari lagu..." style="background:#f0f0f0;">
 
-      <div class="label">Genre *</div>
-      <select id="genre">
-        <option value="">Select</option>
-        <option>Blues</option><option>Dangdut</option>
-        <option>Electronic</option><option>Hip-hop</option>
-        <option>Instrumental</option><option>Jazz</option>
-        <option>Metal</option><option>Pop</option>
-        <option>R&B</option><option>Reggae</option>
-        <option>Rock</option>
-      </select>
+  <div class="label">Artist Name *</div>
+<input id="artist" placeholder="Isi nama artis...">
 
-      <!-- ARTIST INFO -->
-      <div class="label">Artist Name *</div>
-      <input id="artist">
+<div class="label">Featuring</div>
+<input id="featuring" placeholder="Optional">
 
-      <div class="label">Featuring</div>
-      <input id="featuring" placeholder="Optional">
+  <div class="label">Composer *</div>
+  <input id="composer">
 
-      <div class="label">Composer *</div>
-      <input id="composer">
+  <div class="label">Version</div>
+  <select id="version">
+    <option value="">Pilih</option>
+    <option>Remix</option>
+    <option>Cover</option>
+  </select>
 
-      <div class="label">Publisher *</div>
-      <select id="publisher">
-        <option value="">Select</option>
-        <option>Nagaswara Official</option>
-        <option>Mahar Pustaka Nusantara</option>
-      </select>
-    `;
-  }
+  <div class="label">Genre *</div>
+  <select id="genre">
+    <option value="">Select</option>
+    <option>Blues</option><option>Dangdut</option>
+    <option>Electronic</option><option>Hip-hop</option>
+    <option>Instrumental</option><option>Jazz</option>
+    <option>Metal</option><option>Pop</option>
+    <option>R&B</option><option>Reggae</option>
+    <option>Rock</option>
+  </select>
 
-  s.innerHTML += `
-    <button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
-    <button type="button" class="btn" onclick="next(2)">Continue</button>
+  <div class="label">Publisher *</div>
+  <select id="publisher">
+    <option value="">Select</option>
+    <option>Nagaswara Official</option>
+    <option>Mahar Pustaka Nusantara</option>
+  </select>
+
+  <button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
+  <button type="button" class="btn" onclick="next(2)">Continue</button>
   `;
+
+  // pasang event modal
+  document.getElementById("catalog").onclick = openSongModal;
+  document.getElementById("title").onclick = openSongModal;
 }
 
 function goto(n){
@@ -355,14 +355,15 @@ function active(n){
 
 
 function loadPreview(){
-  let html = `
-    <div><span>Type:</span> ${typeEl.value}</div>
-    <div><span>Title:</span> ${title.value}</div>
-    <div><span>Artist:</span> ${artist.value}</div>
-  `;
+ let html = `
+  <div><span>Type:</span> ${typeEl.value}</div>
+  <div><span>Title:</span> ${title.value}</div>
+  <div><span>Singer:</span> ${singer.value}</div>
+  <div><span>Artist:</span> ${artist.value}</div>
+`;
 
-  if(document.getElementById("featuring") && featuring.value)
-    html += `<div><span>Featuring:</span> ${featuring.value}</div>`;
+  const featuringEl = document.getElementById("featuring");
+html += `<div><span>Featuring:</span> ${featuringEl && featuringEl.value ? featuringEl.value : '-'}</div>`;
 
   function shorten(text, max=40){
   if(text.length <= max) return text;
@@ -408,52 +409,53 @@ fetch('../cover/songs.json')
   .then(res => res.json())
   .then(data => songs = data)
   .catch(err => console.error("Gagal load songs.json:", err));
-function openSongModal(){
+
+function openSongModal() {
   const modal = document.getElementById("songModal");
   const list = document.getElementById("songList");
   const search = document.getElementById("songSearch");
 
-  list.innerHTML = songs.map(song => `
-  <div style="padding:6px 0;border-bottom:1px solid #eee;cursor:pointer;" 
-       onclick="selectSong('${song.No}','${song.Title}','${song.Singer}','${song.Composer}')">
-    ${song.No} - ${song.Title} (${song.Singer})
-  </div>
-`).join('');
-
-  search.value = '';
-  modal.style.display = "flex";
-
-  search.oninput = () => {
-  const keyword = search.value.toLowerCase();
-  list.innerHTML = songs
-    .filter(song => song.Title.toLowerCase().includes(keyword) || song.Singer.toLowerCase().includes(keyword))
-    .map(song => `
+  const renderList = (arr) => {
+    list.innerHTML = arr.map(song => `
       <div style="padding:6px 0;border-bottom:1px solid #eee;cursor:pointer;" 
            onclick="selectSong('${song.No}','${song.Title}','${song.Singer}','${song.Composer}')">
         ${song.No} - ${song.Title} (${song.Singer})
       </div>
     `).join('');
   };
+
+  const searchHandler = () => {
+    const keyword = search.value.toLowerCase();
+    renderList(songs.filter(song =>
+      song.Title.toLowerCase().includes(keyword) ||
+      song.Singer.toLowerCase().includes(keyword)
+    ));
+  };
+
+  search.value = '';
+renderList(songs);
+modal.style.display = "flex";
+  
+  search.oninput = searchHandler;
 }
 
-function selectSong(no, title, singer, composer){
-  document.getElementById("catalog").value = no;   // Catalog ID
+function selectSong(no, title, singer, composer) {
+  document.getElementById("catalog").value = no;
   document.getElementById("title").value = title;
-  document.getElementById("artist").value = singer;
+  document.getElementById("singer").value = singer; // otomatis
   document.getElementById("composer").value = composer;
   closeSongModal();
 }
 
-function closeSongModal(){
+function closeSongModal() {
   document.getElementById("songModal").style.display = "none";
 }
-
 function submitRelease(){
 
  const btn = document.getElementById("submitBtn");
  const text = document.getElementById("btnText");
  const loader = document.getElementById("btnLoader");
-
+ 
  btn.disabled = true;
  text.style.display = "none";
  loader.style.display = "inline";
@@ -477,6 +479,8 @@ function submitRelease(){
   status: "pending",
   time: Date.now()
 };
+const singerEl = document.getElementById("singer");
+if(singerEl) data.singer = singerEl.value;
 
  if(titleEl) data.title = titleEl.value;
  if(artistEl) data.artist = artistEl.value;
