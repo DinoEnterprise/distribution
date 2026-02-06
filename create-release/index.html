@@ -95,18 +95,6 @@ header.scrolled{
       color:#fff;
       box-shadow:0 6px 18px rgba(102,126,234,.5);
     }
-.select-input{
-  position:relative;
-  cursor:pointer;
-}
-
-/* input */
-.select-input input{
-  width:100%;
-  cursor:pointer;
-  background:#f9fafb;
-  padding-right:90px;
-}
 
 /* hover */
 .select-input:hover input{
@@ -122,13 +110,34 @@ header.scrolled{
 }
 
 /* bubble select */
+.select-input{
+  position:relative;
+  display:flex;
+  align-items:center;   /* INI KUNCINYA */
+  cursor:pointer;
+}
+.select-input input{
+  width:100%;
+  height:52px;
+  padding:14px 90px 14px 14px;
+  border-radius:14px;
+  border:1px solid #ddd;
+  background:#f9fafb;
+  cursor:pointer;
+  pointer-events:none;
+}
+/* bubble select */
 .select-icon{
   position:absolute;
-  right:10px;
-  top:50%;
-  transform:translateY(-50%);
+  right:12px;
 
-  padding:6px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  height:28px;
+  padding:0 14px;
+
   font-size:11px;
   font-weight:700;
 
@@ -216,7 +225,7 @@ header.scrolled{
 <body>
 
 <header id="mainHeader">
-  <img src="../assets/dynotic-ditribution.png">
+  <img src="../assets/dynotic-distribution.png">
 </header>
 
 <div class="wrap">
@@ -533,8 +542,12 @@ function selectSong(no, title, singer, composer) {
   document.getElementById("title").value = title;
   document.getElementById("singer").value = singer;
   document.getElementById("composer").value = composer;
+const icon = document.querySelector('.select-input .select-icon');
+if(icon) icon.textContent = "Selected";
 
-  document.querySelector('.select-input')?.classList.add('filled');
+  document.getElementById("title")
+  ?.closest('.select-input')
+  ?.classList.add('filled');
 
   setTimeout(closeSongModal, 200);
 }
