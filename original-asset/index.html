@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Original Asset | Dynotic Distribution</title>
+  <title>Origianal Asset | Dynotic Distribution</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
@@ -176,10 +176,11 @@
 
     <!-- STEP 1 -->
     <div id="step1" class="section">
+      <div class="label">Type Asset <span class="req">*</span></div>
       <select id="type">
-  <option value="">Select</option>
-  <option value="original">Original Asset</option>
-</select>
+        <option value="">Select</option>
+        <option value="original">Original Asset</option>
+      </select>
       <button type="button" class="btn" onclick="next(1)">Continue</button>
     </div>
 
@@ -244,6 +245,13 @@
                  document.getElementById("fullname")?.value &&
                  document.getElementById("label")?.value &&
                  document.getElementById("release")?.value;
+        }
+        if(type.value === "cover"){
+          return document.getElementById("title")?.value &&
+                 document.getElementById("artist")?.value &&
+                 document.getElementById("genre")?.value &&
+                 document.getElementById("publisher")?.value &&
+                 document.getElementById("composer")?.value;
         }
       },
       3: () => audio.value && cover.value
@@ -324,6 +332,34 @@
           r.min = d.toISOString().split("T")[0];
         }, 50);
 
+      } else if(type.value === "cover") {
+        s.innerHTML += `
+          <div class="label">Song Title *</div><input id="title">
+          <div class="label">Version</div>
+          <select id="version">
+            <option value="">Pilih</option><option>Remix</option><option>Cover</option>
+          </select>
+          <div class="label">Genre *</div>
+          <select id="genre">
+            <option value="">Select</option>
+            <option>Blues</option><option>Dangdut</option><option>Electronic</option>
+            <option>Hip-hop</option><option>Instrumental</option><option>Jazz</option>
+            <option>Metal</option><option>Pop</option><option>R&B</option>
+            <option>Reggae</option><option>Rock</option>
+          </select>
+          <div class="label">Artist Name *</div><input id="artist">
+          <div class="label">Featuring</div><input id="featuring" placeholder="Optional">
+          <div class="label">Composer *</div><input id="composer">
+          <div class="label">Publisher *</div>
+          <select id="publisher">
+            <option value="">Select</option>
+            <option>Nagaswara Official</option>
+            <option>G2B Production</option>
+            <option>Mahar Pustaka Nusantara</option>
+          </select>
+        `;
+      }
+
       s.innerHTML += `
         <button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
         <button type="button" class="btn" onclick="next(2)">Continue</button>
@@ -354,6 +390,14 @@
           <div><span>Full Name:</span> ${fullname.value}</div>
           <div><span>Label:</span> ${label.value}</div>
           <div><span>Release Date:</span> ${release.value}</div>
+        `;
+      }
+
+      if(type.value === "cover"){
+        html += `
+          <div><span>Publisher:</span> ${publisher.value}</div>
+          <div><span>Composer:</span> ${composer.value}</div>
+          <div><span>Version:</span> ${version.value || "-"}</div>
         `;
       }
 
@@ -393,6 +437,11 @@
         data.fullname = fullname.value;
         data.label = label.value;
         data.release = release.value;
+      }
+
+      if(type.value === "cover") {
+        data.publisher = publisher.value;
+        data.composer = composer.value;
       }
 
       db.ref("releases/"+user.uid).push(data)
