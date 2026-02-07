@@ -1,621 +1,135 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cover License | Dynotic Distribution</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create New Release | Dynotic Distribution</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
 
-  <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:"Outfit",sans-serif;
-    }
-
-    body{
-  background:linear-gradient(135deg,#667eea,#764ba2);
+body{
+  background: linear-gradient(135deg,#667eea,#764ba2);
   min-height:100vh;
-  padding-top:72px;
-}
-
-
-header{
-  padding:12px 20px;
   display:flex;
-  align-items:center;
-  justify-content:space-between;
-  background:#fff;
-  border-bottom:1px solid #eee;
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  z-index:9999;
-}
-
-header img{
-  height:42px;
-}
-
-header.scrolled{
-  box-shadow:0 4px 12px rgba(0,0,0,.08);
-}
-
-    .wrap{
-      width:92%;
-      margin:18px auto;
-      background:rgba(255,255,255,.95);
-      border-radius:24px;
-      padding:22px;
-      box-shadow:0 20px 40px rgba(0,0,0,.18);
-      animation:fade .4s ease;
-    }
-
-    @keyframes fade{
-      from{opacity:0;transform:translateY(15px)}
-      to{opacity:1}
-    }
-
-    .steps{
-      display:flex;
-      justify-content:space-between;
-      margin-bottom:25px;
-      position:relative;
-    }
-
-    .steps:before{
-      content:"";
-      position:absolute;
-      top:50%;
-      left:5%;
-      right:5%;
-      height:3px;
-      background:#e5e7eb;
-      z-index:0;
-    }
-
-    .step{
-      width:38px;
-      height:38px;
-      border-radius:50%;
-      background:#e5e7eb;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:700;
-      color:#666;
-      z-index:1;
-    }
-
-    .step.active{
-      background:linear-gradient(135deg,#667eea,#764ba2);
-      color:#fff;
-      box-shadow:0 6px 18px rgba(102,126,234,.5);
-    }
-
-/* hover */
-.select-input:hover input{
-  border-color:#667eea;
-  background:#f5f7ff;
-}
-
-/* filled */
-.select-input.filled input{
-  background:#eef2ff;
-  border-color:#667eea;
-  font-weight:600;
-}
-
-/* bubble select */
-.select-input{
-  position:relative;
-  display:flex;
-  align-items:center;   /* INI KUNCINYA */
-  cursor:pointer;
-}
-.select-input input{
-  width:100%;
-  height:52px;
-  padding:14px 90px 14px 14px;
-  border-radius:14px;
-  border:1px solid #ddd;
-  background:#f9fafb;
-  cursor:pointer;
-  pointer-events:none;
-}
-/* bubble select */
-.select-icon{
-  position:absolute;
-  right:12px;
-
-  display:flex;
-  align-items:center;
   justify-content:center;
+  align-items:center;
+  padding:20px;
+  overflow-x:hidden;
+}
 
-  height:28px;
-  padding:0 14px;
+.container{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  width:360px;
+}
 
-  font-size:11px;
-  font-weight:700;
-
-  color:#667eea;
+.card{
   background:#fff;
+  border-radius:20px;
+  padding:30px 20px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+  cursor:pointer;
+  text-align:center;
+  transform:translateY(50px);
+  opacity:0;
+  animation:slideIn 0.6s forwards;
+  transition:.3s;
+}
+.card:nth-child(1){animation-delay:.2s;}
+.card:nth-child(2){animation-delay:.4s;}
 
-  border:2px solid #667eea;
-  border-radius:999px;
-
-  box-shadow:0 2px 6px rgba(102,126,234,.25);
-  pointer-events:none;
-  transition:.2s;
+@keyframes slideIn{
+  from{opacity:0; transform:translateY(50px);}
+  to{opacity:1; transform:translateY(0);}
 }
 
-/* hover bubble */
-.select-input:hover .select-icon{
+.card:hover{
+  transform:translateY(-6px) scale(1.02) rotateZ(-1deg);
+  box-shadow:0 16px 32px rgba(0,0,0,0.15);
+}
+
+.card h2{
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:8px;
+  color:#111;
+}
+.card p{
+  font-size:13px;
+  color:#555;
+  margin-bottom:12px;
+}
+
+.card .icon{
+  font-size:28px;
+  font-weight:700;
   background:#667eea;
   color:#fff;
+  width:50px;
+  height:50px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  border-radius:14px;
+  margin:auto;
+  margin-bottom:10px;
+  animation:iconBounce 1.5s infinite alternate ease-in-out;
+  transition:.3s;
+}
+.card.cover .icon{background:#f56565;}
+
+.card.cover:hover .icon{transform:scale(1.3) rotate(10deg);}
+.card.original:hover .icon{transform:scale(1.3) rotate(-10deg);}
+
+@keyframes iconBounce{
+  0%{transform:translateY(0);}
+  50%{transform:translateY(-6px);}
+  100%{transform:translateY(0);}
 }
 
-/* selected */
-.select-input.filled .select-icon{
-  background:#667eea;
+.bottom-note{
+  text-align:center;
+  font-size:12px;
   color:#fff;
+  margin-top:10px;
+  opacity:0;
+  animation:fadeInNote 1s 0.6s forwards;
 }
-    /* FORM */
-    .section{animation:fade .4s}
 
-    .label{
-      font-size:13px;
-      font-weight:600;
-      margin-bottom:6px;
-    }
-
-    .req{color:red}
-
-    input,select{
-      width:100%;
-      padding:14px;
-      border-radius:14px;
-      border:1px solid #ddd;
-      margin-bottom:16px;
-      font-size:14px;
-    }
-
-    input:focus,select:focus{
-      outline:none;
-      border-color:#667eea;
-      box-shadow:0 0 0 3px rgba(102,126,234,.15);
-    }
-
-    .btn{
-      width:100%;
-      padding:15px;
-      border:none;
-      border-radius:16px;
-      font-weight:700;
-      color:#fff;
-      background:linear-gradient(135deg,#667eea,#764ba2);
-    }
-
-    .btn.gray{
-      background:#e5e7eb;
-      color:#111;
-    }
-
-    .btn:active{transform:scale(.96)}
-
-    .preview{
-      background:#f9fafb;
-      border-radius:16px;
-      padding:16px;
-      font-size:14px;
-      line-height:1.7;
-    }
-
-    .preview div{margin-bottom:8px}
-    .preview span{
-      color:#667eea;
-      font-weight:600;
-    }
-  </style>
+@keyframes fadeInNote{
+  from{opacity:0; transform:translateY(10px);}
+  to{opacity:1; transform:translateY(0);}
+}
+</style>
 </head>
-
 <body>
 
-<header id="mainHeader">
-  <img src="../assets/dynotic-distribution.png">
-</header>
-
-<div class="wrap">
-
-  <div class="steps">
-    <div class="step active" id="s1">1</div>
-    <div class="step" id="s2">2</div>
-    <div class="step" id="s3">3</div>
-    <div class="step" id="s4">4</div>
+<div class="container">
+  <div class="card original" onclick="goOriginal()">
+    <div class="icon">O</div>
+    <h2>Original Asset</h2>
+    <p>Create your original release and upload your master files</p>
   </div>
 
-  <div id="step1" class="section">
-    <div class="label">Type Asset <span class="req">*</span></div>
-    <select id="type">
-      <option value="">Select</option>
-      <option value="cover">Cover Asset</option>
-    </select>
-<button type="button" class="btn" onclick="next(1)">Continue</button>
+  <div class="card cover" onclick="goCover()">
+    <div class="icon">C</div>
+    <h2>Cover License</h2>
+    <p>Upload cover releases or Copper License tracks</p>
   </div>
 
-  <div id="step2" class="section" hidden></div>
-
-  <div id="step3" class="section" hidden>
-    <div class="label">Link GDrive Audio *</div>
-    <input id="audio">
-
-    <div class="label">Link GDrive Cover Art *</div>
-    <input id="cover">
-
-    <button type="button" class="btn gray" onclick="back(3)">Back</button><br><br>
-<button type="button" class="btn" onclick="next(3)">Preview</button>
-  </div>
-
-  <div id="step4" class="section" hidden>
-    <div class="preview" id="previewBox"></div><br>
-
-    <button class="btn gray" onclick="back(4)">Edit</button><br><br>
-<button class="btn" id="submitBtn" onclick="submitRelease()">
-  <span id="btnText">Submit Release</span>
-  <span id="btnLoader" style="display:none;">Loading...</span>
-</button>
-  </div>
-
-</div> 
-
-<!-- SONG MODAL -->
-<div id="songModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:99999;justify-content:center;align-items:center;">
-  <div style="background:#fff;border-radius:16px;width:90%;max-width:600px;padding:20px;position:relative;">
-<h3 style="margin-bottom:10px;font-size:16px;">Select Song</h3>
-    <input type="text" id="songSearch" placeholder="Search..." style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;">
-    <div id="songList" style="max-height:300px;overflow-y:auto;"></div>
-    <button class="btn gray" style="margin-top:10px;" onclick="closeSongModal()">Close</button>
-  </div>
+  <div class="bottom-note">Select a release type to start the release process</div>
 </div>
 
 <script>
-const typeEl = document.getElementById("type");
-const audioEl = document.getElementById("audio");
-const coverEl = document.getElementById("cover");
-
-const stepsData = {
-  1: () => typeEl.value != "",
-  2: () => {
-  if(typeEl.value === "cover"){
-    const requiredFields = [
-      {el: document.getElementById("title"), msg: "Pilih Song Title"},
-      {el: document.getElementById("singer"), msg: "Singer wajib diisi otomatis"},
-      {el: document.getElementById("artist"), msg: "Artist wajib"},
-      {el: document.getElementById("genre"), msg: "Genre wajib"},
-      {el: document.getElementById("publisher"), msg: "Publisher wajib"},
-      {el: document.getElementById("composer"), msg: "Composer wajib"}
-    ];
-
-    for(const field of requiredFields){
-      if(!field.el || !field.el.value){
-        alert(field.msg);
-        return false;
-      }
-    }
-    return true;
-  }
-  return false;
-},
-  3: () => {
-    if(!audioEl.value || !coverEl.value){
-      alert("Link Audio dan Cover wajib diisi");
-      return false;
-    }
-    if(!audioEl.value.includes("drive.google.com") || !coverEl.value.includes("drive.google.com")){
-      alert("Pastikan link GDrive valid");
-      return false;
-    }
-    return true;
-  }
-};
-
-
-function loadStep2Fields() {
-  const s = document.getElementById("step2");
-
-  s.innerHTML = `
-  <!-- SONG INFO -->
- <div class="label">Song Title *</div>
-<div class="select-input" onclick="openSongModal()">
-  <input id="title" readonly placeholder="Select Song...">
-  <span class="select-icon">Select</span>
-</div>
-
-  <div class="label">Catalog ID *</div>
-  <input id="catalog" readonly placeholder="Dari lagu..." style="background:#f0f0f0;">
-
-  <div class="label">Singer *</div>
-  <input id="singer" readonly placeholder="Dari lagu..." style="background:#f0f0f0;">
-
-  <div class="label">Artist Name *</div>
-<input id="artist" placeholder="Isi nama artis...">
-
-<div class="label">Featuring</div>
-<input id="featuring" placeholder="Optional">
-
-<div class="label">Composer *</div>
-  <input id="composer" readonly placeholder="Dari lagu..." style="background:#f0f0f0;">
-
- <div class="label">Genre *</div>
-  <select id="genre">
-    <option value="">Select</option>
-    <option>Blues</option><option>Dangdut</option>
-    <option>Electronic</option><option>Hip-hop</option>
-    <option>Instrumental</option><option>Jazz</option>
-    <option>Metal</option><option>Pop</option>
-    <option>R&B</option><option>Reggae</option>
-    <option>Rock</option>
-  </select>
-
-  <div class="label">Publisher *</div>
-  <select id="publisher">
-    <option value="">Select</option>
-    <option>Nagaswara Official</option>
-    <option>Mahar Pustaka Nusantara</option>
-  </select>
-
-  <button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
-  <button type="button" class="btn" onclick="next(2)">Continue</button>
-  `;
+function goOriginal(){
+  location.href = "../original-asset";
 }
-
-function goto(n){
-  if(n>1 && !stepsData[n-1]())
-    return alert("Lengkapi step sebelumnya dulu!");
-
-  hideAll();
-  document.getElementById("step"+n).hidden=false;
-  active(n);
-  if(n==4) loadPreview();
+function goCover(){
+  location.href = "../cover-license";
 }
-
-function next(n){
-  if(n==1){
-    if(!stepsData[1]()) return alert("Type wajib");
-    loadStep2Fields();
-    goto(2);
-    return;
-  }
-
-  if(n==2){
-    if(!stepsData[2]()) return alert("Lengkapi master");
-  }
-  
-  if(n==3){
-    if(!stepsData[3]()) return alert("Link wajib");
-  }
-
-  goto(n+1);
-}
-
-function back(n){goto(n-1);}
-
-function hideAll(){
-  for(let i=1;i<=4;i++)
-    document.getElementById("step"+i).hidden=true;
-}
-
-function active(n){
-  for(let i=1;i<=4;i++)
-    document.getElementById("s"+i).classList.remove("active");
-  document.getElementById("s"+n).classList.add("active");
-}
-
-
-function loadPreview(){
- let html = `
-  <div><span>Type:</span> ${typeEl.value}</div>
-  <div><span>Title:</span> ${title.value}</div>
-  <div><span>Singer:</span> ${singer.value}</div>
-  <div><span>Artist:</span> ${artist.value}</div>
-`;
-
-  const featuringEl = document.getElementById("featuring");
-html += `<div><span>Featuring:</span> ${featuringEl && featuringEl.value ? featuringEl.value : '-'}</div>`;
-
-  function shorten(text, max=40){
-  if(text.length <= max) return text;
-  return text.slice(0, max) + "...";
-}
-
-html += `
-<div><span>Audio:</span> ${audioEl.value ? `<a href="${audioEl.value}" target="_blank">${shorten(audioEl.value)}</a>` : '-'}</div>
-<div><span>Cover:</span> ${coverEl.value ? `<a href="${coverEl.value}" target="_blank">${shorten(coverEl.value)}</a>` : '-'}</div>
-`;
-
-  if(typeEl.value === "cover"){
-    html += `
-      <div><span>Publisher:</span> ${publisher.value}</div>
-      <div><span>Composer:</span> ${composer.value}</div>
-    `;
-  }
-
-  previewBox.innerHTML = html;
-}
-</script>
-
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-<script>
-firebase.initializeApp({
-  apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain:"dynopay-2513c.firebaseapp.com",
-  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
-
-const db=firebase.database();
-
-firebase.auth().onAuthStateChanged(user=>{
-  if(!user) location.href="../login";
-});
-let songs = [];
-
-fetch('../cover/songs.json')
-  .then(res => res.json())
-  .then(data => songs = data)
-  .catch(err => console.error("Gagal load songs.json:", err));
-
-function openSongModal() {
-  const modal = document.getElementById("songModal");
-  const list = document.getElementById("songList");
-  const search = document.getElementById("songSearch");
-songs.sort((a,b)=>a.Title.localeCompare(b.Title));
-
-  const renderList = (arr) => {
-  list.innerHTML = arr.map(song => `
-    <div 
-      class="song-item"
-      data-no="${song.No}"
-      data-title="${song.Title.replace(/"/g,'&quot;')}"
-      data-singer="${song.Singer.replace(/"/g,'&quot;')}"
-      data-composer="${song.Composer.replace(/"/g,'&quot;')}"
-      style="
-        padding:10px 12px;
-        border-bottom:1px solid #eee;
-        cursor:pointer;
-        display:grid;
-        gap:2px;
-      "
-    >
-      <div style="font-size:12px;font-weight:700;color:#667eea;">
-        ${song.No}
-      </div>
-      <div style="font-size:14px;font-weight:600;color:#111;">
-        ${song.Title}
-      </div>
-      <div style="font-size:12px;color:#666;">
-        ${song.Singer}
-      </div>
-    </div>
-  `).join('');
-
-  // PASANG EVENT SETELAH RENDER
-  document.querySelectorAll('.song-item').forEach(item=>{
-    item.onclick = () => {
-      document.querySelectorAll('.song-item')
-        .forEach(d=>d.style.background='transparent');
-
-      item.style.background = '#eef2ff';
-
-      selectSong(
-        item.dataset.no,
-        item.dataset.title,
-        item.dataset.singer,
-        item.dataset.composer
-      );
-    };
-  });
-};
-
-  const searchHandler = () => {
-    const keyword = search.value.toLowerCase();
-    renderList(songs.filter(song =>
-      song.Title.toLowerCase().includes(keyword) ||
-      song.Singer.toLowerCase().includes(keyword)
-    ));
-  };
-
-  search.value = '';
-renderList(songs);
-modal.style.display = "flex";
-  
-  search.oninput = searchHandler;
-}
-
-function selectSong(no, title, singer, composer) {
-  document.getElementById("catalog").value = no;
-  document.getElementById("title").value = title;
-  document.getElementById("singer").value = singer;
-  document.getElementById("composer").value = composer;
-const icon = document.querySelector('.select-input .select-icon');
-if(icon) icon.textContent = "Selected";
-
-  document.getElementById("title")
-  ?.closest('.select-input')
-  ?.classList.add('filled');
-
-  setTimeout(closeSongModal, 200);
-}
-
-function closeSongModal() {
-  document.getElementById("songModal").style.display = "none";
-}
-function submitRelease(){
-
- const btn = document.getElementById("submitBtn");
- const text = document.getElementById("btnText");
- const loader = document.getElementById("btnLoader");
- 
- btn.disabled = true;
- text.style.display = "none";
- loader.style.display = "inline";
-
- const user=firebase.auth().currentUser;
- if(!user) return;
-
- // ambil elemen dengan aman
- const titleEl = document.getElementById("title");
- const artistEl = document.getElementById("artist");
- const genreEl = document.getElementById("genre");
- const catalogEl = document.getElementById("catalog");
- const composerEl = document.getElementById("composer");
- const publisherEl = document.getElementById("publisher");
- const featuringEl = document.getElementById("featuring");
-
- let data = {
-  type: typeEl.value,
-  audio: audioEl.value,
-  cover: coverEl.value,
-  status: "pending",
-  time: Date.now()
-};
-const singerEl = document.getElementById("singer");
-if(singerEl) data.singer = singerEl.value;
-
- if(titleEl) data.title = titleEl.value;
- if(artistEl) data.artist = artistEl.value;
- if(genreEl) data.genre = genreEl.value;
- if(featuringEl && featuringEl.value) data.featuring = featuringEl.value;
-
- if(typeEl.value === "cover"){
-  if(catalogEl) data.catalog = catalogEl.value;
-  if(publisherEl) data.publisher = publisherEl.value;
-  if(composerEl) data.composer = composerEl.value;
- }
-
- db.ref("releases/"+user.uid).push(data)
- .then(()=>{
-   location.href="../home";
- })
- .catch(()=>{
-   btn.disabled = false;
-   text.style.display = "inline";
-   loader.style.display = "none";
- });
-}
-window.addEventListener("scroll",()=>{
-  const h=document.getElementById("mainHeader");
-  if(window.scrollY>5){
-    h.classList.add("scrolled");
-  }else{
-    h.classList.remove("scrolled");
-  }
-});
 </script>
 
 </body>
