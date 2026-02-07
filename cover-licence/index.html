@@ -96,6 +96,73 @@ header.scrolled{
       box-shadow:0 6px 18px rgba(102,126,234,.5);
     }
 
+/* hover */
+.select-input:hover input{
+  border-color:#667eea;
+  background:#f5f7ff;
+}
+
+/* filled */
+.select-input.filled input{
+  background:#eef2ff;
+  border-color:#667eea;
+  font-weight:600;
+}
+
+/* bubble select */
+.select-input{
+  position:relative;
+  display:flex;
+  align-items:center;   /* INI KUNCINYA */
+  cursor:pointer;
+}
+.select-input input{
+  width:100%;
+  height:52px;
+  padding:14px 90px 14px 14px;
+  border-radius:14px;
+  border:1px solid #ddd;
+  background:#f9fafb;
+  cursor:pointer;
+  pointer-events:none;
+}
+/* bubble select */
+.select-icon{
+  position:absolute;
+  right:12px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  height:28px;
+  padding:0 14px;
+
+  font-size:11px;
+  font-weight:700;
+
+  color:#667eea;
+  background:#fff;
+
+  border:2px solid #667eea;
+  border-radius:999px;
+
+  box-shadow:0 2px 6px rgba(102,126,234,.25);
+  pointer-events:none;
+  transition:.2s;
+}
+
+/* hover bubble */
+.select-input:hover .select-icon{
+  background:#667eea;
+  color:#fff;
+}
+
+/* selected */
+.select-input.filled .select-icon{
+  background:#667eea;
+  color:#fff;
+}
     /* FORM */
     .section{animation:fade .4s}
 
@@ -158,7 +225,7 @@ header.scrolled{
 <body>
 
 <header id="mainHeader">
-  <img src="../assets/dynotic-ditribution.png">
+  <img src="../assets/dynotic-distribution.png">
 </header>
 
 <div class="wrap">
@@ -207,7 +274,7 @@ header.scrolled{
 <!-- SONG MODAL -->
 <div id="songModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:99999;justify-content:center;align-items:center;">
   <div style="background:#fff;border-radius:16px;width:90%;max-width:600px;padding:20px;position:relative;">
-    <h3>Select Song</h3>
+<h3 style="margin-bottom:10px;font-size:16px;">Select Song</h3>
     <input type="text" id="songSearch" placeholder="Search..." style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;">
     <div id="songList" style="max-height:300px;overflow-y:auto;"></div>
     <button class="btn gray" style="margin-top:10px;" onclick="closeSongModal()">Close</button>
@@ -222,24 +289,26 @@ const coverEl = document.getElementById("cover");
 const stepsData = {
   1: () => typeEl.value != "",
   2: () => {
-    if(typeEl.value === "cover"){
-      const requiredFields = [
-  {el: document.getElementById("title"), msg: "Pilih Song Title"},
-  {el: document.getElementById("singer"), msg: "Singer wajib diisi otomatis"}, // tambahkan ini
-  {el: document.getElementById("artist"), msg: "Artist wajib"},
-  {el: document.getElementById("genre"), msg: "Genre wajib"},
-  {el: document.getElementById("publisher"), msg: "Publisher wajib"},
-  {el: document.getElementById("composer"), msg: "Composer wajib"}
-];
-      for(const field of requiredFields){
-  if(!field.el?.value){
-    alert(field.msg);
-    return false;
-  }
-}
-return true;
+  if(typeEl.value === "cover"){
+    const requiredFields = [
+      {el: document.getElementById("title"), msg: "Pilih Song Title"},
+      {el: document.getElementById("singer"), msg: "Singer wajib diisi otomatis"},
+      {el: document.getElementById("artist"), msg: "Artist wajib"},
+      {el: document.getElementById("genre"), msg: "Genre wajib"},
+      {el: document.getElementById("publisher"), msg: "Publisher wajib"},
+      {el: document.getElementById("composer"), msg: "Composer wajib"}
+    ];
+
+    for(const field of requiredFields){
+      if(!field.el || !field.el.value){
+        alert(field.msg);
+        return false;
+      }
     }
-  },
+    return true;
+  }
+  return false;
+},
   3: () => {
     if(!audioEl.value || !coverEl.value){
       alert("Link Audio dan Cover wajib diisi");
@@ -259,11 +328,14 @@ function loadStep2Fields() {
 
   s.innerHTML = `
   <!-- SONG INFO -->
-  <div class="label">Catalog ID *</div>
-  <input id="catalog" readonly placeholder="Pilih lagu...">
+ <div class="label">Song Title *</div>
+<div class="select-input" onclick="openSongModal()">
+  <input id="title" readonly placeholder="Select Song...">
+  <span class="select-icon">Select</span>
+</div>
 
-  <div class="label">Song Title *</div>
-  <input id="title" readonly placeholder="Pilih lagu...">
+  <div class="label">Catalog ID *</div>
+  <input id="catalog" readonly placeholder="Dari lagu..." style="background:#f0f0f0;">
 
   <div class="label">Singer *</div>
   <input id="singer" readonly placeholder="Dari lagu..." style="background:#f0f0f0;">
@@ -274,17 +346,10 @@ function loadStep2Fields() {
 <div class="label">Featuring</div>
 <input id="featuring" placeholder="Optional">
 
-  <div class="label">Composer *</div>
-  <input id="composer">
+<div class="label">Composer *</div>
+  <input id="composer" readonly placeholder="Dari lagu..." style="background:#f0f0f0;">
 
-  <div class="label">Version</div>
-  <select id="version">
-    <option value="">Pilih</option>
-    <option>Remix</option>
-    <option>Cover</option>
-  </select>
-
-  <div class="label">Genre *</div>
+ <div class="label">Genre *</div>
   <select id="genre">
     <option value="">Select</option>
     <option>Blues</option><option>Dangdut</option>
@@ -305,10 +370,6 @@ function loadStep2Fields() {
   <button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
   <button type="button" class="btn" onclick="next(2)">Continue</button>
   `;
-
-  // pasang event modal
-  document.getElementById("catalog").onclick = openSongModal;
-  document.getElementById("title").onclick = openSongModal;
 }
 
 function goto(n){
@@ -379,7 +440,6 @@ html += `
     html += `
       <div><span>Publisher:</span> ${publisher.value}</div>
       <div><span>Composer:</span> ${composer.value}</div>
-      <div><span>Version:</span> ${version.value || "-"}</div>
     `;
   }
 
@@ -414,15 +474,53 @@ function openSongModal() {
   const modal = document.getElementById("songModal");
   const list = document.getElementById("songList");
   const search = document.getElementById("songSearch");
+songs.sort((a,b)=>a.Title.localeCompare(b.Title));
 
   const renderList = (arr) => {
-    list.innerHTML = arr.map(song => `
-      <div style="padding:6px 0;border-bottom:1px solid #eee;cursor:pointer;" 
-           onclick="selectSong('${song.No}','${song.Title}','${song.Singer}','${song.Composer}')">
-        ${song.No} - ${song.Title} (${song.Singer})
+  list.innerHTML = arr.map(song => `
+    <div 
+      class="song-item"
+      data-no="${song.No}"
+      data-title="${song.Title.replace(/"/g,'&quot;')}"
+      data-singer="${song.Singer.replace(/"/g,'&quot;')}"
+      data-composer="${song.Composer.replace(/"/g,'&quot;')}"
+      style="
+        padding:10px 12px;
+        border-bottom:1px solid #eee;
+        cursor:pointer;
+        display:grid;
+        gap:2px;
+      "
+    >
+      <div style="font-size:12px;font-weight:700;color:#667eea;">
+        ${song.No}
       </div>
-    `).join('');
-  };
+      <div style="font-size:14px;font-weight:600;color:#111;">
+        ${song.Title}
+      </div>
+      <div style="font-size:12px;color:#666;">
+        ${song.Singer}
+      </div>
+    </div>
+  `).join('');
+
+  // PASANG EVENT SETELAH RENDER
+  document.querySelectorAll('.song-item').forEach(item=>{
+    item.onclick = () => {
+      document.querySelectorAll('.song-item')
+        .forEach(d=>d.style.background='transparent');
+
+      item.style.background = '#eef2ff';
+
+      selectSong(
+        item.dataset.no,
+        item.dataset.title,
+        item.dataset.singer,
+        item.dataset.composer
+      );
+    };
+  });
+};
 
   const searchHandler = () => {
     const keyword = search.value.toLowerCase();
@@ -442,9 +540,16 @@ modal.style.display = "flex";
 function selectSong(no, title, singer, composer) {
   document.getElementById("catalog").value = no;
   document.getElementById("title").value = title;
-  document.getElementById("singer").value = singer; // otomatis
+  document.getElementById("singer").value = singer;
   document.getElementById("composer").value = composer;
-  closeSongModal();
+const icon = document.querySelector('.select-input .select-icon');
+if(icon) icon.textContent = "Selected";
+
+  document.getElementById("title")
+  ?.closest('.select-input')
+  ?.classList.add('filled');
+
+  setTimeout(closeSongModal, 200);
 }
 
 function closeSongModal() {
@@ -495,7 +600,7 @@ if(singerEl) data.singer = singerEl.value;
 
  db.ref("releases/"+user.uid).push(data)
  .then(()=>{
-   location.href="../home";
+   location.href="../releases";
  })
  .catch(()=>{
    btn.disabled = false;
