@@ -4,192 +4,137 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reset Password | Dynotic Distribution</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif;}
+*{box-sizing:border-box;font-family:"Outfit",sans-serif;}
 body{
   background:#f1f2f7;
   min-height:100vh;
-  padding-top:74px;
   display:flex;
+  align-items:center;
   justify-content:center;
-  align-items:flex-start;
-  padding-bottom:50px;
+  padding:20px;
 }
-header{
-  position:fixed; top:0; left:0; width:100%; background:#fff; border-bottom:1px solid #eee; padding:12px 20px; display:flex; align-items:center; z-index:1000;
-}
-header img{height:50px;}
-
 .card{
   background:#fff;
-  width:90%;
-  max-width:400px;
-  margin-top:20px;
-  border-radius:20px;
-  padding:25px;
-  box-shadow:0 8px 18px rgba(0,0,0,.05);
-  text-align:center;
-}
-.card h2{margin-bottom:20px; font-size:20px;}
-.input-group{margin-bottom:15px; text-align:left;}
-.input-group label{display:block; font-size:14px; margin-bottom:4px;}
-.input-group input{
   width:100%;
-  padding:12px;
-  border-radius:12px;
-  border:1px solid #ddd;
-  font-size:14px;
-  outline:none;
-  background:#f9f9f9;
+  max-width:380px;
+  border-radius:20px;
+  padding:30px;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+  animation:fadeUp .4s ease;
 }
-.input-group input:focus{border-color:#667eea;}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(15px);}
+  to{opacity:1;transform:translateY(0);}
+}
+h2{
+  text-align:center;
+  margin-bottom:6px;
+}
+p{
+  text-align:center;
+  font-size:13px;
+  color:#666;
+  margin-bottom:20px;
+}
+input{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:1px solid #ddd;
+  margin-bottom:12px;
+  font-size:14px;
+}
+input:focus{
+  border-color:#667eea;
+  outline:none;
+}
 button{
   width:100%;
-  padding:12px;
+  padding:14px;
+  border-radius:14px;
   border:none;
-  border-radius:12px;
   background:#111;
   color:#fff;
   font-weight:600;
-  font-size:15px;
-  cursor:pointer;
-  margin-top:10px;
-  transition:.2s ease;
-}
-button:hover{filter:brightness(0.9);}
-.success-message{
-  margin-top:15px;
-  color:green;
-  font-weight:600;
-  display:none;
-}
-.back-btn{
-  margin-top:20px;
-  background:#667eea;
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:12px;
-  color:#fff;
   cursor:pointer;
 }
-.error-message{
-  margin-top:10px;
-  color:red;
-  font-weight:500;
-  display:none;
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
 }
+.msg{
+  text-align:center;
+  font-size:13px;
+  margin-top:12px;
+}
+.error{color:#e53e3e;}
+.success{color:#38a169;}
 </style>
 </head>
 <body>
 
-<header>
-  <img src="../assets/dynotic-distribution.png" alt="Dynotic">
-</header>
-
 <div class="card">
   <h2>Reset Password</h2>
+  <p>Create a new password for your Dynotic account</p>
 
-  <div class="input-group">
-    <label for="currentPassword">Current Password</label>
-    <input type="password" id="currentPassword" placeholder="Enter current password">
-  </div>
+  <input type="password" id="password" placeholder="New password">
+  <input type="password" id="confirm" placeholder="Confirm password">
 
-  <div class="input-group">
-    <label for="newPassword">New Password</label>
-    <input type="password" id="newPassword" placeholder="Enter new password">
-  </div>
+  <button onclick="resetPassword()">Reset Password</button>
 
-  <div class="input-group">
-    <label for="confirmPassword">Confirm Password</label>
-    <input type="password" id="confirmPassword" placeholder="Repeat new password">
-  </div>
-
-  <button id="resetBtn">Change Password</button>
-
-  <div class="success-message" id="successMsg">
-    Password updated successfully!
-    <button class="back-btn" onclick="goHome()">Back to Dynotic Distribution</button>
-  </div>
-
-  <div class="error-message" id="errorMsg"></div>
+  <div id="msg" class="msg"></div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
 <script>
-// Firebase config
 firebase.initializeApp({
   apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
   authDomain:"dynopay-2513c.firebaseapp.com"
 });
 
 const auth = firebase.auth();
-const resetBtn = document.getElementById("resetBtn");
-const successMsg = document.getElementById("successMsg");
-const errorMsg = document.getElementById("errorMsg");
 
-// Silent login check
-auth.onAuthStateChanged(user=>{
-  if(!user){
-    window.location.href="../login";
-  }
-});
+// ambil oobCode dari URL
+const params = new URLSearchParams(window.location.search);
+const oobCode = params.get("oobCode");
 
-resetBtn.addEventListener("click", ()=>{
-  const currentPassword = document.getElementById("currentPassword").value.trim();
-  const newPassword = document.getElementById("newPassword").value.trim();
-  const confirmPassword = document.getElementById("confirmPassword").value.trim();
+if(!oobCode){
+  document.getElementById("msg").innerHTML =
+    "<span class='error'>Invalid or expired reset link.</span>";
+}
 
-  errorMsg.style.display = "none";
-  successMsg.style.display = "none";
+function resetPassword(){
+  const pass = document.getElementById("password").value;
+  const confirm = document.getElementById("confirm").value;
+  const msg = document.getElementById("msg");
 
-  if(!currentPassword || !newPassword || !confirmPassword){
-    errorMsg.innerText = "Please fill in all fields.";
-    errorMsg.style.display="block";
+  if(pass.length < 6){
+    msg.innerHTML = "<span class='error'>Password must be at least 6 characters.</span>";
     return;
   }
-  if(newPassword !== confirmPassword){
-    errorMsg.innerText = "Passwords do not match.";
-    errorMsg.style.display="block";
+  if(pass !== confirm){
+    msg.innerHTML = "<span class='error'>Passwords do not match.</span>";
     return;
   }
 
-  const user = auth.currentUser;
-  if(!user){
-    window.location.href="../login";
-    return;
-  }
-
-  resetBtn.disabled = true;
-  resetBtn.innerText = "Updating...";
-
-  // Re-authenticate with current password
-  const credential = firebase.auth.EmailAuthProvider.credential(
-    user.email,
-    currentPassword
-  );
-
-  user.reauthenticateWithCredential(credential)
+  msg.innerHTML = "Processing...";
+  
+  auth.confirmPasswordReset(oobCode, pass)
     .then(()=>{
-      return user.updatePassword(newPassword);
-    })
-    .then(()=>{
-      resetBtn.style.display="none";
-      successMsg.style.display="block";
+      msg.innerHTML = "<span class='success'>Password updated successfully. Redirecting...</span>";
+      setTimeout(()=>{
+        location.href = "../login";
+      },2000);
     })
     .catch(err=>{
-      errorMsg.innerText = "Failed: " + err.message;
-      errorMsg.style.display="block";
-      resetBtn.disabled = false;
-      resetBtn.innerText = "Change Password";
+      msg.innerHTML = "<span class='error'>"+err.message+"</span>";
     });
-});
-
-function goHome(){
-  window.location.href = "../home";
 }
 </script>
 
