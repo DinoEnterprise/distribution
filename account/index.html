@@ -203,7 +203,7 @@ button:active{transform:scale(0.94); filter:brightness(70%);}
     <span id="uid"></span>
   </div>
 
-  <button class="reset-btn clickable" onclick="goResetPassword()">Reset Password</button>
+  <button class="reset-btn clickable" onclick="goChangePassword()">Change Password</button>
 </div>
 <div class="card">
   <div class="card-header">
@@ -317,8 +317,8 @@ function goEditInfo(){
 function goEditPayment(){
   window.location.href = "mailto:dynoticcollective@gmail.com";
 }
-function goResetPassword(){
-  location.href = "../reset-password";
+function goChangePassword(){
+  location.href = "../change-password";
 }
 
 function toggleProfileMenu(){
