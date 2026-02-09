@@ -1,136 +1,286 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Create New Release | Dynotic Distribution</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Outfit",sans-serif;
+}
+.release-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+.release-title{
+  max-width:75%; 
+  line-height:1.3;
+}
+
+.release-status{
+  white-space:nowrap;
+  flex-shrink:0;
+}
 
 body{
-  background: linear-gradient(135deg,#667eea,#764ba2);
+  background:#f1f2f7;
   min-height:100vh;
+  color:#111;
+  animation:fadeIn .5s ease;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+  padding-top:74px;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(15px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes bounceIn{
+  0%{transform:translateY(-20px);opacity:0}
+  50%{transform:translateY(10px);opacity:1}
+  70%{transform:translateY(-5px)}
+  100%{transform:translateY(0);opacity:1}
+}
+
+header{
+  padding:12px 20px;
   display:flex;
-  justify-content:center;
   align-items:center;
-  padding:20px;
-  overflow-x:hidden;
+  background:#fff;
+  border-bottom:1px solid #eee;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:1000;
 }
-
-.container{
-  display:flex;
-  flex-direction:column;
-  gap:20px;
-  width:360px;
-}
-
+header img{height:50px}
+  
 .card{
+  max-width:420px;
+  width:90%;
+  margin:0;
   background:#fff;
   border-radius:20px;
-  padding:30px 20px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.08);
-  cursor:pointer;
-  text-align:center;
-  transform:translateY(50px);
-  opacity:0;
-  animation:slideIn 0.6s forwards;
+  padding:25px;
+  border:1px solid #ececec;
+  box-shadow:0 8px 18px rgba(0,0,0,.05);
   transition:.3s;
+  animation:bounceIn .6s ease;
 }
-.card:nth-child(1){animation-delay:.2s;}
-.card:nth-child(2){animation-delay:.4s;}
-
-@keyframes slideIn{
-  from{opacity:0; transform:translateY(50px);}
-  to{opacity:1; transform:translateY(0);}
-}
-
-.card:hover{
-  transform:translateY(-6px) scale(1.02) rotateZ(-1deg);
-  box-shadow:0 16px 32px rgba(0,0,0,0.15);
-}
-
-.card h2{
-  font-size:20px;
-  font-weight:700;
-  margin-bottom:8px;
-  color:#111;
-}
-.card p{
-  font-size:13px;
-  color:#555;
-  margin-bottom:12px;
-}
-
-.card .icon{
-  font-size:28px;
-  font-weight:700;
-  background:#667eea;
-  color:#fff;
-  width:50px;
-  height:50px;
+.center-wrapper{
+  min-height:calc(100vh - 140px); /* header + bottom nav */
   display:flex;
-  justify-content:center;
   align-items:center;
-  border-radius:14px;
-  margin:auto;
-  margin-bottom:10px;
-  animation:iconBounce 1.5s infinite alternate ease-in-out;
-  transition:.3s;
+  justify-content:center;
 }
-.card.cover .icon{background:#f56565;}
-
-.card.cover:hover .icon{transform:scale(1.3) rotate(10deg);}
-.card.original:hover .icon{transform:scale(1.3) rotate(-10deg);}
-
-@keyframes iconBounce{
-  0%{transform:translateY(0);}
-  50%{transform:translateY(-6px);}
-  100%{transform:translateY(0);}
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 22px rgba(0,0,0,.08);
 }
+.card .clickable:hover{
+  border-color:#667eea;
+  background:#f6f7ff;
+}
+.artist-name{font-size:15px;font-weight:500;color:#555;margin-bottom:6px}
+.balance-title{font-size:15px;font-weight:600;color:#222;margin-bottom:10px}
+.card-value{font-size:33px;font-weight:700;color:#111;margin-bottom:15px}
 
-.bottom-note{
-  text-align:center;
-  font-size:12px;
-  color:#fff;
-  margin-top:10px;
+.profile-menu{
+  position:fixed;
+  bottom:60px;
+  right:20px;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 6px 18px rgba(0,0,0,.12);
+  display:none;
+  width:180px;
+  z-index:10;
   opacity:0;
-  animation:fadeInNote 1s 0.6s forwards;
+  transform:translateY(20px);
+  transition:.25s ease;
+}
+.profile-menu.show{
+  display:block;
+  opacity:1;
+  transform:translateY(0);
+}
+.profile-menu div{
+  padding:12px 14px;
+  cursor:pointer;
+  border-bottom:1px solid #eee;
+  font-size:14px;
+}
+.profile-menu div:last-child{border-bottom:none}
+.profile-menu div:hover{background:#f1f2f7}
+
+.clickable{
+  cursor:pointer;
+  transition:.12s;
+  outline:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.clickable:active{
+  transform:scale(.94);
+  filter:brightness(85%);
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.2);
 }
 
-@keyframes fadeInNote{
-  from{opacity:0; transform:translateY(10px);}
-  to{opacity:1; transform:translateY(0);}
+
+.bottom-nav{
+  background:#fff;
+  border-top:1px solid #eee;
+  padding:10px 0;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+}
+
+.nav-item{
+  text-align:center;
+  font-size:13px;
+  opacity:.75;
+  padding:4px 14px;
+  border-radius:12px;
+}
+.nav-item img{
+  width:28px;
+  display:block;
+  margin:auto;
+  margin-bottom:4px;
+}
+.nav-item:hover{opacity:1}
+.nav-item.active{opacity:1;color:#667eea}
+.nav-item.active img{filter:brightness(1.2)}
+
+
+button{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:14px;
+  font-size:16px;
+  font-weight:700;
+  color:#fff;
+  background:linear-gradient(90deg,#667eea,#764ba2);
+  cursor:pointer;
+}
+button:hover{filter:brightness(90%)}
+button:active{
+  filter:brightness(70%);
+  transform:scale(.95);
 }
 </style>
 </head>
+
 <body>
 
-<div class="container">
-  <div class="card original" onclick="goOriginal()">
-    <div class="icon">O</div>
-    <h2>Original Asset</h2>
-    <p>Create your original release and upload your master files</p>
-  </div>
+<header>
+  <img src="../assets/dynotic-distribution.png">
+</header>
 
-  <div class="card cover" onclick="goCover()">
-    <div class="icon">C</div>
-    <h2>Cover License</h2>
-    <p>Upload cover releases or Copper License tracks</p>
-  </div>
+<div class="center-wrapper">
+  <div class="card">
+    <div style="font-weight:700;font-size:16px;margin-bottom:12px">
+      Choose Release Type
+    </div>
+<div style="font-size:13px;color:#777;margin-bottom:18px">
+  Select how you want to distribute your release
+</div>
+    <!-- COVER ASSET -->
+    <div class="clickable"
+      onclick="goCoverAsset()"
+      style="padding:14px;border:1px solid #eee;border-radius:14px;margin-bottom:12px">
+      <div style="font-weight:600;font-size:15px">Cover Asset</div>
+      <div style="font-size:12px;color:#666;margin-top:4px">
+        Untuk cover / remix / re-upload berlisensi
+      </div>
+    </div>
 
-  <div class="bottom-note">Select a release type to start the release process</div>
+    <!-- ORIGINAL ASSET -->
+    <div class="clickable"
+      onclick="goOriginalAsset()"
+      style="padding:14px;border:1px solid #eee;border-radius:14px">
+      <div style="font-weight:600;font-size:15px">Original Asset</div>
+      <div style="font-size:12px;color:#666;margin-top:4px">
+        Untuk karya original milik sendiri
+      </div>
+    </div>
+  </div>
 </div>
 
+
+<div class="bottom-nav">
+  <div class="nav-item clickable" onclick="homeClick()">
+    <img src="../assets/home.png">
+    Home
+  </div>
+
+  <div class="nav-item clickable active" onclick="ReleasesClick()">
+    <img src="../assets/releases.png">
+    Releases
+  </div>
+
+  <div class="nav-item clickable" onclick="accountClick()">
+  <img src="../assets/account.png">
+  Account
+  </div>
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
 <script>
-function goOriginal(){
-  location.href = "../original-asset";
+firebase.initializeApp({
+  apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain:"dynopay-2513c.firebaseapp.com",
+  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db=firebase.database();
+
+firebase.auth().onAuthStateChanged(user=>{
+  if(!user) location.href="../login";
+});
+
+function logout(){
+  firebase.auth().signOut().then(()=>{
+    location.href="../login";
+  });
 }
-function goCover(){
+function releasesClick(){
+  console.log("Releases active — tidak reload");
+}
+function accountClick(){
+  location.href = "../account";
+}
+
+function homeClick(){
+  location.href = "../home";
+}
+function goCoverAsset(){
   location.href = "../cover-licence";
 }
-</script>
 
+function goOriginalAsset(){
+  location.href = "../original-asset";
+}
+</script>
 </body>
 </html>
