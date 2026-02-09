@@ -26,6 +26,81 @@
   white-space:nowrap;
   flex-shrink:0;
 }
+.notif-btn{
+  margin-left:auto;
+  position:relative;
+}
+
+.notif-btn img{
+  width:26px;
+}
+
+.notif-badge{
+  position:absolute;
+  top:-4px;
+  right:-6px;
+  background:#ef4444;
+  color:#fff;
+  font-size:10px;
+  font-weight:700;
+  padding:2px 6px;
+  border-radius:999px;
+}
+.message-popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.35);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:2000;
+}
+
+.message-popup.show{display:flex}
+
+.message-card{
+  width:85%;
+  max-width:340px;
+  background:#fff;
+  border-radius:16px;
+  padding:18px;
+  animation:bounceIn .4s ease;
+}
+
+.message-title{
+  font-weight:700;
+  font-size:15px;
+  margin-bottom:8px;
+}
+
+.message-text{
+  font-size:13px;
+  color:#555;
+  line-height:1.4;
+}
+
+.message-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:14px;
+}
+
+.view-btn{
+  background:#667eea;
+  color:#fff;
+  border:none;
+  padding:8px 14px;
+  border-radius:10px;
+  font-weight:600;
+}
+
+.close-btn{
+  background:#eee;
+  border:none;
+  padding:8px 12px;
+  border-radius:10px;
+}
 body{
   background:#f1f2f7;
   min-height:100vh;
@@ -163,8 +238,23 @@ button:active{
 <body>
 <header>
   <img src="../assets/dynotic-distribution.png">
+  <div id="notifBtn" class="notif-btn clickable" onclick="openMessages()">
+    <img src="../assets/message.png">
+    <span id="notifBadge" class="notif-badge" style="display:none">0</span>
+  </div>
 </header>
 
+<div id="messagePopup" class="message-popup">
+  <div class="message-card">
+    <div class="message-title" id="msgTitle"></div>
+    <div class="message-text" id="msgText"></div>
+
+    <div class="message-actions">
+      <button class="view-btn" onclick="viewMessage()">View</button>
+      <button class="close-btn" onclick="closeMessage()">✕</button>
+    </div>
+  </div>
+</div>
 <!-- Main Wallet -->
 <div class="card clickable" onclick="goRekapan()">
   <div style="display:flex;justify-content:space-between;align-items:center">
@@ -224,6 +314,7 @@ firebase.auth().onAuthStateChanged(user=>{
   if(!user) location.href="../login";
   else{
     loadReleases(user.uid);
+    loadMessages(user.uid); // ← TAMBAH INI
     db.ref("users/"+user.uid).once("value").then(snap=>{
       if(snap.exists()){
         const d=snap.val();
@@ -303,6 +394,61 @@ function loadReleases(uid){
   });
 }
 function goReleaseDetail(rid){ location.href="../release-detail?rid="+rid; }
+</script>
+
+<script>
+let messagesQueue = [];
+let currentMsgIndex = 0;
+
+function loadMessages(uid){
+  db.ref("messages/"+uid).on("value", snap=>{
+    messagesQueue = [];
+    snap.forEach(i=>{
+      const m=i.val();
+      if(!m.read){
+        messagesQueue.push({ key:i.key, ...m });
+      }
+    });
+
+    if(messagesQueue.length>0){
+      notifBadge.style.display="block";
+      notifBadge.textContent=messagesQueue.length;
+    }else{
+      notifBadge.style.display="none";
+    }
+  });
+}
+
+function openMessages(){
+  if(messagesQueue.length === 0) return;
+  currentMsgIndex = 0;
+  showCurrentMessage();
+}
+
+function showCurrentMessage(){
+  if(currentMsgIndex >= messagesQueue.length){
+    messagePopup.classList.remove("show");
+    return;
+  }
+
+  const m = messagesQueue[currentMsgIndex];
+  msgTitle.textContent = m.title;
+  msgText.textContent = m.text;
+  messagePopup.classList.add("show");
+}
+
+function closeMessage(){
+  const m = messagesQueue[currentMsgIndex];
+  if(m) db.ref("messages/"+firebase.auth().currentUser.uid+"/"+m.key+"/read").set(true);
+  currentMsgIndex++;
+  showCurrentMessage();
+}
+
+function viewMessage(){
+  const m = messagesQueue[currentMsgIndex];
+  db.ref("messages/"+firebase.auth().currentUser.uid+"/"+m.key+"/read").set(true);
+  closeMessage();
+}
 </script>
 </body>
 </html>
