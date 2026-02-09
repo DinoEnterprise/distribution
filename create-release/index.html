@@ -1,190 +1,211 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create New Release | Dynotic Distribution</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create New Release | Dynotic Distribution</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:"Outfit",sans-serif;
-}
-.release-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:10px;
-}
-.release-title{
-  max-width:75%; 
-  line-height:1.3;
-}
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Outfit", sans-serif;
+    }
 
-.release-status{
-  white-space:nowrap;
-  flex-shrink:0;
-}
+    body {
+      background: #f1f2f7;
+      min-height: 100vh;
+      color: #111;
+      animation: fadeIn .5s ease;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      padding-top: 74px;
+    }
 
-body{
-  background:#f1f2f7;
-  min-height:100vh;
-  color:#111;
-  animation:fadeIn .5s ease;
-  -webkit-tap-highlight-color:transparent;
-  user-select:none;
-  padding-top:74px;
-}
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(15px)}
-  to{opacity:1;transform:translateY(0)}
-}
+    @keyframes bounceIn {
+      0% { transform: translateY(-20px); opacity: 0; }
+      50% { transform: translateY(10px); opacity: 1; }
+      70% { transform: translateY(-5px); }
+      100% { transform: translateY(0); opacity: 1; }
+    }
 
-@keyframes bounceIn{
-  0%{transform:translateY(-20px);opacity:0}
-  50%{transform:translateY(10px);opacity:1}
-  70%{transform:translateY(-5px)}
-  100%{transform:translateY(0);opacity:1}
-}
+    header {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+    }
 
-header{
-  padding:12px 20px;
-  display:flex;
-  align-items:center;
-  background:#fff;
-  border-bottom:1px solid #eee;
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  z-index:1000;
-}
-header img{height:50px}
-  
-.card{
-  max-width:420px;
-  width:90%;
-  margin:0;
-  background:#fff;
-  border-radius:20px;
-  padding:25px;
-  border:1px solid #ececec;
-  box-shadow:0 8px 18px rgba(0,0,0,.05);
-  transition:.3s;
-  animation:bounceIn .6s ease;
-}
-.center-wrapper{
-  min-height:calc(100vh - 140px); /* header + bottom nav */
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.card:hover{
-  transform:translateY(-3px);
-  box-shadow:0 10px 22px rgba(0,0,0,.08);
-}
-.card .clickable:hover{
-  border-color:#667eea;
-  background:#f6f7ff;
-}
-.artist-name{font-size:15px;font-weight:500;color:#555;margin-bottom:6px}
-.balance-title{font-size:15px;font-weight:600;color:#222;margin-bottom:10px}
-.card-value{font-size:33px;font-weight:700;color:#111;margin-bottom:15px}
+    header img {
+      height: 50px;
+    }
 
-.profile-menu{
-  position:fixed;
-  bottom:60px;
-  right:20px;
-  background:#fff;
-  border-radius:12px;
-  box-shadow:0 6px 18px rgba(0,0,0,.12);
-  display:none;
-  width:180px;
-  z-index:10;
-  opacity:0;
-  transform:translateY(20px);
-  transition:.25s ease;
-}
-.profile-menu.show{
-  display:block;
-  opacity:1;
-  transform:translateY(0);
-}
-.profile-menu div{
-  padding:12px 14px;
-  cursor:pointer;
-  border-bottom:1px solid #eee;
-  font-size:14px;
-}
-.profile-menu div:last-child{border-bottom:none}
-.profile-menu div:hover{background:#f1f2f7}
+    .card {
+      width: 90%;
+      margin: 35px auto;
+      background: #fff;
+      border-radius: 20px;
+      padding: 25px;
+      border: 1px solid #ececec;
+      box-shadow: 0 8px 18px rgba(0,0,0,.05);
+      transition: .3s;
+      animation: bounceIn .6s ease;
+    }
 
-.clickable{
-  cursor:pointer;
-  transition:.12s;
-  outline:none;
-  -webkit-tap-highlight-color:transparent;
-}
-.clickable:active{
-  transform:scale(.94);
-  filter:brightness(85%);
-  box-shadow:inset 0 2px 6px rgba(0,0,0,.2);
-}
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 22px rgba(0,0,0,.08);
+    }
 
+    .release-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
 
-.bottom-nav{
-  background:#fff;
-  border-top:1px solid #eee;
-  padding:10px 0;
-  display:flex;
-  justify-content:space-around;
-  align-items:center;
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-}
+    .release-title {
+      max-width: 75%;
+      line-height: 1.3;
+    }
 
-.nav-item{
-  text-align:center;
-  font-size:13px;
-  opacity:.75;
-  padding:4px 14px;
-  border-radius:12px;
-}
-.nav-item img{
-  width:28px;
-  display:block;
-  margin:auto;
-  margin-bottom:4px;
-}
-.nav-item:hover{opacity:1}
-.nav-item.active{opacity:1;color:#667eea}
-.nav-item.active img{filter:brightness(1.2)}
+    .release-status {
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
 
+    .release-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 16px;
+      background: #fff;
+      transition: all .25s ease;
+    }
 
-button{
-  width:100%;
-  padding:15px;
-  border:none;
-  border-radius:14px;
-  font-size:16px;
-  font-weight:700;
-  color:#fff;
-  background:linear-gradient(90deg,#667eea,#764ba2);
-  cursor:pointer;
-}
-button:hover{filter:brightness(90%)}
-button:active{
-  filter:brightness(70%);
-  transform:scale(.95);
-}
-</style>
+    .release-option:hover {
+      border-color: #667eea;
+      box-shadow: 0 8px 20px rgba(102,126,234,.15);
+      background: #f8f9ff;
+    }
+
+    .release-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f1f3ff;
+      flex-shrink: 0;
+    }
+
+    .release-icon img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+
+    .release-text-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #111;
+    }
+
+    .release-text-desc {
+      font-size: 12.5px;
+      color: #666;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .clickable {
+      cursor: pointer;
+      transition: .12s;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .clickable:active {
+      transform: scale(.94);
+      filter: brightness(85%);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,.2);
+    }
+
+    .bottom-nav {
+      background: #fff;
+      border-top: 1px solid #eee;
+      padding: 10px 0;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
+
+    .nav-item {
+      text-align: center;
+      font-size: 13px;
+      opacity: .75;
+      padding: 4px 14px;
+      border-radius: 12px;
+    }
+
+    .nav-item img {
+      width: 28px;
+      display: block;
+      margin: auto auto 4px;
+    }
+
+    .nav-item:hover {
+      opacity: 1;
+    }
+
+    .nav-item.active {
+      opacity: 1;
+      color: #667eea;
+    }
+
+    .nav-item.active img {
+      filter: brightness(1.2);
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      cursor: pointer;
+    }
+
+    button:hover { filter: brightness(90%); }
+    button:active {
+      filter: brightness(70%);
+      transform: scale(.95);
+    }
+  </style>
 </head>
 
 <body>
@@ -193,36 +214,39 @@ button:active{
   <img src="../assets/dynotic-distribution.png">
 </header>
 
-<div class="center-wrapper">
-  <div class="card">
-    <div style="font-weight:700;font-size:16px;margin-bottom:12px">
-      Choose Release Type
+<div class="card">
+  <div style="font-weight:700;font-size:16px;margin-bottom:12px">
+    Choose Release Type
+  </div>
+
+  <!-- COVER ASSET -->
+  <div class="clickable release-option" onclick="goCoverAsset()" style="margin-bottom:14px">
+    <div class="release-icon">
+      <img src="../assets/icon-cover.png" alt="Cover Asset">
     </div>
-<div style="font-size:13px;color:#777;margin-bottom:18px">
-  Select how you want to distribute your release
-</div>
-    <!-- COVER ASSET -->
-    <div class="clickable"
-      onclick="goCoverAsset()"
-      style="padding:14px;border:1px solid #eee;border-radius:14px;margin-bottom:12px">
-      <div style="font-weight:600;font-size:15px">Cover Asset</div>
-      <div style="font-size:12px;color:#666;margin-top:4px">
-        Untuk cover / remix / re-upload berlisensi
+    <div>
+      <div class="release-text-title">Cover Asset</div>
+      <div class="release-text-desc">
+        Publish covers, remixes, or licensed versions of existing songs
       </div>
     </div>
+  </div>
 
-    <!-- ORIGINAL ASSET -->
-    <div class="clickable"
-      onclick="goOriginalAsset()"
-      style="padding:14px;border:1px solid #eee;border-radius:14px">
-      <div style="font-weight:600;font-size:15px">Original Asset</div>
-      <div style="font-size:12px;color:#666;margin-top:4px">
-        Untuk karya original milik sendiri
+  <!-- ORIGINAL ASSET -->
+  <div class="clickable release-option" onclick="goOriginalAsset()">
+    <div class="release-icon">
+      <img src="../assets/icon-original.png" alt="Original Asset">
+    </div>
+    <div>
+      <div class="release-text-title">Original Asset</div>
+      <div class="release-text-desc">
+        Publish music you created from scratch and fully own
       </div>
     </div>
   </div>
 </div>
 
+<div style="height:120px"></div>
 
 <div class="bottom-nav">
   <div class="nav-item clickable" onclick="homeClick()">
@@ -230,14 +254,14 @@ button:active{
     Home
   </div>
 
-  <div class="nav-item clickable active" onclick="ReleasesClick()">
+  <div class="nav-item clickable active" onclick="releasesClick()">
     <img src="../assets/releases.png">
     Releases
   </div>
 
   <div class="nav-item clickable" onclick="accountClick()">
-  <img src="../assets/account.png">
-  Account
+    <img src="../assets/account.png">
+    Account
   </div>
 </div>
 
@@ -247,40 +271,44 @@ button:active{
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <script>
-firebase.initializeApp({
-  apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain:"dynopay-2513c.firebaseapp.com",
-  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
-
-const db=firebase.database();
-
-firebase.auth().onAuthStateChanged(user=>{
-  if(!user) location.href="../login";
-});
-
-function logout(){
-  firebase.auth().signOut().then(()=>{
-    location.href="../login";
+  firebase.initializeApp({
+    apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+    authDomain: "dynopay-2513c.firebaseapp.com",
+    databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
   });
-}
-function releasesClick(){
-  console.log("Releases active — tidak reload");
-}
-function accountClick(){
-  location.href = "../account";
-}
 
-function homeClick(){
-  location.href = "../home";
-}
-function goCoverAsset(){
-  location.href = "../cover-licence";
-}
+  const db = firebase.database();
 
-function goOriginalAsset(){
-  location.href = "../original-asset";
-}
+  firebase.auth().onAuthStateChanged(user => {
+    if (!user) location.href = "../login";
+  });
+
+  function logout() {
+    firebase.auth().signOut().then(() => {
+      location.href = "../login";
+    });
+  }
+
+  function releasesClick() {
+    console.log("Releases active — tidak reload");
+  }
+
+  function accountClick() {
+    location.href = "../account";
+  }
+
+  function homeClick() {
+    location.href = "../home";
+  }
+
+  function goCoverAsset() {
+    location.href = "../cover-licence";
+  }
+
+  function goOriginalAsset() {
+    location.href = "../original-asset";
+  }
 </script>
+
 </body>
 </html>
