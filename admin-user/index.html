@@ -6,7 +6,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <style>
 body {
   font-family: 'Outfit', sans-serif;
@@ -61,8 +60,9 @@ button.action-btn:hover { background: #f0f0f0; }
 
 /* Table style */
 .table-container {
-  overflow-x: auto;
-  max-height: 400px;
+  max-height: 500px;   /* tinggi maksimal tabel */
+  overflow-y: auto;    /* scroll vertikal */
+  overflow-x: auto;    /* scroll horizontal jika tabel lebar */
 }
 table {
   width: 100%;
@@ -139,17 +139,17 @@ tr:hover {
 
 <!-- ADD MEMBER -->
 <!-- MEMBERS -->
-<div class="card" style="max-height:600px;overflow:auto;">
-  <h3>Members</h3>
+<div class="card">
+  <h3>Users</h3>
   <input id="searchInput" placeholder="Cari member..." style="margin-bottom:10px;">
   <div class="table-container">
     <table id="memberTable">
       <thead>
         <tr>
-          <th>Nama</th>
+          <th>Name</th>
           <th>Email</th>
-          <th>Saldo</th>
-          <th>Aksi</th>
+          <th>Balance</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody></tbody>
