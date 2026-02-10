@@ -212,25 +212,37 @@ function loadSentMessages(){
   db.ref("messages_sent").once("value")
   .then(snap=>{
     const data = [];
-    snap.forEach(s=>{
-      data.push(s.val());
+    snap.forEach(childSnap => {
+      const val = childSnap.val();
+      // cek kalau nested object (pushId)
+      if(val && typeof val === 'object'){
+        data.push(val);
+      }
     });
-    
-    // urutkan berdasarkan sentAt descending (terbaru dulu)
+
+    // urutkan terbaru dulu
     data.sort((a,b)=> b.sentAt - a.sentAt);
 
-    tbody.innerHTML="";
+    tbody.innerHTML = "";
+    if(data.length === 0){
+      tbody.innerHTML = "<tr><td colspan='3'>Belum ada pesan</td></tr>";
+      return;
+    }
+
     data.slice(0,50).forEach(d=>{
       const tgl = new Date(d.sentAt).toLocaleString();
       tbody.innerHTML += `<tr>
-        <td>${d.memberName}</td>
-        <td>${d.subject}</td>
+        <td>${d.memberName || '-'}</td>
+        <td>${d.subject || '-'}</td>
         <td>${tgl}</td>
       </tr>`;
     });
+  })
+  .catch(err=>{
+    console.error(err);
+    tbody.innerHTML = `<tr><td colspan='3'>Error: ${err.message}</td></tr>`;
   });
 }
-
 
 </script>
 </body>
