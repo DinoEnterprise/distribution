@@ -17,21 +17,23 @@ body{
   background:#f1f2f7;
   padding:14px;
 }
+
 .card{
   background:#fff;
-  border-radius:14px;
+  border-radius:16px;
   padding:14px;
-  box-shadow:0 8px 30px rgba(0,0,0,.06);
+  box-shadow:0 10px 30px rgba(0,0,0,.06);
 }
+
 h3{margin:0 0 12px}
 
 .search{
-  margin-bottom:12px;
   position:relative;
+  margin-bottom:12px;
 }
 .search input{
   width:100%;
-  padding:10px 12px 10px 36px;
+  padding:10px 14px 10px 38px;
   border-radius:12px;
   border:1px solid #ddd;
 }
@@ -44,7 +46,10 @@ h3{margin:0 0 12px}
   opacity:.6;
 }
 
-.table-wrap{overflow-x:auto}
+.table-wrap{
+  overflow-x:auto;
+}
+
 table{
   width:100%;
   border-collapse:collapse;
@@ -53,11 +58,13 @@ table{
 th,td{
   padding:10px;
   border-bottom:1px solid #eee;
+  white-space:nowrap;
 }
 th{
   background:#fafafa;
   text-align:left;
 }
+
 tr:hover{background:#f8f8f8}
 
 .status{
@@ -73,15 +80,20 @@ tr:hover{background:#f8f8f8}
   gap:6px;
   align-items:center;
 }
+
 .btn{
   border:1px solid #000;
-  background:#fff;
-  padding:6px 10px;
+  background:transparent;
+  padding:6px 12px;
   font-size:12px;
+  border-radius:10px;
   cursor:pointer;
-  border-radius:8px;
 }
-.btn:hover{background:#f2f2f2}
+.btn:hover{background:#f3f3f3}
+.btn:disabled{
+  opacity:.4;
+  cursor:not-allowed;
+}
 
 .menu{position:relative}
 .menu button{
@@ -90,32 +102,45 @@ tr:hover{background:#f8f8f8}
   font-size:18px;
   cursor:pointer;
 }
+
 .menu-box{
   display:none;
   position:absolute;
   right:0;
+  top:24px;
   background:#fff;
-  border-radius:10px;
+  border-radius:12px;
   border:1px solid #ddd;
-  box-shadow:0 10px 30px rgba(0,0,0,.12);
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
   overflow:hidden;
   z-index:99;
 }
 .menu-box button{
   width:100%;
-  padding:10px;
+  padding:10px 12px;
   border:none;
   background:none;
   text-align:left;
 }
 .menu-box button:hover{background:#f5f5f5}
-.menu-box .danger{color:#ef4444;font-weight:700}
+.menu-box .danger{
+  color:#ef4444;
+  font-weight:700;
+}
 
+/* 🔥 STICKY PAGINATION */
 .footer{
+  position:sticky;
+  bottom:0;
+  margin-top:12px;
+  background:#fff;
+  padding:10px;
+  border-top:1px solid #eee;
+
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-top:12px;
+  gap:10px;
 }
 </style>
 </head>
@@ -145,9 +170,9 @@ tr:hover{background:#f8f8f8}
   </div>
 
   <div class="footer">
-    <button class="btn" onclick="prev()">Prev</button>
+    <button class="btn" id="prevBtn" onclick="prev()">Prev</button>
     <b id="pageInfo">Page 1</b>
-    <button class="btn" onclick="next()">Next</button>
+    <button class="btn" id="nextBtn" onclick="next()">Next</button>
   </div>
 </div>
 
@@ -159,12 +184,13 @@ firebase.initializeApp({
   databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 
-const auth=firebase.auth();
-const db=firebase.database();
+const auth = firebase.auth();
+const db   = firebase.database();
 
+// 🔐 ADMIN GUARD
 auth.onAuthStateChanged(u=>{
-  if(!u) location.href="../admin";
-  else db.ref("admins/"+u.uid).once("value").then(s=>{
+  if(!u) return location.href="../admin";
+  db.ref("admins/"+u.uid).once("value").then(s=>{
     if(!s.exists()){
       alert("Access denied");
       auth.signOut();
@@ -172,93 +198,100 @@ auth.onAuthStateChanged(u=>{
   });
 });
 
-let DATA=[],page=1;
+let DATA = [];
+let page = 1;
 const perPage = 15;
-let q="";
+let q = "";
 
-document.getElementById("search").oninput=e=>{
-  q=e.target.value.toLowerCase();
-  page=1;
+// 🔍 SEARCH
+search.oninput = e=>{
+  q = e.target.value.toLowerCase();
+  page = 1;
   render();
 };
 
+// 📥 LOAD DATA
 function load(){
-  Promise.all([
-    db.ref("users").once("value"),
-    db.ref("releases").once("value")
-  ]).then(([u,r])=>{
-    const email={};
-    u.forEach(x=>email[x.key]=x.val().email);
-
+  db.ref("releases").once("value").then(s=>{
     DATA=[];
-    r.forEach(user=>{
+    s.forEach(user=>{
       user.forEach(rel=>{
-        const d=rel.val();
+        const d = rel.val();
         DATA.push({
-  uid: user.key,
-  rid: rel.key,
-
-  // 🔥 FIX EMAIL (AMAN)
-  email: d.email || email[user.key] || "-",
-
-  // 🔥 NORMALISASI FIELD
-  artist: d.artist || d.artist_name || "-",
-  title: d.title || d.track_title || d.release_title || d.name || "-",
-
-  status: d.status || "pending",
-  time: d.time || d.createdAt || 0
-});
+          uid:user.key,
+          rid:rel.key,
+          email:d.email || "-",
+          artist:d.artist || d.artist_name || "-",
+          title:d.title || d.track_title || d.release_title || "-",
+          status:d.status || "pending",
+          time:d.time || d.createdAt || 0
+        });
       });
     });
-
     DATA.sort((a,b)=>b.time-a.time);
     render();
   });
 }
 
+// 🧱 RENDER
 function render(){
-  const tb=document.getElementById("tbody");
+  const tb = tbody;
   tb.innerHTML="";
 
-  const f=DATA.filter(d=>{
-    return d.email.toLowerCase().includes(q) ||
-       d.artist.toLowerCase().includes(q) ||
-       d.title.toLowerCase().includes(q);
-  });
+  const filtered = DATA.filter(d =>
+    d.email.toLowerCase().includes(q) ||
+    d.artist.toLowerCase().includes(q) ||
+    d.title.toLowerCase().includes(q)
+  );
 
-  const total=Math.ceil(f.length/perPage)||1;
-  if(page>total) page=total;
+  const total = Math.max(1, Math.ceil(filtered.length / perPage));
+  if(page > total) page = total;
 
-  f.slice((page-1)*perPage,page*perPage).forEach(d=>{
-    const c=d.status=="approved"?"#10b981":d.status=="rejected"?"#ef4444":"#f59e0b";
-    tb.innerHTML+=`
-    <tr>
-      <td>${d.email}</td>
-      <td>${d.artist}</td>
-      <td>${d.title}</td>
-      <td><span class="status" style="color:${c};border-color:${c}">${d.status.toUpperCase()}</span></td>
-      <td class="action">
-        <button class="btn" onclick="location.href='../admin-platform?uid=${d.uid}&rid=${d.rid}'">Detail</button>
-        <div class="menu">
-          <button onclick="menu(this)">⋮</button>
-          <div class="menu-box">
-            <button onclick="setStatus('${d.uid}','${d.rid}','approved')">Approve</button>
-            <button onclick="setStatus('${d.uid}','${d.rid}','rejected')">Reject</button>
-            <button class="danger" onclick="del('${d.uid}','${d.rid}')">Delete</button>
+  filtered
+    .slice((page-1)*perPage, page*perPage)
+    .forEach(d=>{
+      const c =
+        d.status==="approved" ? "#10b981" :
+        d.status==="rejected" ? "#ef4444" :
+        "#f59e0b";
+
+      tb.innerHTML += `
+      <tr>
+        <td>${d.email}</td>
+        <td>${d.artist}</td>
+        <td>${d.title}</td>
+        <td><span class="status" style="color:${c};border-color:${c}">
+          ${d.status.toUpperCase()}
+        </span></td>
+        <td class="action">
+          <button class="btn"
+            onclick="location.href='../admin-platform?uid=${d.uid}&rid=${d.rid}'">
+            Detail
+          </button>
+          <div class="menu">
+            <button onclick="menu(this)">⋮</button>
+            <div class="menu-box">
+              <button onclick="setStatus('${d.uid}','${d.rid}','approved')">Approve</button>
+              <button onclick="setStatus('${d.uid}','${d.rid}','rejected')">Reject</button>
+              <button class="danger" onclick="del('${d.uid}','${d.rid}')">Delete</button>
+            </div>
           </div>
-        </div>
-      </td>
-    </tr>`;
-  });
+        </td>
+      </tr>`;
+    });
 
-  pageInfo.innerText=`Page ${page} / ${total}`;
+  pageInfo.innerText = `Page ${page} / ${total}`;
+  prevBtn.disabled = page === 1;
+  nextBtn.disabled = page === total;
 }
 
-function next(){page++;render()}
-function prev(){if(page>1){page--;render()}}
+// ⏭ PAGINATION
+function next(){ page++; render(); }
+function prev(){ if(page>1){ page--; render(); } }
 
+// ⚙️ ACTIONS
 function setStatus(u,r,s){
-  if(confirm("Set status "+s)){
+  if(confirm("Set status "+s+"?")){
     db.ref(`releases/${u}/${r}/status`).set(s).then(load);
   }
 }
@@ -268,15 +301,16 @@ function del(u,r){
   }
 }
 
+// ☰ MENU
 function menu(b){
   document.querySelectorAll(".menu-box").forEach(x=>x.style.display="none");
   b.nextElementSibling.style.display="block";
 }
-document.onclick=e=>{
+document.onclick = e=>{
   if(!e.target.closest(".menu")){
     document.querySelectorAll(".menu-box").forEach(x=>x.style.display="none");
   }
-}
+};
 
 load();
 </script>
