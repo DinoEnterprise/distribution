@@ -42,8 +42,8 @@ th{ background:#f9f9f9; font-weight:600; }
   <label>Subject</label>
   <input id="subject" placeholder="Subject">
   
-<label>Judul Lagu (hanya untuk Approved)</label>
-<input id="songTitle" placeholder="Judul lagu">
+  <label>Judul Lagu (hanya untuk Approved)</label>
+  <input id="songTitle" placeholder="Judul lagu">
 
   <label>Isi Pesan</label>
   <textarea id="body" rows="5" placeholder="Isi pesan"></textarea>
@@ -79,30 +79,28 @@ firebase.initializeApp({
 const db = firebase.database();
 const auth = firebase.auth();
 
+// Hanya load data setelah admin terverifikasi
 auth.onAuthStateChanged(user => {
   if(!user){
-    // Belum login → redirect ke halaman login admin
-    location.href = "../admin";
+    location.href = "../admin"; 
     return;
   }
 
-  // Cek apakah user ini admin
-  db.ref("admins/"+user.uid).once("value")
-    .then(snapshot=>{
-      if(!snapshot.exists()){
-        alert("⚠ Anda bukan admin!");
-        auth.signOut().then(()=>location.href="../admin");
-      } else {
-        // ✅ Setelah admin terverifikasi, baru load data
-        loadMembers();
-        loadSentMessages();
-      }
-    })
-    .catch(err=>{
-      console.error(err);
+  db.ref("admins/"+user.uid).once("value").then(snapshot=>{
+    if(!snapshot.exists()){
+      alert("⚠ Anda bukan admin!");
       auth.signOut().then(()=>location.href="../admin");
-    });
+    } else {
+      // ✅ Admin verified
+      loadMembers();
+      loadSentMessages();
+    }
+  }).catch(err=>{
+    console.error(err);
+    auth.signOut().then(()=>location.href="../admin");
+  });
 });
+
 // --- Load Members ---
 function loadMembers(){
   const select = document.getElementById("memberSelect");
@@ -114,6 +112,8 @@ function loadMembers(){
       const d = u.val();
       select.innerHTML += `<option value="${u.key}" data-nama="${d.nama}">${d.nama} (${d.email})</option>`;
     });
+  }).catch(err=>{
+    console.error(err);
   });
 }
 
@@ -124,49 +124,45 @@ const templates = {
   royalty_available: "Halo, [Nama],\n\nRoyalty Anda sekarang tersedia di akun Anda.",
   royalty_sent: "Halo, [Nama],\n\nRoyalty Anda sudah dikirim ke rekening Anda."
 };
+
 document.getElementById("templateSelect").addEventListener("change", e=>{
   const val = e.target.value;
   const member = document.getElementById("memberSelect");
   const nama = member.selectedOptions[0]?.dataset.nama || "[Nama]";
-  const body = document.getElementById("body");
-  const subject = document.getElementById("subject");
   const songTitle = document.getElementById("songTitle")?.value.trim() || "[JudulLagu]";
-
   if(val === "manual"){
-    subject.value = "";
-    body.value = "";
-  }else{
-    subject.value = val.replace(/_/g," ").toUpperCase();
-    body.value = templates[val]
-                  .replace("[Nama]", nama)
-                  .replace("[JudulLagu]", songTitle);
+    document.getElementById("subject").value = "";
+    document.getElementById("body").value = "";
+  } else {
+    document.getElementById("subject").value = val.replace(/_/g," ").toUpperCase();
+    document.getElementById("body").value = templates[val]
+                                    .replace("[Nama]", nama)
+                                    .replace("[JudulLagu]", songTitle);
   }
 });
 
-// --- Update body when member berubah ---
 document.getElementById("memberSelect").addEventListener("change", e=>{
-  const member = e.target;
-  const nama = member.selectedOptions[0]?.dataset.nama || "[Nama]";
+  const nama = e.target.selectedOptions[0]?.dataset.nama || "[Nama]";
   const template = document.getElementById("templateSelect").value;
   const songTitle = document.getElementById("songTitle")?.value.trim() || "[JudulLagu]";
-
-  if(template!=="manual"){
+  if(template !== "manual"){
     document.getElementById("body").value = templates[template]
-                                             .replace("[Nama]", nama)
-                                             .replace("[JudulLagu]", songTitle);
+                                    .replace("[Nama]", nama)
+                                    .replace("[JudulLagu]", songTitle);
   }
 });
+
 document.getElementById("songTitle").addEventListener("input", e=>{
-  const template = document.getElementById("templateSelect").value;
-  if(template === "approved"){
+  if(document.getElementById("templateSelect").value === "approved"){
     const member = document.getElementById("memberSelect");
     const nama = member.selectedOptions[0]?.dataset.nama || "[Nama]";
     const songTitle = e.target.value.trim() || "[JudulLagu]";
-    document.getElementById("body").value = templates[template]
-                                           .replace("[Nama]", nama)
-                                           .replace("[JudulLagu]", songTitle);
+    document.getElementById("body").value = templates.approved
+                                    .replace("[Nama]", nama)
+                                    .replace("[JudulLagu]", songTitle);
   }
 });
+
 // --- Send Message ---
 function sendMessage(){
   const uid = document.getElementById("memberSelect").value;
@@ -181,23 +177,16 @@ function sendMessage(){
     return;
   }
 
-  const messageObj = {
-    subject,
-    body,
-    sentAt: Date.now(),
-    admin: auth.currentUser?.email || "admin"
-  };
+  const messageObj = { subject, body, sentAt: Date.now(), admin: auth.currentUser?.email || "admin" };
 
-  // simpan ke inbox member
+  // simpan ke inbox member + sent admin
   db.ref(`messages_inbox/${uid}`).push(messageObj)
-  // simpan ke sent admin
-// simpan ke sent admin
-.then(() => db.ref(`messages_sent`).push({...messageObj, memberUid: uid, memberName: nama}))
-.then(()=>{
+  .then(() => db.ref(`messages_sent`).push({...messageObj, memberUid: uid, memberName: nama}))
+  .then(()=>{
     msg.style.color="green";
     msg.textContent="✔ Pesan berhasil dikirim!";
-    loadSentMessages(); // langsung refresh tabel
-})
+    loadSentMessages();
+  })
   .catch(err=>{
     msg.style.color="red";
     msg.textContent="❌ "+err.message;
@@ -214,13 +203,9 @@ function loadSentMessages(){
     const data = [];
     snap.forEach(childSnap => {
       const val = childSnap.val();
-      // cek kalau nested object (pushId)
-      if(val && typeof val === 'object'){
-        data.push(val);
-      }
+      if(val && typeof val === 'object') data.push(val);
     });
 
-    // urutkan terbaru dulu
     data.sort((a,b)=> b.sentAt - a.sentAt);
 
     tbody.innerHTML = "";
@@ -243,7 +228,6 @@ function loadSentMessages(){
     tbody.innerHTML = `<tr><td colspan='3'>Error: ${err.message}</td></tr>`;
   });
 }
-
 </script>
 </body>
 </html>
