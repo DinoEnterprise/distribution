@@ -53,19 +53,7 @@
     header img {
       height: 50px;
     }
-    
-#closeMsgBtn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  padding: 4px 8px;
-  font-size: 12px;
-  background: #000;
-  color: #fff;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-}
+
 .notif-btn {
   margin-left: auto;
   position: relative;
@@ -81,19 +69,12 @@
 
 .notif-badge {
   position: absolute;
-  top: 0px;
-  right: 0px;
+  top: -4px;
+  right: -6px;
   font-size: 10px;
   font-weight: 700;
-  width: 16px;
-  height: 16px;
-  padding: 0;
-  border-radius: 50%;
-  background: #ef4444;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 2px 6px;
+  border-radius: 999px;
 }
     .message-popup {
       position: fixed;
@@ -281,18 +262,7 @@
       filter: brightness(70%);
       transform: scale(.95);
     }
-.release-item {
-  padding: 12px;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  margin-bottom: 10px;
-  transition: 0.15s;
-}
 
-.release-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,.08);
-}
     .release-row {
       display: flex;
       justify-content: space-between;
@@ -324,11 +294,11 @@
 
 <div id="messagePopup" class="message-popup">
   <div class="message-card">
-    <button id="closeMsgBtn" class="close-btn">✕</button>
-    <div class="message-title" id="msgTitle" style="margin-top:8px;"></div>
+    <div class="message-title" id="msgTitle"></div>
     <div class="message-text" id="msgText"></div>
-    <div style="text-align:center; margin-top:12px;">
-      <button class="view-btn" onclick="viewMessageFull()">View</button>
+    <div class="message-actions">
+      <button class="view-btn" onclick="viewMessage()">View</button>
+      <button class="close-btn" onclick="closeMessage()">✕</button>
     </div>
   </div>
 </div>
@@ -426,9 +396,7 @@ function logout() {
     location.href = "../login";
   });
 }
-function openMessages() {
-  if(messagesQueue.length > 0) showCurrentMessage();
-}
+
 function goReleases() { location.href = "../releases"; }
 function accountClick() { location.href = "../account"; }
 function toggleProfileMenu() { profileMenu.classList.toggle("show"); }
@@ -464,7 +432,9 @@ function loadReleases(uid) {
       if (r.status == "rejected") c = "#ef4444";
 
       releaseList.innerHTML += `
-<div onclick="goReleaseDetail('${r._key}')" class="clickable release-item">
+      <div onclick="goReleaseDetail('${r._key}')"
+           class="clickable"
+           style="padding:12px;border:1px solid #eee;border-radius:12px;margin-bottom:10px">
         <div class="release-row">
           <div class="release-title" style="font-weight:600">${r.title || "-"}</div>
           <div class="release-status"
@@ -483,38 +453,30 @@ function loadReleases(uid) {
 function goReleaseDetail(rid) { location.href = "../release-detail?rid=" + rid; }
 
 // Messages
-// Messages
 let messagesQueue = [];
 let currentMsgIndex = 0;
 
 function loadMessages(uid) {
-  db.ref("messages_inbox/" + uid).on("value", snap => {
+  db.ref("messages/" + uid).on("value", snap => {
     messagesQueue = [];
     snap.forEach(i => {
       const m = i.val();
       if (!m.read) messagesQueue.push({ key: i.key, ...m });
     });
 
-    // Sort terbaru dulu
-    messagesQueue.sort((a,b) => (b.sentAt || 0) - (a.sentAt || 0));
-
-    updateNotifBadge();
-
-    // Auto-popup pertama kali ke home
-    if (messagesQueue.length > 0 && !messagePopup.classList.contains("show")) {
-      currentMsgIndex = 0;
-      showCurrentMessage();
+    if (messagesQueue.length > 0) {
+      notifBadge.style.display = "block";
+      notifBadge.textContent = messagesQueue.length;
+    } else {
+      notifBadge.style.display = "none";
     }
   });
 }
 
-function updateNotifBadge() {
-  if (messagesQueue.length > 0) {
-    notifBadge.style.display = "flex";
-    notifBadge.textContent = messagesQueue.length;
-  } else {
-    notifBadge.style.display = "none";
-  }
+function openMessages() {
+  if (messagesQueue.length === 0) return;
+  currentMsgIndex = 0;
+  showCurrentMessage();
 }
 
 function showCurrentMessage() {
@@ -522,29 +484,24 @@ function showCurrentMessage() {
     messagePopup.classList.remove("show");
     return;
   }
+
   const m = messagesQueue[currentMsgIndex];
-  msgTitle.textContent = m.subject || "-";
-  msgText.textContent = m.body || "-";
+  msgTitle.textContent = m.title;
+  msgText.textContent = m.text;
   messagePopup.classList.add("show");
 }
 
-// Klik X → pindah ke pesan berikutnya
-document.getElementById("closeMsgBtn").addEventListener("click", () => {
-  markReadAndNext();
-});
-
-// View button → ke halaman list
-function viewMessageFull() {
-  markReadAndNext();
-  location.href = "../message";
-}
-
-// Fungsi mark read dan next
-function markReadAndNext() {
+function closeMessage() {
   const m = messagesQueue[currentMsgIndex];
-  if (m) db.ref("messages_inbox/" + firebase.auth().currentUser.uid + "/" + m.key + "/read").set(true);
+  if (m) db.ref("messages/" + firebase.auth().currentUser.uid + "/" + m.key + "/read").set(true);
   currentMsgIndex++;
   showCurrentMessage();
+}
+
+function viewMessage() {
+  const m = messagesQueue[currentMsgIndex];
+  db.ref("messages/" + firebase.auth().currentUser.uid + "/" + m.key + "/read").set(true);
+  closeMessage();
 }
 </script>
 
