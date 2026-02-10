@@ -92,6 +92,10 @@ auth.onAuthStateChanged(user => {
       if(!snapshot.exists()){
         alert("⚠ Anda bukan admin!");
         auth.signOut().then(()=>location.href="../admin");
+      } else {
+        // ✅ Setelah admin terverifikasi, baru load data
+        loadMembers();
+        loadSentMessages();
       }
     })
     .catch(err=>{
@@ -112,7 +116,6 @@ function loadMembers(){
     });
   });
 }
-loadMembers();
 
 // --- Template Logic ---
 const templates = {
@@ -227,7 +230,7 @@ function loadSentMessages(){
     });
   });
 }
-loadSentMessages();
+
 
 </script>
 </body>
