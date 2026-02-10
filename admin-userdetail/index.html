@@ -2,7 +2,8 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Detail Member - DynoPay</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Detail User - Dynotic Admin</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -17,6 +18,26 @@ input, button { width:100%; padding:12px; margin-top:8px; border-radius:10px; bo
 button { cursor:pointer; font-weight:600; border-radius:6px; transition:.25s; }
 button.reset { background:#111; color:#fff; }
 button.reset:hover { opacity:.9; }
+/* Tombol primary (misal Reset Password) */
+button.primary {
+  background:#111;   /* hitam penuh */
+  color:#fff;        /* teks putih */
+  border:none;
+}
+button.primary:hover {
+  opacity:0.9;
+}
+
+/* Tombol stroked (transparent + border hitam + teks hitam) */
+button.stroked {
+  background:transparent;
+  color:#111;
+  border:2px solid #111;
+}
+button.stroked:hover {
+  background:#111;
+  color:#fff;
+}
 </style>
 </head>
 
@@ -28,10 +49,10 @@ button.reset:hover { opacity:.9; }
 <p><strong>Nama:</strong> <span id="nama">-</span></p>
 <p><strong>Status:</strong> <span id="status">-</span></p>
 <p><strong>Terakhir Login / Update:</strong> <span id="lastLogin">-</span></p>
-<button class="reset" id="resetBtn">Reset Password</button>
-<button class="reset" id="sendVerification">Send Verification Email</button>
-<button class="reset" id="toggleActive">Active / Disable</button>
-<button class="reset" id="deleteAccount">Delete Account</button>
+<button class="primary" id="resetBtn">Reset Password</button>
+<button class="stroked" id="sendVerification">Send Verification Email</button>
+<button class="stroked" id="toggleActive">Active / Disable</button>
+<button class="stroked" id="deleteAccount">Delete Account</button>
 
 <div class="card">
 <h3>Registered Artists</h3>
