@@ -188,11 +188,13 @@ function sendMessage(){
   // simpan ke inbox member
   db.ref(`messages_inbox/${uid}`).push(messageObj)
   // simpan ke sent admin
-  .then(()=> db.ref(`messages_sent/${Date.now()}`).set({...messageObj, memberUid: uid, memberName: nama}))
-  .then(()=>{
+// simpan ke sent admin
+.then(() => db.ref(`messages_sent`).push({...messageObj, memberUid: uid, memberName: nama}))
+.then(()=>{
     msg.style.color="green";
     msg.textContent="✔ Pesan berhasil dikirim!";
-  })
+    loadSentMessages(); // langsung refresh tabel
+})
   .catch(err=>{
     msg.style.color="red";
     msg.textContent="❌ "+err.message;
