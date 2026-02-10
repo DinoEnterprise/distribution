@@ -41,6 +41,9 @@ th{ background:#f9f9f9; font-weight:600; }
 
   <label>Subject</label>
   <input id="subject" placeholder="Subject">
+  
+<label>Judul Lagu (hanya untuk Approved)</label>
+<input id="songTitle" placeholder="Judul lagu">
 
   <label>Isi Pesan</label>
   <textarea id="body" rows="5" placeholder="Isi pesan"></textarea>
@@ -124,13 +127,16 @@ document.getElementById("templateSelect").addEventListener("change", e=>{
   const nama = member.selectedOptions[0]?.dataset.nama || "[Nama]";
   const body = document.getElementById("body");
   const subject = document.getElementById("subject");
+  const songTitle = document.getElementById("songTitle")?.value.trim() || "[JudulLagu]";
 
   if(val === "manual"){
     subject.value = "";
     body.value = "";
   }else{
     subject.value = val.replace(/_/g," ").toUpperCase();
-    body.value = templates[val].replace("[Nama]", nama);
+    body.value = templates[val]
+                  .replace("[Nama]", nama)
+                  .replace("[JudulLagu]", songTitle);
   }
 });
 
@@ -139,11 +145,25 @@ document.getElementById("memberSelect").addEventListener("change", e=>{
   const member = e.target;
   const nama = member.selectedOptions[0]?.dataset.nama || "[Nama]";
   const template = document.getElementById("templateSelect").value;
+  const songTitle = document.getElementById("songTitle")?.value.trim() || "[JudulLagu]";
+
   if(template!=="manual"){
-    document.getElementById("body").value = templates[template].replace("[Nama]", nama);
+    document.getElementById("body").value = templates[template]
+                                             .replace("[Nama]", nama)
+                                             .replace("[JudulLagu]", songTitle);
   }
 });
-
+document.getElementById("songTitle").addEventListener("input", e=>{
+  const template = document.getElementById("templateSelect").value;
+  if(template === "approved"){
+    const member = document.getElementById("memberSelect");
+    const nama = member.selectedOptions[0]?.dataset.nama || "[Nama]";
+    const songTitle = e.target.value.trim() || "[JudulLagu]";
+    document.getElementById("body").value = templates[template]
+                                           .replace("[Nama]", nama)
+                                           .replace("[JudulLagu]", songTitle);
+  }
+});
 // --- Send Message ---
 function sendMessage(){
   const uid = document.getElementById("memberSelect").value;
