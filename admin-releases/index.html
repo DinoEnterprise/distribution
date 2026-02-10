@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Admin Releases | DynoPay</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Releases | Dynotc Admin</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -28,7 +28,7 @@ table{
   width:100%;
   border-collapse:collapse;
   font-size:13px;
-  min-width:700px;
+  min-width:100%;
 }
 th,td{
   padding:8px 10px;
@@ -130,6 +130,20 @@ button.action-btn:hover{background:#f0f0f0}
 <tbody></tbody>
 </table>
 </div>
+<div style="
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:12px
+">
+  <button class="action-btn" onclick="prevPage()">Prev</button>
+
+  <span id="pageInfo" style="font-size:13px;font-weight:600">
+    Page 1
+  </span>
+
+  <button class="action-btn" onclick="nextPage()">Next</button>
+</div>
 </div>
 
 <script>
@@ -158,8 +172,11 @@ auth.onAuthStateChanged(user=>{
   });
 });
 let searchTerm = "";
+let currentPage = 1;
+const perPage = 20;
 document.getElementById("searchInput").addEventListener("input", e=>{
   searchTerm = e.target.value.toLowerCase();
+  currentPage = 1; // ⬅️ TAMBAH INI
   loadReleases();
 });
 // LOAD RELEASES
@@ -186,49 +203,62 @@ function loadReleases(){
 
     all.sort((a,b)=>(b.time||0)-(a.time||0));
 
-    all.forEach(d=>{
+   // FILTER SEARCH
+const filtered = all.filter(d=>{
   const email  = (emailMap[d.uid]||"").toLowerCase();
   const artist = (d.artist||"").toLowerCase();
   const title  = (d.title||"").toLowerCase();
 
-  // 🔍 FILTER SEARCH
-  if(
-    searchTerm &&
-    !email.includes(searchTerm) &&
-    !artist.includes(searchTerm) &&
-    !title.includes(searchTerm)
-  ) return;
+  if(!searchTerm) return true;
+  return (
+    email.includes(searchTerm) ||
+    artist.includes(searchTerm) ||
+    title.includes(searchTerm)
+  );
+});
 
+// PAGINATION
+const totalPages = Math.ceil(filtered.length / perPage);
+if(currentPage > totalPages) currentPage = totalPages || 1;
+
+const start = (currentPage - 1) * perPage;
+const pageData = filtered.slice(start, start + perPage);
+
+// RENDER
+pageData.forEach(d=>{
   const color = getStatusColor(d.status);
 
   tbody.innerHTML+=`
-      <tr>
-        <td>${emailMap[d.uid]||"-"}</td>
-        <td>${d.artist||"-"}</td>
-        <td>${d.title||"-"}</td>
-        <td>
-          <span class="status" style="border:1px solid ${color};color:${color}">
-            ${(d.status||"pending").toUpperCase()}
-          </span>
-        </td>
-        <td style="display:flex;gap:6px;align-items:center">
-          <button class="action-btn"
-            onclick="location.href='../admin-platform?uid=${d.uid}&rid=${d.rid}'">
-            Detail
-          </button>
+  <tr>
+    <td>${emailMap[d.uid]||"-"}</td>
+    <td>${d.artist||"-"}</td>
+    <td>${d.title||"-"}</td>
+    <td>
+      <span class="status" style="border:1px solid ${color};color:${color}">
+        ${(d.status||"pending").toUpperCase()}
+      </span>
+    </td>
+    <td style="display:flex;gap:6px;align-items:center">
+      <button class="action-btn"
+        onclick="location.href='../admin-platform?uid=${d.uid}&rid=${d.rid}'">
+        Detail
+      </button>
 
-          <div class="menu-wrap">
-            <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
-            <div class="menu-dropdown">
-              <button onclick="setStatus('${d.uid}','${d.rid}','approved')">Approve</button>
-              <button onclick="setStatus('${d.uid}','${d.rid}','rejected')">Reject</button>
-              <button onclick="deleteRelease('${d.uid}','${d.rid}')">Delete</button>
-            </div>
-          </div>
-        </td>
-      </tr>`;
-    });
-  });
+      <div class="menu-wrap">
+        <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
+        <div class="menu-dropdown">
+          <button onclick="setStatus('${d.uid}','${d.rid}','approved')">Approve</button>
+          <button onclick="setStatus('${d.uid}','${d.rid}','rejected')">Reject</button>
+          <button onclick="deleteRelease('${d.uid}','${d.rid}')">Delete</button>
+        </div>
+      </div>
+    </td>
+  </tr>`;
+});
+
+// INFO PAGE
+document.getElementById("pageInfo").innerText =
+  `Page ${currentPage} / ${totalPages || 1}`;
 }
 
 // ACTIONS
@@ -240,6 +270,17 @@ function setStatus(uid,rid,status){
 function deleteRelease(uid,rid){
   if(!confirm("Delete this release?")) return;
   db.ref(`releases/${uid}/${rid}`).remove().then(loadReleases);
+}
+function nextPage(){
+  currentPage++;
+  loadReleases();
+}
+
+function prevPage(){
+  if(currentPage > 1){
+    currentPage--;
+    loadReleases();
+  }
 }
 
 function getStatusColor(s){
