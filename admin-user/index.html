@@ -270,10 +270,12 @@ function loadMembers(direction="init"){
           <button class="action-btn" onclick="window.location.href='../admin-member?uid=${u.key}'">Detail</button>
           <div class="menu-wrap">
             <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
-            <div class="menu-dropdown">
-              <button onclick="resetPassword('${d.email}')">Reset Password</button>
-              <button onclick="editSaldo('${u.key}')">Edit Saldo</button>
-              <button onclick="deleteMember('${u.key}')">Hapus</button>
+<div class="menu-dropdown">
+  <button onclick="toggleStatus('${u.key}', '${d.status}')">
+    ${d.status === 'active' ? 'Disable' : 'Activate'}
+  </button>
+  <button onclick="editSaldo('${u.key}')">Edit Saldo</button>
+  <button onclick="deleteMember('${u.key}')">Hapus</button>
             </div>
           </div>
         </td>`;
@@ -300,7 +302,15 @@ function editSaldo(uid){
   if(isNaN(newSaldo)){ alert("⚠ Harus angka!"); return; }
   db.ref(`users/${uid}/saldo`).set(newSaldo).then(()=>{ alert("✔ Saldo diperbarui"); loadMembers(); });
 }
-
+function toggleStatus(uid, currentStatus){
+  const newStatus = currentStatus === 'active' ? 'non-active' : 'active';
+  db.ref(`users/${uid}/status`).set(newStatus)
+    .then(()=>{
+      
+      alert(`✔ User status changed to ${newStatus}`);
+      loadMembers();
+    });
+}
 // Delete member
 function deleteMember(uid){
   if(confirm("Apakah yakin ingin menghapus member ini?")) db.ref(`users/${uid}`).remove().then(()=>loadMembers());
