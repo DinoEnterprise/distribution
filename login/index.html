@@ -220,36 +220,49 @@ function login(){
   const pass=document.getElementById("pass").value.trim();
   const errorEl=document.getElementById("error");
 
-  if(!email||!pass){
-    errorEl.textContent="Email dan password wajib diisi";
+  if(!email || !pass){
+    errorEl.textContent = "Email and password are required";
     return;
-  }
-
+}
   firebase.auth()
   .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
   .then(()=>firebase.auth().signInWithEmailAndPassword(email,pass))
-  .then(userCredential=>{
-    const user=userCredential.user;
-    db.ref("users/"+user.uid+"/lastLogin").set(Date.now());
+  .then(userCredential => {
+    const user = userCredential.user;
+    const errorEl = document.getElementById("error");
 
-    document.getElementById("loader").classList.add("active");
-    document.getElementById("card").classList.add("fade-out");
+    // Ambil data user dari database
+    db.ref("users/" + user.uid).once("value").then(snapshot => {
+        const data = snapshot.val();
 
-    setTimeout(()=>window.location.replace("../home"),600);
-  })
+        // Cek kalau user non-active
+        if(!data || data.status !== "active"){
+            firebase.auth().signOut();
+            errorEl.textContent = "Account is inactive. Please contact the admin";
+            return;
+        }
+
+        db.ref("users/" + user.uid + "/lastLogin").set(Date.now());
+
+        document.getElementById("loader").classList.add("active");
+        document.getElementById("card").classList.add("fade-out");
+
+        setTimeout(() => window.location.replace("../home"), 600);
+    });
+})
   .catch(error=>{
     switch(error.code){
       case "auth/user-not-found":
-        errorEl.textContent="User tidak ditemukan";
+        errorEl.textContent="User not found";
         break;
       case "auth/wrong-password":
-        errorEl.textContent="Password salah";
+        errorEl.textContent="Incorrect password";
         break;
       case "auth/invalid-email":
-        errorEl.textContent="Email tidak valid";
+        errorEl.textContent="Invalid email address";
         break;
       default:
-        errorEl.textContent="Terjadi kesalahan, coba lagi";
+        errorEl.textContent="An error occurred. Please try again";
     }
   });
 }
