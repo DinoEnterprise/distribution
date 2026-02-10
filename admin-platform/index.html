@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta charset="UTF-8">
 <title>Platform Detail</title>
 
@@ -10,11 +11,16 @@
 
 <style>
 body{
+  max-width:100vw;
+  overflow-x:hidden;
   font-family:Outfit,sans-serif;
   background:#f1f2f7;
   padding:15px;
 }
-
+img{
+  max-width:100%;
+  height:auto;
+}
 .card{
   background:#fff;
   padding:15px;
@@ -50,12 +56,18 @@ button{
 }
 
 /* ===== INFO GRID ===== */
-.info-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
+@media (max-width: 600px){
+  .info-grid{
+    grid-template-columns:1fr;
+    display:grid;
+     gap:12px;
   margin-top:12px;
   font-size:13px;
+  }
+
+  .info-grid .full{
+    grid-column:1;
+  }
 }
 
 .info-grid div{
@@ -94,7 +106,15 @@ button{
   <h3 id="title">Loading...</h3>
   <small id="artist"></small>
 </div>
-
+<div class="card">
+  <label><b>Set Status Semua Platform</b></label>
+  <select id="globalPlatformStatus" style="margin-bottom:10px;">
+    <option value="process">Process</option>
+    <option value="approved">Approved</option>
+    <option value="unavailable">Unavailable</option>
+  </select>
+  <button onclick="applyToAllPlatforms()" style="margin-bottom:15px;">Apply ke Semua</button>
+</div>
 <div class="card" id="platformWrap"></div>
 <div class="card">
   <label for="releaseDate"><b>Release Date</b></label>
@@ -242,24 +262,30 @@ function extractDriveId(url){
   const match = url.match(/\/d\/([^\/]+)/);
   return match ? match[1] : "";
 }
+function applyToAllPlatforms(){
+  const status = document.getElementById("globalPlatformStatus").value;
+  document.querySelectorAll("#platformWrap select").forEach(s=>{
+    s.value = status;
+  });
+}
 function savePlatform(){
-  // ambil status platform
   let result = {};
-  document.querySelectorAll("select").forEach(s=>{
+
+  // AMBIL HANYA SELECT PLATFORM
+  document.querySelectorAll("#platformWrap select").forEach(s=>{
     result[s.dataset.name] = s.value;
   });
 
-  // ambil input release date & smartlink
   const releaseDate = document.getElementById("releaseDate").value;
   const smartlink = document.getElementById("smartlink").value;
   const ean = document.getElementById("ean").value;
 
-const updates = {
-  platformStatus: result,
-  date: releaseDate || null,
-  smartlink: smartlink || null,
-  ean: ean || null
-};
+  const updates = {
+    platformStatus: result,
+    date: releaseDate || null,
+    smartlink: smartlink || null,
+    ean: ean || null
+  };
 
   db.ref(`releases/${uid}/${rid}`).update(updates)
     .then(()=>alert("✔ Data updated"));
