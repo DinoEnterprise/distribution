@@ -290,41 +290,45 @@ function loadMembers(direction = "init"){
     if(!snap.exists()) return;
 
     let keys = [];
-    snap.forEach(u=>{
-      const d = u.val();
-      const namaLower = (d.nama||"").toLowerCase();
-      const emailLower = (d.email||"").toLowerCase();
+    let visibleCount = 0; // counter untuk yang terlihat
+snap.forEach(u=>{
+  const d = u.val();
+  const namaLower = (d.nama||"").toLowerCase();
+  const emailLower = (d.email||"").toLowerCase();
 
-      // Filter pencarian
-      if(searchTerm && !namaLower.includes(searchTerm) && !emailLower.includes(searchTerm)){
-        return; // skip
-      }
+  // Filter pencarian
+  if(searchTerm && !namaLower.includes(searchTerm) && !emailLower.includes(searchTerm)){
+    return; // skip
+  }
 
-      keys.push(u.key);
-      const saldoFormatted = "Rp " + (d.saldo||0).toLocaleString();
+  keys.push(u.key);
+  const saldoFormatted = "Rp " + (d.saldo||0).toLocaleString();
 
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${d.nama}</td>
-        <td>${d.email||"-"}</td>
-        <td>${saldoFormatted}</td>
-        <td style="display:flex;gap:6px;align-items:center">
-          <button class="action-btn"
-            onclick="window.location.href='../admin-member?uid=${u.key}'">
-            Detail
-          </button>
-          <div class="menu-wrap">
-            <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
-            <div class="menu-dropdown">
-              <button onclick="resetPassword('${d.email}')">Reset Password</button>
-              <button onclick="editSaldo('${u.key}')">Edit Saldo</button>
-              <button onclick="deleteMember('${u.key}')">Hapus</button>
-            </div>
+  if(visibleCount < 10){  // hanya render 10 baris ke DOM
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${d.nama}</td>
+      <td>${d.email||"-"}</td>
+      <td>${saldoFormatted}</td>
+      <td style="display:flex;gap:6px;align-items:center">
+        <button class="action-btn"
+          onclick="window.location.href='../admin-member?uid=${u.key}'">
+          Detail
+        </button>
+        <div class="menu-wrap">
+          <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
+          <div class="menu-dropdown">
+            <button onclick="resetPassword('${d.email}')">Reset Password</button>
+            <button onclick="editSaldo('${u.key}')">Edit Saldo</button>
+            <button onclick="deleteMember('${u.key}')">Hapus</button>
           </div>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+    visibleCount++;
+  }
+});
 
     firstKey = keys[0];
     lastKey = keys[keys.length - 1];
