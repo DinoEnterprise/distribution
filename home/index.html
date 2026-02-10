@@ -457,7 +457,7 @@ let messagesQueue = [];
 let currentMsgIndex = 0;
 
 function loadMessages(uid) {
-  db.ref("messages/" + uid).on("value", snap => {
+  db.ref("messages_inbox/" + uid).on("value", snap => {
     messagesQueue = [];
     snap.forEach(i => {
       const m = i.val();
@@ -486,21 +486,21 @@ function showCurrentMessage() {
   }
 
   const m = messagesQueue[currentMsgIndex];
-  msgTitle.textContent = m.title;
-  msgText.textContent = m.text;
+  msgTitle.textContent = m.subject || "-";
+  msgText.textContent = m.body || "-";
   messagePopup.classList.add("show");
 }
 
 function closeMessage() {
   const m = messagesQueue[currentMsgIndex];
-  if (m) db.ref("messages/" + firebase.auth().currentUser.uid + "/" + m.key + "/read").set(true);
+  if (m) db.ref("messages_inbox/" + firebase.auth().currentUser.uid + "/" + m.key + "/read").set(true);
   currentMsgIndex++;
   showCurrentMessage();
 }
 
 function viewMessage() {
   const m = messagesQueue[currentMsgIndex];
-  db.ref("messages/" + firebase.auth().currentUser.uid + "/" + m.key + "/read").set(true);
+  db.ref("messages_inbox/" + firebase.auth().currentUser.uid + "/" + m.key + "/read").set(true);
   closeMessage();
 }
 </script>
