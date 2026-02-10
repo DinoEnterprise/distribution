@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Admin Messages | Dynotic</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<style>
+body { font-family:'Outfit',sans-serif; background:#f1f2f7; padding:20px; }
+h2{ margin-bottom:12px; }
+.card{ background:#fff; padding:15px; border-radius:12px; margin-bottom:15px; box-shadow:0 3px 10px rgba(0,0,0,.05);}
+input, select, textarea, button{ width:100%; padding:10px; margin:6px 0; border-radius:8px; border:1px solid #ccc; box-sizing:border-box;}
+textarea{ resize:vertical; }
+button{ cursor:pointer; background:#111; color:#fff; font-weight:600; border:none; }
+button:hover{ opacity:0.9; }
+.table-container{ max-height:300px; overflow:auto; }
+table{ width:100%; border-collapse:collapse; }
+th,td{ padding:8px; border-bottom:1px solid #eee; font-size:13px; text-align:left; }
+th{ background:#f9f9f9; font-weight:600; }
+.status-badge{ font-size:12px; padding:2px 6px; border-radius:999px; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Kirim Pesan ke Member</h2>
+
+  <label>Member</label>
+  <select id="memberSelect"></select>
+
+  <label>Template</label>
+  <select id="templateSelect">
+    <option value="manual">Manual</option>
+    <option value="reject">Penolakan (Copyright)</option>
+    <option value="royalty_available">Royalty tersedia</option>
+    <option value="royalty_sent">Royalty sudah dikirim</option>
+    <option value="approved">Lagu Disetujui</option>
+  </select>
+
+  <label>Subject</label>
+  <input id="subject" placeholder="Subject">
+
+  <label>Isi Pesan</label>
+  <textarea id="body" rows="5" placeholder="Isi pesan"></textarea>
+
+  <button onclick="sendMessage()">Kirim Pesan</button>
+  <p id="msgStatus"></p>
+</div>
+
+<div class="card">
+  <h2>Kontak Terkirim</h2>
+  <div class="table-container">
+    <table id="sentTable">
+      <thead>
+        <tr>
+          <th>Member</th>
+          <th>Subject</th>
+          <th>Tanggal</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+// Firebase
+firebase.initializeApp({
+  apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain:"dynopay-2513c.firebaseapp.com",
+  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db = firebase.database();
+const auth = firebase.auth();
+
+auth.onAuthStateChanged(user => {
+  if(!user){
+    // Belum login → redirect ke halaman login admin
+    location.href = "../admin";
+    return;
+  }
+
+  // Cek apakah user ini admin
+  db.ref("admins/"+user.uid).once("value")
+    .then(snapshot=>{
+      if(!snapshot.exists()){
+        alert("⚠ Anda bukan admin!");
+        auth.signOut().then(()=>location.href="../admin");
+      }
+    })
+    .catch(err=>{
+      console.error(err);
+      auth.signOut().then(()=>location.href="../admin");
+    });
+});
+// --- Load Members ---
+function loadMembers(){
+  const select = document.getElementById("memberSelect");
+  select.innerHTML = "<option disabled selected>Loading...</option>";
+
+  db.ref("users").once("value").then(snap=>{
+    select.innerHTML = "<option disabled selected>Pilih member</option>";
+    snap.forEach(u=>{
+      const d = u.val();
+      select.innerHTML += `<option value="${u.key}" data-nama="${d.nama}">${d.nama} (${d.email})</option>`;
+    });
+  });
+}
+loadMembers();
+
+// --- Template Logic ---
+const templates = {
+  reject: "Halo, [Nama],\n\nMaaf, lagu Anda ditolak karena alasan copyright.",
+  approved: "Halo, [Nama],\n\nSelamat! Lagu Anda berjudul '[JudulLagu]' telah disetujui dan siap dirilis.",
+  royalty_available: "Halo, [Nama],\n\nRoyalty Anda sekarang tersedia di akun Anda.",
+  royalty_sent: "Halo, [Nama],\n\nRoyalty Anda sudah dikirim ke rekening Anda."
+};
+document.getElementById("templateSelect").addEventListener("change", e=>{
+  const val = e.target.value;
+  const member = document.getElementById("memberSelect");
+  const nama = member.selectedOptions[0]?.dataset.nama || "[Nama]";
+  const body = document.getElementById("body");
+  const subject = document.getElementById("subject");
+
+  if(val === "manual"){
+    subject.value = "";
+    body.value = "";
+  }else{
+    subject.value = val.replace(/_/g," ").toUpperCase();
+    body.value = templates[val].replace("[Nama]", nama);
+  }
+});
+
+// --- Update body when member berubah ---
+document.getElementById("memberSelect").addEventListener("change", e=>{
+  const member = e.target;
+  const nama = member.selectedOptions[0]?.dataset.nama || "[Nama]";
+  const template = document.getElementById("templateSelect").value;
+  if(template!=="manual"){
+    document.getElementById("body").value = templates[template].replace("[Nama]", nama);
+  }
+});
+
+// --- Send Message ---
+function sendMessage(){
+  const uid = document.getElementById("memberSelect").value;
+  const nama = document.getElementById("memberSelect").selectedOptions[0]?.dataset.nama;
+  const subject = document.getElementById("subject").value.trim();
+  const body = document.getElementById("body").value.trim();
+  const msg = document.getElementById("msgStatus");
+
+  if(!uid || !subject || !body){
+    msg.style.color="red";
+    msg.textContent="⚠ Semua field harus diisi!";
+    return;
+  }
+
+  const messageObj = {
+    subject,
+    body,
+    sentAt: Date.now(),
+    admin: auth.currentUser?.email || "admin"
+  };
+
+  // simpan ke inbox member
+  db.ref(`messages_inbox/${uid}`).push(messageObj)
+  // simpan ke sent admin
+  .then(()=> db.ref(`messages_sent/${Date.now()}`).set({...messageObj, memberUid: uid, memberName: nama}))
+  .then(()=>{
+    msg.style.color="green";
+    msg.textContent="✔ Pesan berhasil dikirim!";
+  })
+  .catch(err=>{
+    msg.style.color="red";
+    msg.textContent="❌ "+err.message;
+  });
+}
+
+// --- Load Sent Messages ---
+function loadSentMessages(){
+  const tbody = document.querySelector("#sentTable tbody");
+  tbody.innerHTML = "<tr><td colspan='3'>Loading...</td></tr>";
+
+  db.ref("messages_sent").orderByChild("sentAt").limitToLast(50).once("value")
+  .then(snap=>{
+    tbody.innerHTML="";
+    snap.forEach(s=>{
+      const d = s.val();
+      const tgl = new Date(d.sentAt).toLocaleString();
+      tbody.innerHTML += `<tr>
+        <td>${d.memberName}</td>
+        <td>${d.subject}</td>
+        <td>${tgl}</td>
+      </tr>`;
+    });
+  });
+}
+loadSentMessages();
+
+</script>
+</body>
+</html>
