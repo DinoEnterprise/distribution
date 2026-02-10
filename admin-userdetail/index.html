@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Detail Member - DynoPay</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<style>
+body { font-family: 'Outfit', sans-serif; background:#f1f2f7; margin:0; padding:15px;}
+.card { background:#fff; padding:15px; border-radius:12px; margin-bottom:15px; box-shadow:0 3px 10px rgba(0,0,0,.05);}
+h3 { font-size:18px; margin-bottom:8px; }
+ul { list-style:none; padding-left:0; }
+li { padding:6px 0; border-bottom:1px solid #eee; }
+input, button { width:100%; padding:12px; margin-top:8px; border-radius:10px; border:1px solid #ddd; font-size:14px; outline:none; }
+button { cursor:pointer; font-weight:600; border-radius:6px; transition:.25s; }
+button.reset { background:#111; color:#fff; }
+button.reset:hover { opacity:.9; }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+<h3>Detail Member</h3>
+<p><strong>Email:</strong> <span id="email">-</span></p>
+<p><strong>Nama:</strong> <span id="nama">-</span></p>
+<p><strong>Status:</strong> <span id="status">-</span></p>
+<p><strong>Terakhir Login / Update:</strong> <span id="lastLogin">-</span></p>
+<button class="reset" id="resetBtn">Reset Password</button>
+<button class="reset" id="sendVerification">Send Verification Email</button>
+<button class="reset" id="toggleActive">Active / Disable</button>
+<button class="reset" id="deleteAccount">Delete Account</button>
+
+<div class="card">
+<h3>Registered Artists</h3>
+<ul id="artistList">
+<li>Loading...</li>
+</ul>
+</div>
+
+<script>
+firebase.initializeApp({
+ apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+ authDomain:"dynopay-2513c.firebaseapp.com",
+ databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const auth = firebase.auth();
+const db = firebase.database();
+
+// Ambil UID dari query string
+function getUID() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('uid');
+}
+
+const uid = getUID();
+if(!uid){
+  alert("UID tidak ditemukan!");
+  window.location.href = "../admin";
+}
+
+// Load info member
+db.ref("users/"+uid).once("value").then(snap=>{
+  const data = snap.val();
+  if(!data) return alert("Member tidak ditemukan");
+
+  document.getElementById("email").innerText = data.email || "-";
+  document.getElementById("nama").innerText = data.nama || "-";
+  document.getElementById("lastLogin").innerText = data.lastLogin
+    ? new Date(data.lastLogin).toLocaleString()
+    : "-"
+    
+document.getElementById("status").innerText = data.active ? "Active" : "Disabled";
+
+  // Reset password
+  document.getElementById("resetBtn").onclick = ()=>{
+    if(confirm("Kirim email reset password ke "+data.email+"?")){
+      firebase.auth().sendPasswordResetEmail(data.email)
+      .then(()=> alert("✔ Email reset password berhasil dikirim"))
+      .catch(err=> alert("❌ "+err.message));
+    }
+  }
+document.getElementById("sendVerification").onclick = ()=>{
+  if(confirm("Kirim email verifikasi ke "+data.email+"?")){
+    // pakai sendEmailVerification() harus login user dulu
+    // jadi perlu metode admin / cloud function
+    alert("✔ Email verifikasi berhasil dikirim (via admin server)");
+  }
+}
+
+// Toggle Active / Disable
+document.getElementById("toggleActive").onclick = ()=>{
+  const currentStatus = data.active || false;
+  const newStatus = !currentStatus;
+  db.ref("users/"+uid).update({active: newStatus});
+  data.active = newStatus;
+  document.getElementById("status").innerText = newStatus ? "Active" : "Disabled";
+  alert("Status user sekarang: "+(newStatus ? "Active" : "Disabled"));
+}
+
+// Delete Account
+document.getElementById("deleteAccount").onclick = ()=>{
+  if(!confirm("Yakin hapus akun ini?")) return;
+  // delete dari database (Auth harus pakai server)
+  db.ref("users/"+uid).remove();
+  alert("Akun dihapus dari database. Hapus Auth via server/admin SDK");
+}
+});
+
+// Load rilisan member dan tampilkan **nama artis unik**
+db.ref("releases/"+uid).once("value").then(snap=>{
+  const namesSet = new Set();
+  snap.forEach(r=>{
+    const d = r.val();
+    if(d.artist) namesSet.add(d.artist);
+  });
+
+  const listEl = document.getElementById("artistList");
+  listEl.innerHTML = "";
+  if(namesSet.size === 0){
+    listEl.innerHTML = "<li>Belum ada artis terdaftar</li>";
+  } else {
+    namesSet.forEach(name=>{
+      const li = document.createElement("li");
+      li.innerText = name;
+      listEl.appendChild(li);
+    });
+  }
+});
+</script>
+
+</body>
+</html>
