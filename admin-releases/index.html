@@ -173,7 +173,7 @@ auth.onAuthStateChanged(u=>{
 });
 
 let DATA=[],page=1;
-const perPage=15;
+const perPage = 15;
 let q="";
 
 document.getElementById("search").oninput=e=>{
@@ -198,11 +198,13 @@ function load(){
   uid: user.key,
   rid: rel.key,
 
-  // 🔥 FIX EMAIL
+  // 🔥 FIX EMAIL (AMAN)
   email: d.email || email[user.key] || "-",
 
+  // 🔥 NORMALISASI FIELD
   artist: d.artist || d.artist_name || "-",
   title: d.title || d.track_title || d.release_title || d.name || "-",
+
   status: d.status || "pending",
   time: d.time || d.createdAt || 0
 });
@@ -220,8 +222,8 @@ function render(){
 
   const f=DATA.filter(d=>{
     return d.email.toLowerCase().includes(q) ||
-           d.artist.toLowerCase().includes(q) ||
-           d.title.toLowerCase().includes(q);
+       d.artist.toLowerCase().includes(q) ||
+       d.title.toLowerCase().includes(q);
   });
 
   const total=Math.ceil(f.length/perPage)||1;
