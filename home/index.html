@@ -4,10 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home | Dynotic Distribution</title>
-
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-
   <style>
+    /* Global Reset */
     * {
       margin: 0;
       padding: 0;
@@ -22,14 +21,14 @@
       animation: fadeIn .5s ease;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
-      padding-top: 74px;
+      padding-top: 74px; /* space for fixed header */
     }
 
+    /* Animations */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(15px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
     @keyframes bounceIn {
       0% { transform: translateY(-20px); opacity: 0; }
       50% { transform: translateY(10px); opacity: 1; }
@@ -37,6 +36,7 @@
       100% { transform: translateY(0); opacity: 1; }
     }
 
+    /* Header */
     header {
       padding: 12px 20px;
       display: flex;
@@ -54,35 +54,34 @@
       height: 50px;
     }
 
-.notif-btn {
-  margin-left: auto;
-  position: relative;
-  width: 50px;   /* samakan dengan tinggi logo */
-  height: 50px;  /* samakan dengan tinggi logo */
-}
+    /* Notification Button */
+    .notif-btn {
+      margin-left: auto;
+      position: relative;
+      width: 50px;
+      height: 50px;
+    }
 
-.notif-btn img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain; /* tetap proporsional */
-}
+    .notif-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
 
-.notif-badge {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  font-size: 10px;
-  font-weight: 700;
-  width: 16px;
-  height: 16px;
-  padding: 0;
-  border-radius: 50%;
-  background: #ef4444;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    .notif-badge {
+      position: absolute;
+      top: -4px;
+      right: -6px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: #ef4444;
+      color: #fff;
+      display: none;
+    }
+
+    /* Message Popup */
     .message-popup {
       position: fixed;
       inset: 0;
@@ -130,6 +129,7 @@
       padding: 8px 14px;
       border-radius: 10px;
       font-weight: 600;
+      cursor: pointer;
     }
 
     .close-btn {
@@ -137,8 +137,10 @@
       border: none;
       padding: 8px 12px;
       border-radius: 10px;
+      cursor: pointer;
     }
 
+    /* Cards */
     .card {
       width: 90%;
       margin: 35px auto;
@@ -177,6 +179,7 @@
       margin-bottom: 15px;
     }
 
+    /* Profile Menu */
     .profile-menu {
       position: fixed;
       bottom: 60px;
@@ -208,6 +211,7 @@
     .profile-menu div:last-child { border-bottom: none; }
     .profile-menu div:hover { background: #f1f2f7; }
 
+    /* Clickable */
     .clickable {
       cursor: pointer;
       transition: .12s;
@@ -221,6 +225,7 @@
       box-shadow: inset 0 2px 6px rgba(0,0,0,.2);
     }
 
+    /* Bottom Navigation */
     .bottom-nav {
       background: #fff;
       border-top: 1px solid #eee;
@@ -252,6 +257,7 @@
     .nav-item.active { opacity: 1; color: #667eea; }
     .nav-item.active img { filter: brightness(1.2); }
 
+    /* Buttons */
     button {
       width: 100%;
       padding: 15px;
@@ -270,6 +276,7 @@
       transform: scale(.95);
     }
 
+    /* Release Row */
     .release-row {
       display: flex;
       justify-content: space-between;
@@ -277,252 +284,187 @@
       gap: 10px;
     }
 
-    .release-title {
-      max-width: 75%;
-      line-height: 1.3;
-    }
+    .release-title { max-width: 75%; line-height: 1.3; }
+    .release-status { white-space: nowrap; flex-shrink: 0; }
 
-    .release-status {
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
   </style>
 </head>
 
 <body>
 
-<header>
-  <img src="../assets/dynotic-distribution.png">
-  <div id="notifBtn" class="notif-btn clickable" onclick="openMessages()">
-    <img src="../assets/message.png">
-    <span id="notifBadge" class="notif-badge" style="display:none">0</span>
-  </div>
-</header>
-
-<div id="messagePopup" class="message-popup">
- <div class="message-card">
-  <button id="closeMsgBtn" class="close-btn" style="position:absolute;top:8px;right:8px;padding:4px 8px;font-size:12px;background:#000;color:#fff;border-radius:50%;border:none;">✕</button>
-  <div class="message-title" id="msgTitle" style="margin-top:8px;"></div>
-  <div class="message-text" id="msgText"></div>
-  <div style="text-align:center; margin-top:12px;">
-    <button class="view-btn" onclick="viewMessageFull()">View</button>
-  </div>
-</div>
-
-<!-- Main Wallet -->
-<div class="card clickable" onclick="goRekapan()">
-  <div style="display:flex;justify-content:space-between;align-items:center">
-    <div>
-      <div id="namaArtis" class="artist-name">Hi, --</div>
-      <div class="balance-title">Main Wallet Balance</div>
-      <div id="saldo" class="card-value">Rp 0</div>
+  <!-- Header -->
+  <header>
+    <img src="../assets/dynotic-distribution.png">
+    <div id="notifBtn" class="notif-btn clickable" onclick="openMessages()">
+      <img src="../assets/message.png">
+      <span id="notifBadge" class="notif-badge">0</span>
     </div>
-    <div style="width:48px;height:48px;border-radius:14px;background:#111;display:flex;align-items:center;justify-content:center;">
-      <img src="../assets/history.png" style="width:26px">
+  </header>
+
+  <!-- Message Popup -->
+  <div id="messagePopup" class="message-popup">
+    <div class="message-card">
+      <div class="message-title" id="msgTitle"></div>
+      <div class="message-text" id="msgText"></div>
+      <div class="message-actions">
+        <button class="view-btn" onclick="viewMessage()">View</button>
+        <button class="close-btn" onclick="closeMessage()">✕</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Latest Releases -->
-<div class="card">
-  <div style="font-weight:700;font-size:16px;margin-bottom:12px">Latest Releases</div>
-  <div id="releaseList"></div>
-</div>
-
-<div style="height:120px"></div>
-
-<!-- Profile Menu -->
-<div id="profileMenu" class="profile-menu">
-  <div class="clickable" onclick="goAccount()">Account</div>
-  <div class="clickable" onclick="logout()">Log Out</div>
-</div>
-
-<!-- Bottom Nav -->
-<div class="bottom-nav">
-  <div class="nav-item clickable active" onclick="homeClick()">
-    <img src="../assets/home.png">
-    Home
+  <!-- Main Wallet -->
+  <div class="card clickable" onclick="goRekapan()">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div id="namaArtis" class="artist-name">Hi, --</div>
+        <div class="balance-title">Main Wallet Balance</div>
+        <div id="saldo" class="card-value">Rp 0</div>
+      </div>
+      <div style="width:48px;height:48px;border-radius:14px;background:#111;display:flex;align-items:center;justify-content:center;">
+        <img src="../assets/history.png" style="width:26px">
+      </div>
+    </div>
   </div>
-  <div class="nav-item clickable" onclick="goReleases()">
-    <img src="../assets/releases.png">
-    Releases
+
+  <!-- Latest Releases -->
+  <div class="card">
+    <div style="font-weight:700;font-size:16px;margin-bottom:12px">Latest Releases</div>
+    <div id="releaseList"></div>
   </div>
-  <div class="nav-item clickable" onclick="accountClick()">
-    <img src="../assets/account.png">
-    Account
+
+  <div style="height:120px"></div>
+
+  <!-- Profile Menu -->
+  <div id="profileMenu" class="profile-menu">
+    <div class="clickable" onclick="goAccount()">Account</div>
+    <div class="clickable" onclick="logout()">Log Out</div>
   </div>
-</div>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-item clickable active" onclick="homeClick()">
+      <img src="../assets/home.png"> Home
+    </div>
+    <div class="nav-item clickable" onclick="goReleases()">
+      <img src="../assets/releases.png"> Releases
+    </div>
+    <div class="nav-item clickable" onclick="accountClick()">
+      <img src="../assets/account.png"> Account
+    </div>
+  </div>
 
-<script>
-firebase.initializeApp({
-  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain: "dynopay-2513c.firebaseapp.com",
-  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-const db = firebase.database();
-let targetSaldo = 0;
+  <script>
+    firebase.initializeApp({
+      apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+      authDomain: "dynopay-2513c.firebaseapp.com",
+      databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+    });
 
-firebase.auth().onAuthStateChanged(user => {
-  if (!user) location.href = "../login";
-  else {
-    loadReleases(user.uid);
-    loadMessages(user.uid);
+    const db = firebase.database();
+    let targetSaldo = 0;
 
-    db.ref("users/" + user.uid).once("value").then(snap => {
-      if (snap.exists()) {
-        const d = snap.val();
-        targetSaldo = Number(d.saldo || 0);
-        namaArtis.textContent = "Hi, " + (d.nama || "Artist");
-        animateSaldo();
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) location.href = "../login";
+      else {
+        loadReleases(user.uid);
+        loadMessages(user.uid);
+
+        db.ref("users/" + user.uid).once("value").then(snap => {
+          if (snap.exists()) {
+            const d = snap.val();
+            targetSaldo = Number(d.saldo || 0);
+            namaArtis.textContent = "Hi, " + (d.nama || "Artist");
+            animateSaldo();
+          }
+        });
       }
     });
-  }
-});
 
-function animateSaldo() {
-  let angka = 0;
-  const step = Math.ceil(targetSaldo / 15);
-  const i = setInterval(() => {
-    if (angka < targetSaldo) {
-      angka += step;
-      if (angka > targetSaldo) angka = targetSaldo;
-      saldo.textContent = "Rp " + angka.toLocaleString("id-ID");
-    } else clearInterval(i);
-  }, 15);
-}
-
-function logout() {
-  firebase.auth().signOut().then(() => {
-    location.href = "../login";
-  });
-}
-
-function goReleases() { location.href = "../releases"; }
-function accountClick() { location.href = "../account"; }
-function toggleProfileMenu() { profileMenu.classList.toggle("show"); }
-function homeClick() { console.log("Dashboard active — tidak reload"); }
-function goRekapan() { location.href = "../income"; }
-
-// Releases
-let currentPage = 1;
-const previewLimit = 3;
-
-function loadReleases(uid) {
-  const releaseList = document.getElementById("releaseList");
-  releaseList.innerHTML = "<div style='color:#888;font-size:13px'>Loading...</div>";
-
-  db.ref("releases/" + uid).once("value").then(snap => {
-    const all = [];
-    snap.forEach(i => {
-      const r = i.val();
-      r._key = i.key;
-      all.push(r);
-    });
-    all.sort((a,b) => (b.time || 0) - (a.time || 0));
-    releaseList.innerHTML = "";
-    if (all.length === 0) {
-      releaseList.innerHTML = "<div style='text-align:center;color:#888;font-size:13px'>No releases yet</div>";
-      return;
+    function animateSaldo() {
+      let angka = 0;
+      const step = Math.ceil(targetSaldo / 15);
+      const i = setInterval(() => {
+        if (angka < targetSaldo) {
+          angka += step;
+          if (angka > targetSaldo) angka = targetSaldo;
+          saldo.textContent = "Rp " + angka.toLocaleString("id-ID");
+        } else clearInterval(i);
+      }, 15);
     }
 
-    const pageItems = all.slice(0, previewLimit);
-    pageItems.forEach(r => {
-      let c = "#f59e0b";
-      if (r.status == "approved") c = "#10b981";
-      if (r.status == "rejected") c = "#ef4444";
+    function logout() { firebase.auth().signOut().then(() => location.href="../login"); }
+    function goReleases() { location.href = "../releases"; }
+    function accountClick() { location.href = "../account"; }
+    function toggleProfileMenu() { profileMenu.classList.toggle("show"); }
+    function homeClick() { console.log("Dashboard active — tidak reload"); }
+    function goRekapan() { location.href = "../income"; }
 
-      releaseList.innerHTML += `
-      <div onclick="goReleaseDetail('${r._key}')"
-           class="clickable"
-           style="padding:12px;border:1px solid #eee;border-radius:12px;margin-bottom:10px">
-        <div class="release-row">
-          <div class="release-title" style="font-weight:600">${r.title || "-"}</div>
-          <div class="release-status"
-               style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid ${c};color:${c}">
-               ${(r.status || "pending").toUpperCase()}
-          </div>
-        </div>
-        <div style="font-size:12px;color:#777;margin-top:4px">
-          ${r.artist || "-"} • ${r.genre || "-"}
-        </div>
-      </div>`;
-    });
-  });
-}
+    /* Load Latest Releases */
+    const previewLimit = 3;
+    function loadReleases(uid) {
+      const releaseList = document.getElementById("releaseList");
+      releaseList.innerHTML = "<div style='color:#888;font-size:13px'>Loading...</div>";
 
-function goReleaseDetail(rid) { location.href = "../release-detail?rid=" + rid; }
+      db.ref("releases/" + uid).once("value").then(snap => {
+        const all = [];
+        snap.forEach(i => { const r = i.val(); r._key = i.key; all.push(r); });
+        all.sort((a,b)=> (b.time||0)-(a.time||0));
+        releaseList.innerHTML = "";
+        if(all.length===0){ releaseList.innerHTML="<div style='text-align:center;color:#888;font-size:13px'>No releases yet</div>"; return; }
 
-// Messages
-// Messages
-let messagesQueue = [];
-let currentMsgIndex = 0;
-
-function loadMessages(uid) {
-  db.ref("messages_inbox/" + uid).on("value", snap => {
-    messagesQueue = [];
-    snap.forEach(i => {
-      const m = i.val();
-      if (!m.read) messagesQueue.push({ key: i.key, ...m });
-    });
-
-    // Sort terbaru dulu
-    messagesQueue.sort((a,b) => (b.sentAt || 0) - (a.sentAt || 0));
-
-    updateNotifBadge();
-
-    // Auto-popup pertama kali ke home
-    if (messagesQueue.length > 0 && !messagePopup.classList.contains("show")) {
-      currentMsgIndex = 0;
-      showCurrentMessage();
+        all.slice(0, previewLimit).forEach(r=>{
+          let c="#f59e0b"; if(r.status=="approved")c="#10b981"; if(r.status=="rejected")c="#ef4444";
+          releaseList.innerHTML += `
+            <div onclick="goReleaseDetail('${r._key}')" class="clickable" style="padding:12px;border:1px solid #eee;border-radius:12px;margin-bottom:10px">
+              <div class="release-row">
+                <div class="release-title" style="font-weight:600">${r.title||"-"}</div>
+                <div class="release-status" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid ${c};color:${c}">
+                  ${(r.status||"pending").toUpperCase()}
+                </div>
+              </div>
+              <div style="font-size:12px;color:#777;margin-top:4px">
+                ${r.artist||"-"} • ${r.genre||"-"}
+              </div>
+            </div>`;
+        });
+      });
     }
-  });
-}
 
-function updateNotifBadge() {
-  if (messagesQueue.length > 0) {
-    notifBadge.style.display = "flex";
-    notifBadge.textContent = messagesQueue.length;
-  } else {
-    notifBadge.style.display = "none";
-  }
-}
+    function goReleaseDetail(rid) { location.href = "../release-detail?rid=" + rid; }
 
-function showCurrentMessage() {
-  if (currentMsgIndex >= messagesQueue.length) {
-    messagePopup.classList.remove("show");
-    return;
-  }
-  const m = messagesQueue[currentMsgIndex];
-  msgTitle.textContent = m.subject || "-";
-  msgText.textContent = m.body || "-";
-  messagePopup.classList.add("show");
-}
+    /* Messages */
+    let messagesQueue=[], currentMsgIndex=0;
 
-// Klik X → pindah ke pesan berikutnya
-document.getElementById("closeMsgBtn").addEventListener("click", () => {
-  markReadAndNext();
-});
+    function loadMessages(uid){
+      db.ref("messages_inbox/"+uid).on("value", snap=>{
+        messagesQueue=[];
+        snap.forEach(i=>{ const m=i.val(); if(!m.read) messagesQueue.push({...m,key:i.key}); });
+        notifBadge.style.display=messagesQueue.length>0?"block":"none";
+        if(messagesQueue.length>0) notifBadge.textContent=messagesQueue.length;
+      });
+    }
 
-// View button → ke halaman list
-function viewMessageFull() {
-  markReadAndNext();
-  location.href = "../message";
-}
-
-// Fungsi mark read dan next
-function markReadAndNext() {
-  const m = messagesQueue[currentMsgIndex];
-  if (m) db.ref("messages_inbox/" + firebase.auth().currentUser.uid + "/" + m.key + "/read").set(true);
-  currentMsgIndex++;
-  showCurrentMessage();
-}
-</script>
+    function openMessages(){ if(messagesQueue.length===0) return; currentMsgIndex=0; showCurrentMessage(); }
+    function showCurrentMessage(){
+      if(currentMsgIndex>=messagesQueue.length){ messagePopup.classList.remove("show"); return; }
+      const m=messagesQueue[currentMsgIndex];
+      msgTitle.textContent=m.subject||"-";
+      msgText.textContent=m.body||"-";
+      messagePopup.classList.add("show");
+    }
+    function closeMessage(){
+      const m=messagesQueue[currentMsgIndex];
+      if(m) db.ref("messages_inbox/"+firebase.auth().currentUser.uid+"/"+m.key+"/read").set(true);
+      currentMsgIndex++; showCurrentMessage();
+    }
+    function viewMessage(){ const m=messagesQueue[currentMsgIndex]; db.ref("messages_inbox/"+firebase.auth().currentUser.uid+"/"+m.key+"/read").set(true); closeMessage(); }
+  </script>
 
 </body>
 </html>
