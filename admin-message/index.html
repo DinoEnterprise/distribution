@@ -206,11 +206,18 @@ function loadSentMessages(){
   const tbody = document.querySelector("#sentTable tbody");
   tbody.innerHTML = "<tr><td colspan='3'>Loading...</td></tr>";
 
-  db.ref("messages_sent").orderByChild("sentAt").limitToLast(50).once("value")
+  db.ref("messages_sent").once("value")
   .then(snap=>{
-    tbody.innerHTML="";
+    const data = [];
     snap.forEach(s=>{
-      const d = s.val();
+      data.push(s.val());
+    });
+    
+    // urutkan berdasarkan sentAt descending (terbaru dulu)
+    data.sort((a,b)=> b.sentAt - a.sentAt);
+
+    tbody.innerHTML="";
+    data.slice(0,50).forEach(d=>{
       const tgl = new Date(d.sentAt).toLocaleString();
       tbody.innerHTML += `<tr>
         <td>${d.memberName}</td>
