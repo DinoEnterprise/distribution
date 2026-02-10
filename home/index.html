@@ -69,12 +69,19 @@
 
 .notif-badge {
   position: absolute;
-  top: -4px;
-  right: -6px;
+  top: 0px;
+  right: 0px;
   font-size: 10px;
   font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 999px;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border-radius: 50%;
+  background: #ef4444;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
     .message-popup {
       position: fixed;
@@ -293,13 +300,12 @@
 </header>
 
 <div id="messagePopup" class="message-popup">
-  <div class="message-card">
-    <div class="message-title" id="msgTitle"></div>
-    <div class="message-text" id="msgText"></div>
-    <div class="message-actions">
-      <button class="view-btn" onclick="viewMessage()">View</button>
-      <button class="close-btn" onclick="closeMessage()">✕</button>
-    </div>
+ <div class="message-card">
+  <button id="closeMsgBtn" class="close-btn" style="position:absolute;top:8px;right:8px;padding:4px 8px;font-size:12px;background:#000;color:#fff;border-radius:50%;border:none;">✕</button>
+  <div class="message-title" id="msgTitle" style="margin-top:8px;"></div>
+  <div class="message-text" id="msgText"></div>
+  <div style="text-align:center; margin-top:12px;">
+    <button class="view-btn" onclick="viewMessageFull()">View</button>
   </div>
 </div>
 
@@ -453,6 +459,7 @@ function loadReleases(uid) {
 function goReleaseDetail(rid) { location.href = "../release-detail?rid=" + rid; }
 
 // Messages
+// Messages
 let messagesQueue = [];
 let currentMsgIndex = 0;
 
@@ -464,19 +471,26 @@ function loadMessages(uid) {
       if (!m.read) messagesQueue.push({ key: i.key, ...m });
     });
 
-    if (messagesQueue.length > 0) {
-      notifBadge.style.display = "block";
-      notifBadge.textContent = messagesQueue.length;
-    } else {
-      notifBadge.style.display = "none";
+    // Sort terbaru dulu
+    messagesQueue.sort((a,b) => (b.sentAt || 0) - (a.sentAt || 0));
+
+    updateNotifBadge();
+
+    // Auto-popup pertama kali ke home
+    if (messagesQueue.length > 0 && !messagePopup.classList.contains("show")) {
+      currentMsgIndex = 0;
+      showCurrentMessage();
     }
   });
 }
 
-function openMessages() {
-  if (messagesQueue.length === 0) return;
-  currentMsgIndex = 0;
-  showCurrentMessage();
+function updateNotifBadge() {
+  if (messagesQueue.length > 0) {
+    notifBadge.style.display = "flex";
+    notifBadge.textContent = messagesQueue.length;
+  } else {
+    notifBadge.style.display = "none";
+  }
 }
 
 function showCurrentMessage() {
@@ -484,24 +498,29 @@ function showCurrentMessage() {
     messagePopup.classList.remove("show");
     return;
   }
-
   const m = messagesQueue[currentMsgIndex];
   msgTitle.textContent = m.subject || "-";
   msgText.textContent = m.body || "-";
   messagePopup.classList.add("show");
 }
 
-function closeMessage() {
+// Klik X → pindah ke pesan berikutnya
+document.getElementById("closeMsgBtn").addEventListener("click", () => {
+  markReadAndNext();
+});
+
+// View button → ke halaman list
+function viewMessageFull() {
+  markReadAndNext();
+  location.href = "../message";
+}
+
+// Fungsi mark read dan next
+function markReadAndNext() {
   const m = messagesQueue[currentMsgIndex];
   if (m) db.ref("messages_inbox/" + firebase.auth().currentUser.uid + "/" + m.key + "/read").set(true);
   currentMsgIndex++;
   showCurrentMessage();
-}
-
-function viewMessage() {
-  const m = messagesQueue[currentMsgIndex];
-  db.ref("messages_inbox/" + firebase.auth().currentUser.uid + "/" + m.key + "/read").set(true);
-  closeMessage();
 }
 </script>
 
