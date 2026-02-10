@@ -138,36 +138,27 @@ tr:hover {
 <body>
 
 <!-- ADD MEMBER -->
-<div class="card">
-<h3>Register Artist</h3>
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<input id="nama" placeholder="Nama Artis">
-<input id="saldo" type="number" placeholder="Saldo awal">
-<button class="register" onclick="register()">CREATE ACCOUNT</button>
-<p id="msg"></p>
-</div>
 <!-- MEMBERS -->
-<div class="card">
-<h3>Members</h3>
-<div class="table-container">
-<table id="memberTable">
-  <thead>
-    <tr>
-      <th>Nama</th>
-      <th>Email</th>
-      <th>Saldo</th>
-      <th>Aksi</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-<div style="display:flex;justify-content:space-between;margin-top:10px">
-  <button onclick="loadMembers('prev')">Prev</button>
-  <button onclick="loadMembers('next')">Next</button>
-</div>
-
-</div>
+<div class="card" style="max-height:600px;overflow:auto;">
+  <h3>Members</h3>
+  <input id="searchInput" placeholder="Cari member..." style="margin-bottom:10px;">
+  <div class="table-container">
+    <table id="memberTable">
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Email</th>
+          <th>Saldo</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div style="display:flex;justify-content:space-between;margin-top:10px">
+      <button onclick="loadMembers('prev')">Prev</button>
+      <button onclick="loadMembers('next')">Next</button>
+    </div>
+  </div>
 </div>
 
 
@@ -257,10 +248,21 @@ function register(){
   isRegistering = false;
 });
 }
-let pageSize = 20;
+let pageSize = 50; // per halaman 50
 let firstKey = null;
 let lastKey = null;
 let pageStack = [];
+let searchTerm = "";
+
+// Input pencarian
+document.getElementById("searchInput").addEventListener("input", e => {
+  searchTerm = e.target.value.toLowerCase();
+  firstKey = null;
+  lastKey = null;
+  pageStack = [];
+  loadMembers();
+});
+
 // LOAD MEMBERS
 function loadMembers(direction = "init"){
   const tbody = document.querySelector("#memberTable tbody");
@@ -289,8 +291,16 @@ function loadMembers(direction = "init"){
 
     let keys = [];
     snap.forEach(u=>{
-      keys.push(u.key);
       const d = u.val();
+      const namaLower = (d.nama||"").toLowerCase();
+      const emailLower = (d.email||"").toLowerCase();
+
+      // Filter pencarian
+      if(searchTerm && !namaLower.includes(searchTerm) && !emailLower.includes(searchTerm)){
+        return; // skip
+      }
+
+      keys.push(u.key);
       const saldoFormatted = "Rp " + (d.saldo||0).toLocaleString();
 
       const tr = document.createElement("tr");
