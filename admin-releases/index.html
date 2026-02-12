@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
 <meta charset="UTF-8">
 <title>Admin Panel - DynoPay (Releases)</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -40,13 +41,14 @@ button.action-btn:hover { background: #f0f0f0; }
 
 .table-container {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* smooth scroll di mobile */
   max-height: 400px;
 }
 table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
-  min-width: 600px;
+  min-width: 100%; /* sebelumnya 600px, diganti agar responsive */
 }
 th, td {
   text-align: left;
@@ -112,6 +114,8 @@ tr:hover {
 <!-- RELEASES -->
 <div class="card">
 <h3>Releases</h3>
+<input type="text" id="releaseSearch" placeholder="Search song, artist and email" 
+       style="width:100%; padding:8px; margin-bottom:8px; border-radius:6px; border:1px solid #ccc;">
 <div class="table-container">
 <table id="releaseTable">
   <thead>
@@ -265,7 +269,22 @@ function loadReleases(){
     });
   });
 }
+document.getElementById("releaseSearch").addEventListener("input", function() {
+  const query = this.value.toLowerCase();
 
+  const rows = document.querySelectorAll("#releaseTable tbody tr");
+  rows.forEach(row => {
+    const email = row.children[0].innerText.toLowerCase();
+    const artist = row.children[1].innerText.toLowerCase();
+    const title = row.children[2].innerText.toLowerCase();
+
+    if(email.includes(query) || artist.includes(query) || title.includes(query)) {
+      row.style.display = "";
+    } else {
+      row.style.display = "none";
+    }
+  });
+});
 loadReleases();
 </script>
 
