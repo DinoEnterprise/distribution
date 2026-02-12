@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artists & Account | Dynotic Admin</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+body {
+  font-family: 'Outfit', sans-serif;
+  background: #f1f2f7;
+  margin: 0;
+  padding: 15px;
+}
+h3 {
+  margin-bottom: 8px;
+  font-size: 18px;
+  color: #111;
+}
+.card {
+  background: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 10px rgba(0,0,0,.05);
+}
+input, select, button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+input:focus, select:focus { border-color: #111; box-shadow: 0 0 6px rgba(0,0,0,.1); }
+
+button {
+  cursor: pointer;
+  transition: 0.25s;
+  font-weight: 600;
+  border-radius: 6px;
+  outline: none;
+}
+button.register { background: #111; color: #fff; }
+button.register:hover { opacity: 0.9; }
+
+button.action-btn {
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+  font-size: 12px;
+  margin-right: 4px;
+  padding: 6px 10px;
+}
+button.action-btn:hover { background: #f0f0f0; }
+
+.table-container {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 600px;
+}
+th, td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;
+}
+th {
+  background: #f9f9f9;
+  font-weight: 600;
+}
+tr:hover { background: #f5f5f5; }
+
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 12px;
+}
+#msg {margin-top:6px;font-weight:600;}
+
+.menu-wrap { position: relative; display: inline-block; }
+.menu-btn { background: none; border: none; font-size: 18px; cursor: pointer; }
+.menu-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  min-width: 140px;
+  z-index: 99;
+  box-shadow: 0 4px 10px rgba(0,0,0,.1);
+}
+.menu-dropdown button {
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 10px;
+  font-size: 13px;
+  text-align: left;
+}
+.menu-dropdown button:nth-child(2) { color:#ef4444; font-weight:700; }
+.menu-dropdown button:hover { background: #f5f5f5; }
+</style>
+</head>
+<body>
+
+<!-- ADD USER -->
+<div class="card">
+  <h3>Add User</h3>
+  <input id="newEmail" placeholder="Email">
+  <input id="newName" placeholder="Name">
+  <input id="newPassword" placeholder="Password" type="password">
+  <input id="newBalance" placeholder="Balance">
+  <select id="newStatus">
+    <option value="active">Active</option>
+    <option value="non-active">Non-Active</option>
+  </select>
+  <button class="register" onclick="addUser()">Add User</button>
+  <div id="msg"></div>
+</div>
+
+<!-- USERS TABLE -->
+<div class="card">
+  <h3>Users</h3>
+  <input id="searchInput" placeholder="Search user..." style="margin-bottom:10px;">
+  <div class="table-container">
+    <table id="memberTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Balance</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div style="display:flex;justify-content:space-between;margin-top:10px">
+      <button onclick="loadMembers('prev')">Prev</button>
+      <button onclick="loadMembers('next')">Next</button>
+    </div>
+  </div>
+</div>
+
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain:"dynopay-2513c.firebaseapp.com",
+  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const auth = firebase.auth();
+const db = firebase.database();
+const secondaryApp = firebase.initializeApp(firebase.app().options, "Secondary");
+const secondaryAuth = secondaryApp.auth();
+
+let isRegistering = false;
+
+// Auth check
+auth.onAuthStateChanged(user => {
+  if(isRegistering) return;
+  if(!user) { location.href="../admin"; return; }
+  db.ref("admins/"+user.uid).once("value").then(snapshot => {
+    if(!snapshot.exists()){ 
+      alert("⚠ Anda bukan admin!");
+      auth.signOut().then(()=>location.href="../admin");
+    }
+  }).catch(err => { console.error(err); auth.signOut().then(()=>location.href="../admin"); });
+});
+
+// ADD USER FUNCTION
+function addUser(){
+  if(isRegistering) return;
+  isRegistering = true;
+
+  const email = document.getElementById("newEmail").value.trim();
+  const name = document.getElementById("newName").value.trim();
+  const password = document.getElementById("newPassword").value.trim();
+  const balance = Number(document.getElementById("newBalance").value.trim());
+  const status = document.getElementById("newStatus").value;
+  const msg = document.getElementById("msg");
+
+  if(!email || !name || !password || isNaN(balance)){
+    msg.style.color="red"; msg.innerHTML="⚠ Semua field harus diisi dengan benar!";
+    isRegistering=false; return;
+  }
+
+  secondaryAuth.createUserWithEmailAndPassword(email,password)
+  .then(res=>{
+    const uid = res.user.uid;
+
+    // Kirim email verification
+    res.user.sendEmailVerification();
+
+    return db.ref("users/"+uid).set({
+      email: email,
+      nama: name,
+      saldo: balance,
+      status: status,
+      createdAt: Date.now()
+    });
+  })
+  .then(()=>{
+    msg.style.color="green"; msg.innerHTML="✔ User berhasil dibuat dan email verifikasi terkirim!";
+    ["newEmail","newName","newPassword","newBalance"].forEach(id=>document.getElementById(id).value="");
+    document.getElementById("newStatus").value="active";
+    secondaryAuth.signOut();
+    loadMembers();
+    isRegistering=false;
+  })
+  .catch(err=>{
+    msg.style.color="red"; msg.innerHTML="❌ "+err.message;
+    isRegistering=false;
+  });
+}
+
+// Pagination & Search
+let pageSize = 50;
+let firstKey = null;
+let lastKey = null;
+let pageStack = [];
+let searchTerm = "";
+document.getElementById("searchInput").addEventListener("input", e=>{
+  searchTerm=e.target.value.toLowerCase();
+  firstKey=null; lastKey=null; pageStack=[];
+  loadMembers();
+});
+
+// LOAD MEMBERS
+function loadMembers(direction="init"){
+  const tbody = document.querySelector("#memberTable tbody");
+  tbody.innerHTML="";
+  let ref = db.ref("users").orderByKey().limitToFirst(pageSize);
+
+  if(direction==="next" && lastKey){ pageStack.push(firstKey); ref=db.ref("users").orderByKey().startAfter(lastKey).limitToFirst(pageSize); }
+  if(direction==="prev" && pageStack.length){ const prevKey=pageStack.pop(); ref=db.ref("users").orderByKey().startAfter(prevKey).limitToFirst(pageSize); }
+
+  ref.once("value", snap=>{
+    if(!snap.exists()) return;
+    let keys=[];
+    snap.forEach(u=>{
+      const d=u.val();
+      const namaLower=(d.nama||"").toLowerCase();
+      const emailLower=(d.email||"").toLowerCase();
+      if(searchTerm && !namaLower.includes(searchTerm) && !emailLower.includes(searchTerm)) return;
+      keys.push(u.key);
+      const saldoFormatted="Rp "+(d.saldo||0).toLocaleString();
+      const statusLabel = d.status==="active" ? "<span class='status-badge' style='background:#34d399;color:#fff'>Active</span>" :
+                                               "<span class='status-badge' style='background:#f87171;color:#fff'>Non-Active</span>";
+
+      const tr=document.createElement("tr");
+      tr.innerHTML=`
+        <td>${d.nama}</td>
+        <td>${d.email||"-"}</td>
+        <td>${saldoFormatted}</td>
+        <td>${statusLabel}</td>
+        <td style="display:flex;gap:6px;align-items:center">
+          <button class="action-btn" onclick="window.location.href='../admin-userdetail?uid=${u.key}'">Detail</button>
+          <div class="menu-wrap">
+            <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
+<div class="menu-dropdown">
+  <button onclick="toggleStatus('${u.key}', '${d.status}')">
+    ${d.status === 'active' ? 'Disable' : 'Activate'}
+  </button>
+  <button onclick="editSaldo('${u.key}')">Edit Saldo</button>
+  <button onclick="deleteMember('${u.key}')">Hapus</button>
+            </div>
+          </div>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+    firstKey=keys[0];
+    lastKey=keys[keys.length-1];
+  });
+}
+
+// Dropdown menu toggle
+function toggleMenu(btn){
+  document.querySelectorAll(".menu-dropdown").forEach(m=>{ if(m!==btn.nextElementSibling) m.style.display="none"; });
+  const menu=btn.nextElementSibling;
+  menu.style.display=menu.style.display==="block" ? "none" : "block";
+}
+document.addEventListener("click", e=>{ if(!e.target.closest(".menu-wrap")) document.querySelectorAll(".menu-dropdown").forEach(m=>m.style.display="none"); });
+
+// Edit saldo
+function editSaldo(uid){
+  let newSaldo=prompt("Masukkan saldo baru:");
+  if(newSaldo===null) return;
+  newSaldo=Number(newSaldo);
+  if(isNaN(newSaldo)){ alert("⚠ Harus angka!"); return; }
+  db.ref(`users/${uid}/saldo`).set(newSaldo).then(()=>{ alert("✔ Saldo diperbarui"); loadMembers(); });
+}
+function toggleStatus(uid, currentStatus){
+  const newStatus = currentStatus === 'active' ? 'non-active' : 'active';
+  db.ref(`users/${uid}/status`).set(newStatus)
+    .then(()=>{
+      
+      alert(`✔ User status changed to ${newStatus}`);
+      loadMembers();
+    });
+}
+// Delete member
+function deleteMember(uid){
+  if(confirm("Apakah yakin ingin menghapus member ini?")) db.ref(`users/${uid}`).remove().then(()=>loadMembers());
+}
+
+// Reset password
+function resetPassword(email){
+  if(!email){ alert("Email tidak ditemukan"); return; }
+  if(!confirm(`Kirim reset password ke:\n${email} ?`)) return;
+  firebase.auth().sendPasswordResetEmail(email).then(()=>alert("✔ Email reset password berhasil dikirim"))
+    .catch(err=>alert("❌ "+err.message));
+}
+
+// Initial load
+loadMembers();
+</script>
+</body>
+</html>
