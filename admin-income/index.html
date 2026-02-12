@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Royalty Report | Dynotic Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif;}
+body{background:#f1f2f7;padding:80px 20px 20px;}
+header{position:fixed;top:0;left:0;width:100%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.1);display:flex;align-items:center;padding:16px 20px;z-index:1000;border-bottom:1px solid #eee;}
+header h1{font-size:18px;font-weight:600;}
+header #adminName{margin-left:auto;font-size:14px;color:#555;}
+form{background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.05);margin-bottom:24px;}
+form label{font-size:14px;margin-top:12px;display:block;color:#333;}
+form input, form select{padding:10px 14px;margin-top:6px;width:100%;border:1px solid #ccc;border-radius:8px;font-size:14px;}
+form button{margin-top:16px;padding:10px 16px;background:#111;color:#fff;border:none;border-radius:12px;font-size:14px;cursor:pointer;transition:0.2s;}
+form button:hover{filter:brightness(0.9);}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.05);}
+thead{background:#f9f9f9;}
+th, td{padding:12px;text-align:left;border-bottom:1px solid #eee;font-size:14px;}
+th{font-weight:600;}
+td button{padding:6px 12px;background:#667eea;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;transition:0.2s;}
+td button:hover{filter:brightness(0.9);}
+#adminRoyaltyList tr:nth-child(even){background:#fafafa;}
+#adminRoyaltyList td:last-child{text-align:center;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Admin Royalty Dashboard</h1>
+  <span id="adminName">Admin</span>
+</header>
+
+<!-- Form Add Royalty -->
+<form id="royaltyForm">
+  <label>Member</label>
+  <select id="memberSelect" required>
+    <option value="">Select User</option>
+  </select>
+
+  <label>Tanggal</label>
+  <input type="date" id="date" required>
+
+  <label>Value</label>
+  <input type="number" id="value" placeholder="Value (contoh: 450000)" required>
+
+  <label>Link Download</label>
+  <input type="text" id="downloadUrl" placeholder="Link GitHub/PDF" required>
+
+  <button type="submit">Add Royalty</button>
+</form>
+
+<!-- Tabel Royalty Admin -->
+<table>
+  <thead>
+    <tr>
+      <th>Users</th>
+      <th>Date</th>
+      <th>Value</th>
+      <th>Status</th>
+      <th>Download</th>
+    </tr>
+  </thead>
+  <tbody id="adminRoyaltyList">
+    <tr><td colspan="5" style="text-align:center;color:#777">Memuat data...</td></tr>
+  </tbody>
+</table>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain: "dynopay-2513c.firebaseapp.com",
+  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db = firebase.database();
+
+// Pastikan login dulu
+firebase.auth().onAuthStateChanged(user=>{
+  if(!user) window.location.href="../login";
+  else {
+    document.getElementById("adminName").innerText = user.email;
+    loadMembers();
+    loadAdminRoyalty();
+  }
+});
+
+// Load list member ke dropdown
+function loadMembers(){
+  const sel = document.getElementById("memberSelect");
+  db.ref("users").once("value").then(snap=>{
+    sel.innerHTML = `<option value="">-- Pilih Member --</option>`;
+    if(snap.exists()){
+      snap.forEach(user=>{
+        const d = user.val();
+        sel.innerHTML += `<option value="${user.key}">${d.email} • ${d.fullName}</option>`;
+      });
+    }
+  });
+}
+
+// Load royalty admin
+function loadAdminRoyalty(){
+  const list = document.getElementById("adminRoyaltyList");
+  list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Memuat data...</td></tr>`;
+  db.ref("royaltyAdmin").once("value").then(snap=>{
+    list.innerHTML = "";
+    if(!snap.exists()){
+      list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada data</td></tr>`;
+      return;
+    }
+    snap.forEach(item=>{
+      const d = item.val();
+      db.ref("users/"+d.uid).once("value").then(uSnap=>{
+        const user = uSnap.val();
+        list.innerHTML += `
+          <tr>
+            <td>${user.email} • ${user.fullName}</td>
+            <td>${d.date}</td>
+            <td>Rp ${Number(d.value).toLocaleString("id-ID")}</td>
+            <td>Accepted</td>
+            <td>${d.downloadUrl ? `<button onclick="downloadFile('${d.downloadUrl}')">Download</button>` : '-'}</td>
+          </tr>`;
+      });
+    });
+  });
+}
+
+// Tambah royalti
+document.getElementById("royaltyForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  const uid = document.getElementById("memberSelect").value;
+  const date = document.getElementById("date").value;
+  const value = document.getElementById("value").value;
+  const downloadUrl = document.getElementById("downloadUrl").value;
+
+  if(!uid) return alert("Pilih member dulu!");
+
+  const newKey = db.ref("royaltyAdmin").push().key;
+  db.ref("royaltyAdmin/"+newKey).set({uid,date,value,downloadUrl})
+    .then(()=>{
+      loadAdminRoyalty();
+      this.reset();
+    });
+});
+
+function downloadFile(url){
+  window.open(url,"_blank");
+}
+</script>
+
+</body>
+</html>
