@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel - DynoPay (Withdraws)</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<style>
+body {
+  font-family: 'Outfit', sans-serif;
+  background: #f1f2f7;
+  margin: 0;
+  padding: 15px;
+}
+h3 { margin-bottom: 8px; font-size: 18px; color: #111; }
+.card {
+  background: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 10px rgba(0,0,0,.05);
+}
+input { width:100%; padding:8px; margin-bottom:8px; border-radius:6px; border:1px solid #ccc; }
+button.action-btn {
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+  font-size: 12px;
+  margin-right: 4px;
+  padding: 6px 10px;
+  cursor:pointer;
+}
+button.action-btn:hover { background:#f0f0f0; }
+
+.table-container { overflow-x:auto; max-height:400px; }
+table { width:100%; border-collapse:collapse; font-size:13px; min-width:600px; }
+th, td { text-align:left; padding:8px 10px; border-bottom:1px solid #eee; }
+th { background:#f9f9f9; font-weight:600; }
+tr:hover { background:#f5f5f5; }
+
+.status-badge { padding:2px 8px; border-radius:999px; font-weight:600; font-size:12px; }
+</style>
+</head>
+
+<body>
+
+<!-- WITHDRAW REQUESTS -->
+<div class="card">
+<h3>Withdraw Requests</h3>
+<input type="text" id="withdrawSearch" placeholder="Search nama, email, bank...">
+
+<div class="table-container">
+<table id="withdrawTable">
+  <thead>
+    <tr>
+      <th>Nama</th>
+      <th>Email</th>
+      <th>Bank</th>
+      <th>Rek</th>
+      <th>Jumlah</th>
+      <th>Status</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+</div>
+
+<!-- Pagination -->
+<div style="margin-top:10px; display:flex; justify-content:center; gap:10px;">
+  <button id="prevPage" style="padding:6px 12px;">Prev</button>
+  <span id="pageInfo" style="align-self:center;"></span>
+  <button id="nextPage" style="padding:6px 12px;">Next</button>
+</div>
+</div>
+
+<script>
+firebase.initializeApp({
+ apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+ authDomain:"dynopay-2513c.firebaseapp.com",
+ databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const auth=firebase.auth();
+const db=firebase.database();
+
+auth.onAuthStateChanged(user => {
+  if(!user) location.href="../admin";
+  db.ref("admins/"+user.uid).once("value")
+    .then(snap=>{ if(!snap.exists()){ alert("⚠ Anda bukan admin!"); auth.signOut().then(()=>location.href="../admin"); }});
+});
+
+// UTILS
+function getStatusColor(status){
+  if(status=="approved") return "#10b981";
+  if(status=="rejected") return "#ef4444";
+  return "#f59e0b"; // pending
+}
+
+function setWithdrawStatus(uid,key,status){
+ db.ref(`withdraws/${uid}/${key}/status`).set(status)
+ .then(()=>{
+   if(status==="approve") db.ref(`users/${uid}/saldo`).set(0);
+   loadWithdraws();
+ });
+}
+function deleteWithdraw(uid,key){
+ if(confirm("Apakah yakin ingin menghapus riwayat ini?")){
+   db.ref(`withdraws/${uid}/${key}`).remove().then(()=>loadWithdraws());
+ }
+}
+
+// ================= Pagination & Search =================
+let withdrawData = [];
+let filteredData = [];
+let currentPage = 1;
+const perPage = 10;
+
+function loadWithdraws(){
+ db.ref("withdraws").once("value").then(snap=>{
+   let all = [];
+   snap.forEach(user=>{
+     user.forEach(w=>{
+       all.push({ uid:user.key, wid:w.key, ...w.val() });
+     });
+   });
+
+   all.sort((a,b)=>b.jumlah-a.jumlah); // urut nominal besar ke kecil
+   withdrawData = all;
+   filteredData = all.slice();
+   currentPage = 1;
+   renderTablePage();
+ });
+}
+
+function renderTablePage(){
+ const tbody = document.querySelector("#withdrawTable tbody");
+ tbody.innerHTML="";
+ const start = (currentPage-1)*perPage;
+ const end = start+perPage;
+ const pageData = filteredData.slice(start,end);
+
+ pageData.forEach(d=>{
+   tbody.innerHTML += `
+<tr>
+  <td>${d.nama}</td>
+  <td>${d.email||"-"}</td>
+  <td>${d.bank}</td>
+  <td>${d.rekening}</td>
+  <td>Rp ${Number(d.jumlah).toLocaleString()}</td>
+  <td><span class="status-badge" style="border:1px solid ${getStatusColor(d.status)}; color:${getStatusColor(d.status)}">${(d.status||"pending").toUpperCase()}</span></td>
+  <td>
+    <button class="action-btn" onclick="setWithdrawStatus('${d.uid}','${d.wid}','approve')">Approve</button>
+    <button class="action-btn" onclick="setWithdrawStatus('${d.uid}','${d.wid}','rejected')">Reject</button>
+    <button class="action-btn" onclick="deleteWithdraw('${d.uid}','${d.wid}')">Delete</button>
+  </td>
+</tr>
+   `;
+ });
+
+ document.getElementById("pageInfo").innerText = `Page ${currentPage} of ${Math.ceil(filteredData.length/perPage)}`;
+ document.getElementById("prevPage").disabled = currentPage===1;
+ document.getElementById("nextPage").disabled = currentPage>=Math.ceil(filteredData.length/perPage);
+}
+
+// Pagination buttons
+document.getElementById("prevPage").addEventListener("click", ()=>{
+ if(currentPage>1){ currentPage--; renderTablePage(); }
+});
+document.getElementById("nextPage").addEventListener("click", ()=>{
+ if(currentPage<Math.ceil(filteredData.length/perPage)){ currentPage++; renderTablePage(); }
+});
+
+// Search
+document.getElementById("withdrawSearch").addEventListener("input", function(){
+ const q = this.value.toLowerCase();
+ filteredData = withdrawData.filter(d=>
+   (d.nama||"").toLowerCase().includes(q) ||
+   (d.email||"").toLowerCase().includes(q) ||
+   (d.bank||"").toLowerCase().includes(q)
+ );
+ currentPage=1;
+ renderTablePage();
+});
+
+// Initial load
+loadWithdraws();
+</script>
+
+</body>
+</html>
