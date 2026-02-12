@@ -2,759 +2,273 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Admin Panel - DynoPay</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dynotic Admin</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <style>
-body {
-  font-family: 'Outfit', sans-serif;
-  background: #f1f2f7;
-  margin: 0;
-  padding: 15px;
-}
-h3 {
-  margin-bottom: 8px;
-  font-size: 18px;
-  color: #111;
-}
-.card {
-  background: #fff;
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  box-shadow: 0 3px 10px rgba(0,0,0,.05);
-}
-input, button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 8px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-  outline: none;
-  box-sizing: border-box;
-}
-input:focus { border-color: #111; box-shadow: 0 0 6px rgba(0,0,0,.1); }
-
-button {
-  cursor: pointer;
-  transition: 0.25s;
-  font-weight: 600;
-  border-radius: 6px;
-  outline: none;
-}
-button.register { background: #111; color: #fff; }
-button.register:hover { opacity: 0.9; }
-
-/* Tombol aksi putih + border hitam */
-button.action-btn {
-  background: #fff;
-  color: #000;
-  border: 1px solid #000;
-  font-size: 12px;
-  margin-right: 4px;
-  padding: 6px 10px;
-}
-button.action-btn:hover { background: #f0f0f0; }
-
-/* Table style */
-.table-container {
-  overflow-x: auto;
-  max-height: 400px;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-  min-width: 600px;
-}
-th, td {
-  text-align: left;
-  padding: 8px 10px;
-  border-bottom: 1px solid #eee;
-}
-th {
-  background: #f9f9f9;
-  font-weight: 600;
-}
-tr:hover {
-  background: #f5f5f5;
+*{box-sizing:border-box}
+body{
+  font-family:'Outfit',sans-serif;
+  background:#f1f2f7;
+  margin:0;
 }
 
-.status-badge {
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 12px;
-}
-#msg {margin-top:6px;font-weight:600;}
-.menu-wrap {
-  position: relative;
-  display: inline-block;
+/* ===== HEADER ===== */
+.header{
+  background:#fff;
+  padding:14px 18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
 }
 
-.menu-btn {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
+.header-title{
+  font-size:18px;
+  font-weight:700;
+  color:#111;
 }
 
-.menu-dropdown {
-  display: none;
-  position: absolute;
-  right: 0;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  min-width: 120px;
-  z-index: 99;
-  box-shadow: 0 4px 10px rgba(0,0,0,.1);
+/* PROFILE MENU */
+.profile-wrap{
+  position:relative;
 }
 
-.menu-dropdown button {
-  width: 100%;
-  border: none;
-  background: none;
-  padding: 12px;
-  font-size: 13px;
-  text-align: left;
+.profile-btn{
+  background:#fff;
+  border:1px solid #ddd;
+  padding:8px 14px;
+  border-radius:999px;
+  font-weight:600;
+  cursor:pointer;
 }
 
-/* tombol ke-2 = Reject */
-.menu-dropdown button:nth-child(2){
+.profile-menu{
+  display:none;
+  position:absolute;
+  right:0;
+  top:45px;
+  background:#fff;
+  border:1px solid #ddd;
+  border-radius:10px;
+  min-width:160px;
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+  z-index:100;
+}
+
+.profile-menu button{
+  width:100%;
+  padding:12px;
+  background:none;
+  border:none;
+  text-align:left;
+  cursor:pointer;
+  font-size:14px;
+}
+
+.profile-menu button:hover{
+  background:#f5f5f5;
+}
+
+.profile-menu button.logout{
   color:#ef4444;
   font-weight:700;
 }
 
-.menu-dropdown button:hover {
-  background: #f5f5f5;
+/* ===== CONTENT ===== */
+.container{
+  padding:18px;
+}
+
+.card{
+  background:#fff;
+  padding:16px;
+  border-radius:14px;
+  box-shadow:0 3px 10px rgba(0,0,0,.05);
+}
+
+.menu-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:12px;
+  margin-top:10px;
+}
+
+.menu-btn{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  padding:16px;
+  border-radius:14px;
+  background:#fff;
+  border:1px solid #ddd;
+  cursor:pointer;
+  transition:.2s;
+  text-align:left;
+}
+
+.menu-btn:hover{
+  background:#f5f5f5;
+}
+
+.menu-icon{
+  width:36px;
+  height:36px;
+  object-fit:contain;
+}
+
+.menu-text{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.menu-title{
+  font-weight:700;
+  font-size:15px;
+  color:#111;
+}
+
+.menu-desc{
+  font-size:13px;
+  color:#666;
+  line-height:1.4;
+}
+
+.menu-btn:hover{
+  background:#f5f5f5;
 }
 </style>
 </head>
 
 <body>
 
-<!-- ADD MEMBER -->
-<div class="card">
-<h3>Register Artist</h3>
-<input id="email" placeholder="Email">
-<input id="password" placeholder="Password">
-<input id="nama" placeholder="Nama Artis">
-<input id="saldo" placeholder="Saldo awal">
-<button class="register" onclick="register()">CREATE ACCOUNT</button>
-<p id="msg"></p>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-title">Dynotic Admin</div>
+
+  <div class="profile-wrap">
+    <button class="profile-btn" onclick="toggleProfile()">Admin ▾</button>
+
+    <div class="profile-menu" id="profileMenu">
+      <button onclick="location.href='admin-profile.html'">Profile</button>
+      <button class="logout" onclick="logout()">Logout</button>
+    </div>
+  </div>
 </div>
 
-<!-- WITHDRAW REQUESTS -->
-<div class="card">
-<h3>Withdraw Requests</h3>
-<div class="table-container">
-<table id="withdrawTable">
-  <thead>
-    <tr>
-      <th>Nama</th>
-      <th>Email</th>
-      <th>Bank</th>
-      <th>Rek</th>
-      <th>Jumlah</th>
-      <th>Status</th>
-      <th>Aksi</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-</div>
-</div>
+<!-- CONTENT -->
+<div class="container">
+ <div class="card">
+  <h3 style="margin:0 0 10px;font-size:16px">Admin Menu</h3> 
+  <div class="menu-grid">
 
-<!-- MEMBERS -->
-<div class="card">
-<h3>Members</h3>
-<div class="table-container">
-<table id="memberTable">
-  <thead>
-    <tr>
-      <th>Nama</th>
-      <th>Email</th>
-      <th>Saldo</th>
-      <th>Aksi</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-</div>
-</div>
+  <button class="menu-btn" onclick="go('admin-users.html')">
+    <img src="../assets/users.png" class="menu-icon">
+    <div class="menu-text">
+      <div class="menu-title">Users</div>
+      <div class="menu-desc">
+        Kelola akun artis, saldo, dan data pengguna.
+      </div>
+    </div>
+  </button>
 
-<!-- RELEASES -->
-<div class="card">
-<h3>Releases</h3>
-<div class="table-container">
-<table id="releaseTable">
-  <thead>
-    <tr>
-<th>Email</th>
-<th>Artist</th>
-<th>Title</th>
-<th>Status</th>
-<th>Aksi</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-</div>
-</div>
+  <button class="menu-btn" onclick="go('admin-releases.html')">
+    <img src="../assets/releases.png" class="menu-icon">
+    <div class="menu-text">
+      <div class="menu-title">Releases Request</div>
+      <div class="menu-desc">
+        Review & approve pengajuan rilis lagu dari artis.
+      </div>
+    </div>
+  </button>
 
-<!-- REKAPAN -->
-<div class="card">
-<h3>Tambah Rekapan</h3>
+  <button class="menu-btn" onclick="go('admin-messages.html')">
+    <img src="../assets/messages.png" class="menu-icon">
+    <div class="menu-text">
+      <div class="menu-title">Messages</div>
+      <div class="menu-desc">
+        Pesan dan komunikasi antara admin & artis.
+      </div>
+    </div>
+  </button>
 
-<select id="emailSelect"></select>
-<input id="artistName" placeholder="Nama Artis">
+  <button class="menu-btn" onclick="go('admin-withdraw.html')">
+    <img src="../assets/withdraw.png" class="menu-icon">
+    <div class="menu-text">
+      <div class="menu-title">Withdraw Request</div>
+      <div class="menu-desc">
+        Permintaan penarikan saldo artis & status pembayaran.
+      </div>
+    </div>
+  </button>
 
-<input type="date" id="datePick">
-
-<div id="platformWrap"></div>
-
-<button class="action-btn" onclick="addPlatform()">+ Tambah Platform</button>
-<button class="action-btn" onclick="saveArtist()">Simpan Artis</button>
-<button class="register" onclick="saveRekapan()">SIMPAN REKAPAN</button>
-
-<p id="rekapMsg"></p>
-</div>
-
-<div class="card">
-<h3>Data Rekapan</h3>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-  <select id="filterEmail"></select>
-  <input type="date" id="filterDate">
-  <button class="action-btn" onclick="loadRekapan()">Filter</button>
-  <button class="action-btn" onclick="resetFilter()">Reset</button>
-</div>
-
-<div class="table-container">
-<table id="rekapTable">
-<thead>
-<tr>
-  <th>Email</th>
-  <th>Tanggal</th>
-  <th>Artis</th>
-  <th>Total</th>
-  <th>Aksi</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-</div>
-</div>
+  <button class="menu-btn" onclick="go('admin-royalty.html')">
+    <img src="../assets/royalty.png" class="menu-icon">
+    <div class="menu-text">
+      <div class="menu-title">Royalty</div>
+      <div class="menu-desc">
+        Rekap, distribusi, dan laporan royalti artis.
+      </div>
+    </div>
+  </button>
+      </div>
+    </div>
+       </div> 
 
 <script>
-let isRegistering = false;
-let tempArtists = [];
 firebase.initializeApp({
  apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
  authDomain:"dynopay-2513c.firebaseapp.com",
  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 
-const auth=firebase.auth();
-const db=firebase.database();
-const secondaryApp = firebase.initializeApp(
-  firebase.app().options,
-  "Secondary"
-);
-const secondaryAuth = secondaryApp.auth();
-auth.onAuthStateChanged(user => {
+const auth = firebase.auth();
+const db = firebase.database();
 
-  if(isRegistering) return;
-
-  if (!user) {
-    location.href = "../admin";
+/* ADMIN PROTECTION */
+auth.onAuthStateChanged(user=>{
+  if(!user){
+    location.href="../admin";
     return;
   }
 
-  const uid = user.uid;
-
-  db.ref("admins/"+uid).once("value")
-  .then(snapshot=>{
-    if (!snapshot.exists()) {
-      alert("⚠ Anda bukan admin!");
-      auth.signOut().then(()=>location.href="../admin");
+  db.ref("admins/"+user.uid).once("value").then(snap=>{
+    if(!snap.exists()){
+      alert("⚠ Anda bukan admin");
+      auth.signOut();
     }
-  })
-  .catch(err=>{
-    console.error(err);
+  });
+});
+
+function toggleProfile(){
+  const m = document.getElementById("profileMenu");
+  m.style.display = m.style.display==="block" ? "none" : "block";
+}
+
+function logout(){
+  if(confirm("Logout dari admin panel?")){
     auth.signOut().then(()=>location.href="../admin");
-  });
-});
-// REGISTER ARTIST
-function register(){
-
- isRegistering = true;
-
- let email=document.getElementById("email").value.trim();
- let pass=document.getElementById("password").value.trim();
- let nama=document.getElementById("nama").value.trim();
- let saldo=document.getElementById("saldo").value.trim();
- const msg=document.getElementById("msg");
-
- if(!email||!pass||!nama||!saldo){
-   msg.style.color="red"; 
-   msg.innerHTML="⚠ Semua field harus diisi!"; 
-   isRegistering = false;
-   return;
- }
-
- secondaryAuth.createUserWithEmailAndPassword(email,pass)
-.then(res=>{
-  let uid=res.user.uid;
-
-  return db.ref("users/"+uid).set({
-    email: email,
-    nama: nama,
-    saldo:Number(saldo),
-    createdAt:Date.now()
-  });
-})
-.then(()=>{
-  msg.style.color="green";
-  msg.innerHTML="✔ Akun berhasil dibuat!";
-
-  ["email","password","nama","saldo"].forEach(id=>
-    document.getElementById(id).value=""
-  );
-
-  secondaryAuth.signOut();
-  loadMembers();
-  isRegistering = false;
-})
-.catch(err=>{
-  msg.style.color="red";
-  msg.innerHTML=err.message;
-  isRegistering = false;
-});
-}
-function confirmRelease(uid, rid, status){
-  const text = status === "approved"
-    ? "Yakin APPROVE rilis ini?"
-    : "⚠ Yakin REJECT rilis ini?\nAksi ini tidak bisa dibatalkan!";
-
-  if(!confirm(text)) return;
-
-  setReleaseStatus(uid, rid, status);
-}
-function saveArtist() {
-  const artistName = document.getElementById("artistName").value.trim();
-  if(!artistName){
-    alert("Masukkan nama artis!");
-    return;
-  }
-
-  let platforms = {};
-  let total = 0;
-  document.querySelectorAll(".plat").forEach((p,i)=>{
-    const n = document.querySelectorAll(".nom")[i];
-    if(p.value && n.value){
-      platforms[p.value] = Number(n.value);
-      total += Number(n.value);
-    }
-  });
-
-  tempArtists.push({
-    name: artistName,
-    total: total,
-    platforms: platforms
-  });
-  document.getElementById("artistName").value = "";
-  document.getElementById("platformWrap").innerHTML = "";
-  addPlatform();
-
-  alert(`✔ Artis "${artistName}" berhasil disimpan sementara!`);
-}
-// LOAD WITHDRAWS
-function loadWithdraws(){
- db.ref("withdraws").on("value",snap=>{
-   const tbody = document.querySelector("#withdrawTable tbody");
-   tbody.innerHTML="";
-   snap.forEach(user=>{
-     user.forEach(w=>{
-       const d=w.val();
-       const tr = document.createElement("tr");
-       tr.innerHTML = `
-         <td>${d.nama}</td>
-         <td>${d.email||"-"}</td>
-         <td>${d.bank}</td>
-         <td>${d.rekening}</td>
-         <td>Rp ${Number(d.jumlah).toLocaleString()}</td>
-         <td>
-           <span class="status-badge" style="border:1px solid ${getStatusColor(d.status)}; color:${getStatusColor(d.status)}">
-             ${(d.status||"pending").toUpperCase()}
-           </span>
-         </td>
-         <td>
-           <button class="action-btn" onclick="setWithdrawStatus('${user.key}','${w.key}','approve')">Approve</button>
-           <button class="action-btn" onclick="setWithdrawStatus('${user.key}','${w.key}','rejected')">Reject</button>
-           <button class="action-btn" onclick="deleteWithdraw('${user.key}','${w.key}')">Delete</button>
-         </td>
-       `;
-       tbody.appendChild(tr);
-     });
-   });
- });
-}
-
-// LOAD MEMBERS
-function loadMembers(){
-  const tbody = document.querySelector("#memberTable tbody");
-  db.ref("users").on("value", snap=>{
-    tbody.innerHTML="";
-    snap.forEach(u=>{
-      const d = u.val();
-      const saldoFormatted = "Rp " + (d.saldo||0).toLocaleString();
-
-      // pakai UID asli sebagai id
-      const uid = u.key;
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${d.nama}</td>
-        <td>${d.email||"-"}</td>
-        <td>${saldoFormatted}</td>
-        <td style="display:flex;gap:6px;align-items:center">
-          
-          <!-- DETAIL MEMBER -->
-          <button class="action-btn" onclick="window.location.href='../admin-member?uid=${uid}'">
-            Detail
-          </button>
-
-          <div class="menu-wrap">
-            <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
-            <div class="menu-dropdown">
-              <button onclick="resetPassword('${d.email}')">Reset Password</button>
-              <button onclick="editSaldo('${uid}')">Edit Saldo</button>
-              <button onclick="deleteMember('${uid}')">Hapus</button>
-            </div>
-          </div>
-
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
-  });
-}
-
-// LOAD RELEASES
-function loadReleases(){
-  const tbody = document.querySelector("#releaseTable tbody");
-  tbody.innerHTML = "";
-
-  Promise.all([
-    db.ref("users").once("value"),
-    db.ref("releases").once("value")
-  ]).then(([userSnap, releaseSnap])=>{
-
-    // mapping uid -> email
-    let userEmailMap = {};
-    userSnap.forEach(u=>{
-      userEmailMap[u.key] = u.val().email;
-    });
-
-    let all = [];
-    releaseSnap.forEach(u=>{
-      u.forEach(r=>{
-        all.push({
-          uid: u.key,
-          rid: r.key,
-          ...r.val()
-        });
-      });
-    });
-
-    // terbaru di atas
-    all.sort((a,b)=>(b.time||0)-(a.time||0));
-
-    all.forEach(d=>{
-      const email = userEmailMap[d.uid] || "-";
-
-tbody.innerHTML += `
-<tr>
-  <td>${email}</td>
-  <td>${d.artist || "-"}</td>
-  <td>${d.title || "-"}</td>
-  <td>
-    <span class="status-badge"
-      style="border:1px solid ${getStatusColor(d.status)};
-      color:${getStatusColor(d.status)}">
-      ${(d.status || "pending").toUpperCase()}
-    </span>
-  </td>
-  <td style="display:flex;gap:6px;align-items:center">
-
-    <!-- DETAIL -->
-    <button class="action-btn"
-      onclick="openPlatform('${d.uid}','${d.rid}')">
-      Detail
-    </button>
-
-    <!-- MENU -->
-    <div class="menu-wrap">
-      <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
-      <div class="menu-dropdown">
-        <button onclick="confirmRelease('${d.uid}','${d.rid}','approved')">
-          Approve
-        </button>
-        <button onclick="confirmRelease('${d.uid}','${d.rid}','rejected')">
-          Reject
-        </button>
-        <button onclick="deleteRelease('${d.uid}','${d.rid}')">
-          Delete
-        </button>
-      </div>
-    </div>
-
-  </td>
-</tr>
-`;
-    });
-  });
-}
-function resetPassword(email){
-  if(!email){
-    alert("Email tidak ditemukan");
-    return;
-  }
-
-  if(!confirm(`Kirim reset password ke:\n${email} ?`)) return;
-
-  firebase.auth().sendPasswordResetEmail(email)
-    .then(()=>{
-      alert("✔ Email reset password berhasil dikirim");
-    })
-    .catch(err=>{
-      alert("❌ " + err.message);
-    });
-}
-// UTILS
-function getStatusColor(status){
-  if(status=="approved") return "#10b981";
-  if(status=="rejected") return "#ef4444";
-  return "#f59e0b"; // pending
-}
-
-// ACTION FUNCTIONS
-function setWithdrawStatus(uid,key,status){
- db.ref(`withdraws/${uid}/${key}/status`).set(status)
- .then(()=>{
-   if(status==="approve") db.ref(`users/${uid}/saldo`).set(0);
-   loadWithdraws(); loadMembers();
- });
-}
-function deleteWithdraw(uid,key){
- if(confirm("Apakah yakin ingin menghapus riwayat ini?")){
-   db.ref(`withdraws/${uid}/${key}`).remove().then(()=>loadWithdraws());
- }
-}
-
-function editSaldo(uid){
-  let newSaldo = prompt("Masukkan saldo baru:");
-  if(newSaldo === null) return;
-
-  newSaldo = Number(newSaldo);
-  if(isNaN(newSaldo)){
-    alert("⚠ Harus angka!");
-    return;
-  }
-
-  db.ref(`users/${uid}/saldo`).set(newSaldo)
-    .then(()=>{
-      alert("✔ Saldo diperbarui");
-      loadMembers(); // 🔥 penting
-    });
-}
-
-function deleteMember(uid){
- if(confirm("Apakah yakin ingin menghapus member ini?")){
-   db.ref(`users/${uid}`).remove().then(()=>loadMembers());
- }
-}
-
-function setReleaseStatus(uid,rid,status){
-  db.ref(`releases/${uid}/${rid}/status`).set(status).then(()=>loadReleases());
-}
-function deleteRelease(uid,rid){
-  if(confirm("Apakah yakin ingin menghapus rilisan ini?")){
-    db.ref(`releases/${uid}/${rid}`).remove().then(()=>loadReleases());
   }
 }
 
-// INITIAL LOAD
-loadWithdraws();
-loadMembers();
-loadReleases();
-// ===== REKAPAN FEATURE =====
-
-let userMap = {};
-function toggleMenu(btn){
-  document.querySelectorAll(".menu-dropdown").forEach(m=>{
-    if(m!==btn.nextElementSibling){
-      m.style.display="none";
-    }
-  });
-
-  const menu = btn.nextElementSibling;
-  menu.style.display = menu.style.display==="block" ? "none" : "block";
-}
-function loadUserDropdown(){
-  const sel = document.getElementById("emailSelect");
-  const filterSel = document.getElementById("filterEmail");
-
-  sel.innerHTML = `<option value="">Pilih Email</option>`;
-  filterSel.innerHTML = `<option value="">Semua Email</option>`;
-
-  db.ref("users").once("value").then(snap=>{
-    snap.forEach(u=>{
-      const d = u.val();
-      if(!d.email) return;
-
-      userMap[d.email] = { uid:u.key, nama:d.nama };
-
-      // dropdown tambah rekapan
-      sel.innerHTML += `<option value="${d.email}">${d.email}</option>`;
-
-      // dropdown filter
-      filterSel.innerHTML += `<option value="${d.email}">${d.email}</option>`;
-    });
-  });
+function go(page){
+  location.href = page;
 }
 
-document.getElementById("emailSelect").addEventListener("change", function() {
-  document.getElementById("artistName").value = "";
-});
-function openPlatform(uid,rid){
-  location.href = `../admin-platform?uid=${uid}&rid=${rid}`;
-}
-function addPlatform(){
-  document.getElementById("platformWrap").innerHTML += `
-  <div style="display:flex;gap:6px;margin-top:6px">
-    <input class="plat" placeholder="Nama platform">
-    <input class="nom" placeholder="Nominal">
-  </div>`;
-}
-
-addPlatform(); // default 1 kolom
-
-function saveRekapan(){
-  const email=document.getElementById("emailSelect").value;
-  const date=document.getElementById("datePick").value;
-  const msg=document.getElementById("rekapMsg");
-
-  if(!email||!date){
-    msg.style.color="red";
-    msg.innerHTML="Lengkapi semua field!";
-    return;
+/* close menu if click outside */
+document.addEventListener("click", e=>{
+  if(!e.target.closest(".profile-wrap")){
+    document.getElementById("profileMenu").style.display="none";
   }
-
-  const uid=userMap[email].uid;
-
-if(tempArtists.length===0){
-  msg.style.color="red";
-  msg.innerHTML="Tambahkan minimal 1 artis!";
-  return;
-}
-
-let detail = {};
-let total = 0;
-
-tempArtists.forEach(a=>{
-  detail[a.name] = { total: a.total, platforms: a.platforms };
-  total += a.total;
 });
-
-db.ref(`royalties/${uid}/${date}`).set({
-  total: total,
-  detail: detail,
-  createdAt: Date.now()
-}).then(()=>{
-  msg.style.color="green";
-  msg.innerHTML="✔ Rekapan tersimpan!";
-
-  tempArtists = [];
-  document.getElementById("artistName").value = "";
-  document.getElementById("platformWrap").innerHTML = "";
-  addPlatform();
-
-  loadRekapan(); // 🔥 INI WAJIB
-});
-}
-function loadRekapan(){
-  const fEmail = document.getElementById("filterEmail").value;
-const fDate  = document.getElementById("filterDate").value;
-  const tbody = document.querySelector("#rekapTable tbody");
-  tbody.innerHTML = "";
-
-  db.ref("users").once("value").then(userSnap=>{
-    let uidEmailMap = {};
-    userSnap.forEach(u=>{
-      uidEmailMap[u.key] = u.val().email;
-    });
-
-    db.ref("royalties").once("value").then(snap=>{
-      snap.forEach(user=>{
-        const uid = user.key;
-        const email = uidEmailMap[uid] || "-";
-if(fEmail && fEmail !== email) return;
-
-        user.forEach(dateSnap=>{
-  const date = dateSnap.key;
-  if(fDate && fDate !== date) return;
-
-  const d = dateSnap.val();
-
-          Object.keys(d.detail||{}).forEach(artist=>{
-            tbody.innerHTML += `
-              <tr>
-                <td>${email}</td>
-                <td>${date}</td>
-                <td>${artist}</td>
-                <td>Rp ${Number(d.detail[artist].total).toLocaleString()}</td>
-                <td>
-                  <button class="action-btn"
-                    onclick="deleteRekapan('${uid}','${date}')">
-                    Hapus
-                  </button>
-                </td>
-              </tr>
-            `;
-          });
-        });
-      });
-    });
-  });
-}
-function deleteRekapan(uid, date){
-  if(!confirm("Yakin hapus rekapan tanggal ini?")) return;
-
-  db.ref(`royalties/${uid}/${date}`)
-    .remove()
-    .then(()=>{
-      alert("✔ Rekapan dihapus");
-      loadRekapan();
-    })
-    .catch(err=>{
-      alert("❌ " + err.message);
-    });
-}
-function resetFilter(){
-  document.getElementById("filterEmail").value = "";
-  document.getElementById("filterDate").value = "";
-  loadRekapan();
-}
-
-loadUserDropdown();
-loadRekapan();
-
 </script>
+
 </body>
 </html>
