@@ -98,9 +98,9 @@ auth.onAuthStateChanged(user => {
 
 // UTILS
 function getStatusColor(status){
-  if(status=="approved") return "#10b981";
-  if(status=="rejected") return "#ef4444";
-  return "#f59e0b"; // pending
+  if(status === "approve" || status === "approved") return "#10b981"; // hijau
+  if(status === "rejected") return "#ef4444"; // merah
+  return "#f59e0b"; // pending / lainnya
 }
 
 function setWithdrawStatus(uid,key,status){
@@ -154,7 +154,7 @@ function renderTablePage(){
   <td>${d.bank}</td>
   <td>${d.rekening}</td>
   <td>Rp ${Number(d.jumlah).toLocaleString()}</td>
-  <td><span class="status-badge" style="border:1px solid ${getStatusColor(d.status)}; color:${getStatusColor(d.status)}">${(d.status||"pending").toUpperCase()}</span></td>
+  <td><span class="status-badge" style="border:1px solid ${getStatusColor(d.status)}; color:${getStatusColor(d.status)}">${(d.status === "approve" ? "APPROVED" : (d.status || "pending")).toUpperCase()}</span></td>
   <td>
     <button class="action-btn" onclick="setWithdrawStatus('${d.uid}','${d.wid}','approve')">Approve</button>
     <button class="action-btn" onclick="setWithdrawStatus('${d.uid}','${d.wid}','rejected')">Reject</button>
