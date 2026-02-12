@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
 <meta charset="UTF-8">
-<title>Admin Panel - DynoPay (Withdraws)</title>
+<title>Withdraw | Dynotic Admin</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -34,7 +35,10 @@ button.action-btn {
 }
 button.action-btn:hover { background:#f0f0f0; }
 
-.table-container { overflow-x:auto; max-height:400px; }
+.table-container {
+  overflow-x: auto; /* sudah ada */
+  max-width: 100%;  /* tambah ini */
+}
 table { width:100%; border-collapse:collapse; font-size:13px; min-width:600px; }
 th, td { text-align:left; padding:8px 10px; border-bottom:1px solid #eee; }
 th { background:#f9f9f9; font-weight:600; }
