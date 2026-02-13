@@ -110,7 +110,7 @@ function loadAdminRoyalty(){
   const list = document.getElementById("adminRoyaltyList");
   list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Memuat data...</td></tr>`;
 
-  db.ref("royaltyAdmin").on("value", snap=>{
+  db.ref("royalties").on("value", snap=>{
     if(!snap.exists()){
       list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada data</td></tr>`;
       return;
@@ -149,8 +149,8 @@ document.getElementById("royaltyForm").addEventListener("submit", function(e){
 
   if(!uid) return alert("Pilih member dulu!");
 
-  const newKey = db.ref("royaltyAdmin").push().key; // buat key baru
-  db.ref("royaltyAdmin/"+newKey).set({uid,date,value,downloadUrl})
+  const newKey = db.ref("royalties").push().key; // buat key baru
+  db.ref("royalties/"+newKey).set({uid,date,value,downloadUrl})
     .then(()=>{
       console.log("Royalty added:", {uid,date,value,downloadUrl});
       loadAdminRoyalty(); // refresh tabel
