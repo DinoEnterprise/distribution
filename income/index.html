@@ -1,174 +1,253 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Income | Dynotic Distribution</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif;}
-body{background:#f1f2f7;padding-top:74px;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Income | Dynotic Distribution</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Outfit', sans-serif;
+    }
 
-header {
-  padding:12px 20px;
-  display:flex;
-  align-items:center;
-  background:#fff;
-  border-bottom:1px solid #eee;
-  position:fixed; top:0; left:0; width:100%; z-index:1000;
-}
-header img{height:50px;}
+    body {
+      background: #f1f2f7;
+      padding-top: 74px;
+    }
 
-/* Card Total & Withdraw */
-.card{
-  width:90%;
-  margin:16px auto;
-  background:#fff;
-  border-radius:18px;
-  padding:18px;
-  border:1px solid #ececec;
-  box-shadow:0 6px 16px rgba(0,0,0,.05);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.card .balance{font-weight:700;font-size:16px;}
-.card button{
-  padding:8px 14px;
-  background:#111;
-  color:#fff;
-  border:none;
-  border-radius:12px;
-  cursor:pointer;
-}
+    header {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+    }
 
-/* Table (hidden for normal users) */
-.table-card{
-  display:none; /* sembunyikan untuk user biasa */
-  width:90%;
-  margin:16px auto;
-  background:#fff;
-  border-radius:18px;
-  padding:0;
-  border:1px solid #ececec;
-  box-shadow:0 6px 16px rgba(0,0,0,.05);
-}
-.table-card table{
-  width:100%;
-  border-collapse:collapse;
-}
-.table-card th, .table-card td{
-  padding:12px 14px;
-  text-align:left;
-  border-bottom:1px solid #eee;
-  font-size:14px;
-}
-.table-card th{
-  background:#f9f9f9;
-  font-weight:600;
-}
-.table-card td button{
-  padding:6px 10px;
-  background:#667eea;
-  color:#fff;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  font-size:13px;
-}
-.table-card td button:hover{filter:brightness(0.9);}
-.status-ok{color:green;font-weight:700;}
-.status-pending{color:#777;font-weight:700;}
-</style>
+    header img {
+      height: 50px;
+    }
+
+    /* Card Total & Withdraw */
+    .card {
+      width: 90%;
+      margin: 16px auto;
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px;
+      border: 1px solid #ececec;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, .05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card .balance {
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .card button {
+      padding: 8px 14px;
+      background: #111;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    /* Table (hidden for normal users) */
+    .table-card {
+      display: none; /* sembunyikan untuk user biasa */
+      width: 90%;
+      margin: 16px auto;
+      background: #fff;
+      border-radius: 18px;
+      padding: 0;
+      border: 1px solid #ececec;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, .05);
+    }
+
+    .table-card table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table-card th,
+    .table-card td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    .table-card th {
+      background: #f9f9f9;
+      font-weight: 600;
+    }
+
+    .table-card td button {
+      padding: 6px 10px;
+      background: #667eea;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .table-card td button:hover {
+      filter: brightness(0.9);
+    }
+
+    /* Report Item */
+    .report-item {
+      background: #fff;
+      width: 90%;
+      margin: 12px auto;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid #eee;
+    }
+
+    .report-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .report-left {
+      font-size: 14px;
+    }
+
+    .report-right {
+      text-align: right;
+    }
+
+    .report-value {
+      font-weight: 700;
+    }
+
+    .report-status {
+      font-size: 12px;
+      color: #777;
+      margin-top: 4px;
+    }
+
+    .report-item button {
+      margin-top: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      border: none;
+      border-radius: 10px;
+      background: #111;
+      color: #fff;
+    }
+  </style>
 </head>
 <body>
 
-<header>
-  <img src="../assets/dynopay2.png" alt="DynoPay">
-</header>
+  <header>
+    <img src="../assets/dynopay2.png" alt="DynoPay">
+  </header>
 
-<!-- Card Total + Withdraw -->
-<div class="card">
-  <div class="balance" id="totalBalance"> € 0</div>
-  <button onclick="withdraw()">Withdraw</button>
-</div>
+  <!-- Card Total + Withdraw -->
+  <div class="card">
+    <div class="balance" id="totalBalance">Total: Rp 0</div>
+    <button onclick="withdraw()">Withdraw</button>
+  </div>
 
-<!-- Table Income (Hidden for users, for admin reference) -->
-<div class="table-card">
-  <table>
-    <thead>
-      <tr>
-        <th>Report</th>
-        <th>Tanggal</th>
-        <th>Value</th>
-        <th>Status</th>
-        <th>Download</th>
-      </tr>
-    </thead>
-    <tbody id="incomeList">
-      <!-- Data akan di-load dari Firebase -->
-    </tbody>
-  </table>
-</div>
+  <!-- Sales Report (Mobile Friendly) -->
+  <div id="reportList"></div>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <!-- Table Income (Hidden for admin) -->
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>Report</th>
+          <th>Tanggal</th>
+          <th>Value</th>
+          <th>Status</th>
+          <th>Download</th>
+        </tr>
+      </thead>
+      <tbody id="incomeList">
+        <!-- Data akan di-load dari Firebase -->
+      </tbody>
+    </table>
+  </div>
 
-<script>
-firebase.initializeApp({
-  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain: "dynopay-2513c.firebaseapp.com",
-  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
-
-const db = firebase.database();
-
-firebase.auth().onAuthStateChanged(user=>{
-  if(!user) window.location.href="../login";
-  else loadIncome(user.uid);
-});
-
-function loadIncome(uid){
-  const list = document.getElementById("incomeList");
-  list.innerHTML = "";
-  let total = 0;
-
-db.ref("saldo/"+uid).once("value").then(snap=>{
-    if(!snap.exists()){
-      list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada data</td></tr>`;
-      return;
-    }
-
-    snap.forEach(item=>{
-      const d = item.val();
-      total += Number(d.total || 0);
-
-      // Hanya untuk admin, user biasa tidak lihat tabel
-      list.innerHTML += `
-      <tr>
-        <td>${item.key}</td>
-        <td>${d.date || '-'}</td>
-        <td>Rp ${Number(d.total).toLocaleString("id-ID")}</td>
-<td>Accepted</td>
-        <td>
-          ${d.downloadUrl ? `<button onclick="downloadFile('${d.downloadUrl}')">Download</button>` : '-'}
-        </td>
-      </tr>`;
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+      authDomain: "dynopay-2513c.firebaseapp.com",
+      databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
     });
 
-    // Update total balance saja untuk user
-    document.getElementById("totalBalance").innerText = "Total: Rp "+total.toLocaleString("id-ID");
-  });
-}
+    const db = firebase.database();
 
-function downloadFile(url){
-  window.open(url,"_blank");
-}
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) window.location.href = "../login";
+      else loadIncome(user.uid);
+    });
 
-function withdraw(){
-  alert("Withdraw klik — bisa sambungkan ke sistem pembayaran nanti");
-}
-</script>
+    function loadIncome(uid) {
+      let total = 0;
+      const reportBox = document.getElementById("reportList");
+      reportBox.innerHTML = "";
+
+      db.ref("royalties/" + uid).orderByKey().limitToLast(12).once("value").then(snap => {
+        if (!snap.exists()) {
+          reportBox.innerHTML = `<p style="text-align:center;color:#777">Belum ada laporan</p>`;
+          document.getElementById("totalBalance").innerText = "Total: Rp 0";
+          return;
+        }
+
+        snap.forEach(item => {
+          const d = item.val();
+          total += Number(d.total || 0);
+
+          reportBox.innerHTML += `
+            <div class="report-item">
+              <div class="report-row">
+                <div class="report-left">
+                  <div><b>${d.date || item.key}</b></div>
+                  <div class="report-status">Accepted</div>
+                </div>
+                <div class="report-right">
+                  <div class="report-value">
+                    Rp ${Number(d.total || 0).toLocaleString("id-ID")}
+                  </div>
+                  ${d.downloadUrl ? `<button onclick="downloadFile('${d.downloadUrl}')">Download</button>` : ''}
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        document.getElementById("totalBalance").innerText =
+          "Total: Rp " + total.toLocaleString("id-ID");
+      });
+    }
+
+    function downloadFile(url) {
+      window.open(url, "_blank", "noopener");
+    }
+
+    function withdraw() {
+      alert("Withdraw klik — bisa sambungkan ke sistem pembayaran nanti");
+    }
+  </script>
 </body>
 </html>
