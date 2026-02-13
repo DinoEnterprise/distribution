@@ -198,48 +198,56 @@
     const db = firebase.database();
 
     firebase.auth().onAuthStateChanged(user => {
-      if (!user) window.location.href = "../login";
-      else loadIncome(user.uid);
+  if (!user) window.location.href = "../login";
+  else loadIncome(user.uid);
+});
+
+function loadIncome(uid){
+  let total = 0;
+  const reportBox = document.getElementById("reportList");
+  reportBox.innerHTML = "";
+
+  db.ref("royalties/" + uid).orderByKey().once("value").then(snap=>{
+    if(!snap.exists()){
+      reportBox.innerHTML = `<p style="text-align:center;color:#777">Belum ada laporan</p>`;
+      document.getElementById("totalBalance").innerText = "Total: Rp 0";
+      return;
+    }
+
+    snap.forEach(item=>{
+      const d = item.val();
+      total += Number(d.value || 0);
+
+      reportBox.innerHTML += `
+        <div class="report-item">
+          <div class="report-row">
+            <div class="report-left">
+              <div><b>${d.date || item.key}</b></div>
+              <div class="report-status">Accepted</div>
+            </div>
+            <div class="report-right">
+              <div class="report-value">
+                Rp ${Number(d.value || 0).toLocaleString("id-ID")}
+              </div>
+              ${d.downloadUrl ? `<button onclick="downloadFile('${d.downloadUrl}')">Download</button>` : ''}
+            </div>
+          </div>
+        </div>
+      `;
     });
 
-    function loadIncome(uid) {
-      let total = 0;
-      const reportBox = document.getElementById("reportList");
-      reportBox.innerHTML = "";
+    document.getElementById("totalBalance").innerText =
+      "Total: Rp " + total.toLocaleString("id-ID");
+  });
+}
 
-      db.ref("royalties/" + uid).orderByKey().limitToLast(12).once("value").then(snap => {
-        if (!snap.exists()) {
-          reportBox.innerHTML = `<p style="text-align:center;color:#777">Belum ada laporan</p>`;
-          document.getElementById("totalBalance").innerText = "Total: Rp 0";
-          return;
-        }
+function downloadFile(url){
+  window.open(url,"_blank","noopener");
+}
 
-        snap.forEach(item => {
-          const d = item.val();
-          total += Number(d.total || 0);
-
-          reportBox.innerHTML += `
-            <div class="report-item">
-              <div class="report-row">
-                <div class="report-left">
-                  <div><b>${d.date || item.key}</b></div>
-                  <div class="report-status">Accepted</div>
-                </div>
-                <div class="report-right">
-                  <div class="report-value">
-                    Rp ${Number(d.total || 0).toLocaleString("id-ID")}
-                  </div>
-                  ${d.downloadUrl ? `<button onclick="downloadFile('${d.downloadUrl}')">Download</button>` : ''}
-                </div>
-              </div>
-            </div>
-          `;
-        });
-
-        document.getElementById("totalBalance").innerText =
-          "Total: Rp " + total.toLocaleString("id-ID");
-      });
-    }
+function withdraw(){
+  alert("Withdraw klik — bisa sambungkan ke sistem pembayaran nanti");
+}
 
     function downloadFile(url) {
       window.open(url, "_blank", "noopener");
