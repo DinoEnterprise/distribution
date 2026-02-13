@@ -110,7 +110,7 @@ function loadAdminRoyalty(){
   const list = document.getElementById("adminRoyaltyList");
   list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Memuat data...</td></tr>`;
 
-  db.ref("royaltyAdmin").once("value").then(snap=>{
+  db.ref("royaltyAdmin").on("value", snap=>{
     if(!snap.exists()){
       list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada data</td></tr>`;
       return;
@@ -119,7 +119,6 @@ function loadAdminRoyalty(){
     const promises = [];
     snap.forEach(item=>{
       const d = item.val();
-      // Promise untuk fetch user data
       const p = db.ref("users/"+d.uid).once("value").then(uSnap=>{
         const user = uSnap.val() || {};
         return `
@@ -150,11 +149,14 @@ document.getElementById("royaltyForm").addEventListener("submit", function(e){
 
   if(!uid) return alert("Pilih member dulu!");
 
-  const newKey = db.ref("royaltyAdmin").push().key;
+  const newKey = db.ref("royaltyAdmin").push().key; // buat key baru
   db.ref("royaltyAdmin/"+newKey).set({uid,date,value,downloadUrl})
     .then(()=>{
-      loadAdminRoyalty();
-      this.reset();
+      console.log("Royalty added:", {uid,date,value,downloadUrl});
+      loadAdminRoyalty(); // refresh tabel
+      this.reset();       // reset form
+    }).catch(err=>{
+      console.error("Gagal tambah royalty:", err);
     });
 });
 
