@@ -199,24 +199,33 @@
 
     firebase.auth().onAuthStateChanged(user => {
   if (!user) window.location.href = "../login";
-  else loadIncome(user.uid);
+  else {
+    const uid = user.uid;
+
+    // Ambil saldo langsung dari database
+    db.ref("users/" + uid + "/saldo").once("value").then(snap => {
+  const saldo = Number(snap.val() || 0);
+  document.getElementById("totalBalance").innerText =
+    "Total: Rp " + saldo.toLocaleString("id-ID");
+});
+
+    // Tetap load laporan royalti
+    loadIncome(uid);
+  }
 });
 
 function loadIncome(uid) {
-  let total = 0;
   const reportBox = document.getElementById("reportList");
   reportBox.innerHTML = "";
 
   db.ref("royalties").orderByKey().once("value").then(snap => {
     if (!snap.exists()) {
       reportBox.innerHTML = `<p style="text-align:center;color:#777">Belum ada laporan</p>`;
-      document.getElementById("totalBalance").innerText = "Total: Rp 0";
-      return;
+      return; // jangan ubah totalBalance di sini
     }
 
     snap.forEach(item => {
       const d = item.val();
-      total += Number(d.value || 0);
 
       reportBox.innerHTML += `
         <div class="report-item">
@@ -235,11 +244,9 @@ function loadIncome(uid) {
         </div>
       `;
     });
-
-    document.getElementById("totalBalance").innerText =
-      "Total: Rp " + total.toLocaleString("id-ID");
   });
 }
+   
 
 function downloadFile(url){
   window.open(url,"_blank","noopener");
@@ -249,13 +256,6 @@ function withdraw(){
   alert("Withdraw klik — bisa sambungkan ke sistem pembayaran nanti");
 }
 
-    function downloadFile(url) {
-      window.open(url, "_blank", "noopener");
-    }
-
-    function withdraw() {
-      alert("Withdraw klik — bisa sambungkan ke sistem pembayaran nanti");
-    }
   </script>
 </body>
 </html>
