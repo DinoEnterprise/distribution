@@ -207,7 +207,7 @@ function loadIncome(uid) {
   const reportBox = document.getElementById("reportList");
   reportBox.innerHTML = "";
 
-  db.ref("royalties").orderByChild("uid").equalTo(uid).once("value").then(snap => {
+  db.ref("royalties").orderByKey().once("value").then(snap => {
     if (!snap.exists()) {
       reportBox.innerHTML = `<p style="text-align:center;color:#777">Belum ada laporan</p>`;
       document.getElementById("totalBalance").innerText = "Total: Rp 0";
