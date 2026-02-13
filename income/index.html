@@ -202,19 +202,19 @@
   else loadIncome(user.uid);
 });
 
-function loadIncome(uid){
+function loadIncome(uid) {
   let total = 0;
   const reportBox = document.getElementById("reportList");
   reportBox.innerHTML = "";
 
-  db.ref("royalties/" + uid).orderByKey().once("value").then(snap=>{
-    if(!snap.exists()){
+  db.ref("royalties").orderByChild("uid").equalTo(uid).once("value").then(snap => {
+    if (!snap.exists()) {
       reportBox.innerHTML = `<p style="text-align:center;color:#777">Belum ada laporan</p>`;
       document.getElementById("totalBalance").innerText = "Total: Rp 0";
       return;
     }
 
-    snap.forEach(item=>{
+    snap.forEach(item => {
       const d = item.val();
       total += Number(d.value || 0);
 
