@@ -99,7 +99,7 @@ function loadMembers(){
     if(snap.exists()){
       snap.forEach(user=>{
         const d = user.val();
-        sel.innerHTML += `<option value="${user.key}">${d.email} • ${d.fullName}</option>`;
+        sel.innerHTML += `<option value="${user.key}">${d.email} • ${d.nama}</option>`;
       });
     }
   });
@@ -109,25 +109,33 @@ function loadMembers(){
 function loadAdminRoyalty(){
   const list = document.getElementById("adminRoyaltyList");
   list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Memuat data...</td></tr>`;
+
   db.ref("royaltyAdmin").once("value").then(snap=>{
-    list.innerHTML = "";
     if(!snap.exists()){
       list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada data</td></tr>`;
       return;
     }
+
+    const promises = [];
     snap.forEach(item=>{
       const d = item.val();
-      db.ref("users/"+d.uid).once("value").then(uSnap=>{
-        const user = uSnap.val();
-        list.innerHTML += `
+      // Promise untuk fetch user data
+      const p = db.ref("users/"+d.uid).once("value").then(uSnap=>{
+        const user = uSnap.val() || {};
+        return `
           <tr>
-            <td>${user.email} • ${user.fullName}</td>
+            <td>${user.email || 'Unknown'} • ${user.nama || ''}</td>
             <td>${d.date}</td>
             <td>Rp ${Number(d.value).toLocaleString("id-ID")}</td>
             <td>Accepted</td>
             <td>${d.downloadUrl ? `<button onclick="downloadFile('${d.downloadUrl}')">Download</button>` : '-'}</td>
           </tr>`;
       });
+      promises.push(p);
+    });
+
+    Promise.all(promises).then(rows=>{
+      list.innerHTML = rows.join('');
     });
   });
 }
