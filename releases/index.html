@@ -108,7 +108,14 @@
       border-radius: 999px;
       text-transform: uppercase;
     }
+.release-status.process {
+  animation: pulse 1.2s infinite;
+}
 
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity:1; }
+  50% { transform: scale(1.05); opacity:0.8; }
+}
     /* Artist & Balance */
     .artist-name { font-size: 15px; font-weight: 500; color: #555; margin-bottom: 6px; }
     .balance-title { font-size: 15px; font-weight: 600; color: #222; margin-bottom: 10px; }
@@ -300,20 +307,32 @@
           const pageItems = all.slice(start, start+releasesPerPage);
 
           pageItems.forEach(r => {
-            let c = "#f59e0b";
-            if(r.status == "approved") c = "#10b981";
-            if(r.status == "rejected") c = "#ef4444";
+  let displayStatus = "PROCESS";
+  let c = "#3b82f6";       // biru untuk process
+  let statusClass = "process"; // class animasi pulse
 
-            list.innerHTML += `
-              <div onclick="goReleaseDetail('${r._key}')" class="clickable" style="padding:12px;border:1px solid #eee;border-radius:12px;margin-bottom:10px">
-                <div class="release-row">
-                  <div class="release-title">${r.title||"-"}</div>
-                  <div class="release-status" style="border:1px solid ${c};color:${c}">${(r.status||"pending").toUpperCase()}</div>
-                </div>
-                <div style="font-size:12px;color:#777;margin-top:4px">${r.artist||"-"} • ${r.genre||"-"}</div>
-              </div>
-            `;
-          });
+  if(r.status === "approved"){
+    displayStatus = "APPROVED";
+    c = "#10b981";
+    statusClass = ""; // tanpa animasi
+  } else if(r.status === "rejected"){
+    displayStatus = "REJECTED";
+    c = "#ef4444";
+    statusClass = ""; // tanpa animasi
+  }
+
+  list.innerHTML += `
+    <div onclick="goReleaseDetail('${r._key}')" class="clickable" style="padding:12px;border:1px solid #eee;border-radius:12px;margin-bottom:10px">
+      <div class="release-row">
+        <div class="release-title">${r.title||"-"}</div>
+        <div class="release-status ${statusClass}" style="border:1px solid ${c};color:${c}">
+          ${displayStatus}
+        </div>
+      </div>
+      <div style="font-size:12px;color:#777;margin-top:4px">${r.artist||"-"} • ${r.genre||"-"}</div>
+    </div>
+  `;
+});
 
           list.innerHTML += `
             <div style="display:flex;justify-content:center;margin-top:8px;gap:6px;align-items:center">
