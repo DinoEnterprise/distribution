@@ -54,7 +54,36 @@
     header img {
       height: 50px;
     }
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
 
+.pagination button {
+  padding: 6px 14px;
+  min-width: 40px;      /* tetap gendut */
+  height: 32px;         /* tetap pendek */
+  border: 1px solid #333;
+  background: #f9f9f9;
+  color: #333;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-size: 14px;
+  font-weight: 600;
+}
     /* Cards */
     .card {
       width: 90%;
@@ -335,16 +364,10 @@
 });
 
 list.innerHTML += `
-<div style="display:flex;justify-content:center;margin-top:12px;gap:10px;align-items:center">
-  <button onclick="prevPage()" ${p===1?'disabled':''} 
-    style="padding:6px 14px;border:1px solid #333;background:#f9f9f9;color:#333;border-radius:16px;font-size:14px;font-weight:600;min-width:40px">
-    &lt;
-  </button>
-  <span style="font-size:14px;font-weight:600">Page ${p}/${totalPages}</span>
-  <button onclick="nextPage()" ${p===totalPages?'disabled':''} 
-    style="padding:6px 14px;border:1px solid #333;background:#f9f9f9;color:#333;border-radius:16px;font-size:14px;font-weight:600;min-width:40px">
-    &gt;
-  </button>
+<div class="pagination">
+  <button onclick="prevPage()" ${p===1?'disabled':''}>&lt;</button>
+  <span>Page ${p}/${totalPages}</span>
+  <button onclick="nextPage()" ${p===totalPages?'disabled':''}>&gt;</button>
 </div>
 `;
         }
