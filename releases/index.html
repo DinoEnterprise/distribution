@@ -60,12 +60,15 @@
   align-items: center;
   gap: 10px;
   margin-top: 12px;
-}
 
+  max-width: 220px;  /* tetap “mobile-like” */
+  margin-left: auto;
+  margin-right: auto;
+}
 .pagination button {
   padding: 6px 14px;
-  min-width: 40px;      /* tetap gendut */
-  height: 32px;         /* tetap pendek */
+  min-width: 40px;
+  height: 32px;
   border: 1px solid #333;
   background: #f9f9f9;
   color: #333;
@@ -74,12 +77,6 @@
   font-weight: 600;
   cursor: pointer;
 }
-
-.pagination button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
 .pagination span {
   font-size: 14px;
   font-weight: 600;
