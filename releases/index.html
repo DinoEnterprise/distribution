@@ -334,7 +334,7 @@
   `;
 });
 
-          list.innerHTML += `
+list.innerHTML += `
 <div style="display:flex;justify-content:center;margin-top:12px;gap:10px;align-items:center">
   <button onclick="prevPage()" ${p===1?'disabled':''} 
     style="padding:6px 14px;border:1px solid #333;background:#f9f9f9;color:#333;border-radius:16px;font-size:14px;font-weight:600;min-width:40px">
@@ -346,7 +346,7 @@
     &gt;
   </button>
 </div>
-          `;
+`;
         }
 
         window.nextPage = () => { if(currentPage < totalPages) { currentPage++; render(currentPage); } }
