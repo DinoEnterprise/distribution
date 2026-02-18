@@ -80,7 +80,20 @@
       color: #fff;
       display: none;
     }
+.release-status.process {
+  animation: pulse 1.2s infinite;
+}
 
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
     /* Message Popup */
     .message-popup {
       position: fixed;
@@ -419,14 +432,26 @@
         if(all.length===0){ releaseList.innerHTML="<div style='text-align:center;color:#888;font-size:13px'>No releases yet</div>"; return; }
 
         all.slice(0, previewLimit).forEach(r=>{
-          let c="#f59e0b"; if(r.status=="approved")c="#10b981"; if(r.status=="rejected")c="#ef4444";
+          let displayStatus = "PROCESS";
+let c = "#3b82f6"; // biru = process
+let statusClass = "process"; // tambahkan class untuk animasi
+
+if (r.status === "approved") {
+  displayStatus = "APPROVED";
+  c = "#10b981";
+  statusClass = ""; // tanpa animasi
+} else if (r.status === "rejected") {
+  displayStatus = "REJECTED";
+  c = "#ef4444";
+  statusClass = ""; // tanpa animasi
+}
           releaseList.innerHTML += `
             <div onclick="goReleaseDetail('${r._key}')" class="clickable" style="padding:12px;border:1px solid #eee;border-radius:12px;margin-bottom:10px">
               <div class="release-row">
                 <div class="release-title" style="font-weight:600">${r.title||"-"}</div>
-                <div class="release-status" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid ${c};color:${c}">
-                  ${(r.status||"process").toUpperCase()}
-                </div>
+             <div class="release-status ${statusClass}" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid ${c};color:${c}">
+  ${displayStatus}
+</div>
               </div>
               <div style="font-size:12px;color:#777;margin-top:4px">
                 ${r.artist||"-"} • ${r.genre||"-"}
