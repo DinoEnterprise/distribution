@@ -335,11 +335,17 @@
 });
 
           list.innerHTML += `
-            <div style="display:flex;justify-content:center;margin-top:8px;gap:6px;align-items:center">
-              <button onclick="prevPage()" ${p===1?'disabled':''} style="padding:2px 6px;border:1px solid #333;background:transparent;color:#333;border-radius:12px;font-size:11px;font-weight:600">&lt;</button>
-              <span style="font-size:12px;margin:0 4px">Page ${p}/${totalPages}</span>
-              <button onclick="nextPage()" ${p===totalPages?'disabled':''} style="padding:2px 6px;border:1px solid #333;background:transparent;color:#333;border-radius:12px;font-size:11px;font-weight:600">&gt;</button>
-            </div>
+<div style="display:flex;justify-content:center;margin-top:12px;gap:10px;align-items:center">
+  <button onclick="prevPage()" ${p===1?'disabled':''} 
+    style="padding:6px 14px;border:1px solid #333;background:#f9f9f9;color:#333;border-radius:16px;font-size:14px;font-weight:600;min-width:40px">
+    &lt;
+  </button>
+  <span style="font-size:14px;font-weight:600">Page ${p}/${totalPages}</span>
+  <button onclick="nextPage()" ${p===totalPages?'disabled':''} 
+    style="padding:6px 14px;border:1px solid #333;background:#f9f9f9;color:#333;border-radius:16px;font-size:14px;font-weight:600;min-width:40px">
+    &gt;
+  </button>
+</div>
           `;
         }
 
