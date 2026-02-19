@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Release Detail | Dynotic Distribution</title>
+<title>Release Detail | DynoPay</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -25,7 +25,20 @@ header{
 }
 header img{height:50px;margin-right:10px;}
 header h2{font-size:18px;color:#111;}
+.cover-box{
+  width: 160px;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #ddd;
+}
 
+.cover-box img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 .card{
   width:90%;
   margin:15px auto;
@@ -74,18 +87,23 @@ header h2{font-size:18px;color:#111;}
 
 .clickable{cursor:pointer;transition:.12s;}
 .clickable:active{transform:scale(.96);filter:brightness(85%);}
+@media (max-width:600px){
+  .cover-box{ width:130px; }
+}
 </style>
 </head>
 <body>
 
 <header>
-  <img src="../assets/dynotic-distribution.png" alt="DynoPay Logo">
+  <img src="../assets/dynopay2.png" alt="DynoPay Logo">
 </header>
 
 <div class="card">
-  <div class="release-header">
+ <div class="release-header">
+  <div class="cover-box">
     <img id="coverArt" src="../assets/profile.png" alt="Cover Art">
-    <div class="release-info">
+  </div>
+  <div class="release-info">
       <div class="title" id="releaseTitle">Loading...</div>
       <div class="artist" id="releaseArtist">--</div>
       <div class="label" id="releaseLabel">Label: --</div>
