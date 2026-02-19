@@ -395,7 +395,11 @@
 
     <div class="release-item">
       <div class="release-cover">
-        <img src="../assets/cover.png" alt="Cover">
+<img 
+  src="${r.cover || '../assets/cover-default.png'}"
+  alt="Cover"
+  onerror="this.onerror=null;this.src='../assets/cover-default.png';"
+/>
       </div>
 
       <div style="flex:1">
