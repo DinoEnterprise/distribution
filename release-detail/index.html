@@ -195,7 +195,7 @@ function loadRelease(uid, rid){
     document.getElementById("releaseTitle").innerText = d.title || "-";
     document.getElementById("releaseArtist").innerText = d.artist || "-";
     document.getElementById("releaseLabel").innerText = "Label: "+(d.label||"-");
-    document.getElementById("releaseEAN").innerText = "EAN: " + (d.ean || "-");
+    document.getElementById("releaseEAN").innerText = "UPC: " + (d.ean || "-");
     document.getElementById("releaseGenre").innerText = "Genre: "+(d.genre||"-");
     document.getElementById("releaseDate").innerText = "Release Date: "+(d.date||"-");
     document.getElementById("releaseStatus").innerText = "Status: "+((d.status||"pending").toUpperCase());
