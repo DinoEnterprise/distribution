@@ -54,6 +54,38 @@
     header img {
       height: 50px;
     }
+    .release-item {
+  display: flex;
+  gap: 12px;
+}
+
+.release-cover {
+  width: 46px;
+  height: 46px;
+  border-radius: 8px;
+  background: #f1f2f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.release-cover img {
+  width: 26px;
+  opacity: 0.7;
+}
+
+.release-meta {
+  font-size: 12px;
+  color: #777;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.release-meta b {
+  color: #444;
+  font-weight: 600;
+}
 .pagination {
   display: flex;
   justify-content: center;
@@ -334,29 +366,50 @@
 
           pageItems.forEach(r => {
   let displayStatus = "PROCESS";
-  let c = "#3b82f6";       // biru untuk process
-  let statusClass = "process"; // class animasi pulse
+  let c = "#3b82f6";
+  let statusClass = "process";
 
-  if(r.status === "approved"){
+  if (r.status === "approved") {
     displayStatus = "APPROVED";
     c = "#10b981";
-    statusClass = ""; // tanpa animasi
-  } else if(r.status === "rejected"){
+    statusClass = "";
+  } else if (r.status === "rejected") {
     displayStatus = "REJECTED";
     c = "#ef4444";
-    statusClass = ""; // tanpa animasi
+    statusClass = "";
   }
 
+  const featuring = r.featuring ? ` • feat. ${r.featuring}` : "";
+  const label = r.label ? r.label : "Dynotic";
+  const upc = r.upc ? r.upc : "-";
+
   list.innerHTML += `
-    <div onclick="goReleaseDetail('${r._key}')" class="clickable" style="padding:12px;border:1px solid #eee;border-radius:12px;margin-bottom:10px">
-      <div class="release-row">
-        <div class="release-title">${r.title||"-"}</div>
-        <div class="release-status ${statusClass}" style="border:1px solid ${c};color:${c}">
-          ${displayStatus}
+  <div onclick="goReleaseDetail('${r._key}')" 
+       class="clickable" 
+       style="padding:14px;border:1px solid #eee;border-radius:14px;margin-bottom:12px">
+
+    <div class="release-item">
+      <div class="release-cover">
+        <img src="../assets/cover.png" alt="Cover">
+      </div>
+
+      <div style="flex:1">
+        <div class="release-row">
+          <div class="release-title">${r.title || "-"}</div>
+          <div class="release-status ${statusClass}" 
+               style="border:1px solid ${c};color:${c}">
+            ${displayStatus}
+          </div>
+        </div>
+
+        <div class="release-meta">
+          <b>${r.artist || "-"}</b>${featuring}<br>
+          UPC: ${upc}<br>
+          Label: ${label}
         </div>
       </div>
-      <div style="font-size:12px;color:#777;margin-top:4px">${r.artist||"-"} • ${r.genre||"-"}</div>
     </div>
+  </div>
   `;
 });
 
