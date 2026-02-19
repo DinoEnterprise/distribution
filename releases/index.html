@@ -408,8 +408,11 @@
     <div class="release-item">
       <div class="release-cover">
 <img 
-  src="${r.cover || '../assets/cover-default.png'}"
-  alt="Cover"
+  src="${
+    r.cover
+    ? `https://drive.google.com/thumbnail?id=${extractDriveId(r.cover)}&sz=w200`
+    : '../assets/cover-default.png'
+  }"
   onload="this.classList.add('loaded')"
   onerror="this.onerror=null;this.src='../assets/cover-default.png';this.classList.add('loaded')"
 />
@@ -451,7 +454,10 @@ list.innerHTML += `
         render(currentPage);
       });
     }
-
+function extractDriveId(url){
+  const match = url.match(/\/d\/([^\/]+)/);
+  return match ? match[1] : "";
+}
     function goReleaseDetail(rid) { location.href="../release-detail?rid="+rid; }
   </script>
 </body>
