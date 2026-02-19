@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Release Detail | DynoPay</title>
+<title>Release Detail | Dynotic Distribution</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -39,7 +39,15 @@ header h2{font-size:18px;color:#111;}
 @keyframes bounceIn{0%{transform:translateY(-20px);opacity:0}50%{transform:translateY(10px);opacity:1}70%{transform:translateY(-5px)}100%{transform:translateY(0);opacity:1}}
 
 .release-header{display:flex;gap:15px;align-items:center;margin-bottom:15px;}
-.release-header img{width:80px;height:80px;border-radius:12px;object-fit:cover;border:1px solid #ddd;}
+.release-header img{
+  filter: blur(10px);
+  opacity: .6;
+  transition: filter .35s ease, opacity .35s ease;
+}
+.release-header img.loaded{
+  filter: blur(0);
+  opacity: 1;
+}
 .release-info{flex:1;}
 .release-info div{margin-bottom:6px;}
 .release-info .title{font-weight:700;font-size:18px;}
@@ -71,7 +79,7 @@ header h2{font-size:18px;color:#111;}
 <body>
 
 <header>
-  <img src="../assets/dynopay2.png" alt="DynoPay Logo">
+  <img src="../assets/dynotic-distribution.png" alt="DynoPay Logo">
 </header>
 
 <div class="card">
@@ -81,7 +89,7 @@ header h2{font-size:18px;color:#111;}
       <div class="title" id="releaseTitle">Loading...</div>
       <div class="artist" id="releaseArtist">--</div>
       <div class="label" id="releaseLabel">Label: --</div>
-      <div class="ean" id="releaseEAN">EAN: --</div>
+      <div class="ean" id="releaseEAN">UPC: --</div>
       <div class="genre" id="releaseGenre">Genre: --</div>
       <div class="date" id="releaseDate">Release Date: --</div>
       <div class="status" id="releaseStatus">Status: --</div>
@@ -173,6 +181,24 @@ function loadRelease(uid, rid){
     document.getElementById("releaseGenre").innerText = "Genre: "+(d.genre||"-");
     document.getElementById("releaseDate").innerText = "Release Date: "+(d.date||"-");
     document.getElementById("releaseStatus").innerText = "Status: "+((d.status||"pending").toUpperCase());
+    const cover = document.getElementById("coverArt");
+
+if(d.cover){
+  const id = extractDriveId(d.cover);
+  if(id){
+    cover.src = `https://drive.google.com/thumbnail?id=${id}&sz=w400`;
+  }else{
+    cover.src = "../assets/cover-default.png";
+  }
+}else{
+  cover.src = "../assets/cover-default.png";
+}
+
+cover.onload = () => cover.classList.add("loaded");
+cover.onerror = () => {
+  cover.src = "../assets/cover-default.png";
+  cover.classList.add("loaded");
+};
 const input = document.getElementById("smartlinkInput");
 const copyBtn = document.getElementById("copyBtn");
 const empty = document.getElementById("emptySmartlink");
@@ -196,6 +222,10 @@ function copySmartlink(){
   navigator.clipboard.writeText(val);
 
   document.getElementById("copyBtn").innerHTML = "✔ Tersalin";
+}
+function extractDriveId(url){
+  const m = url.match(/\/d\/([^\/]+)/);
+  return m ? m[1] : "";
 }
 function renderPlatforms(data){
   const wrap = document.getElementById("platformList");
