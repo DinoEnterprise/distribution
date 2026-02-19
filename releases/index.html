@@ -398,7 +398,7 @@
 
   const featuring = r.featuring ? ` • feat. ${r.featuring}` : "";
   const label = r.label ? r.label : "Dynotic";
-  const upc = r.upc ? r.upc : "-";
+  const ean = r.ean ? r.ean : "-";
 
   list.innerHTML += `
   <div onclick="goReleaseDetail('${r._key}')" 
@@ -429,7 +429,7 @@
 
         <div class="release-meta">
           <b>${r.artist || "-"}</b>${featuring}<br>
-<span style="opacity:.7">UPC:</span> ${upc}<br>
+<span style="opacity:.7">UPC:</span> ${ean}<br>
 <span style="opacity:.7">Label:</span> ${label}
         </div>
       </div>
