@@ -152,11 +152,16 @@
       gap: 10px;
     }
 
-    .release-title {
-      max-width: 75%;
-      line-height: 1.3;
-      font-weight: 600;
-    }
+.release-title {
+  max-width: 75%;
+  line-height: 1.3;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
 
     .release-status {
       white-space: nowrap;
@@ -404,8 +409,8 @@
 
         <div class="release-meta">
           <b>${r.artist || "-"}</b>${featuring}<br>
-          UPC: ${upc}<br>
-          Label: ${label}
+<span style="opacity:.7">UPC:</span> ${upc}<br>
+<span style="opacity:.7">Label:</span> ${label}
         </div>
       </div>
     </div>
