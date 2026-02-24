@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payout History | Dynotic Distribution</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Outfit',sans-serif;
+}
+
+body{
+  background:#f1f2f7;
+  padding-top:74px;
+}
+
+header{
+  padding:12px 20px;
+  display:flex;
+  align-items:center;
+  background:#fff;
+  border-bottom:1px solid #eee;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:1000;
+}
+
+header img{
+  height:50px;
+}
+
+/* Payout Item */
+.payout-item{
+  background:#fff;
+  width:90%;
+  margin:12px auto;
+  padding:14px 16px;
+  border-radius:14px;
+  border:1px solid #eee;
+}
+
+.payout-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+}
+
+.payout-left{
+  font-size:14px;
+}
+
+.payout-right{
+  text-align:right;
+}
+
+.payout-amount{
+  font-weight:700;
+}
+
+.payout-status{
+  font-size:12px;
+  margin-top:4px;
+}
+
+.empty{
+  text-align:center;
+  color:#777;
+  margin-top:30px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="../assets/dynotic-distribution.png" alt="Dynotic">
+</header>
+
+<div id="payoutList"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain:"dynopay-2513c.firebaseapp.com",
+  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db = firebase.database();
+
+firebase.auth().onAuthStateChanged(user=>{
+  if(!user) window.location.href="../login";
+  else loadPayouts(user.uid);
+});
+
+function loadPayouts(uid){
+  const list = document.getElementById("payoutList");
+  list.innerHTML="";
+
+  db.ref("withdraws/"+uid).once("value").then(snap=>{
+    if(!snap.exists()){
+      list.innerHTML=`<div class="empty">Belum ada payout</div>`;
+      return;
+    }
+
+    snap.forEach(item=>{
+      const d = item.val();
+
+      let color="#777";
+      let text="Pending";
+
+      if(d.status==="approved"){
+        color="#3498db";
+        text="Approved";
+      }
+      if(d.status==="paid"){
+        color="#27ae60";
+        text="Paid";
+      }
+
+      list.innerHTML += `
+        <div class="payout-item">
+          <div class="payout-row">
+            <div class="payout-left">
+              <div><b>${new Date(d.requestedAt).toLocaleDateString("id-ID")}</b></div>
+              <div class="payout-status" style="color:${color}">
+                ${text}
+              </div>
+            </div>
+            <div class="payout-right">
+              <div class="payout-amount">
+                Rp ${Number(d.amount || 0).toLocaleString("id-ID")}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+  });
+}
+</script>
+
+</body>
+</html>
