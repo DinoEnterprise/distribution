@@ -106,7 +106,7 @@ function loadMembers(){
     if(snap.exists()){
       snap.forEach(user=>{
         const d = user.val();
-        sel.innerHTML += `<option value="${user.key}">${d.email} • ${d.nama}</option>`;
+        sel.innerHTML += `<option value="${user.key}" data-email="${d.email}">${d.email} • ${d.nama}</option>`;
       });
     }
   });
@@ -154,30 +154,31 @@ function loadAdminRoyalty(){
 document.getElementById("royaltyForm").addEventListener("submit", function(e){
   e.preventDefault();
 
-  const uid = document.getElementById("memberSelect").value;
-  const date = document.getElementById("date").value;
-  const type = document.getElementById("reportType").value;
-  const value = document.getElementById("value").value;
-  const downloadUrl = document.getElementById("downloadUrl").value;
+ const uid = document.getElementById("memberSelect").value;
+const email = document.getElementById("memberSelect").selectedOptions[0].dataset.email; // ambil email dari option
+const date = document.getElementById("date").value;
+const type = document.getElementById("reportType").value;
+const value = document.getElementById("value").value;
+const downloadUrl = document.getElementById("downloadUrl").value;
 
-  if(!uid) return alert("Pilih member dulu!");
-  if(!type) return alert("Pilih type dulu!");
+const newKey = db.ref("royalties").push().key;
+let finalValue = Number(value);
+if(type === "Payment") finalValue = -Math.abs(finalValue);
 
-  const newKey = db.ref("royalties").push().key; // buat key baru
-  let finalValue = Number(value);
-if(type === "Payment") finalValue = -Math.abs(finalValue); // payment jadi minus
-
-db.ref("royalties/"+newKey).set({uid,date,value: finalValue,downloadUrl,type})
-    .then(()=>{
-      // Update saldo user otomatis
-      // saldo utama user TIDAK berubah
-// kosong saja, tidak perlu update
-
-      loadAdminRoyalty(); // refresh tabel
-      this.reset();       // reset form
-    }).catch(err=>{
-      console.error("Gagal tambah royalty:", err);
-    });
+db.ref("royalties/"+newKey).set({
+  uid,
+  email,        // tambahan ini supaya berbasis email
+  date,
+  value: finalValue,
+  downloadUrl,
+  type
+})
+.then(()=>{
+  loadAdminRoyalty(); 
+  this.reset();       
+})
+.catch(err=>{
+  console.error("Gagal tambah royalty:", err);
 });
 
 function downloadFile(url){
