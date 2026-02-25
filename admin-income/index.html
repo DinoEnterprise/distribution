@@ -46,8 +46,15 @@ td button:hover{filter:brightness(0.9);}
   <label>Value</label>
   <input type="number" id="value" placeholder="Value (contoh: 450000)" required>
 
-  <label>Link Download</label>
-  <input type="text" id="downloadUrl" placeholder="Link GitHub/PDF" required>
+ <label>Type</label>
+<select id="reportType" required>
+  <option value="">-- Pilih Type --</option>
+  <option value="Sales Report">Sales Report</option>
+  <option value="Payment">Payment</option>
+</select>
+
+<label>Link Download</label>
+<input type="text" id="downloadUrl" placeholder="Link GitHub/PDF" required>
 
   <button type="submit">Add Royalty</button>
 </form>
@@ -123,7 +130,11 @@ function loadAdminRoyalty(){
         const user = uSnap.val() || {};
         return `
           <tr>
-            <td>${user.email || 'Unknown'} • ${user.nama || ''}</td>
+<td>
+  <span style="color:${d.type==='Sales Report'?'green':'blue'};font-weight:600">
+    ${d.type}
+  </span> • ${user.email || 'Unknown'} • ${user.nama || ''}
+</td>
             <td>${d.date}</td>
             <td>Rp ${Number(d.value).toLocaleString("id-ID")}</td>
             <td>Accepted</td>
@@ -142,17 +153,26 @@ function loadAdminRoyalty(){
 // Tambah royalti
 document.getElementById("royaltyForm").addEventListener("submit", function(e){
   e.preventDefault();
+
   const uid = document.getElementById("memberSelect").value;
   const date = document.getElementById("date").value;
+  const type = document.getElementById("reportType").value;
   const value = document.getElementById("value").value;
   const downloadUrl = document.getElementById("downloadUrl").value;
 
   if(!uid) return alert("Pilih member dulu!");
+  if(!type) return alert("Pilih type dulu!");
 
   const newKey = db.ref("royalties").push().key; // buat key baru
-  db.ref("royalties/"+newKey).set({uid,date,value,downloadUrl})
+  let finalValue = Number(value);
+if(type === "Payment") finalValue = -Math.abs(finalValue); // payment jadi minus
+
+db.ref("royalties/"+newKey).set({uid,date,value: finalValue,downloadUrl,type})
     .then(()=>{
-      console.log("Royalty added:", {uid,date,value,downloadUrl});
+      // Update saldo user otomatis
+      // saldo utama user TIDAK berubah
+// kosong saja, tidak perlu update
+
       loadAdminRoyalty(); // refresh tabel
       this.reset();       // reset form
     }).catch(err=>{
