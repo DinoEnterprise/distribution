@@ -12,10 +12,12 @@
       box-sizing: border-box;
       font-family: 'Outfit', sans-serif;
     }
+
     body {
       background: #f1f2f7;
       padding-top: 74px;
     }
+
     header {
       padding: 12px 20px;
       display: flex;
@@ -28,9 +30,12 @@
       width: 100%;
       z-index: 1000;
     }
+
     header img {
       height: 50px;
     }
+
+    /* Card Total & Withdraw */
     .card {
       width: 90%;
       margin: 16px auto;
@@ -43,10 +48,12 @@
       justify-content: space-between;
       align-items: center;
     }
+
     .card .balance {
       font-weight: 700;
       font-size: 16px;
     }
+
     .card button {
       padding: 8px 14px;
       background: #111;
@@ -55,20 +62,24 @@
       border-radius: 12px;
       cursor: pointer;
     }
+
+    /* Table (hidden for normal users) */
     .table-card {
-      display: block;
-      width: 90%;
-      margin: 16px auto;
+  display: block; /* tampilkan tabel untuk user */
+  width: 90%;
+  margin: 16px auto;
       background: #fff;
       border-radius: 18px;
       padding: 0;
       border: 1px solid #ececec;
       box-shadow: 0 6px 16px rgba(0, 0, 0, .05);
     }
+
     .table-card table {
       width: 100%;
       border-collapse: collapse;
     }
+
     .table-card th,
     .table-card td {
       padding: 12px 14px;
@@ -76,10 +87,12 @@
       border-bottom: 1px solid #eee;
       font-size: 14px;
     }
+
     .table-card th {
       background: #f9f9f9;
       font-weight: 600;
     }
+
     .table-card td button {
       padding: 6px 10px;
       background: #667eea;
@@ -89,9 +102,11 @@
       cursor: pointer;
       font-size: 13px;
     }
+
     .table-card td button:hover {
       filter: brightness(0.9);
     }
+
   </style>
 </head>
 <body>
@@ -101,12 +116,11 @@
   </header>
 
   <!-- Card Total + Withdraw -->
-  <div class="card">
-    <div class="balance" id="totalBalance">Total: Rp 0</div>
-    <button onclick="withdraw()">Withdraw</button>
-  </div>
+<div class="card">
+  <div class="balance" id="totalBalance">Total: Rp 0</div>
+</div>
 
-  <!-- Table Income -->
+  <!-- Table Income (Hidden for admin) -->
   <div class="table-card">
     <table>
       <thead>
@@ -119,7 +133,7 @@
         </tr>
       </thead>
       <tbody id="incomeList">
-        <tr><td colspan="5" style="text-align:center;color:#777">Memuat data...</td></tr>
+        <!-- Data akan di-load dari Firebase -->
       </tbody>
     </table>
   </div>
@@ -137,66 +151,70 @@
     const db = firebase.database();
 
     firebase.auth().onAuthStateChanged(user => {
-      if (!user) window.location.href = "../login";
-      else {
-        const uid = user.uid;
-        const email = user.email.toLowerCase();
+  if (!user) window.location.href = "../login";
+  else {
+    const uid = user.uid;
 
-        // Ambil saldo
-        db.ref("users/" + uid + "/saldo").once("value").then(snap => {
-          const saldo = Number(snap.val() || 0);
-          document.getElementById("totalBalance").innerText =
-            "Total: Rp " + saldo.toLocaleString("id-ID");
-        });
+    // Ambil saldo
+    db.ref("users/" + uid + "/saldo").once("value").then(snap => {
+  const saldo = Number(snap.val() || 0);
+  document.getElementById("totalBalance").innerText =
+    "Total: Rp " + saldo.toLocaleString("id-ID");
+});
 
-        // Load income
-        loadIncome(uid, email);
+    // Panggil loadIncome
+    loadIncome(uid);
+  }
+});
+
+// Fungsi loadIncome di sini, di luar auth
+function loadIncome(uid) {
+  const incomeList = document.getElementById("incomeList");
+  incomeList.innerHTML = ""; // reset
+
+  db.ref("royalties")
+    .orderByChild("uid")
+    .equalTo(uid)
+    .once("value")
+    .then(snap => {
+      if (!snap.exists()) {
+        incomeList.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada laporan</td></tr>`;
+        return;
       }
-    });
 
-    function loadIncome(uid, email) {
-      const incomeList = document.getElementById("incomeList");
-      incomeList.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Memuat data...</td></tr>`;
+      snap.forEach(item => {
+        const d = item.val();
 
-      db.ref("royalties").once("value").then(snap => {
-        if (!snap.exists()) {
-          incomeList.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada laporan</td></tr>`;
-          return;
+        // Status
+        let statusText = "";
+        let icon = "";
+        if (d.type === "Sales Report") {
+          statusText = "Accepted";
+          icon = "../assets/report.png";
+        } else if (d.type === "Payment") {
+          statusText = "Paid";
+          icon = "../assets/invoice.png";
+        } else {
+          statusText = "Pending";
         }
 
-        const rows = [];
-        snap.forEach(item => {
-          const d = item.val();
-          
-          // Filter uid/email lebih aman
-          if ((d.uid && d.uid === uid) || (d.email && d.email.toLowerCase() === email)) {
-            const displayValue = (d.type === "Payment" ? -Math.abs(Number(d.value)) : Number(d.value));
-            const valueColor = d.type === "Sales Report" ? "green" : "blue";
-            rows.push(`
-              <tr>
-                <td style="color:${valueColor}; font-weight:600">${d.type}</td>
-                <td>${d.date ? d.date : item.key}</td>
-                <td>Rp ${displayValue.toLocaleString("id-ID")}</td>
-                <td>Accepted</td>
-                <td>${d.downloadUrl && d.downloadUrl.startsWith("http") ? `<img src="../assets/pdf.png" style="height:16px; cursor:pointer" onclick="downloadFile('${d.downloadUrl}')">` : '-'}</td>
-              </tr>
-            `);
-          }
-        });
-
-        incomeList.innerHTML = rows.length ? rows.join('') :
-          `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada laporan</td></tr>`;
+        incomeList.innerHTML += `
+          <tr>
+            <td style="font-weight:600">${d.type}</td>
+            <td>${d.date || item.key}</td>
+            <td>Rp ${Number(d.value || 0).toLocaleString("id-ID")}</td>
+            <td>${statusText}</td>
+            <td>${d.downloadUrl ? `<img src="${icon}" style="height:16px; cursor:pointer" onclick="downloadFile('${d.downloadUrl}')">` : '-'}</td>
+          </tr>
+        `;
       });
-    }
+    });
+}
+   
 
-    function downloadFile(url){
-      window.open(url,"_blank","noopener");
-    }
-
-    function withdraw(){
-      alert("Withdraw klik — bisa sambungkan ke sistem pembayaran nanti");
-    }
+function downloadFile(url){
+  window.open(url,"_blank","noopener");
+}
   </script>
-
 </body>
 </html>
