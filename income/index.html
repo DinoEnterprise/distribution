@@ -207,8 +207,13 @@ function loadIncome(uid) {
     <td>${d.date || item.key}</td>
     <td>Rp ${Number(d.value || 0).toLocaleString("id-ID")}</td>
     <td>${statusText}</td>
-    <td>${d.downloadUrl ? `<img src="${icon}" class="download-icon" onclick="downloadFile('${d.downloadUrl}')">` : '-'}</td>
-  </tr>
+    <td>
+  ${d.type === "Payment" 
+     ? `<img src="${icon}" class="download-icon" onclick="window.open('../invoice?id=${item.key}','_blank')">`
+     : d.type === "Sales Report" && d.downloadUrl
+       ? `<img src="${icon}" class="download-icon" onclick="downloadFile('${d.downloadUrl}')">`
+       : '-'}
+</td>
 ` + incomeList.innerHTML;
       });
     });
