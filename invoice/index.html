@@ -186,32 +186,36 @@ firebase.initializeApp({
 
 const db = firebase.database();
 const params = new URLSearchParams(location.search);
-const withdrawId = params.get("id");
+const royaltyId = params.get("id");
 
 firebase.auth().onAuthStateChanged(user=>{
-  if(!user) location.href="../login"; // redirect kalau belum login
-  const uid = user.uid;
+  if(!user) return location.href="../login";
 
-  db.ref("withdraws/"+uid+"/"+withdrawId).once("value").then(s=>{
+  if(!royaltyId) return alert("Invoice tidak ditemukan");
+
+  db.ref("royalties/"+royaltyId).once("value").then(s=>{
     if(!s.exists()) return alert("Invoice tidak ditemukan");
-    const d = s.val();
-    if(d.status.toLowerCase() !== "approve" && d.status.toLowerCase() !== "approved") 
-        return alert("Withdraw belum di-approve");
 
-    document.getElementById("invoiceNo").innerText="INV-"+withdrawId;
-    document.getElementById("nama").innerText=d.nama;
-    document.getElementById("email").innerText=user.email || "-";
-    document.getElementById("date").innerText=new Date(d.waktu || Date.now()).toLocaleString();
-    document.getElementById("amount").innerText="Rp "+(d.jumlah || 0).toLocaleString();
+    const d = s.val();
+
+    if(d.type !== "Payment")
+      return alert("Data ini bukan invoice payment");
+
+    document.getElementById("invoiceNo").innerText = "INV-" + royaltyId;
+    document.getElementById("nama").innerText = d.nama || "-";
+    document.getElementById("email").innerText = user.email || "-";
+    document.getElementById("date").innerText =
+      new Date(d.date || Date.now()).toLocaleString("id-ID");
+    document.getElementById("amount").innerText =
+      "Rp " + Number(d.value || 0).toLocaleString("id-ID");
 
     new QRCode(document.getElementById("qrcode"),{
-      text:location.href,
+      text: location.href,
       width:90,
       height:90
     });
 
-    // langsung download otomatis setelah load
-    setTimeout(downloadPDF, 300); 
+    setTimeout(downloadPDF,300);
   }).catch(err=>{
     console.error(err);
     alert("Gagal load data invoice");
@@ -222,7 +226,7 @@ function downloadPDF(){
   html2pdf()
   .set({
     margin:5,
-    filename:"Invoice-"+withdrawId+".pdf",
+    filename:"Invoice-"+royaltyId+".pdf",
     html2canvas:{scale:2},
     jsPDF:{unit:'mm',format:'a4'}
   })
@@ -230,6 +234,5 @@ function downloadPDF(){
   .save();
 }
 </script>
-
 </body>
 </html>
