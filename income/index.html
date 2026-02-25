@@ -164,29 +164,28 @@
 });
 
     // Panggil loadIncome
-    loadIncome(uid);
-  }
+    loadIncome(uid, user.email);
 });
 
 // Fungsi loadIncome di sini, di luar auth
-function loadIncome(uid) {
+function loadIncome(uid, email) {
   const incomeList = document.getElementById("incomeList");
-  incomeList.innerHTML = ""; // reset
+  incomeList.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Memuat data...</td></tr>`;
 
-  db.ref("royalties")
-    .orderByChild("uid")   // cari berdasarkan uid
-    .equalTo(uid)          // hanya untuk uid login ini
-    .once("value")
-    .then(snap => {
-      if (!snap.exists()) {
-        incomeList.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada laporan</td></tr>`;
-        return;
-      }
+  db.ref("royalties").once("value").then(snap => {
+    if (!snap.exists()) {
+      incomeList.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada laporan</td></tr>`;
+      return;
+    }
 
-      snap.forEach(item => {
-        const d = item.val();
+    const rows = [];
+    snap.forEach(item => {
+      const d = item.val();
+
+      // tampilkan royalti untuk user ini (uid atau email)
+      if (d.uid === uid || d.email === email) {
         const valueColor = d.type === "Sales Report" ? "green" : "blue";
-        incomeList.innerHTML += `
+        rows.push(`
           <tr>
             <td style="color:${valueColor}; font-weight:600">${d.type}</td>
             <td>${d.date || item.key}</td>
@@ -194,9 +193,13 @@ function loadIncome(uid) {
             <td>Accepted</td>
             <td>${d.downloadUrl ? `<img src="../assets/pdf.png" style="height:16px; cursor:pointer" onclick="downloadFile('${d.downloadUrl}')">` : '-'}</td>
           </tr>
-        `;
-      });
+        `);
+      }
     });
+
+    incomeList.innerHTML = rows.length ? rows.join('') :
+      `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada laporan</td></tr>`;
+  });
 }
    
 
