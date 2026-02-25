@@ -62,7 +62,10 @@
       border-radius: 12px;
       cursor: pointer;
     }
-
+.download-icon {
+  height: 24px; /* atau 28px */
+  cursor: pointer;
+}
     /* Table (hidden for normal users) */
     .table-card {
   display: block; /* tampilkan tabel untuk user */
@@ -198,15 +201,15 @@ function loadIncome(uid) {
           statusText = "Pending";
         }
 
-        incomeList.innerHTML += `
-          <tr>
-            <td style="font-weight:600">${d.type}</td>
-            <td>${d.date || item.key}</td>
-            <td>Rp ${Number(d.value || 0).toLocaleString("id-ID")}</td>
-            <td>${statusText}</td>
-            <td>${d.downloadUrl ? `<img src="${icon}" style="height:16px; cursor:pointer" onclick="downloadFile('${d.downloadUrl}')">` : '-'}</td>
-          </tr>
-        `;
+        incomeList.innerHTML = `
+  <tr>
+    <td style="font-weight:600">${d.type}</td>
+    <td>${d.date || item.key}</td>
+    <td>Rp ${Number(d.value || 0).toLocaleString("id-ID")}</td>
+    <td>${statusText}</td>
+    <td>${d.downloadUrl ? `<img src="${icon}" class="download-icon" onclick="downloadFile('${d.downloadUrl}')">` : '-'}</td>
+  </tr>
+` + incomeList.innerHTML;
       });
     });
 }
