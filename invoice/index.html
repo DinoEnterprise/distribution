@@ -1,235 +1,228 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Invoice Withdraw</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Income | Dynotic Distribution</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Outfit', sans-serif;
+    }
 
-<!-- Library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+    body {
+      background: #f1f2f7;
+      padding-top: 74px;
+    }
 
-<style>
-body {
-  background: #f1f2f7;
-  font-family: 'Outfit', Arial, sans-serif;
-  margin: 0;
-  padding: 30px 10px;
-}
+    header {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+    }
 
-.invoice {
-  background: #fff;
-  max-width: 720px;
-  margin: 40px auto;
-  padding: 30px 40px;
-  border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  position: relative;
-  overflow: hidden;
-}
+    header img {
+      height: 50px;
+    }
 
-.watermark {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 100px;
-  font-weight: 900;
-  color: #000;
-  opacity: 0.04;
-  pointer-events: none;
-}
+    /* Card Total & Withdraw */
+    .card {
+      width: 90%;
+      margin: 16px auto;
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px;
+      border: 1px solid #ececec;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, .05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+    .card .balance {
+      font-weight: 700;
+      font-size: 16px;
+    }
 
-.logo {
-  height: 50px;
-}
-
-.title {
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: 1px;
-}
-
-.info {
-  margin-top: 25px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-}
-
-.line {
-  border-top: 1px dashed #ddd;
-  margin: 25px 0;
-}
-
-.total {
-  font-size: 20px;
-  font-weight: 800;
-  display: flex;
-  justify-content: space-between;
-}
-
-.status {
-  padding: 6px 14px;
-  border-radius: 20px;
-  background: #e6fff1;
-  color: #0f9d58;
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 13px;
-}
-
-.footer {
-  margin-top: 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-
-#qrcode {
-  flex-shrink: 0;
-}
-
-.ttd {
-  text-align: center;
-}
-
-.ttd img {
-  height: 60px;
-  display: block;
-  margin: 0 auto 5px;
-}
-
-.btn {
-  margin-top: 25px;
-  width: 100%;
-  padding: 14px;
-  background: #111;
-  color: #fff;
-  border: none;
-  border-radius: 12px;
-  font-weight: 800;
-  font-size: 16px;
+    .card button {
+      padding: 8px 14px;
+      background: #111;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+.download-icon {
+  height: 28px; /* atau 28px */
   cursor: pointer;
-  transition: 0.2s;
 }
+    /* Table (hidden for normal users) */
+    .table-card {
+  display: block; /* tampilkan tabel untuk user */
+  width: 90%;
+  margin: 16px auto;
+      background: #fff;
+      border-radius: 18px;
+      padding: 0;
+      border: 1px solid #ececec;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, .05);
+    }
 
-.btn:hover {
-  filter: brightness(90%);
-}
-</style>
+    .table-card table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table-card th,
+    .table-card td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    .table-card th {
+      background: #f9f9f9;
+      font-weight: 600;
+    }
+
+    .table-card td button {
+      padding: 6px 10px;
+      background: #667eea;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .table-card td button:hover {
+      filter: brightness(0.9);
+    }
+
+  </style>
 </head>
-
 <body>
 
-<div class="invoice" id="invoice">
-  <div class="watermark">DYNOPAY</div>
+  <header>
+    <img src="../assets/dynotic-distribution.png" alt="DynoPay">
+  </header>
 
-  <div class="header">
-    <img src="../assets/dynopay2.png" class="logo">
-    <div>
-      <div class="title">INVOICE WITHDRAW</div>
-      <small id="invoiceNo"></small>
-    </div>
-  </div>
-
-  <!-- Susunan info diperbaiki jadi 1 kolom vertikal -->
-  <div class="info">
-    <div class="row"><span>Nama</span><b id="nama"></b></div>
-    <div class="row"><span>Tanggal</span><b id="date"></b></div>
-    <div class="row"><span>Email</span><b id="email"></b></div>
-    <div class="row"><span>Status</span><span class="status">APPROVED</span></div>
-  </div>
-
-  <div class="line"></div>
-
-  <div class="row total">
-    <span>Total Withdraw</span>
-    <span id="amount"></span>
-  </div>
-
-  <div class="footer">
-    <div id="qrcode"></div>
-    <div class="ttd">
-      <img src="../assets/ttd.png">
-      <div>Finance Manager</div>
-    </div>
-  </div>
+  <!-- Card Total + Withdraw -->
+<div class="card">
+  <div class="balance" id="totalBalance">Total: Rp 0</div>
 </div>
 
-<button class="btn" onclick="downloadPDF()">Download</button>
+  <!-- Table Income (Hidden for admin) -->
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>Report</th>
+          <th>Period</th>
+          <th>Value</th>
+          <th>Status</th>
+          <th>Download</th>
+        </tr>
+      </thead>
+      <tbody id="incomeList">
+        <!-- Data akan di-load dari Firebase -->
+      </tbody>
+    </table>
+  </div>
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-<script>
-firebase.initializeApp({
-  apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain:"dynopay-2513c.firebaseapp.com",
-  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
-
-const db = firebase.database();
-const params = new URLSearchParams(location.search);
-const withdrawId = params.get("id");
-
-firebase.auth().onAuthStateChanged(user=>{
-  if(!user) location.href="../login"; // redirect kalau belum login
-  const uid = user.uid;
-
-  db.ref("withdraws/"+uid+"/"+withdrawId).once("value").then(s=>{
-    if(!s.exists()) return alert("Invoice tidak ditemukan");
-    const d = s.val();
-    if(d.status.toLowerCase() !== "approve" && d.status.toLowerCase() !== "approved") 
-        return alert("Withdraw belum di-approve");
-
-    document.getElementById("invoiceNo").innerText="INV-"+withdrawId;
-    document.getElementById("nama").innerText=d.nama;
-    document.getElementById("email").innerText=user.email || "-";
-    document.getElementById("date").innerText=new Date(d.waktu || Date.now()).toLocaleString();
-    document.getElementById("amount").innerText="Rp "+(d.jumlah || 0).toLocaleString();
-
-    new QRCode(document.getElementById("qrcode"),{
-      text:location.href,
-      width:90,
-      height:90
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+      authDomain: "dynopay-2513c.firebaseapp.com",
+      databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
     });
 
-    // langsung download otomatis setelah load
-    setTimeout(downloadPDF, 300); 
-  }).catch(err=>{
-    console.error(err);
-    alert("Gagal load data invoice");
-  });
+    const db = firebase.database();
+
+    firebase.auth().onAuthStateChanged(user => {
+  if (!user) window.location.href = "../login";
+  else {
+    const uid = user.uid;
+
+    // Ambil saldo
+    db.ref("users/" + uid + "/saldo").once("value").then(snap => {
+  const saldo = Number(snap.val() || 0);
+  document.getElementById("totalBalance").innerText =
+    "Total: Rp " + saldo.toLocaleString("id-ID");
 });
 
-function downloadPDF(){
-  html2pdf()
-  .set({
-    margin:5,
-    filename:"Invoice-"+withdrawId+".pdf",
-    html2canvas:{scale:2},
-    jsPDF:{unit:'mm',format:'a4'}
-  })
-  .from(document.getElementById("invoice"))
-  .save();
-}
-</script>
+    // Panggil loadIncome
+    loadIncome(uid);
+  }
+});
 
+// Fungsi loadIncome di sini, di luar auth
+function loadIncome(uid) {
+  const incomeList = document.getElementById("incomeList");
+  incomeList.innerHTML = ""; // reset
+
+  db.ref("royalties")
+    .orderByChild("uid")
+    .equalTo(uid)
+    .once("value")
+    .then(snap => {
+      if (!snap.exists()) {
+        incomeList.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada laporan</td></tr>`;
+        return;
+      }
+
+      snap.forEach(item => {
+        const d = item.val();
+
+        // Status
+        let statusText = "";
+        let icon = "";
+        if (d.type === "Sales Report") {
+          statusText = "Accepted";
+          icon = "../assets/report.png";
+        } else if (d.type === "Payment") {
+          statusText = "Paid";
+          icon = "../assets/invoice.png";
+        } else {
+          statusText = "Pending";
+        }
+
+        incomeList.innerHTML = `
+  <tr>
+    <td style="font-weight:600">${d.type}</td>
+    <td>${d.date || item.key}</td>
+    <td>Rp ${Number(d.value || 0).toLocaleString("id-ID")}</td>
+    <td>${statusText}</td>
+    <td>
+  ${d.type === "Payment" 
+     ? `<img src="${icon}" class="download-icon" onclick="window.open('../invoice?id=${item.key}','_blank')">`
+     : d.type === "Sales Report" && d.downloadUrl
+       ? `<img src="${icon}" class="download-icon" onclick="downloadFile('${d.downloadUrl}')">`
+       : '-'}
+</td>
+` + incomeList.innerHTML;
+      });
+    });
+}
+   
+
+function downloadFile(url){
+  window.open(url,"_blank","noopener");
+}
+  </script>
 </body>
 </html>
