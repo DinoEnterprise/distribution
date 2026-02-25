@@ -104,31 +104,37 @@ function loadMembers(){
   db.ref("users").once("value").then(snap=>{
     sel.innerHTML = `<option value="">-- Pilih Member --</option>`;
     if(snap.exists()){
-      snap.forEach(user=>{
-        const d = user.val();
-        sel.innerHTML += `<option value="${user.key}" data-email="${d.email}">${d.email} • ${d.nama}</option>`;
-      });
+      snap.forEach(userSnap=>{
+  const d = userSnap.val();
+  const uid = userSnap.key; // UID asli
+  sel.innerHTML += `<option value="${uid}" data-email="${d.email}">${d.email} • ${d.nama}</option>`;
+});
     }
   });
 }
-
+function downloadFile(url){
+  window.open(url,"_blank");
+}
 // Load royalty admin
 function loadAdminRoyalty(){
   const list = document.getElementById("adminRoyaltyList");
   list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Memuat data...</td></tr>`;
 
-  db.ref("royalties").on("value", snap=>{
-    if(!snap.exists()){
-      list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada data</td></tr>`;
-      return;
-    }
+  // Preload semua users dulu
+  db.ref("users").once("value").then(userSnap=>{
+    const users = userSnap.val() || {};
 
-    const promises = [];
-    snap.forEach(item=>{
-      const d = item.val();
-      const p = db.ref("users/"+d.uid).once("value").then(uSnap=>{
-        const user = uSnap.val() || {};
-        return `
+    db.ref("royalties").once("value").then(snap=>{
+      if(!snap.exists()){
+        list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada data</td></tr>`;
+        return;
+      }
+
+      const rows = [];
+      snap.forEach(item=>{
+        const d = item.val();
+        const user = users[d.uid] || {};
+        rows.push(`
           <tr>
 <td>
   <span style="color:${d.type==='Sales Report'?'green':'blue'};font-weight:600">
@@ -139,12 +145,10 @@ function loadAdminRoyalty(){
             <td>Rp ${Number(d.value).toLocaleString("id-ID")}</td>
             <td>Accepted</td>
             <td>${d.downloadUrl ? `<button onclick="downloadFile('${d.downloadUrl}')">Download</button>` : '-'}</td>
-          </tr>`;
+          </tr>
+        `);
       });
-      promises.push(p);
-    });
 
-    Promise.all(promises).then(rows=>{
       list.innerHTML = rows.join('');
     });
   });
@@ -154,8 +158,8 @@ function loadAdminRoyalty(){
 document.getElementById("royaltyForm").addEventListener("submit", function(e){
   e.preventDefault();
 
- const uid = document.getElementById("memberSelect").value;
-const email = document.getElementById("memberSelect").selectedOptions[0].dataset.email; // ambil email dari option
+ const uid = document.getElementById("memberSelect").value; // harus UID member
+const email = document.getElementById("memberSelect").selectedOptions[0].dataset.email;
 const date = document.getElementById("date").value;
 const type = document.getElementById("reportType").value;
 const value = document.getElementById("value").value;
@@ -181,9 +185,6 @@ db.ref("royalties/"+newKey).set({
   console.error("Gagal tambah royalty:", err);
 });
 
-function downloadFile(url){
-  window.open(url,"_blank");
-}
 </script>
 
 </body>
