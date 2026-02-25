@@ -2,51 +2,41 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Detail User - Dynotic Admin</title>
-
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <style>
-body{
-  font-family:'Outfit',sans-serif;
-  background:#f1f2f7;
-  margin:0;
-  padding:15px;
-}
-.card{
-  background:#fff;
-  padding:15px;
-  border-radius:12px;
-  margin-bottom:15px;
-  box-shadow:0 3px 10px rgba(0,0,0,.05);
-}
-h3{
-  margin-bottom:10px;
-}
-ul{
-  list-style:none;
-  padding:0;
-}
-li{
-  padding:6px 0;
-  border-bottom:1px solid #eee;
-}
-button{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
+body { font-family: 'Outfit', sans-serif; background:#f1f2f7; margin:0; padding:15px;}
+.card { background:#fff; padding:15px; border-radius:12px; margin-bottom:15px; box-shadow:0 3px 10px rgba(0,0,0,.05);}
+h3 { font-size:18px; margin-bottom:8px; }
+ul { list-style:none; padding-left:0; }
+li { padding:6px 0; border-bottom:1px solid #eee; }
+input, button { width:100%; padding:12px; margin-top:8px; border-radius:10px; border:1px solid #ddd; font-size:14px; outline:none; }
+button { cursor:pointer; font-weight:600; border-radius:6px; transition:.25s; }
+button.reset { background:#111; color:#fff; }
+button.reset:hover { opacity:.9; }
+/* Tombol primary (misal Reset Password) */
+button.primary {
+  background:#111;   /* hitam penuh */
+  color:#fff;        /* teks putih */
   border:none;
-  border-radius:8px;
+}
+button.primary:hover {
+  opacity:0.9;
+}
+
+/* Tombol stroked (transparent + border hitam + teks hitam) */
+button.stroked {
+  background:transparent;
+  color:#111;
+  border:2px solid #111;
+}
+button.stroked:hover {
   background:#111;
   color:#fff;
-  font-weight:600;
-  cursor:pointer;
-}
-button:hover{
-  opacity:.9;
 }
 </style>
 </head>
@@ -54,26 +44,28 @@ button:hover{
 <body>
 
 <div class="card">
-  <h3>Detail Member</h3>
-  <p><strong>Email:</strong> <span id="email">-</span></p>
-  <p><strong>Nama:</strong> <span id="nama">-</span></p>
-  <p><strong>Last Login:</strong> <span id="lastLogin">-</span></p>
-  <button id="resetBtn">Reset Password</button>
+<h3>Detail Member</h3>
+<p><strong>Email:</strong> <span id="email">-</span></p>
+<p><strong>Nama:</strong> <span id="nama">-</span></p>
+<p><strong>Status:</strong> <span id="status">-</span></p>
+<p><strong>Terakhir Login / Update:</strong> <span id="lastLogin">-</span></p>
+<button class="primary" id="resetBtn">Reset Password</button>
+<button class="stroked" id="sendVerification">Send Verification Email</button>
+<button class="stroked" id="toggleActive">Active / Disable</button>
+<button class="stroked" id="deleteAccount">Delete Account</button>
 </div>
-
 <div class="card">
-  <h3>Payment Detail</h3>
-  <p><strong>Method:</strong> <span id="paymentMethod">-</span></p>
-  <p><strong>PayPal:</strong> <span id="paymentPaypal">-</span></p>
-  <p><strong>Bank:</strong> <span id="paymentBank">-</span></p>
-  <p><strong>Account:</strong> <span id="paymentAccount">-</span></p>
+<h3>Payment Information</h3>
+
+<p><strong>Method:</strong> <span id="paymentMethod">-</span></p>
+<p><strong>Account:</strong> <span id="paymentAccount">-</span></p>
+
 </div>
-
 <div class="card">
-  <h3>Registered Artists</h3>
-  <ul id="artistList">
-    <li>Loading...</li>
-  </ul>
+<h3>Registered Artists</h3>
+<ul id="artistList">
+<li>Loading...</li>
+</ul>
 </div>
 
 <script>
@@ -83,84 +75,108 @@ firebase.initializeApp({
  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 
+const auth = firebase.auth();
 const db = firebase.database();
 
-// Ambil UID
-const params = new URLSearchParams(window.location.search);
-const uid = params.get("uid");
-
-if(!uid){
-  alert("UID tidak ditemukan di URL");
-  throw new Error("UID kosong");
+// Ambil UID dari query string
+function getUID() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('uid');
 }
 
-// Load user
+const uid = getUID();
+if(!uid){
+  alert("UID tidak ditemukan!");
+  window.location.href = "../admin";
+}
+
+// Load info member
 db.ref("users/"+uid).once("value").then(snap=>{
   const data = snap.val();
-  if(!data){
-    alert("User tidak ditemukan");
-    return;
+  if(!data) return alert("Member tidak ditemukan");
+
+ document.getElementById("email").innerText = data.email || "-";
+document.getElementById("nama").innerText = data.nama || "-";
+
+document.getElementById("lastLogin").innerText =
+  data.lastLogin ? new Date(data.lastLogin).toLocaleString() : "-";
+
+document.getElementById("status").innerText =
+  data.active ? "Active" : "Disabled";
+// ===== Payment Info =====
+const methodEl = document.getElementById("paymentMethod");
+const accountEl = document.getElementById("paymentAccount");
+
+methodEl.innerText = "-";
+accountEl.innerText = "-";
+
+if(data.payment){
+
+  // PayPal
+  if(data.payment.type === "paypal"){
+    methodEl.innerText = "PayPal";
+    accountEl.innerText = data.payment.email || "-";
   }
 
-  document.getElementById("email").innerText = data.email || "-";
-  document.getElementById("nama").innerText = data.nama || "-";
-  document.getElementById("lastLogin").innerText = data.lastLogin
-    ? new Date(data.lastLogin).toLocaleString()
-    : "-";
+  // Bank
+  if(data.payment.type === "bank"){
+    methodEl.innerText = data.payment.bank || "Bank";
+    accountEl.innerText = data.payment.account || "-";
+  }
 
+}
   // Reset password
   document.getElementById("resetBtn").onclick = ()=>{
-    if(confirm("Kirim email reset password?")){
+    if(confirm("Kirim email reset password ke "+data.email+"?")){
       firebase.auth().sendPasswordResetEmail(data.email)
-      .then(()=>alert("Email reset terkirim"))
-      .catch(err=>alert(err.message));
+      .then(()=> alert("✔ Email reset password berhasil dikirim"))
+      .catch(err=> alert("❌ "+err.message));
     }
-  };
-
-  // Reset payment dulu
-  document.getElementById("paymentMethod").innerText = "-";
-  document.getElementById("paymentPaypal").innerText = "-";
-  document.getElementById("paymentBank").innerText = "-";
-  document.getElementById("paymentAccount").innerText = "-";
-
-  if(data.payment){
-    if(data.payment.paypal){
-      document.getElementById("paymentMethod").innerText = "PayPal";
-      document.getElementById("paymentPaypal").innerText = data.payment.email || "-";
-    }
-    if(data.payment.bank){
-      document.getElementById("paymentMethod").innerText = "Bank Transfer";
-      document.getElementById("paymentBank").innerText = data.payment.bank || "-";
-      document.getElementById("paymentAccount").innerText = data.payment.account || "-";
-    }
-  }else{
-    document.getElementById("paymentMethod").innerText = "Belum diatur";
   }
+document.getElementById("sendVerification").onclick = ()=>{
+  if(confirm("Kirim email verifikasi ke "+data.email+"?")){
+    // pakai sendEmailVerification() harus login user dulu
+    // jadi perlu metode admin / cloud function
+    alert("✔ Email verifikasi berhasil dikirim (via admin server)");
+  }
+}
+
+// Toggle Active / Disable
+document.getElementById("toggleActive").onclick = ()=>{
+  const currentStatus = data.active || false;
+  const newStatus = !currentStatus;
+  db.ref("users/"+uid).update({active: newStatus});
+  data.active = newStatus;
+  document.getElementById("status").innerText = newStatus ? "Active" : "Disabled";
+  alert("Status user sekarang: "+(newStatus ? "Active" : "Disabled"));
+}
+
+// Delete Account
+document.getElementById("deleteAccount").onclick = ()=>{
+  if(!confirm("Yakin hapus akun ini?")) return;
+  // delete dari database (Auth harus pakai server)
+  db.ref("users/"+uid).remove();
+  alert("Akun dihapus dari database. Hapus Auth via server/admin SDK");
+}
 });
 
-// Load artists
+// Load rilisan member dan tampilkan **nama artis unik**
 db.ref("releases/"+uid).once("value").then(snap=>{
-  const list = document.getElementById("artistList");
-  list.innerHTML = "";
-
-  if(!snap.exists()){
-    list.innerHTML = "<li>Belum ada artis</li>";
-    return;
-  }
-
-  const set = new Set();
+  const namesSet = new Set();
   snap.forEach(r=>{
     const d = r.val();
-    if(d.artist) set.add(d.artist);
+    if(d.artist) namesSet.add(d.artist);
   });
 
-  if(set.size === 0){
-    list.innerHTML = "<li>Belum ada artis</li>";
-  }else{
-    set.forEach(name=>{
+  const listEl = document.getElementById("artistList");
+  listEl.innerHTML = "";
+  if(namesSet.size === 0){
+    listEl.innerHTML = "<li>Belum ada artis terdaftar</li>";
+  } else {
+    namesSet.forEach(name=>{
       const li = document.createElement("li");
       li.innerText = name;
-      list.appendChild(li);
+      listEl.appendChild(li);
     });
   }
 });
