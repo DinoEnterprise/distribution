@@ -65,9 +65,9 @@
 
     /* Table (hidden for normal users) */
     .table-card {
-      display: none; /* sembunyikan untuk user biasa */
-      width: 90%;
-      margin: 16px auto;
+  display: block; /* tampilkan tabel untuk user */
+  width: 90%;
+  margin: 16px auto;
       background: #fff;
       border-radius: 18px;
       padding: 0;
@@ -107,49 +107,6 @@
       filter: brightness(0.9);
     }
 
-    /* Report Item */
-    .report-item {
-      background: #fff;
-      width: 90%;
-      margin: 12px auto;
-      padding: 14px 16px;
-      border-radius: 14px;
-      border: 1px solid #eee;
-    }
-
-    .report-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-
-    .report-left {
-      font-size: 14px;
-    }
-
-    .report-right {
-      text-align: right;
-    }
-
-    .report-value {
-      font-weight: 700;
-    }
-
-    .report-status {
-      font-size: 12px;
-      color: #777;
-      margin-top: 4px;
-    }
-
-    .report-item button {
-      margin-top: 6px;
-      padding: 6px 12px;
-      font-size: 12px;
-      border: none;
-      border-radius: 10px;
-      background: #111;
-      color: #fff;
-    }
   </style>
 </head>
 <body>
@@ -163,9 +120,6 @@
     <div class="balance" id="totalBalance">Total: Rp 0</div>
     <button onclick="withdraw()">Withdraw</button>
   </div>
-
-  <!-- Sales Report (Mobile Friendly) -->
-  <div id="reportList"></div>
 
   <!-- Table Income (Hidden for admin) -->
   <div class="table-card">
@@ -202,46 +156,40 @@
   else {
     const uid = user.uid;
 
-    // Ambil saldo langsung dari database
+    // Ambil saldo
     db.ref("users/" + uid + "/saldo").once("value").then(snap => {
   const saldo = Number(snap.val() || 0);
   document.getElementById("totalBalance").innerText =
     "Total: Rp " + saldo.toLocaleString("id-ID");
 });
 
-    // Tetap load laporan royalti
+    // Panggil loadIncome
     loadIncome(uid);
   }
 });
 
+// Fungsi loadIncome di sini, di luar auth
 function loadIncome(uid) {
-  const reportBox = document.getElementById("reportList");
-  reportBox.innerHTML = "";
+  const incomeList = document.getElementById("incomeList");
+  incomeList.innerHTML = ""; // reset
 
   db.ref("royalties").orderByKey().once("value").then(snap => {
     if (!snap.exists()) {
-      reportBox.innerHTML = `<p style="text-align:center;color:#777">Belum ada laporan</p>`;
-      return; // jangan ubah totalBalance di sini
+      incomeList.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada laporan</td></tr>`;
+      return;
     }
 
     snap.forEach(item => {
       const d = item.val();
-
-      reportBox.innerHTML += `
-        <div class="report-item">
-          <div class="report-row">
-            <div class="report-left">
-              <div><b>${d.date || item.key}</b></div>
-              <div class="report-status">Accepted</div>
-            </div>
-            <div class="report-right">
-              <div class="report-value">
-                Rp ${Number(d.value || 0).toLocaleString("id-ID")}
-              </div>
-              ${d.downloadUrl ? `<button onclick="downloadFile('${d.downloadUrl}')">Download</button>` : ''}
-            </div>
-          </div>
-        </div>
+      const valueColor = d.type === "Sales Report" ? "green" : "blue";
+      incomeList.innerHTML += `
+        <tr>
+          <td style="color:${valueColor}; font-weight:600">${d.type}</td>
+          <td>${d.date || item.key}</td>
+          <td>Rp ${Number(d.value || 0).toLocaleString("id-ID")}</td>
+          <td>Accepted</td>
+          <td>${d.downloadUrl ? `<img src="../assets/pdf.png" style="height:16px; cursor:pointer" onclick="downloadFile('${d.downloadUrl}')">` : '-'}</td>
+        </tr>
       `;
     });
   });
