@@ -173,26 +173,30 @@ function loadIncome(uid) {
   const incomeList = document.getElementById("incomeList");
   incomeList.innerHTML = ""; // reset
 
-  db.ref("royalties").orderByKey().once("value").then(snap => {
-    if (!snap.exists()) {
-      incomeList.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada laporan</td></tr>`;
-      return;
-    }
+  db.ref("royalties")
+    .orderByChild("uid")   // cari berdasarkan uid
+    .equalTo(uid)          // hanya untuk uid login ini
+    .once("value")
+    .then(snap => {
+      if (!snap.exists()) {
+        incomeList.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada laporan</td></tr>`;
+        return;
+      }
 
-    snap.forEach(item => {
-      const d = item.val();
-      const valueColor = d.type === "Sales Report" ? "green" : "blue";
-      incomeList.innerHTML += `
-        <tr>
-          <td style="color:${valueColor}; font-weight:600">${d.type}</td>
-          <td>${d.date || item.key}</td>
-          <td>Rp ${Number(d.value || 0).toLocaleString("id-ID")}</td>
-          <td>Accepted</td>
-          <td>${d.downloadUrl ? `<img src="../assets/pdf.png" style="height:16px; cursor:pointer" onclick="downloadFile('${d.downloadUrl}')">` : '-'}</td>
-        </tr>
-      `;
+      snap.forEach(item => {
+        const d = item.val();
+        const valueColor = d.type === "Sales Report" ? "green" : "blue";
+        incomeList.innerHTML += `
+          <tr>
+            <td style="color:${valueColor}; font-weight:600">${d.type}</td>
+            <td>${d.date || item.key}</td>
+            <td>Rp ${Number(d.value || 0).toLocaleString("id-ID")}</td>
+            <td>Accepted</td>
+            <td>${d.downloadUrl ? `<img src="../assets/pdf.png" style="height:16px; cursor:pointer" onclick="downloadFile('${d.downloadUrl}')">` : '-'}</td>
+          </tr>
+        `;
+      });
     });
-  });
 }
    
 
