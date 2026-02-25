@@ -1,112 +1,202 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Income | Dynotic Distribution</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif;}
-body{background:#f1f2f7;padding-top:74px;}
-header{padding:12px 20px;display:flex;align-items:center;background:#fff;border-bottom:1px solid #eee;position:fixed;top:0;left:0;width:100%;z-index:1000;}
-header img{height:50px;}
-.card{width:90%;margin:16px auto;background:#fff;border-radius:18px;padding:18px;border:1px solid #ececec;box-shadow:0 6px 16px rgba(0,0,0,.05);display:flex;justify-content:space-between;align-items:center;}
-.card .balance{font-weight:700;font-size:16px;}
-.card button{padding:8px 14px;background:#111;color:#fff;border:none;border-radius:12px;cursor:pointer;}
-.table-card{display:block;width:90%;margin:16px auto;background:#fff;border-radius:18px;padding:0;border:1px solid #ececec;box-shadow:0 6px 16px rgba(0,0,0,.05);}
-.table-card table{width:100%;border-collapse:collapse;}
-.table-card th,.table-card td{padding:12px 14px;text-align:left;border-bottom:1px solid #eee;font-size:14px;}
-.table-card th{background:#f9f9f9;font-weight:600;}
-.table-card td img{height:16px;cursor:pointer;}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Income | Dynotic Distribution</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Outfit', sans-serif;
+    }
+    body {
+      background: #f1f2f7;
+      padding-top: 74px;
+    }
+    header {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+    header img {
+      height: 50px;
+    }
+    .card {
+      width: 90%;
+      margin: 16px auto;
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px;
+      border: 1px solid #ececec;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, .05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card .balance {
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .card button {
+      padding: 8px 14px;
+      background: #111;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .table-card {
+      display: block;
+      width: 90%;
+      margin: 16px auto;
+      background: #fff;
+      border-radius: 18px;
+      padding: 0;
+      border: 1px solid #ececec;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, .05);
+    }
+    .table-card table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table-card th,
+    .table-card td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+    .table-card th {
+      background: #f9f9f9;
+      font-weight: 600;
+    }
+    .table-card td button {
+      padding: 6px 10px;
+      background: #667eea;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .table-card td button:hover {
+      filter: brightness(0.9);
+    }
+  </style>
 </head>
 <body>
 
-<header>
-<img src="../assets/dynotic-distribution.png" alt="DynoPay">
-</header>
+  <header>
+    <img src="../assets/dynotic-distribution.png" alt="DynoPay">
+  </header>
 
-<div class="card">
-<div class="balance" id="totalBalance">Total: Rp 0</div>
-<button onclick="withdraw()">Withdraw</button>
-</div>
+  <!-- Card Total + Withdraw -->
+  <div class="card">
+    <div class="balance" id="totalBalance">Total: Rp 0</div>
+    <button onclick="withdraw()">Withdraw</button>
+  </div>
 
-<div class="table-card">
-<table>
-<thead>
-<tr>
-<th>Report</th>
-<th>Tanggal</th>
-<th>Value</th>
-<th>Status</th>
-<th>Download</th>
-</tr>
-</thead>
-<tbody id="incomeList">
-<tr><td colspan="5" style="text-align:center;color:#777">Memuat data...</td></tr>
-</tbody>
-</table>
-</div>
+  <!-- Table Income -->
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>Report</th>
+          <th>Tanggal</th>
+          <th>Value</th>
+          <th>Status</th>
+          <th>Download</th>
+        </tr>
+      </thead>
+      <tbody id="incomeList">
+        <tr><td colspan="5" style="text-align:center;color:#777">Memuat data...</td></tr>
+      </tbody>
+    </table>
+  </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script>
-firebase.initializeApp({
-  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain: "dynopay-2513c.firebaseapp.com",
-  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
-
-const db = firebase.database();
-
-firebase.auth().onAuthStateChanged(user=>{
-  if(!user) window.location.href="../login";
-  else {
-    const uid = user.uid;
-
-    // Ambil saldo user
-    db.ref("users/"+uid+"/saldo").once("value").then(snap=>{
-      const saldo = Number(snap.val()||0);
-      document.getElementById("totalBalance").innerText = "Total: Rp "+saldo.toLocaleString("id-ID");
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+      authDomain: "dynopay-2513c.firebaseapp.com",
+      databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
     });
 
-    loadIncome(uid);
-  }
-});
+    const db = firebase.database();
 
-function loadIncome(uid){
-  const incomeList = document.getElementById("incomeList");
-  incomeList.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Memuat data...</td></tr>`;
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) window.location.href = "../login";
+      else {
+        const uid = user.uid;
+        const email = user.email.toLowerCase();
 
-  db.ref("royalties").orderByChild("uid").equalTo(uid).once("value").then(snap=>{
-    if(!snap.exists()){
-      incomeList.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada laporan</td></tr>`;
-      return;
+        // Ambil saldo
+        db.ref("users/" + uid + "/saldo").once("value").then(snap => {
+          const saldo = Number(snap.val() || 0);
+          document.getElementById("totalBalance").innerText =
+            "Total: Rp " + saldo.toLocaleString("id-ID");
+        });
+
+        // Load income
+        loadIncome(uid, email);
+      }
+    });
+
+    function loadIncome(uid, email) {
+      const incomeList = document.getElementById("incomeList");
+      incomeList.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Memuat data...</td></tr>`;
+
+      db.ref("royalties").once("value").then(snap => {
+        if (!snap.exists()) {
+          incomeList.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada laporan</td></tr>`;
+          return;
+        }
+
+        const rows = [];
+        snap.forEach(item => {
+          const d = item.val();
+          
+          // Filter uid/email lebih aman
+          if ((d.uid && d.uid === uid) || (d.email && d.email.toLowerCase() === email)) {
+            const displayValue = (d.type === "Payment" ? -Math.abs(Number(d.value)) : Number(d.value));
+            const valueColor = d.type === "Sales Report" ? "green" : "blue";
+            rows.push(`
+              <tr>
+                <td style="color:${valueColor}; font-weight:600">${d.type}</td>
+                <td>${d.date ? d.date : item.key}</td>
+                <td>Rp ${displayValue.toLocaleString("id-ID")}</td>
+                <td>Accepted</td>
+                <td>${d.downloadUrl && d.downloadUrl.startsWith("http") ? `<img src="../assets/pdf.png" style="height:16px; cursor:pointer" onclick="downloadFile('${d.downloadUrl}')">` : '-'}</td>
+              </tr>
+            `);
+          }
+        });
+
+        incomeList.innerHTML = rows.length ? rows.join('') :
+          `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada laporan</td></tr>`;
+      });
     }
 
-    const rows = [];
-    snap.forEach(item=>{
-      const d = item.val();
-      const valueColor = d.type==="Sales Report"?"green":"blue";
-      rows.push(`
-        <tr>
-          <td style="color:${valueColor}; font-weight:600">${d.type}</td>
-          <td>${d.date||item.key}</td>
-          <td>Rp ${Number(d.value||0).toLocaleString("id-ID")}</td>
-          <td>Accepted</td>
-          <td>${d.downloadUrl?`<img src="../assets/pdf.png" onclick="downloadFile('${d.downloadUrl}')">`:'-'}</td>
-        </tr>
-      `);
-    });
+    function downloadFile(url){
+      window.open(url,"_blank","noopener");
+    }
 
-    incomeList.innerHTML = rows.join('');
-  });
-}
-
-function downloadFile(url){window.open(url,"_blank","noopener");}
-function withdraw(){alert("Withdraw klik — bisa sambungkan ke sistem pembayaran nanti");}
-</script>
+    function withdraw(){
+      alert("Withdraw klik — bisa sambungkan ke sistem pembayaran nanti");
+    }
+  </script>
 
 </body>
 </html>
