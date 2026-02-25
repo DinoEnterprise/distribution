@@ -47,12 +47,17 @@ button.stroked:hover {
 <h3>Detail Member</h3>
 <p><strong>Email:</strong> <span id="email">-</span></p>
 <p><strong>Nama:</strong> <span id="nama">-</span></p>
-<p><strong>Status:</strong> <span id="status">-</span></p>
 <p><strong>Terakhir Login / Update:</strong> <span id="lastLogin">-</span></p>
 <button class="primary" id="resetBtn">Reset Password</button>
-<button class="stroked" id="sendVerification">Send Verification Email</button>
-<button class="stroked" id="toggleActive">Active / Disable</button>
-<button class="stroked" id="deleteAccount">Delete Account</button>
+</div>
+
+<div class="card">
+<h3>Payment Detail</h3>
+<p><strong>Method:</strong> <span id="paymentMethod">-</span></p>
+<p><strong>PayPal Email:</strong> <span id="paymentPaypal">-</span></p>
+<p><strong>Bank Name:</strong> <span id="paymentBank">-</span></p>
+<p><strong>Account Number:</strong> <span id="paymentAccount">-</span></p>
+</div>
 
 <div class="card">
 <h3>Registered Artists</h3>
@@ -91,10 +96,26 @@ db.ref("users/"+uid).once("value").then(snap=>{
   document.getElementById("email").innerText = data.email || "-";
   document.getElementById("nama").innerText = data.nama || "-";
   document.getElementById("lastLogin").innerText = data.lastLogin
-    ? new Date(data.lastLogin).toLocaleString()
-    : "-"
+  ? new Date(data.lastLogin).toLocaleString()
+  : "-";
     
-document.getElementById("status").innerText = data.active ? "Active" : "Disabled";
+// Load payment detail
+if(data.payment){
+
+  if(data.payment.paypal){
+    document.getElementById("paymentMethod").innerText = "PayPal";
+    document.getElementById("paymentPaypal").innerText = data.payment.email || "-";
+  }
+
+  if(data.payment.bank){
+    document.getElementById("paymentMethod").innerText = "Bank Transfer";
+    document.getElementById("paymentBank").innerText = data.payment.bank || "-";
+    document.getElementById("paymentAccount").innerText = data.payment.account || "-";
+  }
+
+} else {
+  document.getElementById("paymentMethod").innerText = "Belum diatur";
+}
 
   // Reset password
   document.getElementById("resetBtn").onclick = ()=>{
@@ -104,32 +125,8 @@ document.getElementById("status").innerText = data.active ? "Active" : "Disabled
       .catch(err=> alert("❌ "+err.message));
     }
   }
-document.getElementById("sendVerification").onclick = ()=>{
-  if(confirm("Kirim email verifikasi ke "+data.email+"?")){
-    // pakai sendEmailVerification() harus login user dulu
-    // jadi perlu metode admin / cloud function
-    alert("✔ Email verifikasi berhasil dikirim (via admin server)");
-  }
 }
 
-// Toggle Active / Disable
-document.getElementById("toggleActive").onclick = ()=>{
-  const currentStatus = data.active || false;
-  const newStatus = !currentStatus;
-  db.ref("users/"+uid).update({active: newStatus});
-  data.active = newStatus;
-  document.getElementById("status").innerText = newStatus ? "Active" : "Disabled";
-  alert("Status user sekarang: "+(newStatus ? "Active" : "Disabled"));
-}
-
-// Delete Account
-document.getElementById("deleteAccount").onclick = ()=>{
-  if(!confirm("Yakin hapus akun ini?")) return;
-  // delete dari database (Auth harus pakai server)
-  db.ref("users/"+uid).remove();
-  alert("Akun dihapus dari database. Hapus Auth via server/admin SDK");
-}
-});
 
 // Load rilisan member dan tampilkan **nama artis unik**
 db.ref("releases/"+uid).once("value").then(snap=>{
