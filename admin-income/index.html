@@ -111,7 +111,13 @@ function downloadFile(url){
   if(url && url.startsWith("http")) window.open(url,"_blank");
   else alert("Link download tidak valid");
 }
-
+function deleteRoyalty(key){
+  if(confirm("Yakin mau hapus data ini?")){
+    db.ref("royalties/"+key).remove()
+      .then(()=> loadAdminRoyalty())
+      .catch(err=> console.error("Gagal hapus:",err));
+  }
+}
 function loadAdminRoyalty(){
   const list = document.getElementById("adminRoyaltyList");
   list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Memuat data...</td></tr>`;
@@ -132,7 +138,8 @@ function loadAdminRoyalty(){
 
       const rows = [];
       snap.forEach(item=>{
-        const d = item.val();
+  const d = item.val();
+  const key = item.key;
         // fallback: pakai UID dulu, kalau tidak ada pakai email
         let user = users[d.uid] || {};
         if(!user.email && d.email) user = emailMap[d.email] || {};
@@ -147,12 +154,16 @@ function loadAdminRoyalty(){
 <td>${d.date}</td>
 <td>Rp ${Number(d.value).toLocaleString("id-ID")}</td>
 <td>Accepted</td>
-<td>${d.downloadUrl ? `<button onclick="downloadFile('${d.downloadUrl}')">Download</button>` : '-'}</td>
+<td>
+  ${d.downloadUrl ? `<button onclick="downloadFile('${d.downloadUrl}')">⬇</button>` : '-'}
+  <button onclick="deleteRoyalty('${key}')" style="background:#ff4d4f;margin-left:6px;">🗑</button>
+</td>
           </tr>
         `);
       });
 
-      list.innerHTML = rows.join('');
+      rows.reverse();
+list.innerHTML = rows.join('');
     });
   });
 }
