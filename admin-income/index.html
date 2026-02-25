@@ -33,11 +33,10 @@ td button:hover{filter:brightness(0.9);}
   <span id="adminName">Admin</span>
 </header>
 
-<!-- Form Add Royalty -->
 <form id="royaltyForm">
   <label>Member</label>
   <select id="memberSelect" required>
-    <option value="">Select User</option>
+    <option value="">-- Pilih Member --</option>
   </select>
 
   <label>Tanggal</label>
@@ -46,20 +45,19 @@ td button:hover{filter:brightness(0.9);}
   <label>Value</label>
   <input type="number" id="value" placeholder="Value (contoh: 450000)" required>
 
- <label>Type</label>
-<select id="reportType" required>
-  <option value="">-- Pilih Type --</option>
-  <option value="Sales Report">Sales Report</option>
-  <option value="Payment">Payment</option>
-</select>
+  <label>Type</label>
+  <select id="reportType" required>
+    <option value="">-- Pilih Type --</option>
+    <option value="Sales Report">Sales Report</option>
+    <option value="Payment">Payment</option>
+  </select>
 
-<label>Link Download</label>
-<input type="text" id="downloadUrl" placeholder="Link GitHub/PDF" required>
+  <label>Link Download</label>
+  <input type="text" id="downloadUrl" placeholder="Link GitHub/PDF">
 
   <button type="submit">Add Royalty</button>
 </form>
 
-<!-- Tabel Royalty Admin -->
 <table>
   <thead>
     <tr>
@@ -88,7 +86,6 @@ firebase.initializeApp({
 
 const db = firebase.database();
 
-// Pastikan login dulu
 firebase.auth().onAuthStateChanged(user=>{
   if(!user) window.location.href="../login";
   else {
@@ -98,31 +95,34 @@ firebase.auth().onAuthStateChanged(user=>{
   }
 });
 
-// Load list member ke dropdown
 function loadMembers(){
   const sel = document.getElementById("memberSelect");
   db.ref("users").once("value").then(snap=>{
     sel.innerHTML = `<option value="">-- Pilih Member --</option>`;
-    if(snap.exists()){
-      snap.forEach(userSnap=>{
-  const d = userSnap.val();
-  const uid = userSnap.key; // UID asli
-  sel.innerHTML += `<option value="${uid}" data-email="${d.email}">${d.email} • ${d.nama}</option>`;
-});
-    }
+    const users = snap.val() || {};
+    Object.keys(users).forEach(uid=>{
+      const u = users[uid];
+      sel.innerHTML += `<option value="${uid}" data-email="${u.email}">${u.email} • ${u.nama}</option>`;
+    });
   });
 }
+
 function downloadFile(url){
-  window.open(url,"_blank");
+  if(url && url.startsWith("http")) window.open(url,"_blank");
+  else alert("Link download tidak valid");
 }
-// Load royalty admin
+
 function loadAdminRoyalty(){
   const list = document.getElementById("adminRoyaltyList");
   list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Memuat data...</td></tr>`;
 
-  // Preload semua users dulu
+  // preload semua users
   db.ref("users").once("value").then(userSnap=>{
     const users = userSnap.val() || {};
+
+    // mapping email fallback
+    const emailMap = {};
+    Object.keys(users).forEach(uid=>{ emailMap[users[uid].email] = users[uid]; });
 
     db.ref("royalties").once("value").then(snap=>{
       if(!snap.exists()){
@@ -133,18 +133,21 @@ function loadAdminRoyalty(){
       const rows = [];
       snap.forEach(item=>{
         const d = item.val();
-        const user = users[d.uid] || {};
+        // fallback: pakai UID dulu, kalau tidak ada pakai email
+        let user = users[d.uid] || {};
+        if(!user.email && d.email) user = emailMap[d.email] || {};
+
         rows.push(`
           <tr>
 <td>
   <span style="color:${d.type==='Sales Report'?'green':'blue'};font-weight:600">
     ${d.type}
-  </span> • ${user.email || 'Unknown'} • ${user.nama || ''}
+  </span> • ${user.email || d.email || 'Unknown'} • ${user.nama || ''}
 </td>
-            <td>${d.date}</td>
-            <td>Rp ${Number(d.value).toLocaleString("id-ID")}</td>
-            <td>Accepted</td>
-            <td>${d.downloadUrl ? `<button onclick="downloadFile('${d.downloadUrl}')">Download</button>` : '-'}</td>
+<td>${d.date}</td>
+<td>Rp ${Number(d.value).toLocaleString("id-ID")}</td>
+<td>Accepted</td>
+<td>${d.downloadUrl ? `<button onclick="downloadFile('${d.downloadUrl}')">Download</button>` : '-'}</td>
           </tr>
         `);
       });
@@ -154,37 +157,23 @@ function loadAdminRoyalty(){
   });
 }
 
-// Tambah royalti
 document.getElementById("royaltyForm").addEventListener("submit", function(e){
   e.preventDefault();
 
- const uid = document.getElementById("memberSelect").value; // harus UID member
-const email = document.getElementById("memberSelect").selectedOptions[0].dataset.email;
-const date = document.getElementById("date").value;
-const type = document.getElementById("reportType").value;
-const value = document.getElementById("value").value;
-const downloadUrl = document.getElementById("downloadUrl").value;
+  const uid = document.getElementById("memberSelect").value;
+  const email = document.getElementById("memberSelect").selectedOptions[0].dataset.email;
+  const date = document.getElementById("date").value;
+  const type = document.getElementById("reportType").value;
+  const value = Number(document.getElementById("value").value);
+  const downloadUrl = document.getElementById("downloadUrl").value;
 
-const newKey = db.ref("royalties").push().key;
-let finalValue = Number(value);
-if(type === "Payment") finalValue = -Math.abs(finalValue);
+  const newKey = db.ref("royalties").push().key;
+  let finalValue = (type==="Payment") ? -Math.abs(value) : value;
 
-db.ref("royalties/"+newKey).set({
-  uid,
-  email,        // tambahan ini supaya berbasis email
-  date,
-  value: finalValue,
-  downloadUrl,
-  type
-})
-.then(()=>{
-  loadAdminRoyalty(); 
-  this.reset();       
-})
-.catch(err=>{
-  console.error("Gagal tambah royalty:", err);
+  db.ref("royalties/"+newKey).set({uid,email,date,value:finalValue,downloadUrl,type})
+    .then(()=>{ loadAdminRoyalty(); this.reset(); })
+    .catch(err=>{ console.error("Gagal tambah royalty:",err); });
 });
-
 </script>
 
 </body>
