@@ -132,17 +132,18 @@ function toggleFields(){
 function loadPayment(uid){
   db.ref("users/"+uid+"/payment").once("value").then(snap=>{
     if(!snap.exists()) return;
+
     const d = snap.val();
 
-    if(d.paypal){
-      document.getElementById("method").value="paypal";
-      document.getElementById("paypalEmail").value=d.email || "";
+    document.getElementById("method").value = d.type;
+
+    if(d.type === "paypal"){
+      document.getElementById("paypalEmail").value = d.email || "";
     }
 
-    if(d.bank){
-      document.getElementById("method").value="bank";
-      document.getElementById("bankName").value=d.bank || "";
-      document.getElementById("bankAccount").value=d.account || "";
+    if(d.type === "bank"){
+      document.getElementById("bankName").value = d.bank || "";
+      document.getElementById("bankAccount").value = d.account || "";
     }
 
     toggleFields();
@@ -154,25 +155,26 @@ function savePayment(){
   if(!user) return;
 
   const method = document.getElementById("method").value;
-  let paymentData = {};
 
-  if(method==="paypal"){
+  let paymentData = {
+    type: method,
+    updatedAt: Date.now()
+  };
+
+  if(method === "paypal"){
     const email = document.getElementById("paypalEmail").value.trim();
     if(!email) return alert("Masukkan email PayPal");
-    paymentData = {
-      paypal:true,
-      email:email
-    };
+
+    paymentData.email = email;
   }
 
-  if(method==="bank"){
+  if(method === "bank"){
     const bank = document.getElementById("bankName").value.trim();
     const account = document.getElementById("bankAccount").value.trim();
     if(!bank || !account) return alert("Lengkapi data bank");
-    paymentData = {
-      bank:bank,
-      account:account
-    };
+
+    paymentData.bank = bank;
+    paymentData.account = account;
   }
 
   db.ref("users/"+user.uid+"/payment").set(paymentData).then(()=>{
