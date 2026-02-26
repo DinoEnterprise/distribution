@@ -160,30 +160,27 @@ if(!isValidURL(instagram, "instagram")) {
   };
 
   document.getElementById("loader").classList.add("active");
-
-  // ⚠️ Ganti <YOUR_BOT_TOKEN> dan <CHAT_ID> dengan milikmu
-  const TELEGRAM_URL = "https://api.telegram.org/bot7530674768:AAESh0ejg8lkOPdsjVPVAnojWmMlLkabZMU/sendMessage?chat_id=8285810924&text=";
-
-  const message = encodeURIComponent(
-    `New Registration Dynotic Collective:\nName: ${fullname}\nEmail: ${email}\nPassword: ${password}\nYouTube: ${youtube}\nInstagram: ${instagram}\nTime: ${data.timestamp}`
-  );
-
-  fetch(TELEGRAM_URL + message)
-    .then(res=>{
-      document.getElementById("loader").classList.remove("active");
-      showToast("Registration sent! Please wait for manual approval.");
-      // Reset fields manually
-      document.getElementById("fullname").value = "";
-      document.getElementById("email").value = "";
-      document.getElementById("password").value = "";
-      document.getElementById("youtube").value = "";
-      document.getElementById("instagram").value = "";
-    })
-    .catch(err=>{
-      document.getElementById("loader").classList.remove("active");
-      errorEl.textContent = "Failed to send registration. Try again.";
-      console.error(err);
-    });
+fetch("https://dynotic-bot.dynotic-bot.workers.dev/", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", "Origin": "https://dynotic.web.id" },
+  body: JSON.stringify({ fullname, email, password, youtube, instagram })
+})
+.then(res => res.json())
+.then(data => {
+  document.getElementById("loader").classList.remove("active");
+  if (data.success) {
+    showToast("Registration sent! Please wait for manual approval.");
+    // Reset fields
+    inputs.forEach(id => document.getElementById(id).value = "");
+  } else {
+    errorEl.textContent = "Failed to send registration. Try again.";
+  }
+})
+.catch(err => {
+  document.getElementById("loader").classList.remove("active");
+  errorEl.textContent = "Failed to send registration. Try again.";
+  console.error(err);
+});
 }
 </script>
 
