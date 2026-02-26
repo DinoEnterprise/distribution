@@ -162,7 +162,7 @@ if(!isValidURL(instagram, "instagram")) {
   document.getElementById("loader").classList.add("active");
 fetch("https://dynotic-bot.dynotic-bot.workers.dev/", {
   method: "POST",
-  headers: { "Content-Type": "application/json", "Origin": "https://dynotic.web.id" },
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ fullname, email, password, youtube, instagram })
 })
 .then(res => res.json())
