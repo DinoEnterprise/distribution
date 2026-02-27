@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Release Detail | DynoPay</title>
+<title>Release Detail | Dynotic Distribution</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -32,7 +32,15 @@ header h2{font-size:18px;color:#111;}
   overflow: hidden;
   background: #ddd;
 }
+.field-title{
+  font-weight:600;
+  color:#111;
+}
 
+.field-value{
+  color:#777;
+  font-weight:400;
+}
 .cover-box img{
   width: 100%;
   height: 100%;
@@ -95,7 +103,7 @@ header h2{font-size:18px;color:#111;}
 <body>
 
 <header>
-  <img src="../assets/dynopay2.png" alt="DynoPay Logo">
+  <img src="../assets/dynotic-distribution.png" alt="DynoPay Logo">
 </header>
 
 <div class="card">
@@ -106,11 +114,30 @@ header h2{font-size:18px;color:#111;}
   <div class="release-info">
       <div class="title" id="releaseTitle">Loading...</div>
       <div class="artist" id="releaseArtist">--</div>
-      <div class="label" id="releaseLabel">Label: --</div>
-      <div class="ean" id="releaseEAN">UPC: --</div>
-      <div class="genre" id="releaseGenre">Genre: --</div>
-      <div class="date" id="releaseDate">Release Date: --</div>
-      <div class="status" id="releaseStatus">Status: --</div>
+<div class="label">
+  <span class="field-title">Label:</span>
+  <span class="field-value" id="releaseLabel">-</span>
+</div>
+
+<div class="ean">
+  <span class="field-title">UPC:</span>
+  <span class="field-value" id="releaseEAN">-</span>
+</div>
+
+<div class="genre">
+  <span class="field-title">Genre:</span>
+  <span class="field-value" id="releaseGenre">-</span>
+</div>
+
+<div class="date">
+  <span class="field-title">Release Date:</span>
+  <span class="field-value" id="releaseDate">-</span>
+</div>
+
+<div class="status">
+  <span class="field-title">Status:</span>
+  <span class="field-value" id="releaseStatus">-</span>
+</div>
     </div>
   </div>
 </div>
@@ -194,21 +221,16 @@ function loadRelease(uid, rid){
 
     document.getElementById("releaseTitle").innerText = d.title || "-";
     document.getElementById("releaseArtist").innerText = d.artist || "-";
-    document.getElementById("releaseLabel").innerText = "Label: "+(d.label||"-");
-    document.getElementById("releaseEAN").innerText = "UPC: " + (d.ean || "-");
-    document.getElementById("releaseGenre").innerText = "Genre: "+(d.genre||"-");
-    document.getElementById("releaseDate").innerText = "Release Date: "+(d.date||"-");
-    document.getElementById("releaseStatus").innerText = "Status: "+((d.status||"pending").toUpperCase());
+  document.getElementById("releaseLabel").innerText = d.label || "-";
+document.getElementById("releaseEAN").innerText = d.ean || "-";
+document.getElementById("releaseGenre").innerText = d.genre || "-";
+document.getElementById("releaseDate").innerText = d.date || "-";
+document.getElementById("releaseStatus").innerText = (d.status||"pending").toUpperCase();
     const cover = document.getElementById("coverArt");
 
-if(d.cover){
-  const id = extractDriveId(d.cover);
-  if(id){
-    cover.src = `https://drive.google.com/thumbnail?id=${id}&sz=w400`;
-  }else{
-    cover.src = "../assets/cover-default.png";
-  }
-}else{
+if (d.cover) {
+  cover.src = d.cover.trim();
+} else {
   cover.src = "../assets/cover-default.png";
 }
 
@@ -240,10 +262,6 @@ function copySmartlink(){
   navigator.clipboard.writeText(val);
 
   document.getElementById("copyBtn").innerHTML = "✔ Tersalin";
-}
-function extractDriveId(url){
-  const m = url.match(/\/d\/([^\/]+)/);
-  return m ? m[1] : "";
 }
 function renderPlatforms(data){
   const wrap = document.getElementById("platformList");
