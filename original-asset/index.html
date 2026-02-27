@@ -461,8 +461,8 @@ function next(n) {
     html += `<div><span>Featuring:</span> ${featuring.value}</div>`;
 
   html += `
-    <div><span>Audio:</span> ${audioUrl ? `<a href="${audioUrl}" target="_blank">${shorten(audioUrl)}</a>` : '-'}</div>
-    <div><span>Cover:</span> ${coverUrl ? `<a href="${coverUrl}" target="_blank">${shorten(coverUrl)}</a>` : '-'}</div>
+<div><span>Audio:</span> ${audioUrl ? "Uploaded ✔" : "-"}</div>
+<div><span>Cover:</span> ${coverUrl ? "Uploaded ✔" : "-"}</div>
   `;
 
   if(type.value === "original"){
