@@ -187,18 +187,20 @@
     <!-- STEP 2 -->
     <div id="step2" class="section" hidden></div>
 
-    <!-- STEP 3 -->
-    <div id="step3" class="section" hidden>
-      <div class="label">Link GDrive Audio *</div>
-      <input id="audio">
+<!-- STEP 3 -->
+<div id="step3" class="section" hidden>
+  <div class="label">Audio File *</div>
+  <input id="audio" type="file" accept="audio/*">
+  <progress id="audioProgress" value="0" max="100" style="width:100%; display:none;"></progress>
 
-      <div class="label">Link GDrive Cover Art *</div>
-      <input id="cover">
+  <div class="label">Cover Art *</div>
+  <input id="cover" type="file" accept="image/*">
+  <progress id="coverProgress" value="0" max="100" style="width:100%; display:none;"></progress>
 
-      <button type="button" class="btn gray" onclick="back(3)">Back</button>
-      <br><br>
-      <button type="button" class="btn" onclick="next(3)">Preview</button>
-    </div>
+  <button type="button" class="btn gray" onclick="back(3)">Back</button>
+  <br><br>
+  <button type="button" class="btn" id="previewBtn" onclick="next(3)">Preview</button>
+</div>
 
     <!-- STEP 4 -->
     <div id="step4" class="section" hidden>
@@ -227,7 +229,36 @@
     });
 
     const db = firebase.database();
+const WORKER_URL = "https://upload-assets.dynotic-bot.workers.dev/"; // ganti sesuai worker mu
 
+async function uploadFile(file, progressEl, callback){
+  const formData = new FormData();
+  formData.append("file", file);
+
+  progressEl.style.display = "block";
+  progressEl.value = 0;
+
+  try {
+    // Simulasi progress (jika worker tidak kirim progress)
+    let fakeProgress = 0;
+    const interval = setInterval(()=>{
+      if(fakeProgress < 90) { fakeProgress += 5; progressEl.value = fakeProgress; }
+    }, 100);
+
+    const res = await fetch(WORKER_URL, { method: "POST", body: formData });
+    clearInterval(interval);
+    progressEl.value = 100;
+
+    const data = await res.json();
+    if(data.success) callback(data.url);
+    else { alert("Upload gagal: " + data.error); callback(null); }
+
+  } catch(e){
+    progressEl.value = 0;
+    alert("Upload gagal: " + e.message);
+    callback(null);
+  }
+}
     // Redirect if not logged in
     firebase.auth().onAuthStateChanged(user => {
       if (!user) location.href = "../login";
@@ -254,34 +285,82 @@
                  document.getElementById("composer")?.value;
         }
       },
-      3: () => audio.value && cover.value
+      3: () => document.getElementById("audio")?.dataset.url &&
+       document.getElementById("cover")?.dataset.url
     };
 
     // STEP NAVIGATION
     function hideAll() {
       for(let i=1; i<=4; i++) document.getElementById("step"+i).hidden = true;
     }
+let listenersAttached = false;
 
-    function active(n) {
-      for(let i=1; i<=4; i++) document.getElementById("s"+i).classList.remove("active");
-      document.getElementById("s"+n).classList.add("active");
-    }
 
-    function goto(n) {
-      if(n>1 && !stepsData[n-1]()) return alert("Lengkapi step sebelumnya dulu!");
-      hideAll();
-      document.getElementById("step"+n).hidden = false;
-      active(n);
-      if(n === 4) loadPreview();
-    }
+let audioUploaded = false;
+let coverUploaded = false;
 
-    function next(n) {
-      if(n === 1 && !stepsData[1]()) return alert("Type wajib");
-      if(n === 1) loadStep2Fields();
-      if(n === 2 && !stepsData[2]()) return alert("Lengkapi master");
-      if(n === 3 && !stepsData[3]()) return alert("Link wajib");
-      goto(n+1);
+function attachUploadListeners(){
+  if(listenersAttached) return;
+  listenersAttached = true;
+
+  const audioInput = document.getElementById("audio");
+  const coverInput = document.getElementById("cover");
+  const previewBtn = document.getElementById("previewBtn");
+  if(!audioInput || !coverInput || !previewBtn) return;
+
+  previewBtn.disabled = true; // tombol Preview disable awal
+
+  audioInput.addEventListener("change", e => {
+    const file = e.target.files[0];
+    if(!file) return;
+    audioUploaded = false;
+    uploadFile(file, document.getElementById("audioProgress"), url => {
+      if(url){
+        audioInput.dataset.url = url;
+        audioUploaded = true;
+        checkAllUploaded();
+      }
+    });
+  });
+
+  coverInput.addEventListener("change", e => {
+    const file = e.target.files[0];
+    if(!file) return;
+    coverUploaded = false;
+    uploadFile(file, document.getElementById("coverProgress"), url => {
+      if(url){
+        coverInput.dataset.url = url;
+        coverUploaded = true;
+        checkAllUploaded();
+      }
+    });
+  });
+}
+
+// Enable Preview button otomatis saat kedua file selesai
+function checkAllUploaded(){
+  const previewBtn = document.getElementById("previewBtn");
+  if(previewBtn) previewBtn.disabled = !(audioUploaded && coverUploaded);
+}
+
+// Modifikasi next() untuk step 3
+function next(n) {
+  if(n === 1 && !stepsData[1]()) return alert("Type wajib");
+  if(n === 1) loadStep2Fields();
+  if(n === 2 && !stepsData[2]()) return alert("Lengkapi master");
+
+  if(n === 3){
+    attachUploadListeners();
+    // Validasi upload selesai
+    if(!audioUploaded || !coverUploaded){
+      return alert("Tunggu sampai audio dan cover selesai di-upload!");
     }
+    // ---- Tambahkan ini ----
+    loadPreview(); // generate isi preview sebelum tampil Step 4
+  }
+
+  goto(n+1); // pindah ke step berikutnya
+}
 
     function back(n) { goto(n-1); }
 
@@ -368,42 +447,57 @@
 
     // ====== PREVIEW ======
     function loadPreview() {
-      const shorten = (text, max=40) => text.length <= max ? text : text.slice(0, max) + "...";
-      let html = `
-        <div><span>Type:</span> ${type.value}</div>
-        <div><span>Title:</span> ${title.value}</div>
-        <div><span>Artist:</span> ${artist.value}</div>
-      `;
+  const shorten = (text, max=40) => text.length <= max ? text : text.slice(0, max) + "...";
+  const audioUrl = document.getElementById("audio").dataset.url;
+  const coverUrl = document.getElementById("cover").dataset.url;
 
-      if(document.getElementById("featuring") && featuring.value)
-        html += `<div><span>Featuring:</span> ${featuring.value}</div>`;
+  let html = `
+    <div><span>Type:</span> ${type.value}</div>
+    <div><span>Title:</span> ${title.value}</div>
+    <div><span>Artist:</span> ${artist.value}</div>
+  `;
 
-      html += `
-        <div><span>Audio:</span> ${audio.value ? `<a href="${audio.value}" target="_blank">${shorten(audio.value)}</a>` : '-'}</div>
-        <div><span>Cover:</span> ${cover.value ? `<a href="${cover.value}" target="_blank">${shorten(cover.value)}</a>` : '-'}</div>
-      `;
+  if(document.getElementById("featuring") && featuring.value)
+    html += `<div><span>Featuring:</span> ${featuring.value}</div>`;
 
-      if(type.value === "original"){
-        html += `
-          <div><span>Release Type:</span> ${releaseType.value}</div>
-          <div><span>Version:</span> ${version.value || "-"}</div>
-          <div><span>Full Name:</span> ${fullname.value}</div>
-          <div><span>Label:</span> ${label.value}</div>
-          <div><span>Release Date:</span> ${release.value}</div>
-        `;
-      }
+  html += `
+    <div><span>Audio:</span> ${audioUrl ? `<a href="${audioUrl}" target="_blank">${shorten(audioUrl)}</a>` : '-'}</div>
+    <div><span>Cover:</span> ${coverUrl ? `<a href="${coverUrl}" target="_blank">${shorten(coverUrl)}</a>` : '-'}</div>
+  `;
 
-      if(type.value === "cover"){
-        html += `
-          <div><span>Publisher:</span> ${publisher.value}</div>
-          <div><span>Composer:</span> ${composer.value}</div>
-          <div><span>Version:</span> ${version.value || "-"}</div>
-        `;
-      }
+  if(type.value === "original"){
+    html += `
+      <div><span>Release Type:</span> ${releaseType.value}</div>
+      <div><span>Version:</span> ${version.value || "-"}</div>
+      <div><span>Full Name:</span> ${fullname.value}</div>
+      <div><span>Label:</span> ${label.value}</div>
+      <div><span>Release Date:</span> ${release.value}</div>
+    `;
+  }
 
-      previewBox.innerHTML = html;
-    }
+  if(type.value === "cover"){
+    html += `
+      <div><span>Publisher:</span> ${publisher.value}</div>
+      <div><span>Composer:</span> ${composer.value}</div>
+      <div><span>Version:</span> ${version.value || "-"}</div>
+    `;
+  }
 
+  previewBox.innerHTML = html;
+}
+function goto(n){
+  hideAll();
+  document.getElementById("step"+n).hidden = false;
+
+  for(let i=1;i<=4;i++){
+    document.getElementById("s"+i).classList.remove("active");
+  }
+  document.getElementById("s"+n).classList.add("active");
+
+  if(n === 3){
+    attachUploadListeners();
+  }
+}
     // ====== SUBMIT ======
     function submitRelease() {
       const btn = document.getElementById("submitBtn");
@@ -422,8 +516,8 @@
         title: title.value,
         artist: artist.value,
         genre: genre.value,
-        audio: audio.value,
-        cover: cover.value,
+        audio: document.getElementById("audio").dataset.url,
+cover: document.getElementById("cover").dataset.url,
         status: "pending",
         time: Date.now()
       };
