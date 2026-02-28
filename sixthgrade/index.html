@@ -163,8 +163,8 @@ button:active{
 <body>
 
 <div class="container" id="card">
-  <img src="../assets/dynotic-distribution.png" class="logo">
-  <h2>Login Dynotic</h2>
+<img src="assets/sixthgrade.png" alt="Sixthgrade Logo" class="logo">
+  <h2>Login Sixthgrade Labs</h2>
 
   <div class="field">
     <input id="email" type="email" placeholder="Email">
@@ -179,7 +179,7 @@ button:active{
   <div id="error"></div>
 </div>
 
-<div class="loader" id="loader">Dynotic Distribution…</div>
+<div class="loader" id="loader">Sixthgrade Distribution…</div>
 
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -195,9 +195,36 @@ firebase.initializeApp({
 
 const db = firebase.database();
 
+document.getElementById("loader").classList.add("active");
 /* AUTO REDIRECT */
 firebase.auth().onAuthStateChanged(user=>{
-  if(user) window.location.replace("../home");
+  if(user){
+
+    db.ref("users/" + user.uid).once("value").then(snapshot=>{
+      const data = snapshot.val();
+
+      if(data && data.status === "active"){
+
+        db.ref("users/" + user.uid + "/lastLogin").set(Date.now());
+
+        document.getElementById("card").classList.add("fade-out");
+
+        setTimeout(() => window.location.replace("home/"), 600);
+
+      }else{
+        firebase.auth().signOut();
+        document.getElementById("error").textContent =
+          "Account is inactive. Please contact the admin";
+
+        document.getElementById("loader").classList.remove("active");
+      }
+
+    });
+
+  }else{
+    // kalau belum login
+    document.getElementById("loader").classList.remove("active");
+  }
 });
 
 /* TOGGLE PASSWORD */
@@ -223,33 +250,11 @@ function login(){
   if(!email || !pass){
     errorEl.textContent = "Email and password are required";
     return;
-}
+  }
+
   firebase.auth()
   .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
   .then(()=>firebase.auth().signInWithEmailAndPassword(email,pass))
-  .then(userCredential => {
-    const user = userCredential.user;
-    const errorEl = document.getElementById("error");
-
-    // Ambil data user dari database
-    db.ref("users/" + user.uid).once("value").then(snapshot => {
-        const data = snapshot.val();
-
-        // Cek kalau user non-active
-        if(!data || data.status !== "active"){
-            firebase.auth().signOut();
-            errorEl.textContent = "Account is inactive. Please contact the admin";
-            return;
-        }
-
-        db.ref("users/" + user.uid + "/lastLogin").set(Date.now());
-
-        document.getElementById("loader").classList.add("active");
-        document.getElementById("card").classList.add("fade-out");
-
-        setTimeout(() => window.location.replace("../home"), 600);
-    });
-})
   .catch(error=>{
     switch(error.code){
       case "auth/user-not-found":
