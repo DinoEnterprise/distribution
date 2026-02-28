@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | Sixthgrade Labs</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:'Outfit',sans-serif;
+  margin:0;
+  padding:0;
+}
+
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  padding:15px;
+}
+
+/* CARD */
+.container{
+  width:100%;
+  max-width:380px;
+  background:#fff;
+  border-radius:20px;
+  padding:30px 25px;
+  text-align:center;
+  box-shadow:0 15px 30px rgba(0,0,0,.18);
+  animation:enter .6s ease;
+}
+
+@keyframes enter{
+  from{opacity:0;transform:translateY(40px)}
+  to{opacity:1;transform:none}
+}
+
+/* LOGO */
+.logo{
+  width:70px;
+  margin-bottom:16px;
+}
+
+h2{
+  margin-bottom:20px;
+  font-size:22px;
+  font-weight:700;
+  color:#222;
+}
+
+/* INPUT */
+.field{
+  position:relative;
+  margin-bottom:15px;
+  width:100%;
+}
+
+input{
+  width:100%;
+  padding:14px 44px 14px 16px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  font-size:15px;
+  outline:none;
+  transition:.2s;
+}
+
+input:focus{
+  border:2px solid #667eea; /* stroke saat fokus */
+  box-shadow:none; /* hilangkan glow */
+}
+
+/* TOGGLE PASSWORD */
+.toggle{
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  font-size:18px;
+  user-select:none;
+  padding:4px;
+  border-radius:6px;
+  transition:.2s;
+  -webkit-tap-highlight-color:transparent; /* hilangkan highlight biru */
+}
+
+.toggle:active,
+.toggle:focus{
+  outline:2px solid #667eea; /* stroke saat tap */
+}
+
+/* BUTTON */
+button{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:14px;
+  font-size:16px;
+  font-weight:700;
+  color:#fff;
+  background:linear-gradient(90deg,#667eea,#764ba2);
+  cursor:pointer;
+  transition:.2s;
+  -webkit-tap-highlight-color:transparent;
+}
+
+button:focus,
+button:active{
+  outline:2px solid #667eea;
+}
+
+button:active{
+  transform:scale(.96);
+}
+
+/* ERROR */
+#error{
+  margin-top:10px;
+  font-size:14px;
+  color:#e53e3e;
+  min-height:20px;
+}
+
+/* LOADER */
+.loader{
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,.9);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:16px;
+  color:#667eea;
+  opacity:0;
+  pointer-events:none;
+  transition:.3s;
+}
+
+.loader.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* ANIMATION EXIT */
+.fade-out{
+  animation:exit .5s ease forwards;
+}
+
+@keyframes exit{
+  to{opacity:0;transform:scale(.95)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="card">
+  <img src="../assets/dynotic-distribution.png" class="logo">
+  <h2>Login Dynotic</h2>
+
+  <div class="field">
+    <input id="email" type="email" placeholder="Email">
+  </div>
+
+  <div class="field">
+    <input id="pass" type="password" placeholder="Password">
+    <div class="toggle" id="eye" tabindex="0" onclick="togglePass()">𖠂</div>
+  </div>
+
+  <button onclick="login()">Login</button>
+  <div id="error"></div>
+</div>
+
+<div class="loader" id="loader">Dynotic Distribution…</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain: "dynopay-2513c.firebaseapp.com",
+  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db = firebase.database();
+
+/* AUTO REDIRECT */
+firebase.auth().onAuthStateChanged(user=>{
+  if(user) window.location.replace("../home");
+});
+
+/* TOGGLE PASSWORD */
+function togglePass(){
+  const p = document.getElementById("pass");
+  const eye = document.getElementById("eye");
+
+  if(p.type==="password"){
+    p.type="text";
+    eye.textContent="⌒";
+  }else{
+    p.type="password";
+    eye.textContent="𖠂";
+  }
+}
+
+/* LOGIN */
+function login(){
+  const email=document.getElementById("email").value.trim();
+  const pass=document.getElementById("pass").value.trim();
+  const errorEl=document.getElementById("error");
+
+  if(!email || !pass){
+    errorEl.textContent = "Email and password are required";
+    return;
+}
+  firebase.auth()
+  .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .then(()=>firebase.auth().signInWithEmailAndPassword(email,pass))
+  .then(userCredential => {
+    const user = userCredential.user;
+    const errorEl = document.getElementById("error");
+
+    // Ambil data user dari database
+    db.ref("users/" + user.uid).once("value").then(snapshot => {
+        const data = snapshot.val();
+
+        // Cek kalau user non-active
+        if(!data || data.status !== "active"){
+            firebase.auth().signOut();
+            errorEl.textContent = "Account is inactive. Please contact the admin";
+            return;
+        }
+
+        db.ref("users/" + user.uid + "/lastLogin").set(Date.now());
+
+        document.getElementById("loader").classList.add("active");
+        document.getElementById("card").classList.add("fade-out");
+
+        setTimeout(() => window.location.replace("../home"), 600);
+    });
+})
+  .catch(error=>{
+    switch(error.code){
+      case "auth/user-not-found":
+        errorEl.textContent="User not found";
+        break;
+      case "auth/wrong-password":
+        errorEl.textContent="Incorrect password";
+        break;
+      case "auth/invalid-email":
+        errorEl.textContent="Invalid email address";
+        break;
+      default:
+        errorEl.textContent="An error occurred. Please try again";
+    }
+  });
+}
+</script>
+
+</body>
+</html>
