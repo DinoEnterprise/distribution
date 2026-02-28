@@ -32,6 +32,19 @@ tr:hover { background:#f5f5f5; }
 </style>
 </head>
 <body>
+  
+<!-- ADD APP -->
+<div class="card">
+  <h3>Add App</h3>
+  <input id="newAppName" placeholder="App Name (gunakan huruf kecil)">
+  <button class="register" onclick="addApp()">Add App</button>
+  <div id="appMsg"></div>
+</div>
+
+<div class="card">
+  <h3>Available Apps</h3>
+  <ul id="appsList"></ul>
+</div>
 
 <!-- USERS TABLE -->
 <div class="card">
@@ -68,7 +81,43 @@ document.getElementById("searchInput").addEventListener("input", e=>{
   searchTerm = e.target.value.toLowerCase();
   loadUsers();
 });
+function loadAppsList(){
+  const list = document.getElementById("appsList");
+  list.innerHTML = "";
+  db.ref("apps").once("value").then(snap=>{
+    if(!snap.exists()){ list.innerHTML = "<li>Belum ada apps</li>"; return; }
+    Object.keys(snap.val()).forEach(app=>{
+      const li = document.createElement("li");
+      li.textContent = app;
+      list.appendChild(li);
+    });
+  });
+}
 
+// Panggil setiap kali addApp selesai
+loadAppsList();
+function addApp(){
+  const appName = document.getElementById("newAppName").value.trim().toLowerCase();
+  const msg = document.getElementById("appMsg");
+
+  if(!appName){
+    msg.style.color = "red";
+    msg.innerHTML = "⚠ Nama app tidak boleh kosong!";
+    return;
+  }
+
+  // Simpan ke Firebase di /apps
+  db.ref(`apps/${appName}`).set(true)
+    .then(()=>{
+      msg.style.color = "green";
+      msg.innerHTML = "✔ App berhasil ditambahkan!";
+      document.getElementById("newAppName").value = "";
+    })
+    .catch(err=>{
+      msg.style.color = "red";
+      msg.innerHTML = "❌ " + err.message;
+    });
+}
 function loadUsers(){
   const tbody = document.querySelector("#memberTable tbody");
   tbody.innerHTML = "";
