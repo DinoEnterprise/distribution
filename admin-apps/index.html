@@ -3,213 +3,170 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Apps Manager | Dynotic Admin</title>
-
+<title>Member & Apps | Dynotic Admin</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <style>
-body{font-family:'Outfit',sans-serif;background:#f1f2f7;margin:0;padding:15px}
-.card{background:#fff;padding:15px;border-radius:12px;margin-bottom:15px;box-shadow:0 3px 10px rgba(0,0,0,.05)}
-h3{margin-bottom:8px}
-input,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #ddd;font-size:13px}
-button{cursor:pointer;font-weight:600;border-radius:6px}
-.table-container{max-height:500px;overflow:auto}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{padding:8px 10px;border-bottom:1px solid #eee}
-th{background:#f9f9f9}
-.status-badge{padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600}
-.menu-wrap{position:relative;display:inline-block}
-.menu-btn{background:none;border:none;font-size:18px;cursor:pointer}
-.menu-dropdown{display:none;position:absolute;right:0;top:25px;background:#fff;border:1px solid #ddd;border-radius:10px;min-width:230px;z-index:99;box-shadow:0 4px 15px rgba(0,0,0,.1);padding:8px}
-.menu-dropdown button{width:100%;border:none;background:none;padding:8px;font-size:13px;text-align:left}
-.menu-dropdown button:hover{background:#f5f5f5}
-.app-item{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}
+body { font-family: 'Outfit', sans-serif; background:#f1f2f7; margin:0; padding:15px; }
+h3 { margin-bottom:8px; font-size:18px; }
+.card { background:#fff; padding:15px; border-radius:12px; margin-bottom:15px; box-shadow:0 3px 10px rgba(0,0,0,.05); }
+input, select, button { width:100%; padding:12px; margin-top:8px; border-radius:10px; border:1px solid #ddd; font-size:14px; outline:none; box-sizing:border-box; }
+button { cursor:pointer; font-weight:600; border-radius:6px; transition:.25s; }
+button.addApp { background:#111; color:#fff; }
+button.addApp:hover { opacity:.9; }
+.table-container { max-height:500px; overflow:auto; }
+table { width:100%; border-collapse: collapse; font-size:13px; min-width:600px; }
+th, td { text-align:left; padding:8px 10px; border-bottom:1px solid #eee; }
+th { background:#f9f9f9; font-weight:600; }
+tr:hover { background:#f5f5f5; }
+.menu-wrap { position: relative; display: inline-block; }
+.menu-btn { background:none; border:none; font-size:18px; cursor:pointer; }
+.menu-dropdown { display:none; position:absolute; right:0; background:#fff; border:1px solid #ddd; border-radius:8px; min-width:180px; z-index:99; box-shadow:0 4px 10px rgba(0,0,0,.1); }
+.menu-dropdown select, .menu-dropdown button { width:100%; margin:0; margin-bottom:6px; }
+.menu-dropdown button:last-child { margin-bottom:0; }
+.menu-dropdown button:hover { background:#f5f5f5; }
+.status-badge { padding:2px 8px; border-radius:999px; font-weight:600; font-size:12px; }
 </style>
 </head>
 <body>
 
 <!-- ADD APP -->
 <div class="card">
-<h3>Add Apps</h3>
-<input id="newAppName" placeholder="Nama App Baru">
-<button onclick="addApp()">Tambah App</button>
+  <h3>Add App</h3>
+  <input id="newAppName" placeholder="Nama App">
+  <button class="addApp" onclick="addApp()">Add App</button>
 </div>
 
-<!-- LIST APP -->
+<!-- USERS TABLE -->
 <div class="card">
-<h3>Apps List</h3>
-<div id="appsList"></div>
-</div>
-
-<!-- USERS -->
-<div class="card">
-<h3>Users</h3>
-<input id="searchInput" placeholder="Search user..." style="margin-bottom:10px;">
-<div class="table-container">
-<table id="memberTable">
-<thead>
-<tr>
-<th>Name</th>
-<th>Email</th>
-<th>Status</th>
-<th>Action</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-</div>
+  <h3>Members</h3>
+  <input id="searchInput" placeholder="Search member..." style="margin-bottom:10px;">
+  <div class="table-container">
+    <table id="memberTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th>Apps</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 </div>
 
 <script>
 firebase.initializeApp({
- apiKey:"AIzaSy...",
- authDomain:"dynopay-2513c.firebaseapp.com",
- databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+  apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain:"dynopay-2513c.firebaseapp.com",
+  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 
-const db=firebase.database();
-let allApps={};
-let searchTerm="";
+const db = firebase.database();
 
-document.getElementById("searchInput").addEventListener("input",e=>{
- searchTerm=e.target.value.toLowerCase();
- loadMembers();
-});
-
+// ADD APP
 function addApp(){
- const name=document.getElementById("newAppName").value.trim();
- if(!name)return alert("Isi nama app dulu");
-
- const key=name.toLowerCase().replace(/\s+/g,'');
- db.ref("apps/"+key).set({
-   name:name,
-   active:true,
-   createdAt:Date.now()
- }).then(()=>{
-   alert("App berhasil ditambahkan");
-   document.getElementById("newAppName").value="";
-   loadAppsList();
- });
+  const name = document.getElementById("newAppName").value.trim();
+  if(!name) return alert("Masukkan nama app!");
+  const appKey = name.toLowerCase().replace(/\s+/g,"_");
+  db.ref("apps/"+appKey).set({name})
+    .then(()=> { alert("✔ App berhasil ditambahkan"); document.getElementById("newAppName").value=""; loadMembers(); });
 }
 
-function loadAppsList(){
- const wrap=document.getElementById("appsList");
- wrap.innerHTML="";
- db.ref("apps").once("value",snap=>{
-  snap.forEach(app=>{
-   const d=app.val();
-   const div=document.createElement("div");
-   div.style.display="flex";
-   div.style.justifyContent="space-between";
-   div.innerHTML=`
-     <span>${d.name}</span>
-     <button onclick="deleteApp('${app.key}')">Hapus</button>
-   `;
-   wrap.appendChild(div);
-  });
- });
-}
-
-function deleteApp(key){
- if(confirm("Hapus app ini?")){
-  db.ref("apps/"+key).remove().then(loadAppsList);
- }
-}
-
-db.ref("apps").on("value",snap=>{
- allApps=snap.val()||{};
+// SEARCH MEMBER
+let searchTerm="";
+document.getElementById("searchInput").addEventListener("input", e=>{
+  searchTerm=e.target.value.toLowerCase();
+  loadMembers();
 });
 
+// LOAD MEMBERS
 function loadMembers(){
- const tbody=document.querySelector("#memberTable tbody");
- tbody.innerHTML="";
- db.ref("users").once("value",snap=>{
-  snap.forEach(u=>{
-   const d=u.val();
-   const nama=(d.nama||"").toLowerCase();
-   const email=(d.email||"").toLowerCase();
-   if(searchTerm && !nama.includes(searchTerm) && !email.includes(searchTerm))return;
+  const tbody = document.querySelector("#memberTable tbody");
+  tbody.innerHTML = "";
+  db.ref("users").once("value").then(snap=>{
+    if(!snap.exists()) return;
+    snap.forEach(u=>{
+      const d = u.val();
+      const namaLower = (d.nama||"").toLowerCase();
+      const emailLower = (d.email||"").toLowerCase();
+      if(searchTerm && !namaLower.includes(searchTerm) && !emailLower.includes(searchTerm)) return;
 
-   const statusLabel=d.status==="active"
-    ?"<span class='status-badge' style='background:#34d399;color:#fff'>Active</span>"
-    :"<span class='status-badge' style='background:#f87171;color:#fff'>Non-Active</span>";
+      const appsList = d.apps ? Object.keys(d.apps).join(", ") : "-";
+      const statusLabel = d.status==="active" ? "<span class='status-badge' style='background:#34d399;color:#fff'>Active</span>" :
+                                               "<span class='status-badge' style='background:#f87171;color:#fff'>Non-Active</span>";
 
-   const tr=document.createElement("tr");
-   tr.innerHTML=`
-    <td>${d.nama}</td>
-    <td>${d.email||"-"}</td>
-    <td>${statusLabel}</td>
-    <td>
-     <div class="menu-wrap">
-      <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
-      <div class="menu-dropdown" id="menu-${u.key}">
-        <button onclick="toggleStatus('${u.key}','${d.status}')">
-          ${d.status==='active'?'Disable':'Activate'}
-        </button>
-        <button onclick="deleteMember('${u.key}')">Hapus</button>
-        <hr>
-        <div id="apps-${u.key}"></div>
-      </div>
-     </div>
-    </td>
-   `;
-   tbody.appendChild(tr);
+      const tr=document.createElement("tr");
+      tr.innerHTML=`
+        <td>${d.nama}</td>
+        <td>${d.email||"-"}</td>
+        <td>${statusLabel}</td>
+        <td>${appsList}</td>
+        <td>
+          <div class="menu-wrap">
+            <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
+            <div class="menu-dropdown">
+              <select id="appSelect-${u.key}">
+                <option value="">--Pilih App--</option>
+              </select>
+              <button onclick="assignApp('${u.key}')">Assign App</button>
+            </div>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+    loadAppsDropdowns();
   });
- });
 }
 
-function renderApps(uid){
- const wrap=document.getElementById("apps-"+uid);
- wrap.innerHTML="";
- db.ref("users/"+uid+"/apps").once("value").then(userSnap=>{
-  const userApps=userSnap.val()||{};
-  Object.keys(allApps).forEach(key=>{
-   const checked=userApps[key]?.access===true;
-   const div=document.createElement("div");
-   div.className="app-item";
-   div.innerHTML=`
-    <span>${allApps[key].name}</span>
-    <input type="checkbox"
-      ${checked?"checked":""}
-      onchange="setAccess('${uid}','${key}',this.checked)">
-   `;
-   wrap.appendChild(div);
+// LOAD APPS FOR DROPDOWNS
+function loadAppsDropdowns(){
+  db.ref("apps").once("value").then(snap=>{
+    if(!snap.exists()) return;
+    const apps = [];
+    snap.forEach(a=> apps.push({key:a.key,name:a.val().name}));
+
+    document.querySelectorAll(".menu-dropdown select").forEach(sel=>{
+      const currentVal = sel.value;
+      sel.innerHTML='<option value="">--Pilih App--</option>';
+      apps.forEach(a=> {
+        const opt = document.createElement("option");
+        opt.value = a.key;
+        opt.textContent = a.name;
+        sel.appendChild(opt);
+      });
+      sel.value = currentVal;
+    });
   });
- });
 }
 
-function setAccess(uid,app,val){
- db.ref("users/"+uid+"/apps/"+app).update({access:val});
+// ASSIGN APP
+function assignApp(uid){
+  const sel = document.getElementById("appSelect-"+uid);
+  if(!sel.value) return alert("Pilih app dulu!");
+  db.ref(`users/${uid}/apps/${sel.value}`).set(true).then(()=>{
+    alert("✔ App berhasil diberikan ke member");
+    loadMembers();
+  });
 }
 
+// DROPDOWN TOGGLE
 function toggleMenu(btn){
- document.querySelectorAll(".menu-dropdown").forEach(m=>{
-  if(m!==btn.nextElementSibling)m.style.display="none";
- });
- const menu=btn.nextElementSibling;
- menu.style.display=menu.style.display==="block"?"none":"block";
- const uid=menu.id.replace("menu-","");
- renderApps(uid);
+  document.querySelectorAll(".menu-dropdown").forEach(m=>{
+    if(m!==btn.nextElementSibling) m.style.display="none";
+  });
+  const menu=btn.nextElementSibling;
+  menu.style.display = menu.style.display==="block"?"none":"block";
 }
-
-document.addEventListener("click",e=>{
- if(!e.target.closest(".menu-wrap"))
-  document.querySelectorAll(".menu-dropdown").forEach(m=>m.style.display="none");
+document.addEventListener("click", e=>{
+  if(!e.target.closest(".menu-wrap")) document.querySelectorAll(".menu-dropdown").forEach(m=>m.style.display="none");
 });
 
-function toggleStatus(uid,current){
- const newStatus=current==="active"?"non-active":"active";
- db.ref("users/"+uid+"/status").set(newStatus).then(loadMembers);
-}
-
-function deleteMember(uid){
- if(confirm("Hapus user ini?"))
-  db.ref("users/"+uid).remove().then(loadMembers);
-}
-
-loadAppsList();
+// Initial load
 loadMembers();
 </script>
 </body>
