@@ -356,7 +356,9 @@ function checkAllUploaded(){
 
 // Modifikasi next() untuk step 3
 function next(n) {
-  if(n === 1 && !stepsData[1]()) return alert("Type wajib");
+if(n === 1){
+    document.getElementById("type").value = "original"; 
+}
   if(n === 1) loadStep2Fields();
   if(n === 2 && !stepsData[2]()) return alert("Lengkapi master");
 
