@@ -60,26 +60,25 @@
 
 <!-- STEP 3 -->
 <div id="step3" class="section" hidden>
+  <!-- Cover Art Upload -->
+  <div class="label">Cover Art *</div>
+  <div style="display:flex;justify-content:flex-start;gap:16px;">
+    <div style="position:relative;width:180px; aspect-ratio:1/1; border:2px dashed #667eea; border-radius:16px; overflow:hidden; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+      <input id="cover" type="file" accept="image/*" style="opacity:0;width:100%;height:100%;position:absolute;top:0;left:0;cursor:pointer;">
+      <img id="coverPreview" src="" alt="Cover Preview" style="max-width:100%; max-height:100%; object-fit:contain; object-position:center center; display:none; background:#f9fafb;">
+      <span id="coverText" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#667eea;font-weight:600;text-align:center;">Click or Drop</span>
+    </div>
+  </div>
+
   <!-- Audio Upload -->
-  <div class="label">Audio File *</div>
+  <div class="label" style="margin-top:16px;">Audio File *</div>
   <div style="display:flex;flex-direction:column;gap:8px;">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
       <input id="audio" type="file" accept="audio/*" style="flex:1;min-width:150px;">
-      <span id="audioName" style="font-size:14px;color:#333;">No file chosen</span>
     </div>
     <progress id="audioProgress" value="0" max="100" style="width:100%;height:6px;border-radius:3px;overflow:hidden;"></progress>
     <div id="audioBar" style="height:6px;width:100%;background:#e5e7eb;border-radius:3px;overflow:hidden;">
       <div id="audioWave" style="height:100%;width:0%;background:#667eea;transition:width 0.2s;"></div>
-    </div>
-  </div>
-
-  <!-- Cover Art Upload -->
-  <div class="label" style="margin-top:16px;">Cover Art *</div>
-  <div style="display:flex;justify-content:flex-start;gap:16px;">
-<div style="position:relative;width:180px; aspect-ratio:1/1; border:2px dashed #667eea; border-radius:16px; overflow:hidden; cursor:pointer; display:flex; align-items:center; justify-content:center;">
-      <input id="cover" type="file" accept="image/*" style="opacity:0;width:100%;height:100%;position:absolute;top:0;left:0;cursor:pointer;">
-<img id="coverPreview" src="" alt="Cover Preview" style="max-width:100%; max-height:100%; object-fit:contain; object-position:center center; display:none; background:#f9fafb;">
-      <span id="coverText" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#667eea;font-weight:600;text-align:center;">Click or Drop</span>
     </div>
   </div>
 
@@ -204,7 +203,6 @@ function attachUploadListeners(){
   const audioInput = document.getElementById("audio");
 const coverInput = document.getElementById("cover");
 const previewBtn = document.getElementById("previewBtn");
-const audioName = document.getElementById("audioName");
 const audioWave = document.getElementById("audioWave");
 const coverPreview = document.getElementById("coverPreview");
 const coverText = document.getElementById("coverText");
@@ -216,7 +214,6 @@ function checkAllUploaded(){ previewBtn.disabled = !(audioUploaded && coverUploa
 audioInput.addEventListener("change", e=>{
   const file = e.target.files[0]; if(!file) return;
   audioUploaded=false;
-  audioName.textContent = file.name;
   audioWave.style.width="0%";
 
   uploadFile(file, document.getElementById("audioProgress"), url=>{
