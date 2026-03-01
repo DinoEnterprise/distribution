@@ -33,14 +33,22 @@ tr:hover { background:#f5f5f5; }
 </head>
 <body>
 <!-- ASSIGN APPS MODAL -->
-<div id="appsModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); align-items:center; justify-content:center;">
-  <div style="background:#fff; width:400px; max-height:500px; border-radius:12px; padding:20px; overflow:hidden; display:flex; flex-direction:column;">
+<div id="appsModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; padding:15px;">
+  <div style="
+  background:#fff; 
+  width:100%; max-width:400px; 
+  max-height:90vh; /* maksimal 90% tinggi layar */
+  border-radius:12px; 
+  padding:20px; 
+  display:flex; 
+  flex-direction:column;
+">
     
     <h3 style="margin-top:0;">Assign Apps</h3>
 
     <input id="appSearch" placeholder="Search apps..." style="margin-bottom:10px; background:#fff;">
 
-    <div id="appsCheckboxList" style="flex:1; overflow-y:auto; border:1px solid #eee; padding:10px; border-radius:8px;"></div>
+<div id="appsCheckboxList" style="flex:1; max-height:60vh; overflow-y:auto; border:1px solid #eee; padding:10px; border-radius:8px;"></div>
 
     <div style="margin-top:15px; display:flex; gap:10px;">
       <button onclick="saveAssignedApps()" class="register">Save</button>
