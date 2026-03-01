@@ -177,10 +177,9 @@
     <!-- STEP 1 -->
     <div id="step1" class="section">
       <div class="label">Type Asset <span class="req">*</span></div>
-      <select id="type">
-        <option value="">Select</option>
-        <option value="original">Original Asset</option>
-      </select>
+    <select id="type" hidden>
+  <option value="original" selected>Original Asset</option>
+</select>
       <button type="button" class="btn" onclick="next(1)">Continue</button>
     </div>
 
@@ -199,11 +198,11 @@
 
   <button type="button" class="btn gray" onclick="back(3)">Back</button>
   <br><br>
-  <button type="button" class="btn" id="previewBtn" onclick="next(3)">Preview</button>
+<button type="button" class="btn" id="previewBtn" onclick="loadPreview(); goto(4)" disabled>Preview</button>
 </div>
 
-    <!-- STEP 4 -->
-    <div id="step4" class="section" hidden>
+<!-- STEP 4 -->
+<div id="step4" class="section" hidden>
       <div class="preview" id="previewBox"></div>
       <br>
       <button class="btn gray" onclick="back(4)">Edit</button>
@@ -304,38 +303,50 @@ function attachUploadListeners(){
   listenersAttached = true;
 
   const audioInput = document.getElementById("audio");
+ audioInput.addEventListener("change", e => {
+  const file = e.target.files[0];
+  if(!file) return;
+  audioUploaded = false;
+
+  uploadFile(file, document.getElementById("audioProgress"), url => {
+    if(url){
+      audioInput.dataset.url = url;
+      audioUploaded = true;
+      checkAllUploaded();
+    }
+  });
+}); 
   const coverInput = document.getElementById("cover");
   const previewBtn = document.getElementById("previewBtn");
   if(!audioInput || !coverInput || !previewBtn) return;
 
   previewBtn.disabled = true; // tombol Preview disable awal
 
-  audioInput.addEventListener("change", e => {
-    const file = e.target.files[0];
-    if(!file) return;
-    audioUploaded = false;
-    uploadFile(file, document.getElementById("audioProgress"), url => {
-      if(url){
-        audioInput.dataset.url = url;
-        audioUploaded = true;
-        checkAllUploaded();
-      }
-    });
-  });
-
   coverInput.addEventListener("change", e => {
-    const file = e.target.files[0];
-    if(!file) return;
-    coverUploaded = false;
-    uploadFile(file, document.getElementById("coverProgress"), url => {
-      if(url){
-        coverInput.dataset.url = url;
-        coverUploaded = true;
-        checkAllUploaded();
-      }
-    });
+  const file = e.target.files[0];
+  if(!file) return;
+  coverUploaded = false;
+
+  // Preview cover
+  const preview = document.getElementById("coverPreview");
+  const reader = new FileReader();
+  reader.onload = ev => {
+    if(preview){
+      preview.src = ev.target.result;
+      preview.style.display = "block";
+    }
+  };
+  reader.readAsDataURL(file);
+
+  uploadFile(file, document.getElementById("coverProgress"), url => {
+    if(url){
+      coverInput.dataset.url = url;
+      coverUploaded = true;
+      checkAllUploaded();
+    }
   });
-}
+});
+
 
 // Enable Preview button otomatis saat kedua file selesai
 function checkAllUploaded(){
@@ -376,33 +387,37 @@ function next(n) {
       s.innerHTML = "";
 
       if(type.value === "original") {
-        s.innerHTML += `
-          <div class="label">Song Title *</div><input id="title">
-          <div class="label">Version</div>
-          <small style="font-size:11px;color:#777;">Contoh: Remix, Remastered, Live, dll</small>
-          <input id="version" placeholder="Optional">
-          <div class="label">Genre *</div>
-          <select id="genre">
-            <option value="">Select</option>
-            <option>Blues</option><option>Dangdut</option><option>Electronic</option>
-            <option>Hip-hop</option><option>Instrumental</option><option>Jazz</option>
-            <option>Metal</option><option>Pop</option><option>R&B</option>
-            <option>Reggae</option><option>Rock</option>
-          </select>
-          <div class="label">Release Type *</div>
-          <select id="releaseType">
-            <option value="">Pilih</option>
-            <option>Single</option>
-            <option>EP</option>
-            <option>Album</option>
-          </select>
-          <div class="label">Artist Name *</div><input id="artist">
-          <div class="label">Full Name *</div><input id="fullname">
-          <div class="label">Featuring</div><input id="featuring" placeholder="Optional">
-          <div class="label">Label *</div><input id="label">
-          <div class="label">Release Date *</div><input type="date" id="release">
-        `;
+    s.innerHTML += `
+      <div class="label">Cover Art *</div>
+      <input id="cover" type="file" accept="image/*">
+      <img id="coverPreview" style="width:120px;margin:6px 0;display:none;">
 
+      <div class="label">Song Title *</div><input id="title">
+      <div class="label">Version</div>
+      <small style="font-size:11px;color:#777;">Contoh: Remix, Remastered, Live, dll</small>
+      <input id="version" placeholder="Optional">
+      <div class="label">Genre *</div>
+      <select id="genre">
+        <option value="">Select</option>
+        <option>Blues</option><option>Dangdut</option><option>Electronic</option>
+        <option>Hip-hop</option><option>Instrumental</option><option>Jazz</option>
+        <option>Metal</option><option>Pop</option><option>R&B</option>
+        <option>Reggae</option><option>Rock</option>
+      </select>
+      <div class="label">Release Type *</div>
+      <select id="releaseType">
+        <option value="">Pilih</option>
+        <option>Single</option>
+        <option>EP</option>
+        <option>Album</option>
+      </select>
+      <div class="label">Artist Name *</div><input id="artist">
+      <div class="label">Full Name *</div><input id="fullname">
+      <div class="label">Featuring</div><input id="featuring" placeholder="Optional">
+      <div class="label">Label *</div><input id="label">
+      <div class="label">Release Date *</div><input type="date" id="release">
+    `;
+    
         // Set min date = 7 days from now
         setTimeout(() => {
           let r = document.getElementById("release");
@@ -413,7 +428,10 @@ function next(n) {
 
       } else if(type.value === "cover") {
         s.innerHTML += `
-          <div class="label">Song Title *</div><input id="title">
+       <div class="label">Cover Art *</div>
+<input id="cover" type="file" accept="image/*">
+<img id="coverPreview" style="width:120px;margin:6px 0;display:none;">
+<div class="label">Song Title *</div><input id="title">
           <div class="label">Version</div>
           <select id="version">
             <option value="">Pilih</option><option>Remix</option><option>Cover</option>
