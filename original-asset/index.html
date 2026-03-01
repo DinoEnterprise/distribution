@@ -219,26 +219,42 @@
 
     const WORKER_URL = "https://upload-assets.dynotic-bot.workers.dev/";
 
-    async function uploadFile(file, progressEl, callback){
-      const formData = new FormData();
-      formData.append("file", file);
-      progressEl.style.display = "block";
-      progressEl.value = 0;
+    function uploadFile(file, progressCallback, doneCallback){
+  const formData = new FormData();
+  formData.append("file", file);
 
-      try {
-        let fakeProgress = 0;
-        const interval = setInterval(()=>{ if(fakeProgress<90){ fakeProgress+=5; progressEl.value=fakeProgress;} },100);
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", WORKER_URL, true);
 
-        const res = await fetch(WORKER_URL, { method:"POST", body:formData });
-        clearInterval(interval);
-        progressEl.value = 100;
-
-        const data = await res.json();
-        if(data.success) callback(data.url);
-        else { alert("Upload gagal: "+data.error); callback(null); }
-
-      } catch(e){ progressEl.value=0; alert("Upload gagal: "+e.message); callback(null);}
+  xhr.upload.onprogress = function(e){
+    if(e.lengthComputable){
+      const percent = Math.round((e.loaded / e.total) * 100);
+      progressCallback(percent);
     }
+  };
+
+  xhr.onload = function(){
+    if(xhr.status === 200){
+      const data = JSON.parse(xhr.responseText);
+      if(data.success){
+        doneCallback(data.url);
+      } else {
+        alert("Upload gagal: " + data.error);
+        doneCallback(null);
+      }
+    } else {
+      alert("Upload gagal!");
+      doneCallback(null);
+    }
+  };
+
+  xhr.onerror = function(){
+    alert("Upload error!");
+    doneCallback(null);
+  };
+
+  xhr.send(formData);
+}
 
     firebase.auth().onAuthStateChanged(user=>{
       if(!user) location.href="../login";
@@ -313,56 +329,62 @@ function attachUploadListeners(){
   const audioName = document.getElementById("audioName");
   const coverPreview = document.getElementById("coverPreview");
 
-  let audioUploaded=false, coverUploaded=false;
+  let audioUploaded = false;
+  let coverUploaded = false;
 
   function checkAllUploaded(){
     previewBtn.disabled = !(audioUploaded && coverUploaded);
   }
 
+  // AUDIO LISTENER
   audioInput.addEventListener("change", e=>{
     const file = e.target.files[0];
     if(!file) return;
 
-    audioUploaded=false;
-    audioName.textContent=file.name;
-    audioWave.style.width="0%";
+    audioUploaded = false;
+    audioName.textContent = file.name;
+    audioWave.style.width = "0%";
 
-    uploadFile(file, document.createElement("progress"), url=>{
-      if(url){
-        audioInput.dataset.url=url;
-        audioUploaded=true;
-        checkAllUploaded();
+    uploadFile(
+      file,
+      percent=>{
+        audioWave.style.width = percent + "%";
+      },
+      url=>{
+        if(url){
+          audioInput.dataset.url = url;
+          audioUploaded = true;
+          checkAllUploaded();
+        }
       }
-    });
-
-    let width=0;
-    const interval=setInterval(()=>{
-      if(width>=100){ clearInterval(interval); return;}
-      width+=8;
-      audioWave.style.width=width+"%";
-    },120);
+    );
   });
 
+  // COVER LISTENER
   coverInput.addEventListener("change", e=>{
     const file = e.target.files[0];
     if(!file) return;
 
-    coverUploaded=false;
+    coverUploaded = false;
 
     const reader = new FileReader();
     reader.onload = ev=>{
-      coverPreview.src=ev.target.result;
-      coverPreview.style.display="block";
+      coverPreview.src = ev.target.result;
+      coverPreview.style.display = "block";
     };
     reader.readAsDataURL(file);
 
-    uploadFile(file, document.createElement("progress"), url=>{
-      if(url){
-        coverInput.dataset.url=url;
-        coverUploaded=true;
-        checkAllUploaded();
+    uploadFile(
+      file,
+      percent=>{},
+      url=>{
+        if(url){
+          coverInput.dataset.url = url;
+          coverUploaded = true;
+          checkAllUploaded();
+        }
       }
-    });
+    );
   });
 }
 
@@ -386,11 +408,19 @@ function attachUploadListeners(){
     function back(n){ goto(n-1); }
 
     function goto(n){
-      hideAll();
-      document.getElementById("step"+n).hidden=false;
-      for(let i=1;i<=4;i++) document.getElementById("s"+i).classList.remove("active");
-      document.getElementById("s"+n).classList.add("active");
-    }
+  hideAll();
+  document.getElementById("step"+n).hidden=false;
+
+  // 🔥 TAMBAHAN INI
+  if(n === 3){
+    attachUploadListeners();
+  }
+
+  for(let i=1;i<=4;i++) 
+    document.getElementById("s"+i).classList.remove("active");
+
+  document.getElementById("s"+n).classList.add("active");
+}
 
     s1.onclick=()=>goto(1); s2.onclick=()=>goto(2);
     s3.onclick=()=>goto(3); s4.onclick=()=>goto(4);
