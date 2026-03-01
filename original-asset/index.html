@@ -58,7 +58,7 @@
     <!-- STEP 2 -->
     <div id="step2" class="section" hidden></div>
 
-<!-- STEP 3 upgraded responsive -->
+<!-- STEP 3 -->
 <div id="step3" class="section" hidden>
   <!-- Audio Upload -->
   <div class="label">Audio File *</div>
@@ -75,7 +75,7 @@
 
   <!-- Cover Art Upload -->
   <div class="label" style="margin-top:16px;">Cover Art *</div>
-  <div style="display:flex;justify-content:center;">
+  <div style="display:flex;justify-content:flex-start;gap:16px;">
     <div style="position:relative;width:180px;height:180px;border:2px dashed #667eea;border-radius:16px;overflow:hidden;cursor:pointer;">
       <input id="cover" type="file" accept="image/*" style="opacity:0;width:100%;height:100%;position:absolute;top:0;left:0;cursor:pointer;">
       <img id="coverPreview" src="" alt="Cover Preview" style="width:100%;height:100%;object-fit:cover;display:none;">
@@ -83,6 +83,7 @@
     </div>
   </div>
 
+  <!-- Buttons -->
   <div style="margin-top:20px; display:flex;gap:10px;flex-wrap:wrap;">
     <button type="button" class="btn gray" onclick="back(3)" style="flex:1;min-width:120px;">Back</button>
     <button type="button" class="btn" id="previewBtn" onclick="loadPreview(); goto(4)" disabled style="flex:2;min-width:120px;">Preview</button>
@@ -201,53 +202,52 @@
     // Audio & cover listeners upgraded
 function attachUploadListeners(){
   const audioInput = document.getElementById("audio");
-  const coverInput = document.getElementById("cover");
-  const previewBtn = document.getElementById("previewBtn");
-  const audioName = document.getElementById("audioName");
-  const audioWave = document.getElementById("audioWave");
-  const coverPreview = document.getElementById("coverPreview");
-  const coverText = document.getElementById("coverText");
-  if(!audioInput || !coverInput || !previewBtn) return;
-  previewBtn.disabled = true;
-  let audioUploaded=false, coverUploaded=false;
+const coverInput = document.getElementById("cover");
+const previewBtn = document.getElementById("previewBtn");
+const audioName = document.getElementById("audioName");
+const audioWave = document.getElementById("audioWave");
+const coverPreview = document.getElementById("coverPreview");
+const coverText = document.getElementById("coverText");
 
-  function checkAllUploaded(){ previewBtn.disabled = !(audioUploaded && coverUploaded); }
+let audioUploaded=false, coverUploaded=false;
 
-  audioInput.addEventListener("change", e=>{
-    const file = e.target.files[0]; if(!file) return;
-    audioUploaded=false;
-    audioName.textContent = file.name;
-    audioWave.style.width="0%";
+function checkAllUploaded(){ previewBtn.disabled = !(audioUploaded && coverUploaded); }
 
-    uploadFile(file, document.getElementById("audioProgress"), url=>{
-      if(url){ audioInput.dataset.url=url; audioUploaded=true; checkAllUploaded();}
-    });
+audioInput.addEventListener("change", e=>{
+  const file = e.target.files[0]; if(!file) return;
+  audioUploaded=false;
+  audioName.textContent = file.name;
+  audioWave.style.width="0%";
 
-    // fake waveform animasi
-    let width=0;
-    const interval = setInterval(()=>{
-      if(width>=100){ clearInterval(interval); return;}
-      width+=Math.random()*10;
-      if(width>100) width=100;
-      audioWave.style.width=width+"%";
-    },150);
+  uploadFile(file, document.getElementById("audioProgress"), url=>{
+    if(url){ audioInput.dataset.url=url; audioUploaded=true; checkAllUploaded();}
   });
 
-  coverInput.addEventListener("change", e=>{
-    const file = e.target.files[0]; if(!file) return;
-    coverUploaded=false;
-    const reader = new FileReader();
-    reader.onload = ev=>{
-      coverPreview.src = ev.target.result;
-      coverPreview.style.display="block";
-      coverText.style.display="none";
-    };
-    reader.readAsDataURL(file);
+  // fake waveform animasi
+  let width=0;
+  const interval = setInterval(()=>{
+    if(width>=100){ clearInterval(interval); return;}
+    width+=Math.random()*10;
+    if(width>100) width=100;
+    audioWave.style.width=width+"%";
+  },150);
+});
 
-    uploadFile(file, document.getElementById("coverProgress"), url=>{
-      if(url){ coverInput.dataset.url=url; coverUploaded=true; checkAllUploaded();}
-    });
+coverInput.addEventListener("change", e=>{
+  const file = e.target.files[0]; if(!file) return;
+  coverUploaded=false;
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    coverPreview.src = ev.target.result;
+    coverPreview.style.display="block";
+    coverText.style.display="none";
+  };
+  reader.readAsDataURL(file);
+
+  uploadFile(file, document.getElementById("coverProgress"), url=>{
+    if(url){ coverInput.dataset.url=url; coverUploaded=true; checkAllUploaded();}
   });
+});
 }
 
     function next(n){
