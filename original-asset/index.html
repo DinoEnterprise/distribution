@@ -70,17 +70,19 @@
     </div>
   </div>
 
-  <!-- Audio Upload -->
-  <div class="label" style="margin-top:16px;">Audio File *</div>
-  <div style="display:flex;flex-direction:column;gap:8px;">
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-      <input id="audio" type="file" accept="audio/*" style="flex:1;min-width:150px;">
-    </div>
-    <progress id="audioProgress" value="0" max="100" style="width:100%;height:6px;border-radius:3px;overflow:hidden;"></progress>
-    <div id="audioBar" style="height:6px;width:100%;background:#e5e7eb;border-radius:3px;overflow:hidden;">
-      <div id="audioWave" style="height:100%;width:0%;background:#667eea;transition:width 0.2s;"></div>
-    </div>
+<!-- Audio Upload -->
+<div class="label">Audio File *</div>
+<div style="display:flex;flex-direction:column;gap:8px;">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <input id="audio" type="file" accept="audio/*" style="flex:1;min-width:150px;">
+    <!-- Nama file akan muncul di sini -->
+    <span id="audioName" style="font-size:14px;color:#333;"></span>
   </div>
+  <progress id="audioProgress" value="0" max="100" style="width:100%;height:6px;border-radius:3px;overflow:hidden;"></progress>
+  <div id="audioBar" style="height:6px;width:100%;background:#e5e7eb;border-radius:3px;overflow:hidden;">
+    <div id="audioWave" style="height:100%;width:0%;background:#667eea;transition:width 0.2s;"></div>
+  </div>
+</div>
 
   <!-- Buttons -->
   <div style="margin-top:20px; display:flex;gap:10px;flex-wrap:wrap;">
@@ -212,8 +214,14 @@ let audioUploaded=false, coverUploaded=false;
 function checkAllUploaded(){ previewBtn.disabled = !(audioUploaded && coverUploaded); }
 
 audioInput.addEventListener("change", e=>{
-  const file = e.target.files[0]; if(!file) return;
+  const file = e.target.files[0]; 
+  if(!file){
+    audioName.textContent = "No file chosen";
+    return;
+  }
+
   audioUploaded=false;
+  audioName.textContent = file.name;  // tampilkan nama file
   audioWave.style.width="0%";
 
   uploadFile(file, document.getElementById("audioProgress"), url=>{
