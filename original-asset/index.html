@@ -22,14 +22,99 @@
     .req { color:red;}
     input, select { width:100%; padding:14px; border-radius:14px; border:1px solid #ddd; margin-bottom:16px; font-size:14px;}
     input:focus, select:focus { outline:none; border-color:#667eea; box-shadow:0 0 0 3px rgba(102,126,234,0.15);}
+   .upload-box{
+  box-shadow:0 8px 20px rgba(102,126,234,0.15);
+  display:block;
+  width:200px;
+  aspect-ratio:1/1;
+  border:2px dashed #667eea;
+  border-radius:20px;
+  cursor:pointer;
+  transition:0.3s;
+}
+.upload-box:hover{
+  background:#f3f4ff;
+}
+.upload-inner{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+.upload-icon{
+  font-size:32px;
+  font-weight:600;
+  color:#667eea;
+}
+.upload-text{
+  font-size:13px;
+  color:#667eea;
+  margin-top:6px;
+}
+#coverPreview{
+  position:absolute;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:18px;
+  display:none;
+}
+
+.upload-audio{
+  display:block;
+  cursor:pointer;
+}
+.audio-box{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:16px;
+  border-radius:18px;
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  transition:0.3s;
+}
+.audio-box:active{
+  transform:scale(0.98);
+}
+.audio-box:hover{
+  border-color:#667eea;
+  background:#f3f4ff;
+}
+.audio-icon{
+  font-size:22px;
+}
+.audio-name{
+  font-weight:600;
+  font-size:14px;
+}
+.audio-sub{
+  font-size:12px;
+  color:#888;
+}
+
+.progress-wrapper{
+  margin-top:14px;
+  width:100%;
+  height:8px;
+  background:#e5e7eb;
+  border-radius:6px;
+  overflow:hidden;
+}
+.progress-bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#667eea,#764ba2);
+  transition:width 0.3s;
+}
     .btn { width:100%; padding:15px; border:none; border-radius:16px; font-weight:700; color:#fff; background:linear-gradient(135deg,#667eea,#764ba2); cursor:pointer;}
     .btn.gray { background:#e5e7eb; color:#111;}
     .btn:active { transform:scale(0.96);}
     .preview { background:#f9fafb; border-radius:16px; padding:16px; font-size:14px; line-height:1.7;}
     .preview div { margin-bottom:8px; }
     .preview span { color:#667eea; font-weight:600; }
-    img#coverPreview { display:block; margin-top:6px; max-width:120px;}
-    progress { width:100%; display:none; }
   </style>
 </head>
 <body>
@@ -59,38 +144,50 @@
     <div id="step2" class="section" hidden></div>
 
 <!-- STEP 3 -->
+<!-- STEP 3 -->
 <div id="step3" class="section" hidden>
-  <!-- Cover Art Upload -->
-  <div class="label">Cover Art *</div>
-  <div style="display:flex;justify-content:flex-start;gap:16px;">
-    <div style="position:relative;width:180px; aspect-ratio:1/1; border:2px dashed #667eea; border-radius:16px; overflow:hidden; cursor:pointer; display:flex; align-items:center; justify-content:center;">
-      <input id="cover" type="file" accept="image/*" style="opacity:0;width:100%;height:100%;position:absolute;top:0;left:0;cursor:pointer;">
-      <img id="coverPreview" src="" alt="Cover Preview" style="max-width:100%; max-height:100%; object-fit:contain; object-position:center center; display:none; background:#f9fafb;">
-      <span id="coverText" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#667eea;font-weight:600;text-align:center;">Click or Drop</span>
+
+  <!-- COVER UPLOAD -->
+  <div style="margin-bottom:28px;">
+    <div class="label" style="margin-bottom:12px;">Cover Art *</div>
+
+    <label class="upload-box">
+      <input id="cover" type="file" accept="image/*" hidden>
+      <div class="upload-inner">
+        <img id="coverPreview" />
+        <div id="coverPlaceholder">
+          <div class="upload-icon">+</div>
+          <div class="upload-text">Upload Cover (JPG / PNG)</div>
+        </div>
+      </div>
+    </label>
+  </div>
+
+  <!-- AUDIO UPLOAD -->
+  <div style="margin-bottom:28px;">
+    <div class="label" style="margin-bottom:12px;">Audio File *</div>
+
+    <label class="upload-audio">
+      <input id="audio" type="file" accept="audio/*" hidden>
+      <div class="audio-box">
+        <div class="audio-icon">🎵</div>
+        <div class="audio-info">
+          <div id="audioName" class="audio-name">No file selected</div>
+          <div class="audio-sub">MP3 / WAV</div>
+        </div>
+      </div>
+    </label>
+
+    <div class="progress-wrapper">
+      <div id="audioWave" class="progress-bar"></div>
     </div>
   </div>
 
-  <!-- Progress untuk cover -->
-  <progress id="coverProgress" value="0" max="100" style="width:100%;height:6px;border-radius:3px;overflow:hidden; display:none;"></progress>
-
-  <!-- Audio Upload -->
-  <div class="label">Audio File *</div>
-  <div style="display:flex;flex-direction:column;gap:8px;">
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-      <input id="audio" type="file" accept="audio/*" style="flex:1;min-width:150px;">
-      <span id="audioName" style="font-size:14px;color:#333;"></span>
-    </div>
-    <progress id="audioProgress" value="0" max="100" style="width:100%;height:6px;border-radius:3px;overflow:hidden;"></progress>
-    <div id="audioBar" style="height:6px;width:100%;background:#e5e7eb;border-radius:3px;overflow:hidden;">
-      <div id="audioWave" style="height:100%;width:0%;background:#667eea;transition:width 0.2s;"></div>
-    </div>
+  <div style="display:flex;gap:12px;">
+    <button type="button" class="btn gray" onclick="back(3)" style="flex:1;">Back</button>
+    <button type="button" class="btn" id="previewBtn" onclick="loadPreview(); goto(4)" disabled style="flex:2;">Preview</button>
   </div>
 
-  <!-- Buttons -->
-  <div style="margin-top:20px; display:flex;gap:10px;flex-wrap:wrap;">
-    <button type="button" class="btn gray" onclick="back(3)" style="flex:1;min-width:120px;">Back</button>
-    <button type="button" class="btn" id="previewBtn" onclick="loadPreview(); goto(4)" disabled style="flex:2;min-width:120px;">Preview</button>
-  </div>
 </div>
 
     <!-- STEP 4 -->
@@ -203,58 +300,70 @@
     }
 
     // Audio & cover listeners upgraded
+let uploadListenerAttached = false;
+
 function attachUploadListeners(){
+  if(uploadListenerAttached) return;
+  uploadListenerAttached = true;
+
   const audioInput = document.getElementById("audio");
-const coverInput = document.getElementById("cover");
-const previewBtn = document.getElementById("previewBtn");
-const audioWave = document.getElementById("audioWave");
-const coverPreview = document.getElementById("coverPreview");
-const coverText = document.getElementById("coverText");
+  const coverInput = document.getElementById("cover");
+  const previewBtn = document.getElementById("previewBtn");
+  const audioWave = document.getElementById("audioWave");
+  const audioName = document.getElementById("audioName");
+  const coverPreview = document.getElementById("coverPreview");
 
-let audioUploaded=false, coverUploaded=false;
+  let audioUploaded=false, coverUploaded=false;
 
-function checkAllUploaded(){ previewBtn.disabled = !(audioUploaded && coverUploaded); }
-
-audioInput.addEventListener("change", e=>{
-  const file = e.target.files[0]; 
-  if(!file){
-    audioName.textContent = "No file chosen";
-    return;
+  function checkAllUploaded(){
+    previewBtn.disabled = !(audioUploaded && coverUploaded);
   }
 
-  audioUploaded=false;
-  audioName.textContent = file.name;  // tampilkan nama file
-  audioWave.style.width="0%";
+  audioInput.addEventListener("change", e=>{
+    const file = e.target.files[0];
+    if(!file) return;
 
-  uploadFile(file, document.getElementById("audioProgress"), url=>{
-    if(url){ audioInput.dataset.url=url; audioUploaded=true; checkAllUploaded();}
+    audioUploaded=false;
+    audioName.textContent=file.name;
+    audioWave.style.width="0%";
+
+    uploadFile(file, document.createElement("progress"), url=>{
+      if(url){
+        audioInput.dataset.url=url;
+        audioUploaded=true;
+        checkAllUploaded();
+      }
+    });
+
+    let width=0;
+    const interval=setInterval(()=>{
+      if(width>=100){ clearInterval(interval); return;}
+      width+=8;
+      audioWave.style.width=width+"%";
+    },120);
   });
 
-  // fake waveform animasi
-  let width=0;
-  const interval = setInterval(()=>{
-    if(width>=100){ clearInterval(interval); return;}
-    width+=Math.random()*10;
-    if(width>100) width=100;
-    audioWave.style.width=width+"%";
-  },150);
-});
+  coverInput.addEventListener("change", e=>{
+    const file = e.target.files[0];
+    if(!file) return;
 
-coverInput.addEventListener("change", e=>{
-  const file = e.target.files[0]; if(!file) return;
-  coverUploaded=false;
-  const reader = new FileReader();
-  reader.onload = ev=>{
-    coverPreview.src = ev.target.result;
-    coverPreview.style.display="block";
-    coverText.style.display="none";
-  };
-  reader.readAsDataURL(file);
+    coverUploaded=false;
 
-  uploadFile(file, document.getElementById("coverProgress"), url=>{
-    if(url){ coverInput.dataset.url=url; coverUploaded=true; checkAllUploaded();}
+    const reader = new FileReader();
+    reader.onload = ev=>{
+      coverPreview.src=ev.target.result;
+      coverPreview.style.display="block";
+    };
+    reader.readAsDataURL(file);
+
+    uploadFile(file, document.createElement("progress"), url=>{
+      if(url){
+        coverInput.dataset.url=url;
+        coverUploaded=true;
+        checkAllUploaded();
+      }
+    });
   });
-});
 }
 
     function next(n){
@@ -281,7 +390,6 @@ coverInput.addEventListener("change", e=>{
       document.getElementById("step"+n).hidden=false;
       for(let i=1;i<=4;i++) document.getElementById("s"+i).classList.remove("active");
       document.getElementById("s"+n).classList.add("active");
-      if(n===3) attachUploadListeners();
     }
 
     s1.onclick=()=>goto(1); s2.onclick=()=>goto(2);
