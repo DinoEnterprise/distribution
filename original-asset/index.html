@@ -265,7 +265,7 @@ async function uploadFile(file, progressEl, callback){
 
     // ====== STEP LOGIC ======
     const stepsData = {
-      1: () => type.value !== "",
+      1: () => true,
       2: () => {
         if(type.value === "original"){
           return document.getElementById("title")?.value &&
