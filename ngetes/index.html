@@ -498,7 +498,7 @@ function attachUploadListeners(){
 
     s1.onclick=()=>goto(1); s2.onclick=()=>goto(2);
     s3.onclick=()=>goto(3); s4.onclick=()=>goto(4);
-
+const type = document.getElementById("type");
     function loadPreview(){
       const audioUrl=document.getElementById("audio")?.dataset.url;
       const coverUrl=document.getElementById("cover")?.dataset.url;
