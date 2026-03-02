@@ -484,7 +484,21 @@ function filterGenres(){
            });
 }
 
- 
+ const genreInput = document.getElementById("genreSearch");
+const genreList = document.getElementById("genreList");
+
+genreInput.addEventListener("focus", () => {
+  if (genreList.children.length > 0) {
+    genreList.style.display = "block"; // muncul saat fokus
+  }
+});
+
+genreInput.addEventListener("blur", () => {
+  // delay sedikit supaya klik di list masih terbaca sebelum disembunyikan
+  setTimeout(() => {
+    genreList.style.display = "none";
+  }, 150);
+});
     function updateSelectedGenres(){
   const container = document.getElementById("selectedGenres");
   container.innerHTML = "";
