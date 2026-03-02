@@ -484,47 +484,85 @@ function filterGenres(){
            });
 }
 
- const genreInput = document.getElementById("genreSearch");
+const genreInput = document.getElementById("genreSearch");
 const genreList = document.getElementById("genreList");
 
-// fungsi untuk sembunyikan list
-function hideGenreList() {
-  genreList.style.display = "none";
-}
-
-// munculkan saat input fokus
+// Munculkan list saat input fokus
 genreInput.addEventListener("focus", () => {
   if (genreList.children.length > 0) {
     genreList.style.display = "block";
   }
 });
 
-// klik global untuk sembunyikan list kalau klik di luar
+// Tutup list saat klik di luar input atau list
 document.addEventListener("click", (e) => {
   if (!genreInput.contains(e.target) && !genreList.contains(e.target)) {
-    hideGenreList();
+    genreList.style.display = "none";
   }
 });
-    function updateSelectedGenres(){
-  const container = document.getElementById("selectedGenres");
-  container.innerHTML = "";
-  selectedGenresArr.forEach((g,i)=>{
-    const span = document.createElement("span");
-    span.textContent = g;
-    span.style.color="#111";
-    span.style.border="1px solid #111";
-    span.style.borderRadius="999px";    // pill-style
-    span.style.padding="4px 10px";
-    span.style.margin="0 6px 6px 0";     // jarak antar tag
-    span.style.cursor="pointer";
-    span.style.fontSize="13px";
-    span.addEventListener("click", ()=>{
-      selectedGenresArr.splice(i,1);
-      updateSelectedGenres();
-    });
-    container.appendChild(span);
+
+// Fungsi untuk pilih genre dari list
+function selectGenre(g) {
+  selectedGenresArr.push(g);
+  updateSelectedGenres();
+  genreList.style.display = "none"; // <--- langsung hilang saat genre dipilih
+  genreInput.value = ""; // reset search
+}
+
+// Saat membuat list item
+function showAllGenres() {
+  genreList.innerHTML = "";
+  allGenres.forEach(g => {
+    if (!selectedGenresArr.includes(g)) {
+      const div = document.createElement("div");
+      div.textContent = g;
+      div.style.cursor = "pointer";
+      div.style.padding = "4px";
+      div.addEventListener("click", () => selectGenre(g));
+      genreList.appendChild(div);
+    }
   });
 }
+
+// Filter genre
+function filterGenres() {
+  const val = genreInput.value.toLowerCase();
+  genreList.innerHTML = "";
+  allGenres.filter(g => g.toLowerCase().includes(val) && !selectedGenresArr.includes(g))
+           .forEach(g => {
+             const div = document.createElement("div");
+             div.textContent = g;
+             div.style.cursor = "pointer";
+             div.style.padding = "4px";
+             div.addEventListener("click", () => selectGenre(g));
+             genreList.appendChild(div);
+           });
+  if (genreList.children.length > 0) genreList.style.display = "block";
+    }
+function updateSelectedGenres(){
+  const container = document.getElementById("selectedGenres");
+  container.innerHTML = "";
+
+  selectedGenresArr.forEach((g, i) => {
+    const span = document.createElement("span");
+    span.textContent = g + " x"; // <--- tambahkan tanda X
+    span.style.color = "#111";
+    span.style.border = "1px solid #111";
+    span.style.borderRadius = "999px";
+    span.style.padding = "4px 10px";
+    span.style.marginBottom = "6px";
+    span.style.cursor = "pointer";
+    span.style.fontSize = "13px";
+
+    // klik tanda X hapus genre
+    span.addEventListener("click", () => {
+      selectedGenresArr.splice(i, 1);
+      updateSelectedGenres();
+    });
+
+    container.appendChild(span);
+  });
+    }
     function submitRelease(){
       const btn=document.getElementById("submitBtn");
       const text=document.getElementById("btnText");
