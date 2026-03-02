@@ -63,72 +63,7 @@
   border-radius:18px;
   display:none;
 }
-.selected-genres{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  margin-bottom:8px;
-}
 
-.genre-tag{
-  border:1px solid #667eea;
-  border-radius:20px;
-  padding:4px 10px;
-  font-size:13px;
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-
-.genre-tag span{
-  cursor:pointer;
-  font-weight:600;
-}
-
-.genre-dropdown{
-  position:absolute;
-  width:100%;
-  background:white;
-  border:1px solid #ddd;
-  border-radius:10px;
-  max-height:150px;
-  overflow-y:auto;
-  margin-top:4px;
-  z-index:10;
-}
-
-.genre-item{
-  padding:10px;
-  cursor:pointer;
-  font-size:14px;
-}
-
-.genre-item:hover{
-  background:#f3f4ff;
-}
-
-.genre-notice{
-  margin-top:8px;
-  background:white;
-  border:1px solid #667eea;
-  border-left:4px solid #667eea;
-  border-radius:10px;
-  padding:10px 12px;
-  font-size:13px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.06);
-  display:none;
-}
-.input-error{
-  animation:shake 0.2s ease;
-  border-color:#667eea !important;
-}
-@keyframes shake {
-  0%{transform:translateX(0);}
-  25%{transform:translateX(-3px);}
-  50%{transform:translateX(3px);}
-  75%{transform:translateX(-3px);}
-  100%{transform:translateX(0);}
-}
 .upload-audio{
   display:block;
   cursor:pointer;
@@ -329,15 +264,19 @@
       if(!user) location.href="../login";
     });
 
-    stepsData[2] = ()=>{
-  return document.getElementById("title")?.value &&
-         document.getElementById("artist")?.value &&
-         selectedGenres.length > 0 && // <-- ini ganti genre.value
-         document.getElementById("releaseType")?.value &&
-         document.getElementById("fullname")?.value &&
-         document.getElementById("label")?.value &&
-         document.getElementById("release")?.value;
-};
+    const stepsData = {
+      1: ()=>true,
+      2: ()=>{
+        return document.getElementById("title")?.value && 
+               document.getElementById("artist")?.value &&
+               document.getElementById("genre")?.value &&
+               document.getElementById("releaseType")?.value &&
+               document.getElementById("fullname")?.value &&
+               document.getElementById("label")?.value &&
+               document.getElementById("release")?.value;
+      },
+      3: ()=>document.getElementById("audio")?.dataset.url && document.getElementById("cover")?.dataset.url
+    };
 
     function hideAll(){ for(let i=1;i<=4;i++) document.getElementById("step"+i).hidden=true; }
 
@@ -348,12 +287,14 @@
         s.innerHTML += `
           <div class="label">Song Title *</div><input id="title">
           <div class="label">Version</div><input id="version" placeholder="Optional">
-<div class="genre-wrapper">
-  <div id="selectedGenres" class="selected-genres"></div>
-  <input type="text" id="genreSearch" placeholder="Search genre..." oninput="filterGenres()" onclick="showAllGenres()">
-  <div id="genreDropdown" class="genre-dropdown"></div>
-  <div id="genreNotice" class="genre-notice"></div>
-</div>
+          <div class="label">Genre *</div>
+          <select id="genre">
+            <option value="">Select</option>
+            <option>Blues</option><option>Dangdut</option><option>Electronic</option>
+            <option>Hip-hop</option><option>Instrumental</option><option>Jazz</option>
+            <option>Metal</option><option>Pop</option><option>R&B</option>
+            <option>Reggae</option><option>Rock</option>
+          </select>
           <div class="label">Release Type *</div>
           <select id="releaseType">
             <option value="">Pilih</option>
@@ -505,83 +446,7 @@ function attachUploadListeners(){
              <div><span>Release Date:</span> ${release.value}</div>`;
       previewBox.innerHTML=html;
     }
-const genreOptions = ["Alternatif","Anime","Antiques & Collectibles","Blues","Bossa Nova","Childrens Music",
-  "Chill Out","Cristian","Classical","Comedy","Country","Dance","Dancehall","Devotional",
-  "Disco","Easy Listening","Educational","Electronic","Fitness & Workout","Folk",
-  "Health & Fitness","Holiday Music","House","Indian","Industrial","Inspirational",
-  "Instructional","Jazz","Latin","Lo-fi","Metal","Motown","Oldies","Pop","Phonk",
-  "R&B/Soul","Rap/Hip-Hop","Reggae","Rock","Samba","Soundtrack","Spoken World",
-  "Unknown","Wallpaper","World"];
-let selectedGenres = [];
 
-function renderGenres(list){
-  const dropdown = document.getElementById("genreDropdown");
-  dropdown.innerHTML = "";
-  list.forEach(g=>{
-    const div = document.createElement("div");
-    div.className="genre-item";
-    div.textContent=g;
-    div.onclick=()=>addGenre(g);
-    dropdown.appendChild(div);
-  });
-}
-
-function filterGenres(){
-  const val = document.getElementById("genreSearch").value.toLowerCase();
-  const filtered = genreOptions.filter(g=> g.toLowerCase().includes(val) && !selectedGenres.includes(g));
-  renderGenres(filtered);
-}
-
-function showAllGenres(){
-  renderGenres(genreOptions.filter(g=>!selectedGenres.includes(g)));
-}
-
-function addGenre(genre){
-  if(selectedGenres.includes(genre)) return;
-  if(selectedGenres.length>=3){
-    showGenreNotice("Maximum 3 genres allowed");
-    return;
-  }
-  selectedGenres.push(genre);
-  updateGenreTags();
-  showAllGenres();
-}
-
-function removeGenre(genre){
-  selectedGenres = selectedGenres.filter(g=>g!==genre);
-  updateGenreTags();
-  showAllGenres();
-}
-
-function updateGenreTags(){
-  const container=document.getElementById("selectedGenres");
-  container.innerHTML="";
-  selectedGenres.forEach(g=>{
-    const tag=document.createElement("div");
-    tag.className="genre-tag";
-    tag.innerHTML=g + `<span onclick="removeGenre('${g}')">×</span>`;
-    container.appendChild(tag);
-  });
-  document.getElementById("genreSearch").value="";
-}
-
-function showGenreNotice(message){
-  const notice=document.getElementById("genreNotice");
-  const input=document.getElementById("genreSearch");
-  notice.textContent=message;
-  notice.style.display="block";
-  input.classList.add("input-error");
-  setTimeout(()=>{
-    notice.style.display="none";
-    input.classList.remove("input-error");
-  },2000);
-}
-
-document.addEventListener("click", e=>{
-  if(!document.querySelector(".genre-wrapper").contains(e.target)){
-    document.getElementById("genreDropdown").innerHTML="";
-  }
-});
     function submitRelease(){
       const btn=document.getElementById("submitBtn");
       const text=document.getElementById("btnText");
@@ -589,16 +454,7 @@ document.addEventListener("click", e=>{
       btn.disabled=true; text.style.display="none"; loader.style.display="inline";
       const user=firebase.auth().currentUser;
       if(!user) return;
-      let data = {
-  type: type.value,
-  title: title.value,
-  artist: artist.value,
-  genre: selectedGenres.join(", "), // <-- ganti ini
-  audio: audio.dataset.url,
-  cover: cover.dataset.url,
-  status: "pending",
-  time: Date.now()
-};
+      let data={type:type.value,title:title.value,artist:artist.value,genre:genre.value,audio:audio.dataset.url,cover:cover.dataset.url,status:"pending",time:Date.now()};
       if(featuring?.value) data.featuring=featuring.value;
       data.releaseType=releaseType.value; data.version=version.value; data.fullname=fullname.value; data.label=label.value; data.release=release.value;
       db.ref("releases/"+user.uid).push(data).then(()=>location.href="../releases")
