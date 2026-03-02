@@ -85,16 +85,21 @@
   font-weight:600;
 }
 
+.genre-wrapper{
+  position: relative; /* sudah ada */
+  width: 100%;
+  max-width: 100%; /* pastikan tidak melebar */
+}
+
 .genre-dropdown{
-  position:absolute;
-  width:100%;
-  background:white;
-  border:1px solid #ddd;
-  border-radius:10px;
-  max-height:150px;
-  overflow-y:auto;
-  margin-top:4px;
-  z-index:10;
+  width: 100%;
+  box-sizing: border-box;
+  max-height: 150px;
+  overflow-y: auto;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: white;
+  z-index: 50;
 }
 
 .genre-item{
@@ -332,14 +337,14 @@
     const stepsData = {
       1: ()=>true,
       2: ()=>{
-        return document.getElementById("title")?.value && 
-               document.getElementById("artist")?.value &&
-               document.getElementById("genre")?.value &&
-               document.getElementById("releaseType")?.value &&
-               document.getElementById("fullname")?.value &&
-               document.getElementById("label")?.value &&
-               document.getElementById("release")?.value;
-      },
+  return document.getElementById("title")?.value &&
+         document.getElementById("artist")?.value &&
+         selectedGenres.length > 0 &&
+         document.getElementById("releaseType")?.value &&
+         document.getElementById("fullname")?.value &&
+         document.getElementById("label")?.value &&
+         document.getElementById("release")?.value;
+}
       3: ()=>document.getElementById("audio")?.dataset.url && document.getElementById("cover")?.dataset.url
     };
 
