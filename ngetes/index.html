@@ -487,17 +487,23 @@ function filterGenres(){
  const genreInput = document.getElementById("genreSearch");
 const genreList = document.getElementById("genreList");
 
+// fungsi untuk sembunyikan list
+function hideGenreList() {
+  genreList.style.display = "none";
+}
+
+// munculkan saat input fokus
 genreInput.addEventListener("focus", () => {
   if (genreList.children.length > 0) {
-    genreList.style.display = "block"; // muncul saat fokus
+    genreList.style.display = "block";
   }
 });
 
-genreInput.addEventListener("blur", () => {
-  // delay sedikit supaya klik di list masih terbaca sebelum disembunyikan
-  setTimeout(() => {
-    genreList.style.display = "none";
-  }, 150);
+// klik global untuk sembunyikan list kalau klik di luar
+document.addEventListener("click", (e) => {
+  if (!genreInput.contains(e.target) && !genreList.contains(e.target)) {
+    hideGenreList();
+  }
 });
     function updateSelectedGenres(){
   const container = document.getElementById("selectedGenres");
