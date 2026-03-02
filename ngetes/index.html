@@ -490,18 +490,20 @@ function updateSelectedGenres(){
   selectedGenresArr.forEach((g,i)=>{
     const span = document.createElement("span");
     span.textContent = g + " ×";
-    span.style.background="#667eea";
-    span.style.color="#fff";
+    span.style.background="transparent";      // background transparan
+    span.style.color="#111";                  // text hitam
+    span.style.border="1px solid #111";      // garis hitam
     span.style.padding="2px 6px";
     span.style.borderRadius="6px";
     span.style.cursor="pointer";
+    span.style.fontSize="13px";
     span.addEventListener("click", ()=>{
       selectedGenresArr.splice(i,1);
       updateSelectedGenres();
     });
     container.appendChild(span);
   });
-}
+    }
     function submitRelease(){
       const btn=document.getElementById("submitBtn");
       const text=document.getElementById("btnText");
