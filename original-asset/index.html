@@ -329,19 +329,15 @@
       if(!user) location.href="../login";
     });
 
-    const stepsData = {
-      1: ()=>true,
-      2: ()=>{
-        return document.getElementById("title")?.value && 
-               document.getElementById("artist")?.value &&
-               document.getElementById("genre")?.value &&
-               document.getElementById("releaseType")?.value &&
-               document.getElementById("fullname")?.value &&
-               document.getElementById("label")?.value &&
-               document.getElementById("release")?.value;
-      },
-      3: ()=>document.getElementById("audio")?.dataset.url && document.getElementById("cover")?.dataset.url
-    };
+    stepsData[2] = ()=>{
+  return document.getElementById("title")?.value &&
+         document.getElementById("artist")?.value &&
+         selectedGenres.length > 0 && // <-- ini ganti genre.value
+         document.getElementById("releaseType")?.value &&
+         document.getElementById("fullname")?.value &&
+         document.getElementById("label")?.value &&
+         document.getElementById("release")?.value;
+};
 
     function hideAll(){ for(let i=1;i<=4;i++) document.getElementById("step"+i).hidden=true; }
 
