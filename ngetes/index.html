@@ -384,6 +384,11 @@
             <option>Album</option>
           </select>
           <div class="label">Artist Name *</div><input id="artist">
+            <div class="label">Spotify URL (Optional)</div>
+  <input id="spotifyUrl" placeholder="https://open.spotify.com/track/...">
+
+  <div class="label">Apple Music ID (Optional)</div>
+  <input id="appleId" placeholder="Apple Music ID">
           <div class="label">Full Name *</div><input id="fullname">
           <div class="label">Featuring</div><input id="featuring" placeholder="Optional">
           <div class="label">Label *</div><input id="label">
@@ -628,6 +633,8 @@ document.addEventListener("click", e=>{
   status: "pending",
   time: Date.now()
 };
+if(spotifyUrl?.value) data.spotifyUrl = spotifyUrl.value;
+if(appleId?.value) data.appleId = appleId.value;
       if(featuring?.value) data.featuring=featuring.value;
       data.releaseType=releaseType.value; data.version=version.value; data.fullname=fullname.value; data.label=label.value; data.release=release.value;
       db.ref("releases/"+user.uid).push(data).then(()=>location.href="../releases")
