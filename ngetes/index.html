@@ -380,8 +380,6 @@
           <select id="releaseType">
             <option value="">Pilih</option>
             <option>Single</option>
-            <option>EP</option>
-            <option>Album</option>
           </select>
           <div class="label">Artist Name *</div><input id="artist">
             <div class="label">Spotify URL (Optional)</div>
@@ -641,7 +639,4 @@ if(appleId?.value) data.appleId = appleId.value;
         .catch(()=>{ btn.disabled=false; text.style.display="inline"; loader.style.display="none";});
     }
 
-    window.addEventListener("scroll",()=>{ const h=document.getElementById("mainHeader"); window.scrollY>5?h.classList.add("scrolled"):h.classList.remove("scrolled"); });
-  </script>
-</body>
-</html>
+    window.addEventListener("scroll",()=>{ const h=document.getElementById("
