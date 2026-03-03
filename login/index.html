@@ -20,22 +20,28 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
-  background:linear-gradient(135deg,#667eea,#764ba2);
+  background: linear-gradient(180deg, #e5e7eb, #d1d5db);
   padding:15px;
 }
 
 /* CARD */
 .container{
   width:100%;
-  max-width:380px;
-  background:#fff;
-  border-radius:20px;
-  padding:30px 25px;
+  max-width:420px;
+  background:#ffffff;
+  border-radius:26px;
+  padding:32px 26px;
   text-align:center;
-  box-shadow:0 15px 30px rgba(0,0,0,.18);
+  border:1px solid rgba(0,0,0,0.05);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.12),
+    0 30px 60px rgba(0,0,0,0.08);
   animation:enter .6s ease;
 }
-
+.container:hover{
+  transform:translateY(-3px);
+  transition:.3s;
+}
 @keyframes enter{
   from{opacity:0;transform:translateY(40px)}
   to{opacity:1;transform:none}
@@ -72,8 +78,8 @@ input{
 }
 
 input:focus{
-  border:2px solid #667eea; /* stroke saat fokus */
-  box-shadow:none; /* hilangkan glow */
+  border:1px solid #111;
+  box-shadow:0 0 0 3px rgba(0,0,0,0.08);
 }
 
 /* TOGGLE PASSWORD */
@@ -93,32 +99,37 @@ input:focus{
 
 .toggle:active,
 .toggle:focus{
-  outline:2px solid #667eea; /* stroke saat tap */
+  outline:2px solid #111;
 }
 
 /* BUTTON */
 button{
+  letter-spacing:.3px;
   width:100%;
   padding:15px;
-  border:none;
   border-radius:14px;
   font-size:16px;
   font-weight:700;
   color:#fff;
-  background:linear-gradient(90deg,#667eea,#764ba2);
+  background:#000;
+  border:1px solid #000;
   cursor:pointer;
   transition:.2s;
-  -webkit-tap-highlight-color:transparent;
+}
+
+button:hover{
+  background:#111;
 }
 
 button:focus,
 button:active{
-  outline:2px solid #667eea;
+  outline:2px solid #000;
 }
 
 button:active{
   transform:scale(.96);
 }
+
 
 /* ERROR */
 #error{
@@ -138,7 +149,7 @@ button:active{
   justify-content:center;
   font-weight:700;
   font-size:16px;
-  color:#667eea;
+  color:#111;
   opacity:0;
   pointer-events:none;
   transition:.3s;
@@ -174,7 +185,9 @@ button:active{
     <input id="pass" type="password" placeholder="Password">
     <div class="toggle" id="eye" tabindex="0" onclick="togglePass()">𖠂</div>
   </div>
-
+<div style="text-align:right; margin-bottom:15px;">
+  <a href="#" onclick="resetPassword()" style="font-size:14px; color:#555; text-decoration:underline;">Forgot password?</a>
+</div>
   <button onclick="login()">Login</button>
   <div id="error"></div>
 </div>
@@ -213,34 +226,59 @@ function togglePass(){
     eye.textContent="𖠂";
   }
 }
-
+document.addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    login();
+  }
+});
+function resetPassword(){
+  const email = document.getElementById("email").value.trim();
+  if(!email){
+    alert("Please enter your email first");
+    return;
+  }
+  firebase.auth().sendPasswordResetEmail(email)
+    .then(() => alert("Password reset email sent"))
+    .catch(err => alert(err.message));
+}
 /* LOGIN */
 function login(){
+ const btn = document.querySelector("button");
+
+if(btn.disabled) return;
+
+btn.disabled = true;
+btn.textContent = "Signing in..."; 
   const email=document.getElementById("email").value.trim();
   const pass=document.getElementById("pass").value.trim();
   const errorEl=document.getElementById("error");
+document.getElementById("email").addEventListener("input",()=>{ errorEl.textContent=""; });
+document.getElementById("pass").addEventListener("input",()=>{ errorEl.textContent=""; });
 
-  if(!email || !pass){
-    errorEl.textContent = "Email and password are required";
-    return;
+if(!email || !pass){
+  errorEl.textContent = "Email and password are required";
+  btn.disabled = false;
+  btn.textContent = "Login";
+  return;
 }
   firebase.auth()
   .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
   .then(()=>firebase.auth().signInWithEmailAndPassword(email,pass))
   .then(userCredential => {
     const user = userCredential.user;
-    const errorEl = document.getElementById("error");
 
     // Ambil data user dari database
     db.ref("users/" + user.uid).once("value").then(snapshot => {
         const data = snapshot.val();
 
         // Cek kalau user non-active
-        if(!data || data.status !== "active"){
-            firebase.auth().signOut();
-            errorEl.textContent = "Account is inactive. Please contact the admin";
-            return;
-        }
+if(!data || data.status !== "active"){
+    firebase.auth().signOut();
+    errorEl.textContent = "Account is inactive. Please contact the admin";
+    btn.disabled = false;
+    btn.textContent = "Login";
+    return;
+}
 
         db.ref("users/" + user.uid + "/lastLogin").set(Date.now());
 
@@ -250,7 +288,8 @@ function login(){
         setTimeout(() => window.location.replace("../home"), 600);
     });
 })
-  .catch(error=>{
+
+.catch(error=>{
     switch(error.code){
       case "auth/user-not-found":
         errorEl.textContent="User not found";
@@ -264,8 +303,10 @@ function login(){
       default:
         errorEl.textContent="An error occurred. Please try again";
     }
-  });
-}
+
+    btn.disabled = false;
+    btn.textContent = "Login";
+});
 </script>
 
 </body>
