@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home | Sixthgrade Distribution</title>
+  <title>Home | Dynotic Distribution</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* Global Reset */
@@ -51,7 +51,7 @@
     }
 
     header img {
-      height: 50px;
+      height: 80px;
     }
 
     /* Notification Button */
@@ -267,7 +267,23 @@
     }
 
     .nav-item:hover { opacity: 1; }
-    .nav-item.active { opacity: 1; color: #667eea; }
+  .nav-item.active {
+  font-weight: 700;      /* teks jadi tebal */
+  color: #111;           /* ganti jadi hitam */
+  position: relative;
+}
+
+.nav-item.active::before {
+  content: "";
+  position: absolute;
+  bottom: 0;             /* di bawah teks */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;            /* lebar kotak */
+  height: 4px;           /* tinggi kotak */
+  border-radius: 8px;    /* biar agak bulat sudutnya */
+  background-color: #111; /* warna kotak */
+}
     .nav-item.active img { filter: brightness(1.2); }
 
     /* Buttons */
@@ -307,7 +323,7 @@
 
   <!-- Header -->
   <header>
-    <img src="../assets/sixthgrade.png">
+    <img src="../assets/dynotic-distribution.png">
     <div id="notifBtn" class="notif-btn clickable" onclick="openMessages()">
       <img src="../assets/message.png">
       <span id="notifBadge" class="notif-badge">0</span>
@@ -383,7 +399,7 @@
     let targetSaldo = 0;
 
     firebase.auth().onAuthStateChanged(user => {
-      if (!user) location.href = "../login";
+      if (!user) location.href = "../index.html";
       else {
         loadReleases(user.uid);
         loadMessages(user.uid);
@@ -411,7 +427,7 @@
       }, 15);
     }
 
-    function logout() { firebase.auth().signOut().then(() => location.href="../login"); }
+    function logout() { firebase.auth().signOut().then(() => location.href="../index.html"); }
     function goReleases() { location.href = "../releases"; }
     function accountClick() { location.href = "../account"; }
     function toggleProfileMenu() { profileMenu.classList.toggle("show"); }
@@ -492,4 +508,4 @@ if (r.status === "approved") {
   </script>
 
 </body>
-  </html>
+</html>
