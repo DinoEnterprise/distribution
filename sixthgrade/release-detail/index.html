@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Release Detail | Dynotic Distribution</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
+body{background:#f1f2f7;color:#111;min-height:100vh;padding-top:74px;animation:fadeIn .5s ease;-webkit-tap-highlight-color:transparent;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+
+header{
+  padding:12px 20px;
+  display:flex;
+  align-items:center;
+  background:#fff;
+  border-bottom:1px solid #eee;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:1000;
+}
+header img{height:50px;margin-right:10px;}
+header h2{font-size:18px;color:#111;}
+.cover-box{
+  width: 160px;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #ddd;
+}
+.field-title{
+  font-weight:600;
+  color:#111;
+}
+
+.field-value{
+  color:#777;
+  font-weight:400;
+}
+.cover-box img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.card{
+  width:90%;
+  margin:15px auto;
+  background:#fff;
+  border-radius:20px;
+  padding:20px;
+  border:1px solid #ececec;
+  box-shadow:0 8px 18px rgba(0,0,0,.05);
+  animation:bounceIn .6s ease;
+}
+@keyframes bounceIn{0%{transform:translateY(-20px);opacity:0}50%{transform:translateY(10px);opacity:1}70%{transform:translateY(-5px)}100%{transform:translateY(0);opacity:1}}
+
+.release-header{display:flex;gap:15px;align-items:center;margin-bottom:15px;}
+.release-header img{
+  filter: blur(10px);
+  opacity: .6;
+  transition: filter .35s ease, opacity .35s ease;
+}
+.release-header img.loaded{
+  filter: blur(0);
+  opacity: 1;
+}
+.release-info{flex:1;}
+.release-info div{margin-bottom:6px;}
+.release-info .title{font-weight:700;font-size:18px;}
+.release-info .artist,.release-info .label,.release-info .genre,.release-info .date,.release-info .status{font-size:14px;color:#555;}
+
+.platform-list{margin-top:15px;}
+.platform-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 12px;
+  border-bottom:1px solid #eee;
+}
+.platform-item img{width:28px;height:28px;margin-right:8px;border-radius:6px;}
+.platform-item b{flex:1;font-size:14px;}
+.platform-status{
+  font-size:12px;
+  font-weight:600;
+  padding:4px 10px;
+  border-radius:999px;
+  border:1px solid #f59e0b;
+  color:#f59e0b;
+}
+
+.clickable{cursor:pointer;transition:.12s;}
+.clickable:active{transform:scale(.96);filter:brightness(85%);}
+@media (max-width:600px){
+  .cover-box{ width:130px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="../assets/sixthgrade-distribution.png" alt="DynoPay Logo">
+</header>
+
+<div class="card">
+ <div class="release-header">
+  <div class="cover-box">
+    <img id="coverArt" src="../assets/profile.png" alt="Cover Art">
+  </div>
+  <div class="release-info">
+      <div class="title" id="releaseTitle">Loading...</div>
+      <div class="artist" id="releaseArtist">--</div>
+<div class="label">
+  <span class="field-title">Label:</span>
+  <span class="field-value" id="releaseLabel">-</span>
+</div>
+
+<div class="ean">
+  <span class="field-title">UPC:</span>
+  <span class="field-value" id="releaseEAN">-</span>
+</div>
+
+<div class="genre">
+  <span class="field-title">Genre:</span>
+  <span class="field-value" id="releaseGenre">-</span>
+</div>
+
+<div class="date">
+  <span class="field-title">Release Date:</span>
+  <span class="field-value" id="releaseDate">-</span>
+</div>
+
+<div class="status">
+  <span class="field-title">Status:</span>
+  <span class="field-value" id="releaseStatus">-</span>
+</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div style="font-weight:700;margin-bottom:10px;">Platforms</div>
+  <div id="platformList" class="platform-list"></div>
+</div>
+<div class="card">
+  <div style="font-weight:700;margin-bottom:10px;">Smartlink</div>
+
+  <input id="smartlinkInput" 
+  readonly
+  placeholder="Smartlink belum tersedia"
+  style="display:none;width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;margin-bottom:10px;">
+
+  <button id="copyBtn"
+  onclick="copySmartlink()"
+  style="display:none;width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;background:#fff;">
+
+<svg width="18" height="18" viewBox="0 0 24 24" fill="black"
+xmlns="http://www.w3.org/2000/svg">
+<path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z"/>
+</svg>
+&nbsp; Salin Smartlink
+  </button>
+
+  <div id="emptySmartlink"
+  style="font-size:13px;color:#888;text-align:center;">
+  Smartlink belum tersedia
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+ apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+ authDomain:"dynopay-2513c.firebaseapp.com",
+ databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db = firebase.database();
+const params = new URLSearchParams(location.search);
+const uid = params.get("uid");
+const rid = params.get("rid");
+
+const platformIcons = {
+  "Spotify": "../assets/spotify.png",
+  "Tidal": "../assets/tidal.png",
+  "Amazon": "../assets/amazon.png",
+  "Apple Music": "../assets/apple.png",
+  "Tiktok": "../assets/tiktok.png",
+  "YouTube Music": "../assets/youtube.png",
+  "YouTube Content ID": "../assets/contentid.png",
+  "META": "../assets/meta.png",
+  "SoundCloud": "../assets/soundcloud.png",
+  "Tencent": "../assets/tencent.png"
+};
+const platforms = ["Spotify","Tidal","Amazon","Apple Music","Tiktok","YouTube Music","YouTube Content ID","META","SoundCloud","Tencent"];
+
+    firebase.auth().onAuthStateChanged(user => {
+  if (!user) {
+    location.href = "../index.html";
+  } else {
+    const uid = user.uid; 
+    const rid = new URLSearchParams(location.search).get("rid"); 
+    loadRelease(uid, rid);
+  }
+});
+
+function loadRelease(uid, rid){
+  db.ref(`releases/${uid}/${rid}`).once("value").then(snap=>{
+    const d = snap.val();
+    if(!d){ 
+      alert("Rilisan tidak ditemukan"); 
+      return; 
+    }
+
+    document.getElementById("releaseTitle").innerText = d.title || "-";
+    document.getElementById("releaseArtist").innerText = d.artist || "-";
+  document.getElementById("releaseLabel").innerText = d.label || "-";
+document.getElementById("releaseEAN").innerText = d.ean || "-";
+document.getElementById("releaseGenre").innerText = d.genre || "-";
+document.getElementById("releaseDate").innerText = d.date || "-";
+document.getElementById("releaseStatus").innerText = (d.status||"pending").toUpperCase();
+    const cover = document.getElementById("coverArt");
+
+if (d.cover) {
+  cover.src = d.cover.trim();
+} else {
+  cover.src = "../assets/cover-default.png";
+}
+
+cover.onload = () => cover.classList.add("loaded");
+cover.onerror = () => {
+  cover.src = "../assets/cover-default.png";
+  cover.classList.add("loaded");
+};
+const input = document.getElementById("smartlinkInput");
+const copyBtn = document.getElementById("copyBtn");
+const empty = document.getElementById("emptySmartlink");
+
+if(d.smartlink){
+  input.style.display = "block";
+  copyBtn.style.display = "block";
+  empty.style.display = "none";
+  input.value = d.smartlink;
+}
+
+    if((d.status||"pending").toLowerCase() !== "pending"){
+      renderPlatforms(d.platformStatus||{});
+    } else {
+      document.getElementById("platformList").innerHTML = "<div style='color:#888;font-size:13px;text-align:center;'>Platform belum tersedia</div>";
+    }
+  });
+}
+function copySmartlink(){
+  const val = document.getElementById("smartlinkInput").value;
+  navigator.clipboard.writeText(val);
+
+  document.getElementById("copyBtn").innerHTML = "✔ Tersalin";
+}
+function renderPlatforms(data){
+  const wrap = document.getElementById("platformList");
+  wrap.innerHTML = "";
+  platforms.forEach(p=>{
+    let st = data[p] || "process";
+    let color = "#f59e0b";
+    if(st==="approved") color="#10b981";
+    if(st==="unavailable") color="#ef4444";
+
+    wrap.innerHTML += `
+      <div class="platform-item clickable">
+<img src="${platformIcons[p]}" alt="${p} Logo">
+        <b>${p}</b>
+        <div class="platform-status" style="border-color:${color};color:${color};">${st.toUpperCase()}</div>
+      </div>`;
+  });
+}
+</script>
+</body>
+</html>
