@@ -19,7 +19,8 @@ body{
   padding:15px;
 }
 
-/* CARD */
+.container:hover{ transform:translateY(-3px); transition:.3s; }
+@keyframes enter{ from{opacity:0; transform:translateY(40px)} to{opacity:1; transform:none} }
 .container{
   width:100%;
   max-width:420px;
@@ -30,16 +31,36 @@ body{
   border:1px solid rgba(0,0,0,0.05);
   box-shadow:0 10px 30px rgba(0,0,0,0.12), 0 30px 60px rgba(0,0,0,0.08);
   animation:enter .6s ease;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
 }
-.container:hover{ transform:translateY(-3px); transition:.3s; }
-@keyframes enter{ from{opacity:0; transform:translateY(40px)} to{opacity:1; transform:none} }
 
-/* LOGO */
-.logo{ width:70px; margin-bottom:16px; }
-h2{ margin-bottom:20px; font-size:22px; font-weight:700; color:#222; }
+.logo{
+  width:90px;        /* lebih besar */
+  margin-bottom:16px;
+}
 
-/* INPUT */
-.field{ position:relative; margin-bottom:15px; width:100%; }
+.brand-name{
+  font-size:28px;    /* besar */
+  font-weight:700;
+  color:#222;
+  margin-bottom:4px;
+}
+
+.brand-tagline{
+  font-size:12px;    /* kecil */
+  font-weight:400;
+  color:#555;
+  margin-bottom:20px;
+}
+
+/* Fields */
+.field{
+  position:relative;
+  margin-bottom:15px;
+  width:100%;
+}
 input{
   width:100%;
   padding:14px 44px 14px 16px;
@@ -54,7 +75,7 @@ input:focus{
   box-shadow:0 0 0 3px rgba(0,0,0,0.08);
 }
 
-/* TOGGLE PASSWORD */
+/* Toggle password */
 .toggle{
   position:absolute;
   right:12px;
@@ -63,14 +84,9 @@ input:focus{
   cursor:pointer;
   font-size:18px;
   user-select:none;
-  padding:4px;
-  border-radius:6px;
-  transition:.2s;
-  -webkit-tap-highlight-color:transparent;
 }
-.toggle:active, .toggle:focus{ outline:2px solid #111; }
 
-/* BUTTON */
+/* Button */
 button{
   letter-spacing:.3px;
   width:100%;
@@ -82,8 +98,8 @@ button{
   background:#000;
   border:1px solid #000;
   cursor:pointer;
-  transition:.2s;
 }
+
 button:hover{ background:#111; }
 button:focus, button:active{ outline:2px solid #000; }
 button:active{ transform:scale(.96); }
@@ -117,7 +133,7 @@ button:active{ transform:scale(.96); }
 <body>
 
 <div class="container" id="card">
-  <img src="assets/dynotic-distribution.png" class="logo">
+  <img src="assets/sixthgrade-distribution.png" class="logo">
   
   <h2 class="brand-name">Sixthgrade Labs</h2>
   <p class="brand-tagline">Powered by Dynotic</p>
