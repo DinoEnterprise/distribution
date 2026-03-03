@@ -85,21 +85,16 @@
   font-weight:600;
 }
 
-.genre-wrapper{
-  position: relative; /* sudah ada */
-  width: 100%;
-  max-width: 100%; /* pastikan tidak melebar */
-}
-
 .genre-dropdown{
-  width: 100%;
-  box-sizing: border-box;
-  max-height: 150px;
-  overflow-y: auto;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  background: white;
-  z-index: 50;
+  position:absolute;
+  width:100%;
+  background:white;
+  border:1px solid #ddd;
+  border-radius:10px;
+  max-height:150px;
+  overflow-y:auto;
+  margin-top:4px;
+  z-index:10;
 }
 
 .genre-item{
@@ -337,56 +332,55 @@
     const stepsData = {
       1: ()=>true,
       2: ()=>{
-  return document.getElementById("title")?.value &&
-         document.getElementById("artist")?.value &&
-         selectedGenres.length > 0 &&
-         document.getElementById("releaseType")?.value &&
-         document.getElementById("fullname")?.value &&
-         document.getElementById("label")?.value &&
-         document.getElementById("release")?.value;
-}
+        return document.getElementById("title")?.value && 
+               document.getElementById("artist")?.value &&
+               selectedGenres.length > 0 &&
+               document.getElementById("releaseType")?.value &&
+               document.getElementById("fullname")?.value &&
+               document.getElementById("label")?.value &&
+               document.getElementById("release")?.value;
+      },
       3: ()=>document.getElementById("audio")?.dataset.url && document.getElementById("cover")?.dataset.url
     };
 
     function hideAll(){ for(let i=1;i<=4;i++) document.getElementById("step"+i).hidden=true; }
 
     function loadStep2Fields(){
-  const s = document.getElementById("step2");
-  s.innerHTML = "";
-  const type = document.getElementById("type"); // <<< Tambahkan ini
-  if(type.value==="original"){
-    s.innerHTML += `
-      <div class="label">Song Title *</div><input id="title">
-      <div class="label">Version</div><input id="version" placeholder="Optional">
-      <div class="genre-wrapper">
-        <div id="selectedGenres" class="selected-genres"></div>
-        <input type="text" id="genreSearch" placeholder="Search genre..." oninput="filterGenres()" onclick="showAllGenres()">
-        <div id="genreDropdown" class="genre-dropdown"></div>
-        <div id="genreNotice" class="genre-notice"></div>
-      </div>
-      <div class="label">Release Type *</div>
-      <select id="releaseType">
-        <option value="">Pilih</option>
-        <option>Single</option>
-        <option>EP</option>
-        <option>Album</option>
-      </select>
-      <div class="label">Artist Name *</div><input id="artist">
-      <div class="label">Full Name *</div><input id="fullname">
-      <div class="label">Featuring</div><input id="featuring" placeholder="Optional">
-      <div class="label">Label *</div><input id="label">
-      <div class="label">Release Date *</div><input type="date" id="release">
-    `;
-    // set min date 7 hari
-    setTimeout(()=>{
-      const r = document.getElementById("release");
-      let d = new Date(); d.setDate(d.getDate()+7);
-      r.min = d.toISOString().split("T")[0];
-    },50);
-  }
-  s.innerHTML += `<button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
-                  <button type="button" class="btn" onclick="next(2)">Continue</button>`;
-}
+      const s = document.getElementById("step2");
+      s.innerHTML="";
+      if(type.value==="original"){
+        s.innerHTML += `
+          <div class="label">Song Title *</div><input id="title">
+          <div class="label">Version</div><input id="version" placeholder="Optional">
+<div class="genre-wrapper">
+  <div id="selectedGenres" class="selected-genres"></div>
+  <input type="text" id="genreSearch" placeholder="Search genre..." oninput="filterGenres()" onclick="showAllGenres()">
+  <div id="genreDropdown" class="genre-dropdown"></div>
+  <div id="genreNotice" class="genre-notice"></div>
+</div>
+          <div class="label">Release Type *</div>
+          <select id="releaseType">
+            <option value="">Pilih</option>
+            <option>Single</option>
+            <option>EP</option>
+            <option>Album</option>
+          </select>
+          <div class="label">Artist Name *</div><input id="artist">
+          <div class="label">Full Name *</div><input id="fullname">
+          <div class="label">Featuring</div><input id="featuring" placeholder="Optional">
+          <div class="label">Label *</div><input id="label">
+          <div class="label">Release Date *</div><input type="date" id="release">
+        `;
+        // set min date 7 hari
+        setTimeout(()=>{
+          const r = document.getElementById("release");
+          let d = new Date(); d.setDate(d.getDate()+7);
+          r.min = d.toISOString().split("T")[0];
+        },50);
+      }
+      s.innerHTML += `<button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
+                      <button type="button" class="btn" onclick="next(2)">Continue</button>`;
+    }
 
     // Audio & cover listeners upgraded
 let uploadListenerAttached = false;
@@ -469,7 +463,14 @@ function attachUploadListeners(){
         goto(2);
         return;
       }
-      if(n===2 && !stepsData[2]()) return alert("Lengkapi master");
+if(n===2){
+  console.log("Validasi Step 2:", {
+    title: document.getElementById("title")?.value,
+    artist: document.getElementById("artist")?.value,
+    genres: selectedGenres
+  });
+  if(!stepsData[2]()) return alert("Lengkapi master");
+}
       if(n===3){
         const audio=document.getElementById("audio");
         const cover=document.getElementById("cover");
@@ -498,7 +499,7 @@ function attachUploadListeners(){
 
     s1.onclick=()=>goto(1); s2.onclick=()=>goto(2);
     s3.onclick=()=>goto(3); s4.onclick=()=>goto(4);
-const type = document.getElementById("type");
+
     function loadPreview(){
       const audioUrl=document.getElementById("audio")?.dataset.url;
       const coverUrl=document.getElementById("cover")?.dataset.url;
