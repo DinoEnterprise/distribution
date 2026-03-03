@@ -349,14 +349,14 @@
 
     const stepsData = {
       1: ()=>true,
-      2: ()=>{
-        return document.getElementById("title")?.value && 
-               document.getElementById("artist")?.value &&
-               selectedGenres.length > 0 &&
-               document.getElementById("releaseType")?.value &&
-               document.getElementById("fullname")?.value &&
-               document.getElementById("label")?.value &&
-               document.getElementById("release")?.value;
+2: ()=>{
+  return document.getElementById("title")?.value && 
+         document.getElementById("artist")?.value &&
+         selectedGenres.length > 0 &&
+         document.getElementById("fullname")?.value &&
+         document.getElementById("label")?.value &&
+         document.getElementById("release")?.value;
+},
       },
       3: ()=>document.getElementById("audio")?.dataset.url && document.getElementById("cover")?.dataset.url
     };
@@ -376,13 +376,7 @@
   <div id="genreDropdown" class="genre-dropdown"></div>
   <div id="genreNotice" class="genre-notice"></div>
 </div>
-          <div class="label">Release Type *</div>
-          <select id="releaseType">
-            <option value="">Pilih</option>
-            <option>Single</option>
-            <option>EP</option>
-            <option>Album</option>
-          </select>
+          <input type="hidden" id="releaseType" value="Single">
           <div class="label">Artist Name *</div><input id="artist">
             <div class="label">Spotify URL (Optional)</div>
   <input id="spotifyUrl" placeholder="https://open.spotify.com/track/...">
