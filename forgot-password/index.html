@@ -29,10 +29,17 @@ body{
   text-align:center;
   border:1px solid rgba(0,0,0,0.05);
   box-shadow: 0 15px 35px rgba(0,0,0,0.08), 0 5px 10px rgba(0,0,0,0.04);
+  opacity:0;
+  transform: translateY(40px);
+  animation: cardEnter 0.6s forwards;
   transition: all 0.3s ease;
 }
 .container:hover{
   transform: translateY(-4px);
+}
+
+@keyframes cardEnter{
+  to { opacity:1; transform: translateY(0); }
 }
 
 /* LOGO */
@@ -57,6 +64,8 @@ input:focus{
 
 /* BUTTON */
 button{
+  position: relative;
+  overflow: hidden;
   letter-spacing:.3px;
   width:100%;
   padding:16px;
@@ -69,7 +78,25 @@ button{
   cursor:pointer;
   transition:.3s;
 }
-button:hover{ background:#111; }
+button::after{
+  content:'';
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%, -50%) scale(0);
+  width:300%;
+  height:300%;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  transition: transform 0.5s ease;
+}
+button:hover::after{
+  transform:translate(-50%, -50%) scale(1);
+}
+button:hover{ 
+  background:#111; 
+  box-shadow:0 4px 12px rgba(0,0,0,0.2);
+}
 button:focus{ outline:none; }
 button:active{ transform: scale(0.96); }
 
@@ -78,7 +105,11 @@ button:active{ transform: scale(0.96); }
   margin-top:15px;
   font-size:14px;
   min-height:22px;
-  transition:.3s;
+  opacity:0;
+  transition: opacity 0.5s ease;
+}
+#message.show{
+  opacity:1;
 }
 
 /* LINK BACK */
@@ -110,6 +141,17 @@ button:active{ transform: scale(0.96); }
   transition:.3s;
 }
 .loader.active{ opacity:1; pointer-events:auto; }
+.loader::after{
+  content:'...';
+  display:inline-block;
+  animation:dots 1s steps(3, end) infinite;
+}
+@keyframes dots{
+  0%, 20%{ content:''; }
+  40%{ content:'.'; }
+  60%{ content:'..'; }
+  80%,100%{ content:'...'; }
+}
 
 /* HILANGKAN GARIS BIRU DEFAULT */
 input:focus, button:focus, .back-link:focus{ outline:none; }
@@ -126,16 +168,16 @@ input:focus, button:focus, .back-link:focus{ outline:none; }
     <input id="email" type="email" placeholder="Enter your email">
   </div>
 
-  <button onclick="resetPassword()">Send Reset Email</button>
+  <button onclick="resetPassword()">Reset</button>
 
   <div id="message"></div>
 
   <div>
-    <a href="login.html" class="back-link">Back to Login</a>
+    <a href="../login" class="back-link">Back to Login</a>
   </div>
 </div>
 
-<div class="loader" id="loader">Dynotic Distribution…</div>
+<div class="loader" id="loader">Dynotic Distribution</div>
 
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -153,13 +195,14 @@ const btn = document.querySelector("button");
 const messageEl = document.getElementById("message");
 const loader = document.getElementById("loader");
 
-emailInput.addEventListener("input", () => { messageEl.textContent = ""; });
+emailInput.addEventListener("input", () => { messageEl.textContent = ""; messageEl.classList.remove("show"); });
 
 function resetPassword(){
   const email = emailInput.value.trim();
   if(!email){
     messageEl.style.color = "#e53e3e";
     messageEl.textContent = "Please enter your email first";
+    messageEl.classList.add("show");
     return;
   }
 
@@ -170,12 +213,14 @@ function resetPassword(){
     .then(() => {
       messageEl.style.color = "green";
       messageEl.textContent = "Password reset email sent. Check your inbox!";
+      messageEl.classList.add("show");
       loader.classList.remove("active");
       btn.disabled = false;
     })
     .catch(err => {
       messageEl.style.color = "#e53e3e";
       messageEl.textContent = err.message;
+      messageEl.classList.add("show");
       loader.classList.remove("active");
       btn.disabled = false;
     });
