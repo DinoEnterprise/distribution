@@ -271,7 +271,23 @@
     }
 
     .nav-item:hover { opacity: 1; }
-    .nav-item.active { opacity: 1; color: #667eea; }
+.nav-item.active {
+  font-weight: 700;      /* teks jadi tebal */
+  color: #111;           /* ganti jadi hitam */
+  position: relative;
+}
+
+.nav-item.active::before {
+  content: "";
+  position: absolute;
+  bottom: 0;             /* di bawah teks */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;            /* lebar kotak */
+  height: 4px;           /* tinggi kotak */
+  border-radius: 8px;    /* biar agak bulat sudutnya */
+  background-color: #111; /* warna kotak */
+}
     .nav-item.active img { filter: brightness(1.2); }
 
     /* Inline helpers */
