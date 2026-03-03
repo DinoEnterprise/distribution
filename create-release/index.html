@@ -179,14 +179,27 @@
       opacity: 1;
     }
 
-    .nav-item.active {
-      opacity: 1;
-      color: #667eea;
-    }
+.nav-item.active {
+  font-weight: 700;        /* teks jadi tebal */
+  color: #111;             /* hitam */
+  position: relative;      /* buat pseudo-element kotak */
+}
 
-    .nav-item.active img {
-      filter: brightness(1.2);
-    }
+.nav-item.active::before {
+  content: "";
+  position: absolute;
+  bottom: 0;               /* di bawah teks/ikon */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;              /* lebar kotak */
+  height: 4px;             /* tinggi kotak */
+  border-radius: 8px;      /* sudut membulat */
+  background-color: #111;  /* warna kotak */
+}
+
+.nav-item.active img {
+  filter: brightness(1.2); /* ikon sedikit lebih terang */
+}
 
     button {
       width: 100%;
