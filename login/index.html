@@ -8,12 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{
-  box-sizing:border-box;
-  font-family:'Outfit',sans-serif;
-  margin:0;
-  padding:0;
-}
+*{ box-sizing:border-box; font-family:'Outfit',sans-serif; margin:0; padding:0; }
 
 body{
   min-height:100vh;
@@ -28,45 +23,23 @@ body{
 .container{
   width:100%;
   max-width:420px;
-  background:#ffffff;
+  background:#fff;
   border-radius:26px;
   padding:32px 26px;
   text-align:center;
   border:1px solid rgba(0,0,0,0.05);
-  box-shadow:
-    0 10px 30px rgba(0,0,0,0.12),
-    0 30px 60px rgba(0,0,0,0.08);
+  box-shadow:0 10px 30px rgba(0,0,0,0.12), 0 30px 60px rgba(0,0,0,0.08);
   animation:enter .6s ease;
 }
-.container:hover{
-  transform:translateY(-3px);
-  transition:.3s;
-}
-@keyframes enter{
-  from{opacity:0;transform:translateY(40px)}
-  to{opacity:1;transform:none}
-}
+.container:hover{ transform:translateY(-3px); transition:.3s; }
+@keyframes enter{ from{opacity:0; transform:translateY(40px)} to{opacity:1; transform:none} }
 
 /* LOGO */
-.logo{
-  width:70px;
-  margin-bottom:16px;
-}
-
-h2{
-  margin-bottom:20px;
-  font-size:22px;
-  font-weight:700;
-  color:#222;
-}
+.logo{ width:70px; margin-bottom:16px; }
+h2{ margin-bottom:20px; font-size:22px; font-weight:700; color:#222; }
 
 /* INPUT */
-.field{
-  position:relative;
-  margin-bottom:15px;
-  width:100%;
-}
-
+.field{ position:relative; margin-bottom:15px; width:100%; }
 input{
   width:100%;
   padding:14px 44px 14px 16px;
@@ -76,7 +49,6 @@ input{
   outline:none;
   transition:.2s;
 }
-
 input:focus{
   border:1px solid #111;
   box-shadow:0 0 0 3px rgba(0,0,0,0.08);
@@ -94,13 +66,9 @@ input:focus{
   padding:4px;
   border-radius:6px;
   transition:.2s;
-  -webkit-tap-highlight-color:transparent; /* hilangkan highlight biru */
+  -webkit-tap-highlight-color:transparent;
 }
-
-.toggle:active,
-.toggle:focus{
-  outline:2px solid #111;
-}
+.toggle:active, .toggle:focus{ outline:2px solid #111; }
 
 /* BUTTON */
 button{
@@ -116,28 +84,12 @@ button{
   cursor:pointer;
   transition:.2s;
 }
-
-button:hover{
-  background:#111;
-}
-
-button:focus,
-button:active{
-  outline:2px solid #000;
-}
-
-button:active{
-  transform:scale(.96);
-}
-
+button:hover{ background:#111; }
+button:focus, button:active{ outline:2px solid #000; }
+button:active{ transform:scale(.96); }
 
 /* ERROR */
-#error{
-  margin-top:10px;
-  font-size:14px;
-  color:#e53e3e;
-  min-height:20px;
-}
+#error{ margin-top:10px; font-size:14px; color:#e53e3e; min-height:20px; }
 
 /* LOADER */
 .loader{
@@ -154,20 +106,11 @@ button:active{
   pointer-events:none;
   transition:.3s;
 }
-
-.loader.active{
-  opacity:1;
-  pointer-events:auto;
-}
+.loader.active{ opacity:1; pointer-events:auto; }
 
 /* ANIMATION EXIT */
-.fade-out{
-  animation:exit .5s ease forwards;
-}
-
-@keyframes exit{
-  to{opacity:0;transform:scale(.95)}
-}
+.fade-out{ animation:exit .5s ease forwards; }
+@keyframes exit{ to{opacity:0; transform:scale(.95);} }
 </style>
 </head>
 
@@ -185,9 +128,11 @@ button:active{
     <input id="pass" type="password" placeholder="Password">
     <div class="toggle" id="eye" tabindex="0" onclick="togglePass()">𖠂</div>
   </div>
-<div style="text-align:right; margin-bottom:15px;">
-  <a href="#" onclick="resetPassword()" style="font-size:14px; color:#555; text-decoration:underline;">Forgot password?</a>
-</div>
+
+  <div style="text-align:right; margin-bottom:15px;">
+<a href="forgot-password.html" style="font-size:14px; color:#555; text-decoration:underline;">Forgot password?</a>
+  </div>
+
   <button onclick="login()">Login</button>
   <div id="error"></div>
 </div>
@@ -200,112 +145,98 @@ button:active{
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <script>
+// Initialize Firebase
 firebase.initializeApp({
   apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
   authDomain: "dynopay-2513c.firebaseapp.com",
   databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
-
 const db = firebase.database();
 
-/* AUTO REDIRECT */
-firebase.auth().onAuthStateChanged(user=>{
-  if(user) window.location.replace("../home");
-});
+// Ambil elemen
+const errorEl = document.getElementById("error");
+const emailInput = document.getElementById("email");
+const passInput = document.getElementById("pass");
+const btn = document.querySelector("button");
 
-/* TOGGLE PASSWORD */
+// Pasang listener input sekali saja
+emailInput.addEventListener("input", () => { errorEl.textContent = ""; });
+passInput.addEventListener("input", () => { errorEl.textContent = ""; });
+
+// Toggle password
 function togglePass(){
-  const p = document.getElementById("pass");
-  const eye = document.getElementById("eye");
-
-  if(p.type==="password"){
-    p.type="text";
-    eye.textContent="⌒";
+  if(passInput.type==="password"){
+    passInput.type="text";
+    document.getElementById("eye").textContent="⌒";
   }else{
-    p.type="password";
-    eye.textContent="𖠂";
+    passInput.type="password";
+    document.getElementById("eye").textContent="𖠂";
   }
 }
-document.addEventListener("keydown", function(e){
-  if(e.key === "Enter"){
-    login();
-  }
-});
-function resetPassword(){
-  const email = document.getElementById("email").value.trim();
-  if(!email){
-    alert("Please enter your email first");
-    return;
-  }
-  firebase.auth().sendPasswordResetEmail(email)
-    .then(() => alert("Password reset email sent"))
-    .catch(err => alert(err.message));
-}
-/* LOGIN */
+
+// Login
 function login(){
- const btn = document.querySelector("button");
+  if(btn.disabled) return;
 
-if(btn.disabled) return;
+  const email = emailInput.value.trim();
+  const pass = passInput.value.trim();
 
-btn.disabled = true;
-btn.textContent = "Signing in..."; 
-  const email=document.getElementById("email").value.trim();
-  const pass=document.getElementById("pass").value.trim();
-  const errorEl=document.getElementById("error");
-document.getElementById("email").addEventListener("input",()=>{ errorEl.textContent=""; });
-document.getElementById("pass").addEventListener("input",()=>{ errorEl.textContent=""; });
-
-if(!email || !pass){
-  errorEl.textContent = "Email and password are required";
-  btn.disabled = false;
-  btn.textContent = "Login";
-  return;
-}
-  firebase.auth()
-  .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-  .then(()=>firebase.auth().signInWithEmailAndPassword(email,pass))
-  .then(userCredential => {
-    const user = userCredential.user;
-
-    // Ambil data user dari database
-    db.ref("users/" + user.uid).once("value").then(snapshot => {
-        const data = snapshot.val();
-
-        // Cek kalau user non-active
-if(!data || data.status !== "active"){
-    firebase.auth().signOut();
-    errorEl.textContent = "Account is inactive. Please contact the admin";
-    btn.disabled = false;
-    btn.textContent = "Login";
+  if(!email || !pass){
+    errorEl.textContent = "Email and password are required";
     return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "Signing in...";
+
+  firebase.auth()
+    .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    .then(() => firebase.auth().signInWithEmailAndPassword(email, pass))
+    .then(userCredential => {
+      const user = userCredential.user;
+      return db.ref("users/" + user.uid).once("value");
+    })
+    .then(snapshot => {
+      const data = snapshot.val();
+      if(!data || data.status !== "active"){
+        firebase.auth().signOut();
+        errorEl.textContent = "Account is inactive. Please contact the admin";
+        btn.disabled = false;
+        btn.textContent = "Login";
+        return;
+      }
+
+      db.ref("users/" + snapshot.key + "/lastLogin").set(Date.now());
+
+      document.getElementById("loader").classList.add("active");
+      document.getElementById("card").classList.add("fade-out");
+
+      setTimeout(() => window.location.replace("../home"), 600);
+    })
+    .catch(error => {
+      switch(error.code){
+        case "auth/user-not-found":
+          errorEl.textContent="User not found"; break;
+        case "auth/wrong-password":
+          errorEl.textContent="Incorrect password"; break;
+        case "auth/invalid-email":
+          errorEl.textContent="Invalid email address"; break;
+        default:
+          errorEl.textContent="An error occurred. Please try again";
+      }
+      btn.disabled = false;
+      btn.textContent = "Login";
+    });
 }
 
-        db.ref("users/" + user.uid + "/lastLogin").set(Date.now());
+// Enter key
+document.addEventListener("keydown", e => {
+  if(e.key === "Enter") login();
+});
 
-        document.getElementById("loader").classList.add("active");
-        document.getElementById("card").classList.add("fade-out");
-
-        setTimeout(() => window.location.replace("../home"), 600);
-    });
-})
-
-.catch(error=>{
-    switch(error.code){
-      case "auth/user-not-found":
-        errorEl.textContent="User not found";
-        break;
-      case "auth/wrong-password":
-        errorEl.textContent="Incorrect password";
-        break;
-      case "auth/invalid-email":
-        errorEl.textContent="Invalid email address";
-        break;
-      default:
-        errorEl.textContent="An error occurred. Please try again";
-    }
-
-    btn.disabled = false;
-    btn.textContent = "Login";
+// Auto redirect
+firebase.auth().onAuthStateChanged(user => {
+  if(user) window.location.replace("../home");
 });
 </script>
 
