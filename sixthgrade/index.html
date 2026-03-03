@@ -19,8 +19,7 @@ body{
   padding:15px;
 }
 
-.container:hover{ transform:translateY(-3px); transition:.3s; }
-@keyframes enter{ from{opacity:0; transform:translateY(40px)} to{opacity:1; transform:none} }
+/* Container Card */
 .container{
   width:100%;
   max-width:420px;
@@ -33,34 +32,19 @@ body{
   animation:enter .6s ease;
   display:flex;
   flex-direction:column;
-  gap:12px;
+  gap:16px;
 }
+.container:hover{ transform:translateY(-3px); transition:.3s; }
 
-.logo{
-  width:90px;        /* lebih besar */
-  margin-bottom:16px;
-}
+@keyframes enter{ from{opacity:0; transform:translateY(40px)} to{opacity:1; transform:none} }
 
-.brand-name{
-  font-size:28px;    /* besar */
-  font-weight:700;
-  color:#222;
-  margin-bottom:4px;
-}
-
-.brand-tagline{
-  font-size:12px;    /* kecil */
-  font-weight:400;
-  color:#555;
-  margin-bottom:20px;
-}
+/* Logo & Branding */
+.logo{ width:90px; margin:0 auto 12px; }
+.brand-name{ font-size:28px; font-weight:700; color:#222; margin-bottom:4px; }
+.brand-tagline{ font-size:12px; font-weight:400; color:#555; margin-bottom:20px; }
 
 /* Fields */
-.field{
-  position:relative;
-  margin-bottom:15px;
-  width:100%;
-}
+.field{ position:relative; margin-bottom:15px; width:100%; }
 input{
   width:100%;
   padding:14px 44px 14px 16px;
@@ -99,15 +83,13 @@ button{
   border:1px solid #000;
   cursor:pointer;
 }
-
 button:hover{ background:#111; }
-button:focus, button:active{ outline:2px solid #000; }
 button:active{ transform:scale(.96); }
 
-/* ERROR */
+/* Error Message */
 #error{ margin-top:10px; font-size:14px; color:#e53e3e; min-height:20px; }
 
-/* LOADER */
+/* Loader */
 .loader{
   position:fixed;
   inset:0;
@@ -124,41 +106,42 @@ button:active{ transform:scale(.96); }
 }
 .loader.active{ opacity:1; pointer-events:auto; }
 
-/* ANIMATION EXIT */
+/* Animation Exit */
 .fade-out{ animation:exit .5s ease forwards; }
 @keyframes exit{ to{opacity:0; transform:scale(.95);} }
 </style>
 </head>
-
 <body>
 
 <div class="container" id="card">
   <img src="assets/sixthgrade-distribution.png" class="logo">
-  
   <h2 class="brand-name">Sixthgrade Labs</h2>
   <p class="brand-tagline">Powered by Dynotic</p>
-</div>
 
+  <!-- Email -->
   <div class="field">
     <input id="email" type="email" placeholder="Email">
   </div>
 
+  <!-- Password -->
   <div class="field">
     <input id="pass" type="password" placeholder="Password">
     <div class="toggle" id="eye" tabindex="0" onclick="togglePass()">𖠂</div>
   </div>
 
+  <!-- Forgot Password -->
   <div style="text-align:right; margin-bottom:15px;">
-<a href="../forgot-password" style="font-size:14px; color:#555; text-decoration:underline;">Forgot password?</a>
+    <a href="../forgot-password" style="font-size:14px; color:#555; text-decoration:underline;">Forgot password?</a>
   </div>
 
+  <!-- Login Button -->
   <button onclick="login()">Login</button>
   <div id="error"></div>
 </div>
 
 <div class="loader" id="loader">Dynotic Distribution…</div>
 
-<!-- FIREBASE -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
