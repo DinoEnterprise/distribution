@@ -18,7 +18,12 @@ body{
   background: linear-gradient(180deg, #e5e7eb, #d1d5db);
   padding:15px;
 }
-
+.description {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
 /* CARD */
 .container{
   width:100%;
@@ -43,7 +48,7 @@ body{
 }
 
 /* LOGO */
-.logo{ width:80px; margin-bottom:20px; }
+.logo{ width:70px; margin-bottom:16px; }
 h2{ margin-bottom:25px; font-size:24px; font-weight:700; color:#222; }
 
 /* INPUT */
@@ -63,20 +68,18 @@ input:focus{
 }
 
 /* BUTTON */
-button{
-  position: relative;
-  overflow: hidden;
-  letter-spacing:.3px;
-  width:100%;
-  padding:16px;
-  border-radius:14px;
-  font-size:16px;
-  font-weight:700;
-  color:#fff;
-  background:#000;
-  border:none;
-  cursor:pointer;
-  transition:.3s;
+button {
+  width: auto;          /* sebelumnya 100%, sekarang auto agar pas tulisan */
+  min-width: 120px;     /* agar tetap cukup lebar */
+  padding: 12px 24px;   /* padding horizontal dan vertical pas */
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: #000;
+  border: none;
+  cursor: pointer;
+  transition: .3s;
 }
 button::after{
   content:'';
@@ -162,13 +165,16 @@ input:focus, button:focus, .back-link:focus{ outline:none; }
 
 <div class="container">
   <img src="../assets/dynotic-distribution.png" class="logo">
-  <h2>Reset Password</h2>
-
+  <h2>Forgot your password?</h2>
+<p class="description">
+  Enter your email to reset your password.<br>
+  Check your inbox (and spam) for instructions.
+</p>
   <div class="field">
     <input id="email" type="email" placeholder="Enter your email">
   </div>
 
-  <button onclick="resetPassword()">Reset</button>
+<button onclick="resetPassword()">Send</button>
 
   <div id="message"></div>
 
