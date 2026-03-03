@@ -13,6 +13,18 @@
     header.scrolled { box-shadow:0 4px 12px rgba(0,0,0,0.08);}
     .wrap { width:92%; margin:18px auto; background:rgba(255,255,255,0.95); border-radius:24px; padding:22px; box-shadow:0 20px 40px rgba(0,0,0,0.18); animation:fade 0.4s ease;}
     @keyframes fade { from{opacity:0; transform:translateY(15px);} to{opacity:1;} }
+    .genre-wrapper {
+  position: relative; /* agar dropdown absolute relatif ke sini */
+  width: 100%;
+}
+
+.genre-dropdown {
+  max-width: 100%; /* jangan melebihi .genre-wrapper */
+  word-wrap: break-word; /* genre panjang jangan keluar */
+  width: 100%; /* pastikan dropdown selebar container */
+  left: 0;      /* reset posisi kiri */
+  box-sizing: border-box;
+}
     .steps { display:flex; justify-content:space-between; margin-bottom:25px; position:relative;}
     .steps::before { content:""; position:absolute; top:50%; left:5%; right:5%; height:3px; background:#e5e7eb; z-index:0;}
     .step { width:38px; height:38px; border-radius:50%; background:#e5e7eb; display:flex; align-items:center; justify-content:center; font-weight:700; color:#666; z-index:1;}
