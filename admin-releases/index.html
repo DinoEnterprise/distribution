@@ -99,7 +99,7 @@ tr:hover {
   font-size: 13px;
   text-align: left;
 }
-.menu-dropdown button:nth-child(2){
+.menu-dropdown button:nth-child(3){
   color:#ef4444;
   font-weight:700;
 }
@@ -205,7 +205,23 @@ function openPlatform(uid,rid){
 }
 
 function setReleaseStatus(uid,rid,status){
-  db.ref(`releases/${uid}/${rid}/status`).set(status).then(()=>loadReleases());
+  db.ref(`releases/${uid}/${rid}/status`).set(status).then(()=>{
+
+    // update data di array tanpa reload
+    const item = releasesData.find(r => r.uid===uid && r.rid===rid);
+    if(item){
+      item.status = status;
+    }
+
+    const filteredItem = filteredData.find(r => r.uid===uid && r.rid===rid);
+    if(filteredItem){
+      filteredItem.status = status;
+    }
+
+    // render ulang halaman yang sama
+    renderTablePage(currentPage);
+
+  });
 }
 
 function deleteRelease(uid,rid){
