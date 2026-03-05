@@ -184,9 +184,17 @@ auth.onAuthStateChanged(user => {
 });
 
 function confirmRelease(uid, rid, status){
-  const text = status === "approved"
-    ? "Yakin APPROVE rilis ini?"
-    : "⚠ Yakin REJECT rilis ini?\nAksi ini tidak bisa dibatalkan!";
+  let text = "";
+
+  if(status === "approved"){
+    text = "Yakin APPROVE rilis ini?";
+  }
+  else if(status === "rejected"){
+    text = "⚠ Yakin REJECT rilis ini?\nAksi ini tidak bisa dibatalkan!";
+  }
+  else if(status === "proses"){
+    text = "Tandai rilisan ini sebagai PROSES?";
+  }
 
   if(!confirm(text)) return;
   setReleaseStatus(uid, rid, status);
@@ -207,9 +215,10 @@ function deleteRelease(uid,rid){
 }
 
 function getStatusColor(status){
-  if(status=="approved") return "#10b981";
-  if(status=="rejected") return "#ef4444";
-  return "#f59e0b"; // pending
+  if(status=="approved") return "#10b981";   // hijau
+  if(status=="rejected") return "#ef4444";   // merah
+  if(status=="proses") return "#3b82f6";     // biru
+  return "#f59e0b"; // pending (kuning)
 }
 
 function toggleMenu(btn){
@@ -278,11 +287,12 @@ function renderTablePage(page){
     <button class="action-btn" onclick="openPlatform('${d.uid}','${d.rid}')">Detail</button>
     <div class="menu-wrap">
       <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
-      <div class="menu-dropdown">
-        <button onclick="confirmRelease('${d.uid}','${d.rid}','approved')">Approve</button>
-        <button onclick="confirmRelease('${d.uid}','${d.rid}','rejected')">Reject</button>
-        <button onclick="deleteRelease('${d.uid}','${d.rid}')">Delete</button>
-      </div>
+<div class="menu-dropdown">
+  <button onclick="confirmRelease('${d.uid}','${d.rid}','proses')">Proses</button>
+  <button onclick="confirmRelease('${d.uid}','${d.rid}','approved')">Approve</button>
+  <button onclick="confirmRelease('${d.uid}','${d.rid}','rejected')">Reject</button>
+  <button onclick="deleteRelease('${d.uid}','${d.rid}')">Delete</button>
+</div>
     </div>
   </td>
 </tr>
