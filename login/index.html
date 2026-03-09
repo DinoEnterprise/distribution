@@ -206,13 +206,21 @@ function login(){
     return;
 }
 
-// Cek akses Dynotic
-if(!data.apps || !data.apps.includes("dynotic")){
-    firebase.auth().signOut();
-    errorEl.textContent = "You don't have access to Dynotic dashboard";
-    btn.disabled = false;
-    btn.textContent = "Login";
-    return;
+// ✅ Cek akses Dynotic
+let hasDynotic = false;
+
+if(Array.isArray(data.apps)){
+  hasDynotic = data.apps.includes("dynotic");
+} else if(typeof data.apps === "object" && data.apps !== null){
+  hasDynotic = !!data.apps.dynotic;
+}
+
+if(!hasDynotic){
+  firebase.auth().signOut();
+  errorEl.textContent = "You don't have access to Dynotic dashboard";
+  btn.disabled = false;
+  btn.textContent = "Login";
+  return;
 }
 
       db.ref("users/" + snapshot.key + "/lastLogin").set(Date.now());
@@ -245,7 +253,26 @@ document.addEventListener("keydown", e => {
 
 // Auto redirect
 firebase.auth().onAuthStateChanged(user => {
-  if(user) window.location.replace("../home");
+  if(user){
+    db.ref("users/" + user.uid).once("value").then(snapshot => {
+      const data = snapshot.val();
+      let hasDynotic = false;
+if(data && data.apps){
+  if(Array.isArray(data.apps)){
+    hasDynotic = data.apps.includes("dynotic");
+  } else if(typeof data.apps === "object"){
+    hasDynotic = !!data.apps.dynotic;
+  }
+}
+
+if(data && data.status === "active" && hasDynotic){
+  window.location.replace("../home");
+} else {
+  firebase.auth().signOut();
+}
+      }
+    });
+  }
 });
 </script>
 
