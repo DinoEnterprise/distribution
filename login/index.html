@@ -207,7 +207,7 @@ function login(){
 }
 
 // Cek akses Dynotic
-if(!data.apps || !data.apps.dynotic){
+if(!data.apps || !data.apps.includes("dynotic")){
     firebase.auth().signOut();
     errorEl.textContent = "You don't have access to Dynotic dashboard";
     btn.disabled = false;
