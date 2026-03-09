@@ -346,20 +346,7 @@ header img {
       </button>
     </div>
   </div>
-<!-- MODAL ADD NEW ARTIST -->
-<div id="artistModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:99999;justify-content:center;align-items:center;">
-  <div style="background:#fff;border-radius:16px;width:90%;max-width:400px;padding:20px;position:relative;">
-    <h3 style="margin-bottom:10px;font-size:16px;">Add New Artist</h3>
-    <div class="label">Artist Name *</div>
-    <input id="newArtistName" placeholder="Artist Name">
-    <div class="label">Spotify URL (Optional)</div>
-    <input id="newArtistSpotify" placeholder="https://...">
-    <div class="label">Apple Music ID (Optional)</div>
-    <input id="newArtistApple" placeholder="ID Apple Music">
-    <button class="btn" onclick="addNewArtist()">Add Artist</button>
-    <button class="btn gray" style="margin-top:10px;" onclick="closeArtistModal()">Cancel</button>
-  </div>
-</div>
+
   <!-- FIREBASE -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -453,18 +440,12 @@ header img {
             <option>EP</option>
             <option>Album</option>
           </select>
-<div class="label">Artist Name *</div>
-<div class="select-input" id="artistSelect" onclick="openArtistDropdown()">
-  <input id="artist" readonly placeholder="Select Artist...">
-  <span class="select-icon">Select</span>
-</div>
-<div id="artistDropdown" class="genre-dropdown" style="display:none;"></div>
-<button type="button" class="btn gray" style="margin-top:6px;" onclick="openNewArtistModal()">Create New Artist</button>
+          <div class="label">Artist Name *</div><input id="artist">
+            <div class="label">Spotify URL (Optional)</div>
+  <input id="spotifyUrl" placeholder="https://open.spotify.com/track/...">
 
-<div class="label">Spotify URL (Optional)</div>
-<input id="spotifyUrl" placeholder="https://open.spotify.com/track/...">
-<div class="label">Apple Music ID (Optional)</div>
-<input id="appleId" placeholder="Apple Music ID">
+  <div class="label">Apple Music ID (Optional)</div>
+  <input id="appleId" placeholder="Apple Music ID">
           <div class="label">Full Name *</div><input id="fullname">
           <div class="label">Featuring</div><input id="featuring" placeholder="Optional">
           <div class="label">Label *</div><input id="label">
@@ -626,71 +607,7 @@ const genreOptions = ["Alternatif","Anime","Antiques & Collectibles","Blues","Bo
   "R&B/Soul","Rap/Hip-Hop","Reggae","Rock","Samba","Soundtrack","Spoken World",
   "Unknown","Wallpaper","World"];
 let selectedGenres = [];
-let artists = ["Dynotic Collective","Another Artist"]; // bisa diisi artist awal
 
-function openArtistDropdown(){
-  const dropdown = document.getElementById("artistDropdown");
-  dropdown.style.display = "block";
-  renderArtistDropdown('');
-}
-
-function closeArtistDropdown(){
-  document.getElementById("artistDropdown").style.display = "none";
-}
-
-function renderArtistDropdown(filter){
-  const dropdown = document.getElementById("artistDropdown");
-  dropdown.innerHTML = '';
-  const filtered = artists.filter(a=>a.toLowerCase().includes(filter.toLowerCase()));
-  filtered.forEach(a=>{
-    const div = document.createElement('div');
-    div.textContent = a;
-    div.style.padding = '8px 12px';
-    div.style.cursor = 'pointer';
-    div.onmouseenter = ()=>div.style.background='#eef2ff';
-    div.onmouseleave = ()=>div.style.background='transparent';
-    div.onclick = ()=>{
-      document.getElementById("artist").value = a;
-      document.getElementById("artistSelect").classList.add('filled');
-      document.querySelector('#artistSelect .select-icon').textContent = "Selected";
-      closeArtistDropdown();
-    };
-    dropdown.appendChild(div);
-  });
-  if(filtered.length === 0){
-    const div = document.createElement('div');
-    div.textContent = "No artist found. Click 'Create New Artist'";
-    div.style.padding = '8px 12px';
-    div.style.color = '#999';
-    dropdown.appendChild(div);
-  }
-}
-
-// Modal Artist
-function openNewArtistModal(){
-  closeArtistDropdown();
-  document.getElementById("artistModal").style.display = "flex";
-}
-
-function closeArtistModal(){
-  document.getElementById("artistModal").style.display = "none";
-}
-
-function addNewArtist(){
-  const name = document.getElementById("newArtistName").value.trim();
-  if(!name) return alert("Artist Name wajib diisi");
-
-  const spotify = document.getElementById("newArtistSpotify").value.trim();
-  const apple = document.getElementById("newArtistApple").value.trim();
-
-  artists.push(name); // tambahkan ke daftar artist
-
-  document.getElementById("artist").value = name;
-  document.getElementById("artistSelect").classList.add('filled');
-  document.querySelector('#artistSelect .select-icon').textContent = "Selected";
-
-  closeArtistModal();
-}
 function renderGenres(list){
   const dropdown = document.getElementById("genreDropdown");
   dropdown.innerHTML = "";
