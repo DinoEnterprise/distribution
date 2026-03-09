@@ -199,12 +199,21 @@ function login(){
     .then(snapshot => {
       const data = snapshot.val();
       if(!data || data.status !== "active"){
-        firebase.auth().signOut();
-        errorEl.textContent = "Account is inactive. Please contact the admin";
-        btn.disabled = false;
-        btn.textContent = "Login";
-        return;
-      }
+    firebase.auth().signOut();
+    errorEl.textContent = "Account is inactive. Please contact the admin";
+    btn.disabled = false;
+    btn.textContent = "Login";
+    return;
+}
+
+// Cek akses Dynotic
+if(!data.apps || !data.apps.dynotic){
+    firebase.auth().signOut();
+    errorEl.textContent = "You don't have access to Dynotic dashboard";
+    btn.disabled = false;
+    btn.textContent = "Login";
+    return;
+}
 
       db.ref("users/" + snapshot.key + "/lastLogin").set(Date.now());
 
