@@ -13,7 +13,18 @@ body {
   padding-top:74px;
 }
     
-    .wrap { width:92%; margin:18px auto; background:rgba(255,255,255,0.95); border-radius:24px; padding:22px; box-shadow:0 20px 40px rgba(0,0,0,0.18); animation:fade 0.4s ease;}
+.wrap {
+  width:92%;
+  margin:18px auto;
+  background:rgba(255,255,255,0.95);
+  border-radius:24px;
+  padding:22px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.18);
+  animation:fade 0.4s ease;
+  position:relative;
+  z-index:1;
+  overflow:visible;
+}
     @keyframes fade { from{opacity:0; transform:translateY(15px);} to{opacity:1;} }
    /* Tambahkan ini di style CSS */
 
@@ -33,12 +44,44 @@ header {
 header img {
   height: 50px;
 }
-.genre-wrapper {
-  position: relative;
-  width: 100%;
-  margin-bottom: 16px; /* <-- spasi antara genre dan field berikutnya */
+.genre-wrapper{
+  position:relative;
+  width:100%;
+  margin-bottom:16px;
 }
-
+#artistModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.5);
+  z-index:999999;
+  align-items:center;
+  justify-content:center;
+}
+#artistModal > div{
+  position:relative;
+  z-index:1000000;
+}
+#artistSelect{
+  position:relative;
+  z-index:1000;
+}
+#artistModal input{
+  margin-bottom:12px;
+}
+#artistDropdown{
+  position:absolute;
+  top:100%;
+  left:0;
+  width:100%;
+  max-height:180px;
+  overflow-y:auto;
+  background:#fff;
+  border:1px solid #ddd;
+  border-radius:10px;
+  margin-top:4px;
+  z-index:2000;
+}
 #genreSearch {
   margin-bottom: 8px; /* optional, agar jarak search bar lebih jelas */
 }
@@ -138,12 +181,20 @@ header img {
   background:white;
   border:1px solid #ddd;
   border-radius:10px;
-  max-height:150px;
+  max-height:180px;
   overflow-y:auto;
   margin-top:4px;
-  z-index:10;
+  z-index:999;
+}
+.select-input{
+  position:relative;
+  cursor:pointer;
 }
 
+.select-input input{
+  cursor:pointer;
+  background:#fff;
+}
 .genre-item{
   padding:10px;
   cursor:pointer;
@@ -347,8 +398,8 @@ header img {
     </div>
   </div>
 <!-- MODAL ADD NEW ARTIST -->
-<div id="artistModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:99999;justify-content:center;align-items:center;">
-  <div style="background:#fff;border-radius:16px;width:90%;max-width:400px;padding:20px;position:relative;">
+<div id="artistModal">
+<div style="background:#fff;border-radius:16px;width:90%;max-width:400px;padding:20px;position:relative;max-height:90vh;overflow:auto;">
     <h3 style="margin-bottom:10px;font-size:16px;">Add New Artist</h3>
     <div class="label">Artist Name *</div>
     <input id="newArtistName" placeholder="Artist Name">
@@ -417,11 +468,16 @@ header img {
   if(!user) location.href="../login";
 
   db.ref("artists/"+user.uid).on("value",snap=>{
-    artists = [];
-    snap.forEach(s=>{
-      artists.push(s.val().name);
+  artists = [];
+
+  snap.forEach(s=>{
+    artists.push({
+      name: s.val().name,
+      spotify: s.val().spotify,
+      apple: s.val().apple
     });
   });
+
 });
 
     const stepsData = {
@@ -466,7 +522,6 @@ header img {
   <span class="select-icon">Select</span>
 </div>
 <div id="artistDropdown" class="genre-dropdown" style="display:none;"></div>
-<button type="button" class="btn gray" style="margin-top:6px;" onclick="openNewArtistModal()">Create New Artist</button>
 
 <div class="label">Spotify URL (Optional)</div>
 <input id="spotifyUrl" placeholder="https://open.spotify.com/track/...">
@@ -637,7 +692,9 @@ let artists = [];
 
 function openArtistDropdown(){
   const dropdown = document.getElementById("artistDropdown");
+
   dropdown.style.display = "block";
+
   renderArtistDropdown();
 }
 
@@ -659,9 +716,9 @@ function renderArtistDropdown(){
     artists.forEach(a=>{
       const div = document.createElement("div");
       div.className="genre-item";
-      div.textContent = a;
+      div.textContent = a.name;
       div.onclick = ()=>{
-        document.getElementById("artist").value = a;
+        document.getElementById("artist").value = a.name;
         closeArtistDropdown();
       };
       dropdown.appendChild(div);
@@ -680,10 +737,9 @@ function renderArtistDropdown(){
 
 // Modal Artist
 function openNewArtistModal(){
-  closeArtistDropdown();
-  document.getElementById("artistModal").style.display = "flex";
+  document.getElementById("artistDropdown").style.display="none";
+  document.getElementById("artistModal").style.display="flex";
 }
-
 function closeArtistModal(){
   document.getElementById("artistModal").style.display = "none";
 }
@@ -703,12 +759,20 @@ function addNewArtist(){
     apple: apple || ""
   }).then(()=>{
 
-    artists.push(name);
+    artists.push({
+      name: name,
+      spotify: spotify,
+      apple: apple
+    });
 
     document.getElementById("artist").value = name;
 
+    document.getElementById("newArtistName").value="";
+    document.getElementById("newArtistSpotify").value="";
+    document.getElementById("newArtistApple").value="";
+
     closeArtistModal();
-    closeArtistDropdown();
+renderArtistDropdown();
 
   });
 }
@@ -776,7 +840,8 @@ function showGenreNotice(message){
 }
 
 document.addEventListener("click", e=>{
-  if(!document.querySelector(".genre-wrapper").contains(e.target)){
+  const wrapper = document.querySelector(".genre-wrapper");
+  if(wrapper && !wrapper.contains(e.target)){
     document.getElementById("genreDropdown").innerHTML="";
   }
 });
@@ -808,7 +873,24 @@ if(feat?.value) data.featuring = feat.value;
       db.ref("releases/"+user.uid).push(data).then(()=>location.href="../releases")
         .catch(()=>{ btn.disabled=false; text.style.display="inline"; loader.style.display="none";});
     }
+document.addEventListener("click", e=>{
+  const artistSelect = document.getElementById("artistSelect");
+  const artistDropdown = document.getElementById("artistDropdown");
+  const artistModal = document.getElementById("artistModal");
 
+  if(!artistDropdown) return;
+
+  // kalau modal sedang terbuka jangan ganggu
+  if(artistModal && artistModal.style.display === "flex") return;
+
+  if(
+    artistSelect &&
+    !artistSelect.contains(e.target) &&
+    !artistDropdown.contains(e.target)
+  ){
+    artistDropdown.style.display="none";
+  }
+});
   </script>
 </body>
 </html>
