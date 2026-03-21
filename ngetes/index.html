@@ -433,28 +433,41 @@ searchInput.oninput = function(e){
 
           pageItems.forEach(r => {
   let displayStatus = "PROCESS";
-  let c = "#3b82f6";
-  let statusClass = "process";
+let c = "#3b82f6";
+let statusClass = "process";
 
-  if (r.status === "approved") {
+const now = new Date();
+const releaseDateObj = r.date ? new Date(r.date) : null;
+
+if (r.status === "approved") {
+
+  if (releaseDateObj && now >= releaseDateObj) {
+    // ✅ SUDAH RILIS
+    displayStatus = "LIVE";
+    c = "#22c55e"; // hijau terang
+  } else {
+    // ⏳ BELUM RILIS
     displayStatus = "APPROVED";
     c = "#10b981";
-    statusClass = "";
-  } else if (r.status === "rejected") {
-    displayStatus = "REJECTED";
-    c = "#ef4444";
-    statusClass = "";
   }
+
+  statusClass = "";
+
+} else if (r.status === "rejected") {
+  displayStatus = "REJECTED";
+  c = "#ef4444";
+  statusClass = "";
+}
 
   const featuring = r.featuring ? ` • feat. ${r.featuring}` : "";
   const label = r.label ? r.label : "Dynotic";
   const ean = r.ean ? r.ean : "-";
-const releaseDate = r.date 
+const releaseDate = (r.status === "approved" && r.date)
   ? new Date(r.date).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric"
-    }) 
+    })
   : "-";
 
   list.innerHTML += `
