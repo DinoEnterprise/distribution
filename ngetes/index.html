@@ -449,6 +449,13 @@ searchInput.oninput = function(e){
   const featuring = r.featuring ? ` • feat. ${r.featuring}` : "";
   const label = r.label ? r.label : "Dynotic";
   const ean = r.ean ? r.ean : "-";
+const releaseDate = r.date 
+  ? new Date(r.date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    }) 
+  : "-";
 
   list.innerHTML += `
   <div onclick="goReleaseDetail('${r._key}')" 
@@ -476,6 +483,7 @@ searchInput.oninput = function(e){
         <div class="release-meta">
           <b>${r.artist || "-"}</b>${featuring}<br>
 <span style="opacity:.7">UPC:</span> ${ean}<br>
+<span style="opacity:.7">Release Date:</span> ${releaseDate}<br>
 <span style="opacity:.7">Label:</span> ${label}
         </div>
       </div>
