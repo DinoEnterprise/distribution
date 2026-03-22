@@ -243,11 +243,6 @@ Success
   <span class="field-value" id="releaseLabel">-</span>
 </div>
 
-<div class="ean">
-  <span class="field-title">UPC:</span>
-  <span class="field-value" id="releaseEAN" onclick="copyEAN()" style="cursor:pointer">-</span>
-</div>
-
 <div class="genre">
   <span class="field-title">Genre:</span>
   <span class="field-value" id="releaseGenre">-</span>
@@ -419,14 +414,12 @@ cover.onerror = () => {
   cover.classList.add("loaded");
 };
 const input = document.getElementById("smartlinkInput");
-const copyBtn = document.getElementById("copyBtn");
 const openBtn = document.getElementById("openBtn"); // 👈 TAMBAH INI
 const empty = document.getElementById("emptySmartlink");
 
 if(d.smartlink){
   input.style.display = "block";
-  copyBtn.style.display = "block";
-  openBtn.style.display = "block"; // 👈 TAMBAH INI
+  openBtn.style.display = "block";
   empty.style.display = "none";
   input.value = d.smartlink;
 }
