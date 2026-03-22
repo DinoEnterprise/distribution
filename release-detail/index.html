@@ -157,6 +157,7 @@ header h2{font-size:18px;color:#111;}
 @media (max-width:600px){
   .cover-box{ width:130px; }
 }
+
 </style>
 </head>
 <body>
@@ -178,6 +179,56 @@ header h2{font-size:18px;color:#111;}
       Request Takedown
     </button>
   </div>
+</div>
+<div id="popup" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.4);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:2000;
+">
+
+  <div style="
+  background:#fff;
+  padding:20px;
+  border-radius:16px;
+  width:85%;
+  max-width:320px;
+  text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,.2);
+  animation:fadeIn .2s ease;
+  ">
+
+    <div id="popupText" style="font-weight:600;margin-bottom:15px;">
+      Are you sure?
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:center;">
+      <button onclick="closePopup()" class="btn">Cancel</button>
+      <button onclick="confirmDelete()" class="btn danger">Delete</button>
+    </div>
+
+  </div>
+</div>
+<div id="toast" style="
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:#111;
+color:#fff;
+padding:10px 16px;
+border-radius:999px;
+font-size:13px;
+display:none;
+z-index:3000;
+">
+Success
 </div>
 <div class="card">
  <div class="release-header">
@@ -258,7 +309,7 @@ firebase.initializeApp({
 });
 const db = firebase.database();
 const params = new URLSearchParams(location.search);
-const uid = params.get("uid");
+let uid;
 const rid = params.get("rid");
 
 const platformIcons = {
@@ -279,8 +330,7 @@ const platforms = ["Spotify","Tidal","Amazon","Apple Music","Tiktok","YouTube Mu
   if (!user) {
     location.href = "../login";
   } else {
-    const uid = user.uid; 
-    const rid = new URLSearchParams(location.search).get("rid"); 
+    uid = user.uid; // ⬅️ isi ke global
     loadRelease(uid, rid);
   }
 });
@@ -339,6 +389,10 @@ statusEl.innerHTML = `
 const deleteBtn = document.getElementById("deleteBtn");
 const takedownBtn = document.getElementById("takedownBtn");
 const editBtn = document.getElementById("editBtn");
+
+editBtn.onclick = editRelease;
+deleteBtn.onclick = deleteRelease;
+takedownBtn.onclick = takedownRelease;
 
 const statusLower = (d.status || "pending").toLowerCase();
 const isLive = releaseDateObj && now >= releaseDateObj;
@@ -407,12 +461,23 @@ function editRelease(){
 }
 
 function deleteRelease(){
-  if(confirm("Yakin mau hapus release ini?")){
-    db.ref(`releases/${uid}/${rid}`).remove().then(()=>{
-      alert("Berhasil dihapus");
+  document.getElementById("popup").style.display = "flex";
+  document.getElementById("popupText").innerText = "Delete this release?";
+}
+
+function closePopup(){
+  document.getElementById("popup").style.display = "none";
+}
+
+function confirmDelete(){
+  db.ref(`releases/${uid}/${rid}`).remove().then(()=>{
+    closePopup();
+    showToast("Release deleted");
+
+    setTimeout(()=>{
       location.href = "../releases";
-    });
-  }
+    }, 800);
+  });
 }
 function openSmartlink(){
   const link = document.getElementById("smartlinkInput").value;
@@ -429,6 +494,15 @@ function takedownRelease(){
   );
 
   window.location.href = `mailto:admin@dynotic.web.id?subject=${subject}&body=${body}`;
+}
+function showToast(text){
+  const toast = document.getElementById("toast");
+  toast.innerText = text;
+  toast.style.display = "block";
+
+  setTimeout(()=>{
+    toast.style.display = "none";
+  }, 2000);
 }
 function renderPlatforms(data){
   const wrap = document.getElementById("platformList");
