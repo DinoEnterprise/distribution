@@ -1,552 +1,348 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Releases | Dynotic Distribution</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    /* Reset & global */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Outfit", sans-serif;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Release Detail | Dynotic Distribution</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    body {
-      background: #f1f2f7;
-      min-height: 100vh;
-      color: #111;
-      padding-top: 74px;
-      animation: fadeIn 0.5s ease;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
+body{background:#f1f2f7;color:#111;min-height:100vh;padding-top:74px;animation:fadeIn .5s ease;-webkit-tap-highlight-color:transparent;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
 
-    /* Animations */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes bounceIn {
-      0% { transform: translateY(-20px); opacity: 0; }
-      50% { transform: translateY(10px); opacity: 1; }
-      70% { transform: translateY(-5px); }
-      100% { transform: translateY(0); opacity: 1; }
-    }
-
-    /* Header */
-    header {
-      padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      background: #fff;
-      border-bottom: 1px solid #eee;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      z-index: 1000;
-    }
-
-    header img {
-      height: 50px;
-    }
-    .release-item {
-  display: flex;
-  gap: 12px;
+header{
+  padding:12px 20px;
+  display:flex;
+  align-items:center;
+  background:#fff;
+  border-bottom:1px solid #eee;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:1000;
+}
+header img{height:50px;margin-right:10px;}
+header h2{font-size:18px;color:#111;}
+.cover-box{
+  width: 160px;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #ddd;
+}
+.field-title{
+  font-weight:600;
+  color:#111;
 }
 
-.release-cover {
-  width: 46px;
-  height: 46px;
-  border-radius: 8px;
-  background: #f1f2f7;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+.field-value{
+  color:#777;
+  font-weight:400;
 }
-
-.release-cover img {
-  width: 46px;
-  height: 46px;
+.cover-box img{
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 6px;
-
-  /* LOADING STATE */
-  filter: blur(10px);
-  opacity: 0.6;
-  transition: filter 0.35s ease, opacity 0.35s ease;
+  display: block;
 }
-
-.release-cover img.loaded {
+.card{
+  width:90%;
+  margin:15px auto;
+  background:#fff;
+  border-radius:20px;
+  padding:20px;
+  border:1px solid #ececec;
+  box-shadow:0 8px 18px rgba(0,0,0,.05);
+  animation:bounceIn .6s ease;
+}
+@keyframes bounceIn{0%{transform:translateY(-20px);opacity:0}50%{transform:translateY(10px);opacity:1}70%{transform:translateY(-5px)}100%{transform:translateY(0);opacity:1}}
+.status-badge{
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  margin-top:6px;
+}
+.release-header{display:flex;gap:15px;align-items:center;margin-bottom:15px;}
+.release-header img{
+  filter: blur(10px);
+  opacity: .6;
+  transition: filter .35s ease, opacity .35s ease;
+}
+.release-header img.loaded{
   filter: blur(0);
   opacity: 1;
 }
+.release-info{flex:1;}
+.release-info div{margin-bottom:6px;}
+.release-info .title{font-weight:700;font-size:18px;}
+.release-info .artist,.release-info .label,.release-info .genre,.release-info .date,.release-info .status{font-size:14px;color:#555;}
 
-.release-meta {
-  font-size: 12px;
-  color: #777;
-  margin-top: 4px;
-  line-height: 1.4;
+.platform-list{margin-top:15px;}
+.platform-item{
+  transition:.2s;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 12px;
+  border-bottom:1px solid #eee;
+}
+.platform-item:hover{
+  background:#f5f5f5;
+  border-radius:10px;
+}
+.platform-item img{width:28px;height:28px;margin-right:8px;border-radius:6px;}
+.platform-item b{flex:1;font-size:14px;}
+.platform-status{
+  font-size:12px;
+  font-weight:600;
+  padding:4px 10px;
+  border-radius:999px;
+  border:1px solid #f59e0b;
+  color:#f59e0b;
 }
 
-.release-meta b {
-  color: #444;
-  font-weight: 600;
+.clickable{cursor:pointer;transition:.12s;}
+.clickable:active{transform:scale(.96);filter:brightness(85%);}
+@media (max-width:600px){
+  .cover-box{ width:130px; }
 }
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-top: 12px;
-
-  max-width: 220px;  /* tetap “mobile-like” */
-  margin-left: auto;
-  margin-right: auto;
-}
-.pagination button {
-  padding: 6px 14px;
-  min-width: 40px;
-  height: 32px;
-  border: 1px solid #333;
-  background: #f9f9f9;
-  color: #333;
-  border-radius: 16px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.pagination span {
-  font-size: 14px;
-  font-weight: 600;
-}
-    /* Cards */
-    .card {
-      width: 90%;
-      margin: 35px auto;
-      background: #fff;
-      border-radius: 20px;
-      padding: 25px;
-      border: 1px solid #ececec;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
-      transition: 0.3s;
-      animation: bounceIn 0.6s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
-    }
-
-    .clickable {
-      cursor: pointer;
-      transition: 0.12s;
-      outline: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .clickable:active {
-      transform: scale(0.94);
-      filter: brightness(85%);
-      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Release Row */
-.release-row {
-  padding-right: 4px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 10px;
-  overflow: hidden; /* 🔥 ini fix utama */
-}
-
-.release-title {
-  flex: 1; /* 🔥 biar flexible */
-  line-height: 1.3;
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.release-status {
-  white-space: nowrap;
-  flex-shrink: 0;
-  min-width: 70px; /* 🔥 penting */
-  text-align: center;
-  transform-origin: center; /* 🔥 biar animasi gak dorong keluar */
-      font-size: 11px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      text-transform: uppercase;
-    }
-.release-status.process {
-  animation: pulse 1.2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); opacity:1; }
-  50% { transform: scale(1.05); opacity:0.8; }
-}
-    /* Artist & Balance */
-    .artist-name { font-size: 15px; font-weight: 500; color: #555; margin-bottom: 6px; }
-    .balance-title { font-size: 15px; font-weight: 600; color: #222; margin-bottom: 10px; }
-    .card-value { font-size: 33px; font-weight: 700; color: #111; margin-bottom: 15px; }
-
-    /* Profile Menu */
-    .profile-menu {
-      position: fixed;
-      bottom: 60px;
-      right: 20px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-      display: none;
-      width: 180px;
-      z-index: 10;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: 0.25s ease;
-    }
-
-    .profile-menu.show { display: block; opacity: 1; transform: translateY(0); }
-
-    .profile-menu div {
-      padding: 12px 14px;
-      cursor: pointer;
-      border-bottom: 1px solid #eee;
-      font-size: 14px;
-    }
-
-    .profile-menu div:last-child { border-bottom: none; }
-    .profile-menu div:hover { background: #f1f2f7; }
-
-    /* Buttons */
-    button {
-      width: 100%;
-      padding: 15px;
-      border: none;
-      border-radius: 14px;
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff;
-      background: linear-gradient(90deg,#667eea,#764ba2);
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    button:hover { filter: brightness(90%); }
-    button:active { filter: brightness(70%); transform: scale(0.95); }
-
-    /* Bottom Navigation */
-    .bottom-nav {
-      background: #fff;
-      border-top: 1px solid #eee;
-      padding: 10px 0;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-    }
-
-    .nav-item {
-      text-align: center;
-      font-size: 13px;
-      opacity: 0.75;
-      padding: 4px 14px;
-      border-radius: 12px;
-    }
-
-    .nav-item img {
-      width: 28px;
-      display: block;
-      margin: auto;
-      margin-bottom: 4px;
-    }
-
-    .nav-item:hover { opacity: 1; }
-.nav-item.active {
-  font-weight: 700;      /* teks jadi tebal */
-  color: #111;           /* ganti jadi hitam */
-  position: relative;
-}
-
-.nav-item.active::before {
-  content: "";
-  position: absolute;
-  bottom: 0;             /* di bawah teks */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40%;            /* lebar kotak */
-  height: 4px;           /* tinggi kotak */
-  border-radius: 8px;    /* biar agak bulat sudutnya */
-  background-color: #111; /* warna kotak */
-}
-    .nav-item.active img { filter: brightness(1.2); }
-
-    /* Inline helpers */
-    .new-release-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      background: #111;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      font-weight: 700;
-    }
-  </style>
+</style>
 </head>
 <body>
-  <!-- Header -->
-  <header>
-    <img src="../assets/dynotic-distribution.png" alt="Dynotic Distribution">
-  </header>
 
-  <!-- Create New Release Card -->
-  <div class="card clickable" onclick="goCreateRelease()">
-    <div class="release-row">
-      <div>
-        <div style="font-weight:700;font-size:16px">Create New Release</div>
-        <div style="font-size:12px;color:#666;margin-top:4px">Upload & kelola rilisanmu</div>
-      </div>
-      <div class="new-release-btn">+</div>
+<header>
+  <img src="../assets/dynotic-distribution.png" alt="DynoPay Logo">
+</header>
+<div class="card">
+  <div style="font-weight:700;margin-bottom:10px;">Actions</div>
+
+  <button onclick="editRelease()">Edit Release</button>
+  <button onclick="deleteRelease()" style="margin-top:8px;background:#ef4444;">Delete</button>
+</div>
+<div class="card">
+ <div class="release-header">
+  <div class="cover-box">
+    <img id="coverArt" src="../assets/profile.png" alt="Cover Art">
+  </div>
+  <div class="release-info">
+      <div class="title" id="releaseTitle">Loading...</div>
+      <div class="artist" id="releaseArtist">--</div>
+<div class="label">
+  <span class="field-title">Label:</span>
+  <span class="field-value" id="releaseLabel">-</span>
+</div>
+
+<div class="ean">
+  <span class="field-title">UPC:</span>
+  <span class="field-value" id="releaseEAN">-</span>
+</div>
+
+<div class="genre">
+  <span class="field-title">Genre:</span>
+  <span class="field-value" id="releaseGenre">-</span>
+</div>
+
+<div class="date">
+  <span class="field-title">Release Date:</span>
+  <span class="field-value" id="releaseDate">-</span>
+</div>
+
+<div class="status">
+  <span class="field-title">Status:</span>
+  <span class="field-value" id="releaseStatus">-</span>
+</div>
     </div>
   </div>
+</div>
 
-  <!-- My Releases Card -->
-  <div class="card">
-<div style="font-weight:700;font-size:16px;margin-bottom:12px">My Releases</div>
+<div class="card">
+  <div style="font-weight:700;margin-bottom:10px;">Platforms</div>
+  <div id="platformList" class="platform-list"></div>
+</div>
+<div class="card">
+  <div style="font-weight:700;margin-bottom:10px;">Smartlink</div>
 
-<input 
-  type="text" 
-  id="searchInput"
-  placeholder="Search release..."
-  style="
-    width:100%;
-    padding:12px;
-    border-radius:12px;
-    border:1px solid #eee;
-    margin-bottom:12px;
-    font-size:14px;
-    outline:none;
-  "
->
-    <div id="releaseList"></div>
+  <input id="smartlinkInput" 
+  readonly
+  placeholder="Smartlink belum tersedia"
+  style="display:none;width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;margin-bottom:10px;">
+
+  <button id="copyBtn"
+  onclick="copySmartlink()"
+  style="display:none;width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;background:#fff;">
+
+<svg width="18" height="18" viewBox="0 0 24 24" fill="black"
+xmlns="http://www.w3.org/2000/svg">
+<path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z"/>
+</svg>
+&nbsp; Salin Smartlink
+  </button>
+
+  <div id="emptySmartlink"
+  style="font-size:13px;color:#888;text-align:center;">
+  Smartlink belum tersedia
   </div>
+</div>
 
-  <div style="height:120px"></div> <!-- Spacer for bottom nav -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-  <!-- Bottom Navigation -->
-  <div class="bottom-nav">
-    <div class="nav-item clickable" onclick="homeClick()">
-      <img src="../assets/home.png" alt="Home">Home
-    </div>
-    <div class="nav-item clickable active" onclick="releasesClick()">
-      <img src="../assets/releases.png" alt="Releases">Releases
-    </div>
-    <div class="nav-item clickable" onclick="accountClick()">
-      <img src="../assets/account.png" alt="Account">Account
-    </div>
-  </div>
+<script>
+firebase.initializeApp({
+ apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+ authDomain:"dynopay-2513c.firebaseapp.com",
+ databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+const db = firebase.database();
+const params = new URLSearchParams(location.search);
+const uid = params.get("uid");
+const rid = params.get("rid");
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <script>
-    firebase.initializeApp({
-      apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-      authDomain: "dynopay-2513c.firebaseapp.com",
-      databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
-    });
-
-    const db = firebase.database();
+const platformIcons = {
+  "Spotify": "../assets/spotify.png",
+  "Tidal": "../assets/tidal.png",
+  "Amazon": "../assets/amazon.png",
+  "Apple Music": "../assets/apple.png",
+  "Tiktok": "../assets/tiktok.png",
+  "YouTube Music": "../assets/youtube.png",
+  "YouTube Content ID": "../assets/contentid.png",
+  "META": "../assets/meta.png",
+  "SoundCloud": "../assets/soundcloud.png",
+  "Tencent": "../assets/tencent.png"
+};
+const platforms = ["Spotify","Tidal","Amazon","Apple Music","Tiktok","YouTube Music","YouTube Content ID","META","SoundCloud","Tencent"];
 
     firebase.auth().onAuthStateChanged(user => {
-      if(!user) location.href="../login";
-      else loadReleases(user.uid);
-    });
-
-    function logout() { firebase.auth().signOut().then(()=>location.href="../login"); }
-    function releasesClick() { console.log("Releases active — tidak reload"); }
-    function accountClick() { location.href="../account"; }
-    function goCreateRelease() { location.href="../create-release"; }
-    function goRekapan() { location.href="../dashboard-rekapan"; }
-    function homeClick() { location.href="../home"; }
-
-    // Pagination & Loading Releases
-    let currentPage = 1;
-    const releasesPerPage = 5;
-
-    function loadReleases(uid) {
-      const list = releaseList;
-      list.innerHTML = "<div style='color:#888;font-size:13px'>Loading...</div>";
-
-      db.ref("releases/" + uid).once("value").then(snap => {
-        let all = [];
-let filtered = [];
-        snap.forEach(i => {
-          const r = i.val();
-          r._key = i.key;
-          all.push(r);
-        });
-
-        all.sort((a,b)=>(b.time||0)-(a.time||0));
-        filtered = all;
-const searchInput = document.getElementById("searchInput");
-
-searchInput.oninput = function(e){
-  const q = e.target.value.toLowerCase();
-
-  filtered = all.filter(r => 
-    (r.title || "").toLowerCase().includes(q) ||
-    (r.artist || "").toLowerCase().includes(q) ||
-    (r.label || "").toLowerCase().includes(q)
-  );
-
-  currentPage = 1;
-  render(currentPage);
-};
-        function render(p) {
-          list.innerHTML = "";
-          const totalPages = Math.ceil(filtered.length / releasesPerPage);
-          if(filtered.length === 0) {
-  list.innerHTML = `
-    <div style='text-align:center;color:#888;font-size:13px'>
-      ${searchInput.value ? "Tidak ditemukan hasil" : "Belum ada rilisan"}
-    </div>
-  `;
-  return;
-}
-
-          const start = (p-1) * releasesPerPage;
-          const pageItems = filtered.slice(start, start+releasesPerPage);
-
-          pageItems.forEach((r, index) => {
-  let displayStatus = "PROCESS";
-let c = "#3b82f6";
-let statusClass = "process";
-
-const now = new Date();
-const releaseDateObj = r.date ? new Date(r.date) : null;
-
-if (r.status === "approved") {
-
-  if (releaseDateObj && now >= releaseDateObj) {
-    // ✅ SUDAH RILIS
-    displayStatus = "LIVE";
-    c = "#22c55e"; // hijau terang
+  if (!user) {
+    location.href = "../login";
   } else {
-    // ⏳ BELUM RILIS
-    displayStatus = "APPROVED";
-    c = "#10b981";
+    const uid = user.uid; 
+    const rid = new URLSearchParams(location.search).get("rid"); 
+    loadRelease(uid, rid);
   }
-
-  statusClass = "";
-
-} else if (r.status === "rejected") {
-  displayStatus = "REJECTED";
-  c = "#ef4444";
-  statusClass = "";
-}
-
-  const featuring = r.featuring ? ` • feat. ${r.featuring}` : "";
-  const label = r.label ? r.label : "Dynotic";
-  const ean = r.ean ? r.ean : "-";
-const releaseDate = (r.status === "approved" && r.date)
-  ? new Date(r.date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric"
-    })
-  : "-";
-list.innerHTML += `
-  <div onclick="goReleaseDetail('${r._key}')" 
-     class="clickable" 
-     style="
-       padding:14px;
-       border:1px solid #eee;
-       border-radius:14px;
-       margin-bottom:12px;
-       opacity:0;
-       transform:translateY(10px);
-       animation:fadeIn 0.4s ease forwards;
-       animation-delay:${index * 0.06}s;
-     ">
-
-    <div class="release-item">
-      <div class="release-cover">
- <img 
-  src="${r.cover ? r.cover : '../assets/cover-default.png'}"
-  onload="this.classList.add('loaded')"
-  onerror="this.onerror=null;this.src='../assets/cover-default.png';this.classList.add('loaded')"
-/>
-      </div>
-
-      <div style="flex:1">
-        <div class="release-row">
-          <div class="release-title">${r.title || "-"}</div>
-          <div class="release-status ${statusClass}" 
-               style="border:1px solid ${c};color:${c}">
-            ${displayStatus}
-          </div>
-        </div>
-
-        <div class="release-meta">
-          <b>${r.artist || "-"}</b>${featuring}<br>
-<span style="opacity:.7">UPC:</span> ${ean}<br>
-<span style="opacity:.7">Release Date:</span> ${releaseDate}<br>
-<span style="opacity:.7">Label:</span> ${label}
-        </div>
-      </div>
-    </div>
-  </div>
-  `;
 });
 
-list.innerHTML += `
-<div class="pagination">
-  <button onclick="prevPage()" ${p===1?'disabled':''}>&lt;</button>
-  <span>Page ${p}/${totalPages}</span>
-  <button onclick="nextPage()" ${p===totalPages?'disabled':''}>&gt;</button>
-</div>
-`;
-        }
-
-        window.nextPage = () => {
-  const totalPages = Math.ceil(filtered.length / releasesPerPage);
-  if(currentPage < totalPages) {
-    currentPage++;
-    render(currentPage);
-  }
-}
-
-window.prevPage = () => {
-  if(currentPage > 1) {
-    currentPage--;
-    render(currentPage);
-  }
-}
-
-        currentPage = 1;
-        render(currentPage);
-      });
+function loadRelease(uid, rid){
+  db.ref(`releases/${uid}/${rid}`).once("value").then(snap=>{
+    const d = snap.val();
+    if(!d){ 
+      alert("Rilisan tidak ditemukan"); 
+      return; 
     }
-    function goReleaseDetail(rid) { location.href="../release-detail?rid="+rid; }
-  </script>
+
+    document.getElementById("releaseTitle").innerText = d.title || "-";
+    document.getElementById("releaseArtist").innerText = d.artist || "-";
+  document.getElementById("releaseLabel").innerText = d.label || "-";
+document.getElementById("releaseEAN").innerText = d.ean || "-";
+document.getElementById("releaseGenre").innerText = d.genre || "-";
+const date = d.date ? new Date(d.date) : null;
+
+document.getElementById("releaseDate").innerText =
+  date ? date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  }) : "-";
+const statusEl = document.getElementById("releaseStatus");
+
+let text = "PROCESS";
+let color = "#3b82f6";
+
+const now = new Date();
+const releaseDateObj = d.date ? new Date(d.date) : null;
+
+if(d.status === "approved"){
+  if(releaseDateObj && now >= releaseDateObj){
+    text = "LIVE";
+    color = "#22c55e";
+  } else {
+    text = "APPROVED";
+    color = "#10b981";
+  }
+}
+
+if(d.status === "rejected"){
+  text = "REJECTED";
+  color = "#ef4444";
+}
+
+statusEl.innerHTML = `
+  <span class="status-badge" 
+    style="border:1px solid ${color};color:${color}">
+    ${text}
+  </span>
+`;
+    const cover = document.getElementById("coverArt");
+
+if (d.cover) {
+  cover.src = d.cover.trim();
+} else {
+  cover.src = "../assets/cover-default.png";
+}
+
+cover.onload = () => cover.classList.add("loaded");
+cover.onerror = () => {
+  cover.src = "../assets/cover-default.png";
+  cover.classList.add("loaded");
+};
+const input = document.getElementById("smartlinkInput");
+const copyBtn = document.getElementById("copyBtn");
+const empty = document.getElementById("emptySmartlink");
+
+if(d.smartlink){
+  input.style.display = "block";
+  copyBtn.style.display = "block";
+  empty.style.display = "none";
+  input.value = d.smartlink;
+}
+
+    if((d.status||"pending").toLowerCase() !== "pending"){
+      renderPlatforms(d.platformStatus||{});
+    } else {
+      document.getElementById("platformList").innerHTML = "<div style='color:#888;font-size:13px;text-align:center;'>Platform belum tersedia</div>";
+    }
+  });
+}
+function copySmartlink(){
+  const val = document.getElementById("smartlinkInput").value;
+  navigator.clipboard.writeText(val);
+
+  document.getElementById("copyBtn").innerHTML = "✔ Tersalin";
+}
+function editRelease(){
+  location.href = "../edit-release?rid=" + rid;
+}
+
+function deleteRelease(){
+  if(confirm("Yakin mau hapus release ini?")){
+    db.ref(`releases/${uid}/${rid}`).remove().then(()=>{
+      alert("Berhasil dihapus");
+      location.href = "../releases";
+    });
+  }
+}
+function renderPlatforms(data){
+  const wrap = document.getElementById("platformList");
+  wrap.innerHTML = "";
+  platforms.forEach(p=>{
+    let st = data[p] || "process";
+    let color = "#f59e0b";
+    if(st==="approved") color="#10b981";
+    if(st==="unavailable") color="#ef4444";
+
+    wrap.innerHTML += `
+      <div class="platform-item clickable">
+<img src="${platformIcons[p]}" alt="${p} Logo">
+        <b>${p}</b>
+        <div class="platform-status" style="border-color:${color};color:${color};">${st.toUpperCase()}</div>
+      </div>`;
+  });
+}
+</script>
 </body>
 </html>
