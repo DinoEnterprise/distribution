@@ -459,7 +459,7 @@ function copyEAN(){
   const el = document.getElementById("releaseEAN");
   const old = el.innerText;
 
-  el.innerText = "✔ Copied";
+  el.innerText = "Copied";
   setTimeout(()=>{
     el.innerText = old;
   }, 1500);
@@ -498,8 +498,8 @@ function takedownRelease(){
 
   const subject = encodeURIComponent("Request Takedown Release");
   const body = encodeURIComponent(
-    `Hello Dynotic Admin,\n\nI would like to request a takedown for the following release:\n\nTitle: ${title}\nArtist: ${artist}\nUPC: ${ean}\n\I would appreciate your assistance.\n\nThank you.`
-  );
+  `Hello Dynotic Admin,\n\nI would like to request a takedown for the following release:\n\nTitle: ${title}\nArtist: ${artist}\nUPC: ${ean}\nI would appreciate your assistance.\n\nThank you.`
+);
 
   window.location.href = `mailto:admin@dynotic.web.id?subject=${subject}&body=${body}`;
 }
