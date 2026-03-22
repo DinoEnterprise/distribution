@@ -419,16 +419,18 @@ cover.onerror = () => {
   cover.classList.add("loaded");
 };
 const input = document.getElementById("smartlinkInput");
-const copyBtn = document.getElementById("copyBtn");
-const openBtn = document.getElementById("openBtn"); // 👈 TAMBAH INI
+const openBtn = document.getElementById("openBtn");
 const empty = document.getElementById("emptySmartlink");
 
-if(d.smartlink){
+if(d.smartlink && d.smartlink.trim() !== ""){
   input.style.display = "block";
-  copyBtn.style.display = "block";
-  openBtn.style.display = "block"; // 👈 TAMBAH INI
+  openBtn.style.display = "block";
   empty.style.display = "none";
-  input.value = d.smartlink;
+  input.value = d.smartlink.trim();
+} else {
+  input.style.display = "none";
+  openBtn.style.display = "none";
+  empty.style.display = "block";
 }
 
 if(statusLower === "approved" || statusLower === "live"){
