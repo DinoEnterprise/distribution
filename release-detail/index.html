@@ -102,15 +102,16 @@ header h2{font-size:18px;color:#111;}
   padding:20px;
   border:1px solid #ececec;
   box-shadow:0 8px 18px rgba(0,0,0,.05);
-  animation:fadeSlideIn .5s ease forwards; /* animasi halus */
+  opacity:0;
+  animation:fadeSlideIn 0.5s ease forwards;
 }
 
 @keyframes fadeSlideIn{
-  0%{
+  from{
     opacity:0;
-    transform:translateY(10px);
+    transform:translateY(4px); /* geser sedikit, halus */
   }
-  100%{
+  to{
     opacity:1;
     transform:translateY(0);
   }
@@ -255,7 +256,8 @@ Success
 
 <div class="ean">
   <span class="field-title">UPC:</span>
-<span class="field-value" id="releaseEAN">-</span>
+  <span class="field-value" id="releaseEAN" onclick="copyEAN()" style="cursor:pointer">-</span>
+</div>
 
 <div class="genre">
   <span class="field-title">Genre:</span>
@@ -450,7 +452,18 @@ if(statusLower === "approved" || statusLower === "live"){
 }
   });
 }
+function copyEAN(){
+  const val = document.getElementById("releaseEAN").innerText;
+  navigator.clipboard.writeText(val);
 
+  const el = document.getElementById("releaseEAN");
+  const old = el.innerText;
+
+  el.innerText = "✔ Copied";
+  setTimeout(()=>{
+    el.innerText = old;
+  }, 1500);
+}
 function editRelease(){
   location.href = "../edit-release?rid=" + rid;
 }
@@ -484,9 +497,9 @@ function takedownRelease(){
   const ean = document.getElementById("releaseEAN").innerText;
 
   const subject = encodeURIComponent("Request Takedown Release");
-   const body = encodeURIComponent(
-  `Hello Dynotic Admin,\n\nI would like to request a takedown for the following release:\n\nTitle: ${title}\nArtist: ${artist}\nUPC: ${ean}\nI would appreciate your assistance.\n\nThank you.`
-);
+  const body = encodeURIComponent(
+    `Hello Dynotic Admin,\n\nI would like to request a takedown for the following release:\n\nTitle: ${title}\nArtist: ${artist}\nUPC: ${ean}\n\I would appreciate your assistance.\n\nThank you.`
+  );
 
   window.location.href = `mailto:admin@dynotic.web.id?subject=${subject}&body=${body}`;
 }
