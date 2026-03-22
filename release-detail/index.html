@@ -32,6 +32,53 @@ header h2{font-size:18px;color:#111;}
   overflow: hidden;
   background: #ddd;
 }
+.action-group{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap; /* biar turun kalau kepanjangan */
+}
+
+.btn{
+  padding:8px 14px;
+  border-radius:10px;
+  border:1px solid #e5e7eb;
+  background:#fff;
+  font-size:13px;
+  font-weight:500;
+  color:#111;
+  cursor:pointer;
+  transition:.15s ease;
+}
+
+/* Hover */
+.btn:hover{
+  background:#f9fafb;
+}
+
+/* Klik (interaksi utama 🔥) */
+.btn:active{
+  transform:scale(.94);
+  background:#f3f4f6;
+}
+
+/* Variasi warna */
+.btn.danger{
+  border-color:#ef4444;
+  color:#ef4444;
+}
+
+.btn.danger:hover{
+  background:#fee2e2;
+}
+
+.btn.warning{
+  border-color:#f59e0b;
+  color:#f59e0b;
+}
+
+.btn.warning:hover{
+  background:#fef3c7;
+}
 .field-title{
   font-weight:600;
   color:#111;
@@ -118,21 +165,19 @@ header h2{font-size:18px;color:#111;}
   <img src="../assets/dynotic-distribution.png" alt="DynoPay Logo">
 </header>
 <div class="card">
-  <div style="font-weight:700;margin-bottom:10px;">Actions</div>
+  <div style="font-weight:700;margin-bottom:12px;">Actions</div>
 
-  <button id="editBtn" onclick="editRelease()" style="width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;background:#fff;">
-    Edit Release
-  </button>
+  <div class="action-group">
+    <button id="editBtn" class="btn">Edit Release</button>
 
-  <button id="deleteBtn" onclick="deleteRelease()" 
-    style="display:none;margin-top:8px;width:100%;padding:12px;border-radius:12px;border:1px solid #ef4444;background:#ef4444;color:#fff;">
-    Delete Release
-  </button>
+    <button id="deleteBtn" class="btn danger" style="display:none;">
+      Delete
+    </button>
 
-  <button id="takedownBtn" onclick="takedownRelease()" 
-    style="display:none;margin-top:8px;width:100%;padding:12px;border-radius:12px;border:1px solid #f59e0b;background:#fff;color:#f59e0b;">
-    Request Takedown
-  </button>
+    <button id="takedownBtn" class="btn warning" style="display:none;">
+      Request Takedown
+    </button>
+  </div>
 </div>
 <div class="card">
  <div class="release-header">
