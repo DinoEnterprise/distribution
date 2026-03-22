@@ -120,8 +120,19 @@ header h2{font-size:18px;color:#111;}
 <div class="card">
   <div style="font-weight:700;margin-bottom:10px;">Actions</div>
 
-  <button onclick="editRelease()">Edit Release</button>
-  <button onclick="deleteRelease()" style="margin-top:8px;background:#ef4444;">Delete</button>
+  <button id="editBtn" onclick="editRelease()" style="width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;background:#fff;">
+    Edit Release
+  </button>
+
+  <button id="deleteBtn" onclick="deleteRelease()" 
+    style="display:none;margin-top:8px;width:100%;padding:12px;border-radius:12px;border:1px solid #ef4444;background:#ef4444;color:#fff;">
+    Delete Release
+  </button>
+
+  <button id="takedownBtn" onclick="takedownRelease()" 
+    style="display:none;margin-top:8px;width:100%;padding:12px;border-radius:12px;border:1px solid #f59e0b;background:#fff;color:#f59e0b;">
+    Request Takedown
+  </button>
 </div>
 <div class="card">
  <div class="release-header">
@@ -279,6 +290,28 @@ statusEl.innerHTML = `
     ${text}
   </span>
 `;
+// === ACTION BUTTON LOGIC ===
+const deleteBtn = document.getElementById("deleteBtn");
+const takedownBtn = document.getElementById("takedownBtn");
+const editBtn = document.getElementById("editBtn");
+
+const statusLower = (d.status || "pending").toLowerCase();
+const isLive = releaseDateObj && now >= releaseDateObj;
+
+// DELETE → process & rejected
+if(statusLower === "pending" || statusLower === "rejected"){
+  deleteBtn.style.display = "block";
+}
+
+// TAKEDOWN → approved & live
+if(statusLower === "approved" || isLive){
+  takedownBtn.style.display = "block";
+}
+
+// EDIT → hide saat approved & live
+if(statusLower === "approved" || isLive){
+  editBtn.style.display = "none";
+}
     const cover = document.getElementById("coverArt");
 
 if (d.cover) {
@@ -339,6 +372,18 @@ function deleteRelease(){
 function openSmartlink(){
   const link = document.getElementById("smartlinkInput").value;
   if(link) window.open(link, "_blank");
+}
+function takedownRelease(){
+  const title = document.getElementById("releaseTitle").innerText;
+  const artist = document.getElementById("releaseArtist").innerText;
+  const ean = document.getElementById("releaseEAN").innerText;
+
+  const subject = encodeURIComponent("Request Takedown Release");
+  const body = encodeURIComponent(
+    `Halo Admin Dynotic,\n\nSaya ingin melakukan takedown release berikut:\n\nTitle: ${title}\nArtist: ${artist}\nUPC: ${ean}\n\nMohon bantuannya.\n\nTerima kasih.`
+  );
+
+  window.location.href = `mailto:admin@dynotic.web.id?subject=${subject}&body=${body}`;
 }
 function renderPlatforms(data){
   const wrap = document.getElementById("platformList");
