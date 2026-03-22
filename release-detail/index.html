@@ -102,9 +102,19 @@ header h2{font-size:18px;color:#111;}
   padding:20px;
   border:1px solid #ececec;
   box-shadow:0 8px 18px rgba(0,0,0,.05);
-  animation:bounceIn .6s ease;
+  animation:fadeSlideIn .5s ease forwards; /* animasi halus */
 }
-@keyframes bounceIn{0%{transform:translateY(-20px);opacity:0}50%{transform:translateY(10px);opacity:1}70%{transform:translateY(-5px)}100%{transform:translateY(0);opacity:1}}
+
+@keyframes fadeSlideIn{
+  0%{
+    opacity:0;
+    transform:translateY(10px);
+  }
+  100%{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
 .status-badge{
   display:inline-block;
   padding:6px 12px;
@@ -245,8 +255,7 @@ Success
 
 <div class="ean">
   <span class="field-title">UPC:</span>
-  <span class="field-value" id="releaseEAN" onclick="copyEAN()" style="cursor:pointer">-</span>
-</div>
+<span class="field-value" id="releaseEAN">-</span>
 
 <div class="genre">
   <span class="field-title">Genre:</span>
@@ -441,18 +450,7 @@ if(statusLower === "approved" || statusLower === "live"){
 }
   });
 }
-function copyEAN(){
-  const val = document.getElementById("releaseEAN").innerText;
-  navigator.clipboard.writeText(val);
 
-  const el = document.getElementById("releaseEAN");
-  const old = el.innerText;
-
-  el.innerText = "✔ Copied";
-  setTimeout(()=>{
-    el.innerText = old;
-  }, 1500);
-}
 function editRelease(){
   location.href = "../edit-release?rid=" + rid;
 }
@@ -486,9 +484,9 @@ function takedownRelease(){
   const ean = document.getElementById("releaseEAN").innerText;
 
   const subject = encodeURIComponent("Request Takedown Release");
-  const body = encodeURIComponent(
-    `Hello Dynotic Admin,\n\nI would like to request a takedown for the following release:\n\nTitle: ${title}\nArtist: ${artist}\nUPC: ${ean}\n\I would appreciate your assistance.\n\nThank you.`
-  );
+   const body = encodeURIComponent(
+  `Hello Dynotic Admin,\n\nI would like to request a takedown for the following release:\n\nTitle: ${title}\nArtist: ${artist}\nUPC: ${ean}\nI would appreciate your assistance.\n\nThank you.`
+);
 
   window.location.href = `mailto:admin@dynotic.web.id?subject=${subject}&body=${body}`;
 }
