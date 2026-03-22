@@ -58,7 +58,14 @@ header h2{font-size:18px;color:#111;}
   animation:bounceIn .6s ease;
 }
 @keyframes bounceIn{0%{transform:translateY(-20px);opacity:0}50%{transform:translateY(10px);opacity:1}70%{transform:translateY(-5px)}100%{transform:translateY(0);opacity:1}}
-
+.status-badge{
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  margin-top:6px;
+}
 .release-header{display:flex;gap:15px;align-items:center;margin-bottom:15px;}
 .release-header img{
   filter: blur(10px);
@@ -76,11 +83,16 @@ header h2{font-size:18px;color:#111;}
 
 .platform-list{margin-top:15px;}
 .platform-item{
+  transition:.2s;
   display:flex;
   align-items:center;
   justify-content:space-between;
   padding:10px 12px;
   border-bottom:1px solid #eee;
+}
+.platform-item:hover{
+  background:#f5f5f5;
+  border-radius:10px;
 }
 .platform-item img{width:28px;height:28px;margin-right:8px;border-radius:6px;}
 .platform-item b{flex:1;font-size:14px;}
@@ -105,7 +117,12 @@ header h2{font-size:18px;color:#111;}
 <header>
   <img src="../assets/dynotic-distribution.png" alt="DynoPay Logo">
 </header>
+<div class="card">
+  <div style="font-weight:700;margin-bottom:10px;">Actions</div>
 
+  <button onclick="editRelease()">Edit Release</button>
+  <button onclick="deleteRelease()" style="margin-top:8px;background:#ef4444;">Delete</button>
+</div>
 <div class="card">
  <div class="release-header">
   <div class="cover-box">
@@ -181,7 +198,6 @@ firebase.initializeApp({
  authDomain:"dynopay-2513c.firebaseapp.com",
  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
-
 const db = firebase.database();
 const params = new URLSearchParams(location.search);
 const uid = params.get("uid");
@@ -224,8 +240,43 @@ function loadRelease(uid, rid){
   document.getElementById("releaseLabel").innerText = d.label || "-";
 document.getElementById("releaseEAN").innerText = d.ean || "-";
 document.getElementById("releaseGenre").innerText = d.genre || "-";
-document.getElementById("releaseDate").innerText = d.date || "-";
-document.getElementById("releaseStatus").innerText = (d.status||"pending").toUpperCase();
+const date = d.date ? new Date(d.date) : null;
+
+document.getElementById("releaseDate").innerText =
+  date ? date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  }) : "-";
+const statusEl = document.getElementById("releaseStatus");
+
+let text = "PROCESS";
+let color = "#3b82f6";
+
+const now = new Date();
+const releaseDateObj = d.date ? new Date(d.date) : null;
+
+if(d.status === "approved"){
+  if(releaseDateObj && now >= releaseDateObj){
+    text = "LIVE";
+    color = "#22c55e";
+  } else {
+    text = "APPROVED";
+    color = "#10b981";
+  }
+}
+
+if(d.status === "rejected"){
+  text = "REJECTED";
+  color = "#ef4444";
+}
+
+statusEl.innerHTML = `
+  <span class="status-badge" 
+    style="border:1px solid ${color};color:${color}">
+    ${text}
+  </span>
+`;
     const cover = document.getElementById("coverArt");
 
 if (d.cover) {
@@ -262,6 +313,18 @@ function copySmartlink(){
   navigator.clipboard.writeText(val);
 
   document.getElementById("copyBtn").innerHTML = "✔ Tersalin";
+}
+function editRelease(){
+  location.href = "../edit-release?rid=" + rid;
+}
+
+function deleteRelease(){
+  if(confirm("Yakin mau hapus release ini?")){
+    db.ref(`releases/${uid}/${rid}`).remove().then(()=>{
+      alert("Berhasil dihapus");
+      location.href = "../releases";
+    });
+  }
 }
 function renderPlatforms(data){
   const wrap = document.getElementById("platformList");
