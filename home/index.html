@@ -107,14 +107,15 @@
 
     .message-popup.show { display: flex; }
 
-    .message-card {
-      width: 85%;
-      max-width: 340px;
-      background: #fff;
-      border-radius: 16px;
-      padding: 18px;
-      animation: bounceIn .4s ease;
-    }
+.message-card {
+  width: 85%;
+  max-width: 340px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px;
+  /* animation: bounceIn .4s ease; */
+}
+
 
     .message-title {
       font-weight: 700;
@@ -154,17 +155,17 @@
     }
 
     /* Cards */
-    .card {
-      width: 90%;
-      margin: 35px auto;
-      background: #fff;
-      border-radius: 20px;
-      padding: 25px;
-      border: 1px solid #ececec;
-      box-shadow: 0 8px 18px rgba(0,0,0,.05);
-      transition: .3s;
-      animation: bounceIn .6s ease;
-    }
+.card {
+  width: 90%;
+  margin: 35px auto;
+  background: #fff;
+  border-radius: 20px;
+  padding: 25px;
+  border: 1px solid #ececec;
+  box-shadow: 0 8px 18px rgba(0,0,0,.05);
+  transition: .3s;
+  /* animation: bounceIn .6s ease; */
+}
 
     .card:hover {
       transform: translateY(-3px);
@@ -492,18 +493,48 @@ if (r.status === "approved") {
     }
 
     function openMessages(){ if(messagesQueue.length===0) return; currentMsgIndex=0; showCurrentMessage(); }
-    function showCurrentMessage(){
-      if(currentMsgIndex>=messagesQueue.length){ messagePopup.classList.remove("show"); return; }
-      const m=messagesQueue[currentMsgIndex];
-      msgTitle.textContent=m.subject||"-";
-      msgText.textContent=m.body||"-";
-      messagePopup.classList.add("show");
-    }
-    function closeMessage(){
-      const m=messagesQueue[currentMsgIndex];
-      if(m) db.ref("messages_inbox/"+firebase.auth().currentUser.uid+"/"+m.key+"/read").set(true);
-      currentMsgIndex++; showCurrentMessage();
-    }
+    function showCurrentMessage() {
+  if(currentMsgIndex >= messagesQueue.length) {
+    messagePopup.classList.remove("show");
+    return;
+  }
+  const m = messagesQueue[currentMsgIndex];
+  msgTitle.textContent = m.subject || "-";
+  msgText.textContent = m.body || "-";
+  messagePopup.style.display = 'flex';
+  fadeInElement(document.querySelector('.message-card'), 250);
+}
+
+// Fungsi global untuk menutup pesan
+function closeMessage() {
+  const m = messagesQueue[currentMsgIndex];
+  if(m) db.ref("messages_inbox/" + firebase.auth().currentUser.uid + "/" + m.key + "/read").set(true);
+  currentMsgIndex++;
+  showCurrentMessage();
+}
+    function fadeInElement(el, duration = 350) {
+  el.style.opacity = 0;
+  el.style.transform = 'translateY(12px)';
+  el.style.display = 'block';
+  const start = performance.now();
+
+  function animate(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    el.style.opacity = progress;
+    el.style.transform = `translateY(${12 * (1 - progress)}px)`;
+    if(progress < 1) requestAnimationFrame(animate);
+  }
+
+  requestAnimationFrame(animate);
+}
+
+// Animasi untuk semua card saat load
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.card').forEach((c, idx) => {
+    setTimeout(() => fadeInElement(c), idx * 100);
+  });
+});
     function viewMessage(){ const m=messagesQueue[currentMsgIndex]; db.ref("messages_inbox/"+firebase.auth().currentUser.uid+"/"+m.key+"/read").set(true); closeMessage(); }
   </script>
 
