@@ -336,7 +336,8 @@ function loadRelease(uid, rid){
       alert("Rilisan tidak ditemukan"); 
       return; 
     }
-
+    
+const statusLower = (d.status || "pending").toLowerCase();
     document.getElementById("releaseTitle").innerText = d.title || "-";
     document.getElementById("releaseArtist").innerText = d.artist || "-";
   document.getElementById("releaseLabel").innerText = d.label || "-";
@@ -388,7 +389,6 @@ editBtn.onclick = editRelease;
 deleteBtn.onclick = deleteRelease;
 takedownBtn.onclick = takedownRelease;
 
-const statusLower = (d.status || "pending").toLowerCase();
 const isLive = releaseDateObj && now >= releaseDateObj;
 
 // DELETE → process & rejected
@@ -431,11 +431,12 @@ if(d.smartlink){
   input.value = d.smartlink;
 }
 
-    if((d.status||"pending").toLowerCase() !== "pending"){
-      renderPlatforms(d.platformStatus||{});
-    } else {
-      document.getElementById("platformList").innerHTML = "<div style='color:#888;font-size:13px;text-align:center;'Not available</div>";
-    }
+if(statusLower === "approved" || statusLower === "live"){
+  renderPlatforms(d.platformStatus||{});
+} else {
+  // pending atau rejected
+  document.getElementById("platformList").innerHTML = "<div style='color:#888;font-size:13px;text-align:center;'>Platform not available</div>";
+}
   });
 }
 function copyEAN(){
@@ -502,14 +503,16 @@ function renderPlatforms(data){
   const wrap = document.getElementById("platformList");
   wrap.innerHTML = "";
   platforms.forEach(p=>{
-    let st = data[p] || "process";
+    let st = data[p]; // jangan default ke 'process'
+    if(!st) return; // jika platform tidak ada, skip
+
     let color = "#f59e0b";
     if(st==="approved") color="#10b981";
     if(st==="unavailable") color="#ef4444";
 
     wrap.innerHTML += `
       <div class="platform-item clickable">
-<img src="${platformIcons[p]}" alt="${p} Logo">
+        <img src="${platformIcons[p]}" alt="${p} Logo">
         <b>${p}</b>
         <div class="platform-status" style="border-color:${color};color:${color};">${st.toUpperCase()}</div>
       </div>`;
