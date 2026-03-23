@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mahar Pustaka Nusantara- Dynotic</title>
+<title>Mahar Pustaka Nusantara - Dynotic</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
 *{
   margin:0;
@@ -12,82 +14,64 @@
   box-sizing:border-box;
   font-family:"Outfit",sans-serif;
 }
-html, body{
+
+body{
   min-height:100vh;
-  width:100%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  color:#f5f3ff;
-  background: 
-    radial-gradient(circle at 20% 30%, rgba(130,60,255,0.08), transparent 65%),
-    radial-gradient(circle at 80% 70%, rgba(150,70,255,0.06), transparent 70%),
-    #000;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
-  overflow-x:hidden;
-  padding-top:70px;  
+  background:#f5f7fb;
+  color:#111;
+  padding-top:70px;
 }
 
-/* ANIMASI MASUK */
+/* ANIMATION */
 @keyframes fadeSlideUp {
-  0% {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  0%{opacity:0; transform:translateY(30px);}
+  100%{opacity:1; transform:translateY(0);}
 }
 
-/* HEADER FIXED */
+/* HEADER */
 header{
   position:fixed;
   top:0;
   left:0;
   width:100%;
-  background:#0d0d0d;
-  border-bottom:1px solid rgba(255,255,255,0.1);
+  background:#fff;
+  border-bottom:1px solid #e5e7eb;
   padding:12px 5%;
-  z-index:100;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:clamp(1.8rem,4vw,2.5rem);
+  text-align:center;
+  font-size:clamp(1.6rem,4vw,2.2rem);
   font-weight:700;
+  z-index:100;
   opacity:0;
 }
 
-/* SEARCH BOX */
+/* SEARCH */
 .filter-wrapper{
   width:95%;
   max-width:1200px;
-  display:flex;
-  justify-content:flex-start;
-  margin:10px auto;
-  margin-top:10px;
+  margin:15px auto;
   opacity:0;
 }
+
 .filter-box input{
-  padding:10px 14px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,0.25);
-  background: rgba(255,255,255,0.05);
-  color:#fff;
-  font-size:1rem;
-  outline:none;
+  width:100%;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  background:#fff;
+  font-size:14px;
 }
 
-/* TABLE WRAPPER */
+.filter-box input:focus{
+  outline:none;
+  border-color:#111;
+  box-shadow:0 0 0 3px rgba(0,0,0,0.05);
+}
+
+/* TABLE */
 .table-wrapper{
   width:95%;
   max-width:1200px;
-  margin:20px auto 0;
-  display:flex;
-  flex-direction:column;
+  margin:auto;
   opacity:0;
 }
 
@@ -98,28 +82,31 @@ header{
 table{
   width:100%;
   border-collapse:collapse;
-  min-width:600px;
+  background:#fff;
+  border-radius:14px;
+  overflow:hidden;
 }
+
 th,td{
-  padding:14px 10px;
-  border:1px solid rgba(255,255,255,0.8);
+  padding:12px;
+  border-bottom:1px solid #eee;
   text-align:center;
-  background: rgba(0,0,0,0.2);
-  color:#fff;
 }
+
 th{
-  background: rgba(0,0,0,0.4);
-  font-weight:700;
+  background:#f9fafb;
+  font-weight:600;
 }
+
 tr:hover td{
-  background: rgba(255,255,255,0.05);
+  background:#f3f4f6;
 }
 
 /* NO RESULT */
 .no-result{
   text-align:center;
-  margin-top:15px;
-  color:#f0a;
+  margin-top:12px;
+  color:#999;
   display:none;
 }
 
@@ -127,42 +114,38 @@ tr:hover td{
 .pagination{
   display:flex;
   justify-content:center;
-  gap:12px;
-  margin-top:10px;
-  flex-wrap:wrap;
+  gap:10px;
+  margin:15px 0;
   opacity:0;
 }
+
 .pagination button{
+  padding:8px 16px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  background:#fff;
   cursor:pointer;
-  padding:8px 18px;
-  border-radius:12px;
-  background: rgba(255,255,255,0.1);
-  color:#fff;
-  font-weight:600;
-  border:1px solid rgba(255,255,255,0.25);
-  transition: all 0.25s ease;
+  transition:0.25s;
 }
+
 .pagination button:hover{
-  background: rgba(255,255,255,0.3);
-  transform: scale(1.05);
+  background:#111;
+  color:#fff;
 }
+
 .pagination button:disabled{
   opacity:0.4;
   cursor:not-allowed;
-  background: rgba(255,255,255,0.05);
+  background:#f3f4f6;
 }
 
 /* MOBILE */
-@media (max-width:992px){
-  th,td{ font-size:0.9rem; padding:10px 6px;}
-  .filter-box input{ font-size:0.9rem; padding:8px 10px;}
-  .pagination button{ padding:6px 12px; font-size:0.85rem;}
-}
-@media (max-width:576px){
-  th,td{ font-size:0.8rem; padding:8px 4px;}
+@media(max-width:600px){
+  th,td{font-size:12px; padding:8px;}
 }
 </style>
 </head>
+
 <body>
 
 <header id="header">Mahar Pustaka Nusantara</header>
@@ -189,7 +172,7 @@ tr:hover td{
     </table>
   </div>
 
-  <p class="no-result" id="noResult">Data tidak ditemukan.</p>
+  <p class="no-result" id="noResult">Data tidak ditemukan</p>
 
   <div class="pagination" id="pagination">
     <button id="prevBtn">Previous</button>
@@ -215,21 +198,21 @@ const pagination = document.getElementById('pagination');
 
 async function loadData(){
   try{
-    const response = await fetch('mpn.json');   
-    const rawData = await response.json();
+    const res = await fetch('mpn.json');
+    const data = await res.json();
 
-    transactions = rawData.map((item) => ({
+    transactions = data.map(item => ({
       no: item["No"] || "-",
       title: item["Title"] || "-",
-      singer: item["Singer "] || item["Singer "] || "-", // aman
+      singer: item["Singer"] || "-",
       composer: item["Composer"] || "-",
       youtube: item["Youtube link (if Any)"] || "-"
     }));
 
     filteredTransactions = [...transactions];
     renderTransactions();
-  }catch(err){
-    console.error("Gagal load mpn.json", err);
+  }catch(e){
+    console.error("Gagal load JSON", e);
   }
 }
 
@@ -237,80 +220,60 @@ function renderTransactions(){
   transactionList.innerHTML = '';
 
   const start = (currentPage-1)*itemsPerPage;
-  const end = start + itemsPerPage;
-  const pageItems = filteredTransactions.slice(start,end);
+  const pageItems = filteredTransactions.slice(start, start+itemsPerPage);
 
-  noResult.style.display = pageItems.length === 0 ? 'block' : 'none';
+  noResult.style.display = pageItems.length ? 'none':'block';
 
   pageItems.forEach((t,i)=>{
-    const tr=document.createElement('tr');
-    const youtubeDisplay = t.youtube === "-" ? "-" : `<a href="${t.youtube}" target="_blank" style="color:#8a2be2;">Link</a>`;
+    const tr = document.createElement('tr');
+
+    const yt = t.youtube === "-"
+      ? "-"
+      : `<a href="${t.youtube}" target="_blank" style="color:#2563eb;">Link</a>`;
+
     tr.innerHTML = `
       <td>${t.no}</td>
       <td>${t.title}</td>
       <td>${t.singer}</td>
       <td>${t.composer}</td>
-      <td>${youtubeDisplay}</td>
+      <td>${yt}</td>
     `;
-    tr.style.opacity = '0';
-    tr.style.transform = 'translateY(20px)';
-    tr.style.animation = `fadeSlideUp 0.5s ease ${(i*0.03)}s forwards`;
+
+    tr.style.animation = `fadeSlideUp 0.4s ease ${(i*0.02)}s forwards`;
     transactionList.appendChild(tr);
   });
 
   prevBtn.disabled = currentPage===1;
-  nextBtn.disabled = currentPage>=Math.ceil(filteredTransactions.length/itemsPerPage);
-
-  [prevBtn, nextBtn].forEach(btn => {
-    btn.style.opacity = '0';
-    btn.style.transform = 'translateY(10px)';
-    btn.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-    setTimeout(() => {
-      btn.style.opacity = '1';
-      btn.style.transform = 'translateY(0)';
-    }, 50);
-  });
+  nextBtn.disabled = currentPage >= Math.ceil(filteredTransactions.length/itemsPerPage);
 }
 
 searchInput.addEventListener('input',()=>{
-  const query = searchInput.value.toLowerCase();
+  const q = searchInput.value.toLowerCase();
 
-  filteredTransactions = transactions.filter(t=>{
-    return String(t.title).toLowerCase().includes(query) ||
-           String(t.singer).toLowerCase().includes(query) ||
-           String(t.composer).toLowerCase().includes(query);
-  });
+  filteredTransactions = transactions.filter(t =>
+    t.title.toLowerCase().includes(q) ||
+    t.singer.toLowerCase().includes(q) ||
+    t.composer.toLowerCase().includes(q)
+  );
 
-  currentPage=1;
+  currentPage = 1;
   renderTransactions();
 });
 
-prevBtn.addEventListener('click',()=>{ 
-  if(currentPage>1){
-    currentPage--;
-    renderTransactions();
-  }
-});
+prevBtn.onclick = ()=>{ currentPage--; renderTransactions(); };
+nextBtn.onclick = ()=>{ currentPage++; renderTransactions(); };
 
-nextBtn.addEventListener('click',()=>{ 
-  if(currentPage<Math.ceil(filteredTransactions.length/itemsPerPage)){
-    currentPage++;
-    renderTransactions();
-  }
-});
-
-function triggerPageAnimation(){
-  const fadeEls = [header, filterWrapper, tableWrapper, pagination];
-  fadeEls.forEach((el, idx)=>{
-    el.style.animation = 'none';
-    void el.offsetHeight;
-    el.style.animation = `fadeSlideUp 0.8s ease ${idx*0.2}s forwards`;
+function animatePage(){
+  [header, filterWrapper, tableWrapper, pagination].forEach((el,i)=>{
+    el.style.animation = `fadeSlideUp 0.6s ease ${i*0.1}s forwards`;
   });
 }
 
-window.addEventListener('pageshow', triggerPageAnimation);
-
-loadData();
+window.addEventListener('load', ()=>{
+  animatePage();
+  loadData();
+});
 </script>
+
 </body>
 </html>
