@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nagaswaa Official - Dynotic</title>
+<title>Nagaswara Official - Dynotic</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
 *{
   margin:0;
@@ -12,82 +14,79 @@
   box-sizing:border-box;
   font-family:"Outfit",sans-serif;
 }
+
+/* BODY */
 html, body{
   min-height:100vh;
   width:100%;
   display:flex;
   flex-direction:column;
   align-items:center;
-  color:#f5f3ff;
-  background: 
-    radial-gradient(circle at 20% 30%, rgba(130,60,255,0.08), transparent 65%),
-    radial-gradient(circle at 80% 70%, rgba(150,70,255,0.06), transparent 70%),
-    #000;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
+  color:#111;
+  background:#f5f7fb;
   overflow-x:hidden;
-  padding-top:70px;  
+  padding-top:70px;
 }
 
-/* ANIMASI MASUK */
-@keyframes fadeSlideUp {
-  0% {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* ANIMATION */
+@keyframes fadeSlideUp{
+  0%{opacity:0; transform:translateY(30px);}
+  100%{opacity:1; transform:translateY(0);}
 }
 
-/* HEADER FIXED */
+/* HEADER */
 header{
   position:fixed;
   top:0;
   left:0;
   width:100%;
-  background:#0d0d0d;
-  border-bottom:1px solid rgba(255,255,255,0.1);
+  background:#fff;
+  border-bottom:1px solid #e5e7eb;
   padding:12px 5%;
   z-index:100;
   display:flex;
-  align-items:center;
   justify-content:center;
   font-size:clamp(1.8rem,4vw,2.5rem);
   font-weight:700;
+  backdrop-filter:blur(10px);
   opacity:0;
 }
 
-/* SEARCH BOX */
+/* SEARCH */
 .filter-wrapper{
   width:95%;
   max-width:1200px;
-  display:flex;
-  justify-content:flex-start;
   margin:10px auto;
-  margin-top:10px;
   opacity:0;
 }
+
 .filter-box input{
-  padding:10px 14px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,0.25);
-  background: rgba(255,255,255,0.05);
-  color:#fff;
+  width:100%;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  background:#fff;
+  color:#111;
   font-size:1rem;
   outline:none;
 }
 
-/* TABLE WRAPPER */
+.filter-box input:focus{
+  border-color:#111;
+  box-shadow:0 0 0 3px rgba(0,0,0,0.05);
+}
+
+/* TABLE CARD */
 .table-wrapper{
   width:95%;
   max-width:1200px;
-  margin:20px auto 0;
+  margin-top:15px;
   display:flex;
   flex-direction:column;
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.06);
+  padding:10px;
   opacity:0;
 }
 
@@ -100,26 +99,27 @@ table{
   border-collapse:collapse;
   min-width:600px;
 }
-th,td{
+
+th, td{
   padding:14px 10px;
-  border:1px solid rgba(255,255,255,0.8);
+  border:1px solid #e5e7eb;
   text-align:center;
-  background: rgba(0,0,0,0.2);
-  color:#fff;
 }
+
 th{
-  background: rgba(0,0,0,0.4);
+  background:#f9fafb;
   font-weight:700;
 }
+
 tr:hover td{
-  background: rgba(255,255,255,0.05);
+  background:#f3f4f6;
 }
 
 /* NO RESULT */
 .no-result{
   text-align:center;
-  margin-top:15px;
-  color:#f0a;
+  margin:15px;
+  color:#e11d48;
   display:none;
 }
 
@@ -128,44 +128,48 @@ tr:hover td{
   display:flex;
   justify-content:center;
   gap:12px;
-  margin-top:10px;
+  margin:10px 0;
   flex-wrap:wrap;
   opacity:0;
 }
+
 .pagination button{
   cursor:pointer;
   padding:8px 18px;
   border-radius:12px;
-  background: rgba(255,255,255,0.1);
-  color:#fff;
+  background:#fff;
+  color:#111;
   font-weight:600;
-  border:1px solid rgba(255,255,255,0.25);
-  transition: all 0.25s ease;
+  border:1px solid #ddd;
+  transition:0.25s;
 }
+
 .pagination button:hover{
-  background: rgba(255,255,255,0.3);
-  transform: scale(1.05);
+  background:#111;
+  color:#fff;
+  transform:scale(1.05);
 }
+
 .pagination button:disabled{
   opacity:0.4;
   cursor:not-allowed;
-  background: rgba(255,255,255,0.05);
+  background:#f3f4f6;
 }
 
 /* MOBILE */
 @media (max-width:992px){
-  th,td{ font-size:0.9rem; padding:10px 6px;}
-  .filter-box input{ font-size:0.9rem; padding:8px 10px;}
-  .pagination button{ padding:6px 12px; font-size:0.85rem;}
+  th,td{font-size:0.9rem; padding:10px 6px;}
 }
+
 @media (max-width:576px){
-  th,td{ font-size:0.8rem; padding:8px 4px;}
+  th,td{font-size:0.8rem; padding:8px 4px;}
 }
 </style>
 </head>
+
 <body>
 
-<header id="header">Nagaswara Oficial</header>
+<header id="header">Nagaswara Official</header>
 
 <div class="filter-wrapper" id="filterWrapper">
   <div class="filter-box">
@@ -174,6 +178,7 @@ tr:hover td{
 </div>
 
 <div class="table-wrapper" id="tableWrapper">
+
   <div class="table-scroll">
     <table>
       <thead>
@@ -189,16 +194,17 @@ tr:hover td{
     </table>
   </div>
 
-  <p class="no-result" id="noResult">Data tidak ditemukan.</p>
+  <p class="no-result" id="noResult">tidak ditemukan.</p>
 
   <div class="pagination" id="pagination">
     <button id="prevBtn">Previous</button>
     <button id="nextBtn">Next</button>
   </div>
+
 </div>
 
 <script>
-const itemsPerPage = 50; // tampil 50 lagu per halaman
+const itemsPerPage = 50;
 let currentPage = 1;
 let transactions = [];
 let filteredTransactions = [];
@@ -213,24 +219,31 @@ const filterWrapper = document.getElementById('filterWrapper');
 const tableWrapper = document.getElementById('tableWrapper');
 const pagination = document.getElementById('pagination');
 
+/* LOAD DATA */
 async function loadData(){
   try{
-    const response = await fetch('nagaswara.json');   
+    const response = await fetch('nagaswara.json');
     const rawData = await response.json();
-    transactions = rawData.map((item) => ({
+
+    transactions = rawData.map(item => ({
       no: item["No"] || "-",
       title: item["Title"] || "-",
       singer: item["Singer"] || "-",
       composer: item["Composer"] || "-",
       youtube: item["Youtube link (if Any)"] || "-"
     }));
+
     filteredTransactions = [...transactions];
     renderTransactions();
-  }catch(err){ console.error("Gagal load nagaswara.json", err);}
+  }catch(err){
+    console.error("Gagal load JSON:", err);
+  }
 }
 
+/* RENDER */
 function renderTransactions(){
   transactionList.innerHTML = '';
+
   const start = (currentPage-1)*itemsPerPage;
   const end = start + itemsPerPage;
   const pageItems = filteredTransactions.slice(start,end);
@@ -238,64 +251,74 @@ function renderTransactions(){
   noResult.style.display = pageItems.length===0 ? 'block' : 'none';
 
   pageItems.forEach((t,i)=>{
-    const tr=document.createElement('tr');
-    const youtubeDisplay = t.youtube === "-" ? "-" : `<a href="${t.youtube}" target="_blank" style="color:#8a2be2;">Link</a>`;
+    const tr = document.createElement('tr');
+
+    const yt = t.youtube === "-" 
+      ? "-" 
+      : `<a href="${t.youtube}" target="_blank" style="color:#2563eb;">Link</a>`;
+
     tr.innerHTML = `
       <td>${t.no}</td>
       <td>${t.title}</td>
       <td>${t.singer}</td>
       <td>${t.composer}</td>
-      <td>${youtubeDisplay}</td>
+      <td>${yt}</td>
     `;
-    // Animasi fade-slide-up tiap baris
+
     tr.style.opacity = '0';
     tr.style.transform = 'translateY(20px)';
     tr.style.animation = `fadeSlideUp 0.5s ease ${(i*0.03)}s forwards`;
+
     transactionList.appendChild(tr);
   });
 
-  // Pagination
   prevBtn.disabled = currentPage===1;
   nextBtn.disabled = currentPage>=Math.ceil(filteredTransactions.length/itemsPerPage);
-
-  // Animasi tombol pagination fade-in
-  [prevBtn, nextBtn].forEach(btn => {
-    btn.style.opacity = '0';
-    btn.style.transform = 'translateY(10px)';
-    btn.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-    setTimeout(() => {
-      btn.style.opacity = '1';
-      btn.style.transform = 'translateY(0)';
-    }, 50);
-  });
 }
 
+/* SEARCH */
 searchInput.addEventListener('input',()=>{
-  const query = searchInput.value.toLowerCase();
-  filteredTransactions = transactions.filter(t=>{
-    return t.title.toLowerCase().includes(query) ||
-           t.singer.toLowerCase().includes(query) ||
-           t.composer.toLowerCase().includes(query);
-  });
-  currentPage=1;
+  const q = searchInput.value.toLowerCase();
+
+  filteredTransactions = transactions.filter(t =>
+    t.title.toLowerCase().includes(q) ||
+    t.singer.toLowerCase().includes(q) ||
+    t.composer.toLowerCase().includes(q)
+  );
+
+  currentPage = 1;
   renderTransactions();
 });
 
-prevBtn.addEventListener('click',()=>{ if(currentPage>1){currentPage--;renderTransactions();} });
-nextBtn.addEventListener('click',()=>{ if(currentPage<Math.ceil(filteredTransactions.length/itemsPerPage)){currentPage++;renderTransactions();} });
+/* PAGINATION */
+prevBtn.onclick = ()=>{
+  if(currentPage>1){
+    currentPage--;
+    renderTransactions();
+  }
+};
 
+nextBtn.onclick = ()=>{
+  if(currentPage < Math.ceil(filteredTransactions.length/itemsPerPage)){
+    currentPage++;
+    renderTransactions();
+  }
+};
+
+/* PAGE ANIMATION */
 function triggerPageAnimation(){
-  const fadeEls = [header, filterWrapper, tableWrapper, pagination];
-  fadeEls.forEach((el, idx)=>{
+  [header, filterWrapper, tableWrapper, pagination].forEach((el,i)=>{
     el.style.animation = 'none';
-    void el.offsetHeight;   
-    el.style.animation = `fadeSlideUp 0.8s ease ${idx*0.2}s forwards`;
+    void el.offsetHeight;
+    el.style.animation = `fadeSlideUp 0.8s ease ${i*0.2}s forwards`;
   });
 }
 
 window.addEventListener('pageshow', triggerPageAnimation);
 
+/* INIT */
 loadData();
 </script>
+
 </body>
 </html>
