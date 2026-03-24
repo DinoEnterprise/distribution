@@ -13,6 +13,7 @@
       box-sizing: border-box;
       font-family: "Outfit", sans-serif;
     }
+
     body {
       background: #f1f2f7;
       min-height: 100vh;
@@ -307,23 +308,7 @@
   <header>
     <img src="../assets/dynotic-distribution.png" alt="Dynotic Distribution">
   </header>
-<div id="launchCard" style="
-  position:fixed;
-  background:#fff;
-  padding:14px;
-  border-radius:12px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.15);
-  width:220px;
-  font-size:13px;
-  opacity:0;
-  pointer-events:none;
-  transform: translateY(10px);
-  transition:0.2s ease;
-  z-index:999;
-">
-<div id="launchText" style="font-size:13px;line-height:1.5">
-</div>
-</div>
+
   <!-- Create New Release Card -->
   <div class="card clickable" onclick="goCreateRelease()">
     <div class="release-row">
@@ -510,22 +495,25 @@ list.innerHTML += `
           <div class="release-title">${r.title || "-"}</div>
         <div style="display:flex;align-items:center;gap:6px;">
 
-<img 
-  src="${
-    displayStatus === 'PROCESS' ? '../assets/bell-process.png' :
-    displayStatus === 'APPROVED' ? '../assets/bell-approve.png' :
-    displayStatus === 'REJECTED' ? '../assets/bell-rejected.png' :
-    '../assets/bell-live.png'
-  }"
-  onclick="event.stopPropagation(); handleBellClick(this, '${displayStatus}', '${r.adminMessage || ""}')"
-  style="
-    width:24px;
-    height:24px;
-    cursor:pointer;
-    transition:0.2s;
-  "
-/>
-</div>
+  <!-- 🔔 ICON LONCENG -->
+  <div 
+    onclick="event.stopPropagation(); showLaunchInfo('${displayStatus}', '${r.reason || ""}')"
+    style="
+      width:26px;
+      height:26px;
+      border-radius:8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      background:${c}15;
+      border:1px solid ${c};
+      color:${c};
+      font-size:14px;
+    "
+  >
+    🔔
+  </div>
 
   <!-- STATUS -->
   <div class="release-status ${statusClass}" 
@@ -575,81 +563,20 @@ window.prevPage = () => {
         render(currentPage);
       });
     }
-    function showLaunchInfo(status, message){
-  const card = document.getElementById("launchCard");
-  const text = document.getElementById("launchText");
-
-  text.style.color = status === "REJECTED" ? "#ef4444" :
-                     status === "APPROVED" ? "#10b981" :
-                     status === "LIVE" ? "#22c55e" :
-                     "#444";
-
-  let finalText = "";
-
-  if(message){
-    finalText = message;
-  } else {
-    if(status === "LIVE"){
-      finalText = "Release sudah LIVE di platform 🎉";
-    } 
-    else if(status === "APPROVED"){
-      finalText = "Release sudah disetujui, menunggu tanggal rilis";
-    } 
-    else if(status === "REJECTED"){
-      finalText = "Release ditolak. Silakan cek detail.";
-    } 
-    else {
-      finalText = "Release sedang dalam proses review";
-    }
+    function showLaunchInfo(status, reason){
+  if(status === "LIVE"){
+    alert("Release sudah LIVE di platform 🎉");
+  } 
+  else if(status === "APPROVED"){
+    alert("Release sudah disetujui, menunggu tanggal rilis");
+  } 
+  else if(status === "REJECTED"){
+    alert(reason || "Release ditolak. Silakan cek detail.");
+  } 
+  else {
+    alert("Release sedang dalam proses review");
   }
-
-  text.innerHTML = finalText;
-
 }
-function handleBellClick(el, status, message){
-  const rect = el.getBoundingClientRect();
-  const card = document.getElementById("launchCard");
-
-  // efek klik
-  el.style.transform = "scale(0.85)";
-  setTimeout(() => {
-    el.style.transform = "scale(1)";
-  }, 120);
-
-  showLaunchInfo(status, message);
-
-  // posisi (SMART)
-  const cardWidth = 220;
-
-  let left = rect.left + (rect.width / 2) - (cardWidth / 2);
-  let top = rect.bottom + 10;
-
-  // biar gak keluar layar kanan
-  if(left + cardWidth > window.innerWidth){
-    left = window.innerWidth - cardWidth - 10;
-  }
-
-  // biar gak keluar kiri
-  if(left < 10){
-    left = 10;
-  }
-
-  card.style.top = top + "px";
-  card.style.left = left + "px";
-
-  card.style.opacity = "1";
-card.style.transform = "translateY(0)";
-card.style.pointerEvents = "auto";
-}
-document.addEventListener("click", function(e){
-  const card = document.getElementById("launchCard");
-
-  if(!card.contains(e.target)){
-    card.style.opacity = "0";
-    card.style.transform = "translateY(10px)";
-    card.style.pointerEvents = "none";
-  }
-});
     function goReleaseDetail(rid) { location.href="../release-detail?rid="+rid; }
   </script>
 </body>
