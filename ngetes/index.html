@@ -310,9 +310,9 @@
   </header>
 <div id="launchCard" style="
   position:fixed;
-  bottom:80px;
+  top:50%;
   left:50%;
-  transform:translateX(-50%) translateY(20px);
+  transform:translate(-50%, -50%) scale(0.9);
   background:#fff;
   padding:16px;
   border-radius:14px;
@@ -321,7 +321,7 @@
   max-width:320px;
   opacity:0;
   pointer-events:none;
-  transition:0.3s ease;
+  transition:0.25s ease;
   z-index:999;
 ">
 <div id="launchText" style="font-size:13px;line-height:1.5">
@@ -514,24 +514,24 @@ list.innerHTML += `
         <div style="display:flex;align-items:center;gap:6px;">
 
   <!-- 🔔 ICON LONCENG -->
-  <div 
-    onclick="event.stopPropagation(); showLaunchInfo('${displayStatus}', '${r.adminMessage || ""}')"
-    style="
-      width:26px;
-      height:26px;
-      border-radius:8px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      background:transparent;
-border:none;
-color:${c};
-font-size:16px;
-    "
-  >
-    🔔
-  </div>
+ <div 
+  onclick="event.stopPropagation(); handleBellClick(this, '${displayStatus}', '${r.adminMessage || ""}')"
+  style="
+    width:26px;
+    height:26px;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    background:transparent;
+    color:${c};
+    font-size:16px;
+    transition:0.2s;
+  "
+>
+  🔔
+</div>
 
   <!-- STATUS -->
   <div class="release-status ${statusClass}" 
@@ -611,15 +611,24 @@ text.style.color = status === "REJECTED" ? "#ef4444" :
 
   // tampilkan
   card.style.opacity = "1";
-  card.style.transform = "translateX(-50%) translateY(0)";
+  card.style.transform = "translate(-50%, -50%) scale(1)";
   card.style.pointerEvents = "auto";
 
   // auto hide
   setTimeout(() => {
     card.style.opacity = "0";
-    card.style.transform = "translateX(-50%) translateY(20px)";
+    card.style.transform = "translate(-50%, -50%) scale(0.9)";
     card.style.pointerEvents = "none";
   }, 3000);
+}
+function handleBellClick(el, status, message){
+  // efek klik (gelap dikit)
+  el.style.filter = "brightness(0.6)";
+  setTimeout(() => {
+    el.style.filter = "brightness(1)";
+  }, 150);
+
+  showLaunchInfo(status, message);
 }
     function goReleaseDetail(rid) { location.href="../release-detail?rid="+rid; }
   </script>
