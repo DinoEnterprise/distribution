@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Release Detail | Dynotic Distribution</title>
+<title>Release Detail | Sixthgrade Labs</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -32,6 +32,53 @@ header h2{font-size:18px;color:#111;}
   overflow: hidden;
   background: #ddd;
 }
+.action-group{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap; /* biar turun kalau kepanjangan */
+}
+
+.btn{
+  padding:8px 14px;
+  border-radius:10px;
+  border:1px solid #e5e7eb;
+  background:#fff;
+  font-size:13px;
+  font-weight:500;
+  color:#111;
+  cursor:pointer;
+  transition:.15s ease;
+}
+
+/* Hover */
+.btn:hover{
+  background:#f9fafb;
+}
+
+/* Klik (interaksi utama 🔥) */
+.btn:active{
+  transform:scale(.94);
+  background:#f3f4f6;
+}
+
+/* Variasi warna */
+.btn.danger{
+  border-color:#ef4444;
+  color:#ef4444;
+}
+
+.btn.danger:hover{
+  background:#fee2e2;
+}
+
+.btn.warning{
+  border-color:#f59e0b;
+  color:#f59e0b;
+}
+
+.btn.warning:hover{
+  background:#fef3c7;
+}
 .field-title{
   font-weight:600;
   color:#111;
@@ -55,10 +102,28 @@ header h2{font-size:18px;color:#111;}
   padding:20px;
   border:1px solid #ececec;
   box-shadow:0 8px 18px rgba(0,0,0,.05);
-  animation:bounceIn .6s ease;
+  opacity:0;
+  animation:fadeSlideIn 0.5s ease forwards;
 }
-@keyframes bounceIn{0%{transform:translateY(-20px);opacity:0}50%{transform:translateY(10px);opacity:1}70%{transform:translateY(-5px)}100%{transform:translateY(0);opacity:1}}
 
+@keyframes fadeSlideIn{
+  from{
+    opacity:0;
+    transform:translateY(4px); /* geser sedikit, halus */
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+.status-badge{
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  margin-top:6px;
+}
 .release-header{display:flex;gap:15px;align-items:center;margin-bottom:15px;}
 .release-header img{
   filter: blur(10px);
@@ -76,11 +141,16 @@ header h2{font-size:18px;color:#111;}
 
 .platform-list{margin-top:15px;}
 .platform-item{
+  transition:.2s;
   display:flex;
   align-items:center;
   justify-content:space-between;
   padding:10px 12px;
   border-bottom:1px solid #eee;
+}
+.platform-item:hover{
+  background:#f5f5f5;
+  border-radius:10px;
 }
 .platform-item img{width:28px;height:28px;margin-right:8px;border-radius:6px;}
 .platform-item b{flex:1;font-size:14px;}
@@ -98,6 +168,7 @@ header h2{font-size:18px;color:#111;}
 @media (max-width:600px){
   .cover-box{ width:130px; }
 }
+
 </style>
 </head>
 <body>
@@ -105,7 +176,71 @@ header h2{font-size:18px;color:#111;}
 <header>
   <img src="../assets/sixthgrade-distribution.png" alt="DynoPay Logo">
 </header>
+<div class="card">
+  <div style="font-weight:700;margin-bottom:12px;">Actions</div>
 
+  <div class="action-group">
+    <button id="editBtn" class="btn">Edit Release</button>
+
+    <button id="deleteBtn" class="btn danger" style="display:none;">
+      Delete
+    </button>
+
+    <button id="takedownBtn" class="btn warning" style="display:none;">
+      Request Takedown
+    </button>
+  </div>
+</div>
+<div id="popup" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.4);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:2000;
+">
+
+  <div style="
+  background:#fff;
+  padding:20px;
+  border-radius:16px;
+  width:85%;
+  max-width:320px;
+  text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,.2);
+  animation:fadeIn .2s ease;
+  ">
+
+    <div id="popupText" style="font-weight:600;margin-bottom:15px;">
+      Are you sure?
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:center;">
+      <button onclick="closePopup()" class="btn">Cancel</button>
+      <button onclick="confirmDelete()" class="btn danger">Delete</button>
+    </div>
+
+  </div>
+</div>
+<div id="toast" style="
+position:fixed;
+bottom:20px;
+left:50%;
+transform:translateX(-50%);
+background:#111;
+color:#fff;
+padding:10px 16px;
+border-radius:999px;
+font-size:13px;
+display:none;
+z-index:3000;
+">
+Success
+</div>
 <div class="card">
  <div class="release-header">
   <div class="cover-box">
@@ -121,7 +256,7 @@ header h2{font-size:18px;color:#111;}
 
 <div class="ean">
   <span class="field-title">UPC:</span>
-  <span class="field-value" id="releaseEAN">-</span>
+  <span class="field-value" id="releaseEAN" onclick="copyEAN()" style="cursor:pointer">-</span>
 </div>
 
 <div class="genre">
@@ -151,23 +286,19 @@ header h2{font-size:18px;color:#111;}
 
   <input id="smartlinkInput" 
   readonly
-  placeholder="Smartlink belum tersedia"
+  placeholder="Smartlink not available"
   style="display:none;width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;margin-bottom:10px;">
 
-  <button id="copyBtn"
-  onclick="copySmartlink()"
-  style="display:none;width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;background:#fff;">
+<button id="openBtn"
+  onclick="openSmartlink()"
+  style="display:none;margin-top:8px;width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;background:#fff;">
+  Open Smartlink
+</button>
 
-<svg width="18" height="18" viewBox="0 0 24 24" fill="black"
-xmlns="http://www.w3.org/2000/svg">
-<path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z"/>
-</svg>
-&nbsp; Salin Smartlink
-  </button>
 
   <div id="emptySmartlink"
   style="font-size:13px;color:#888;text-align:center;">
-  Smartlink belum tersedia
+  Smartlink not available
   </div>
 </div>
 
@@ -181,10 +312,9 @@ firebase.initializeApp({
  authDomain:"dynopay-2513c.firebaseapp.com",
  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
-
 const db = firebase.database();
 const params = new URLSearchParams(location.search);
-const uid = params.get("uid");
+let uid;
 const rid = params.get("rid");
 
 const platformIcons = {
@@ -203,10 +333,9 @@ const platforms = ["Spotify","Tidal","Amazon","Apple Music","Tiktok","YouTube Mu
 
     firebase.auth().onAuthStateChanged(user => {
   if (!user) {
-    location.href = "../index.html";
+    location.href = "../login";
   } else {
-    const uid = user.uid; 
-    const rid = new URLSearchParams(location.search).get("rid"); 
+    uid = user.uid; // ⬅️ isi ke global
     loadRelease(uid, rid);
   }
 });
@@ -218,14 +347,75 @@ function loadRelease(uid, rid){
       alert("Rilisan tidak ditemukan"); 
       return; 
     }
-
+    
+const statusLower = (d.status || "pending").toLowerCase();
     document.getElementById("releaseTitle").innerText = d.title || "-";
     document.getElementById("releaseArtist").innerText = d.artist || "-";
   document.getElementById("releaseLabel").innerText = d.label || "-";
 document.getElementById("releaseEAN").innerText = d.ean || "-";
 document.getElementById("releaseGenre").innerText = d.genre || "-";
-document.getElementById("releaseDate").innerText = d.date || "-";
-document.getElementById("releaseStatus").innerText = (d.status||"pending").toUpperCase();
+const date = d.date ? new Date(d.date) : null;
+
+document.getElementById("releaseDate").innerText =
+  date ? date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  }) : "-";
+const statusEl = document.getElementById("releaseStatus");
+
+let text = "PROCESS";
+let color = "#3b82f6";
+
+const now = new Date();
+const releaseDateObj = d.date ? new Date(d.date) : null;
+
+if(d.status === "approved"){
+  if(releaseDateObj && now >= releaseDateObj){
+    text = "LIVE";
+    color = "#22c55e";
+  } else {
+    text = "APPROVED";
+    color = "#10b981";
+  }
+}
+
+if(d.status === "rejected"){
+  text = "REJECTED";
+  color = "#ef4444";
+}
+
+statusEl.innerHTML = `
+  <span class="status-badge" 
+    style="border:1px solid ${color};color:${color}">
+    ${text}
+  </span>
+`;
+// === ACTION BUTTON LOGIC ===
+const deleteBtn = document.getElementById("deleteBtn");
+const takedownBtn = document.getElementById("takedownBtn");
+const editBtn = document.getElementById("editBtn");
+
+editBtn.onclick = editRelease;
+deleteBtn.onclick = deleteRelease;
+takedownBtn.onclick = takedownRelease;
+
+const isLive = releaseDateObj && now >= releaseDateObj;
+
+// DELETE → process & rejected
+if(statusLower === "pending" || statusLower === "rejected"){
+  deleteBtn.style.display = "block";
+}
+
+// TAKEDOWN → approved & live
+if(statusLower === "approved" || isLive){
+  takedownBtn.style.display = "block";
+}
+
+// EDIT → hide saat approved & live
+if(statusLower === "approved" || isLive){
+  editBtn.style.display = "none";
+}
     const cover = document.getElementById("coverArt");
 
 if (d.cover) {
@@ -240,41 +430,102 @@ cover.onerror = () => {
   cover.classList.add("loaded");
 };
 const input = document.getElementById("smartlinkInput");
-const copyBtn = document.getElementById("copyBtn");
+const openBtn = document.getElementById("openBtn");
 const empty = document.getElementById("emptySmartlink");
 
-if(d.smartlink){
+if(d.smartlink && d.smartlink.trim() !== ""){
   input.style.display = "block";
-  copyBtn.style.display = "block";
+  openBtn.style.display = "block";
   empty.style.display = "none";
-  input.value = d.smartlink;
+  input.value = d.smartlink.trim();
+} else {
+  input.style.display = "none";
+  openBtn.style.display = "none";
+  empty.style.display = "block";
 }
 
-    if((d.status||"pending").toLowerCase() !== "pending"){
-      renderPlatforms(d.platformStatus||{});
-    } else {
-      document.getElementById("platformList").innerHTML = "<div style='color:#888;font-size:13px;text-align:center;'>Platform belum tersedia</div>";
-    }
+if(statusLower === "approved" || statusLower === "live"){
+  renderPlatforms(d.platformStatus||{});
+} else {
+  // pending atau rejected
+  document.getElementById("platformList").innerHTML = "<div style='color:#888;font-size:13px;text-align:center;'>Platform not available</div>";
+}
   });
 }
-function copySmartlink(){
-  const val = document.getElementById("smartlinkInput").value;
+function copyEAN(){
+  const val = document.getElementById("releaseEAN").innerText;
   navigator.clipboard.writeText(val);
 
-  document.getElementById("copyBtn").innerHTML = "✔ Tersalin";
+  const el = document.getElementById("releaseEAN");
+  const old = el.innerText;
+
+  el.innerText = "Copied";
+  setTimeout(()=>{
+    el.innerText = old;
+  }, 1500);
+}
+function editRelease(){
+  location.href = "../edit-release?rid=" + rid;
+}
+
+function deleteRelease(){
+  document.getElementById("popup").style.display = "flex";
+  document.getElementById("popupText").innerText = "Delete this release?";
+}
+
+function closePopup(){
+  document.getElementById("popup").style.display = "none";
+}
+
+function confirmDelete(){
+  db.ref(`releases/${uid}/${rid}`).remove().then(()=>{
+    closePopup();
+    showToast("Release deleted");
+
+    setTimeout(()=>{
+      location.href = "../releases";
+    }, 800);
+  });
+}
+function openSmartlink(){
+  const link = document.getElementById("smartlinkInput").value;
+  if(link) window.open(link, "_blank");
+}
+function takedownRelease(){
+  const title = document.getElementById("releaseTitle").innerText;
+  const artist = document.getElementById("releaseArtist").innerText;
+  const ean = document.getElementById("releaseEAN").innerText;
+
+  const subject = encodeURIComponent("Request Takedown Release");
+  const body = encodeURIComponent(
+  `Hello Dynotic Admin,\n\nI would like to request a takedown for the following release:\n\nTitle: ${title}\nArtist: ${artist}\nUPC: ${ean}\nI would appreciate your assistance.\n\nThank you.`
+);
+
+  window.location.href = `mailto:admin@dynotic.web.id?subject=${subject}&body=${body}`;
+}
+function showToast(text){
+  const toast = document.getElementById("toast");
+  toast.innerText = text;
+  toast.style.display = "block";
+
+  setTimeout(()=>{
+    toast.style.display = "none";
+  }, 2000);
 }
 function renderPlatforms(data){
   const wrap = document.getElementById("platformList");
   wrap.innerHTML = "";
   platforms.forEach(p=>{
-    let st = data[p] || "process";
+    let st = data[p]; // jangan default ke 'process'
+    if(!st) return; // jika platform tidak ada, skip
+
     let color = "#f59e0b";
     if(st==="approved") color="#10b981";
     if(st==="unavailable") color="#ef4444";
 
     wrap.innerHTML += `
       <div class="platform-item clickable">
-<img src="${platformIcons[p]}" alt="${p} Logo">
+        <img src="${platformIcons[p]}" alt="${p} Logo">
         <b>${p}</b>
         <div class="platform-status" style="border-color:${color};color:${color};">${st.toUpperCase()}</div>
       </div>`;
