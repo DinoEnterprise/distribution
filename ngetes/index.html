@@ -13,7 +13,6 @@
       box-sizing: border-box;
       font-family: "Outfit", sans-serif;
     }
-
     body {
       background: #f1f2f7;
       min-height: 100vh;
@@ -310,18 +309,16 @@
   </header>
 <div id="launchCard" style="
   position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%, -50%) scale(0.9);
   background:#fff;
-  padding:16px;
-  border-radius:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.15);
-  width:85%;
-  max-width:320px;
+  padding:14px;
+  border-radius:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+  width:220px;
+  font-size:13px;
   opacity:0;
   pointer-events:none;
-  transition:0.25s ease;
+  transform: translateY(10px);
+  transition:0.2s ease;
   z-index:999;
 ">
 <div id="launchText" style="font-size:13px;line-height:1.5">
@@ -513,24 +510,21 @@ list.innerHTML += `
           <div class="release-title">${r.title || "-"}</div>
         <div style="display:flex;align-items:center;gap:6px;">
 
-  <!-- 🔔 ICON LONCENG -->
- <div 
+<img 
+  src="${
+    displayStatus === 'PROCESS' ? '../assets/bell-process.png' :
+    displayStatus === 'APPROVED' ? '../assets/bell-approve.png' :
+    displayStatus === 'REJECTED' ? '../assets/bell-rejected.png' :
+    '../assets/bell-live.png'
+  }"
   onclick="event.stopPropagation(); handleBellClick(this, '${displayStatus}', '${r.adminMessage || ""}')"
   style="
-    width:26px;
-    height:26px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    width:24px;
+    height:24px;
     cursor:pointer;
-    background:transparent;
-    color:${c};
-    font-size:16px;
     transition:0.2s;
   "
->
-  🔔
+/>
 </div>
 
   <!-- STATUS -->
@@ -584,23 +578,25 @@ window.prevPage = () => {
     function showLaunchInfo(status, message){
   const card = document.getElementById("launchCard");
   const text = document.getElementById("launchText");
-text.style.color = status === "REJECTED" ? "#ef4444" :
-                   status === "APPROVED" ? "#10b981" :
-                   status === "LIVE" ? "#22c55e" :
-                   "#444";
+
+  text.style.color = status === "REJECTED" ? "#ef4444" :
+                     status === "APPROVED" ? "#10b981" :
+                     status === "LIVE" ? "#22c55e" :
+                     "#444";
+
   let finalText = "";
 
   if(message){
-    finalText = message; // dari admin
+    finalText = message;
   } else {
     if(status === "LIVE"){
       finalText = "Release sudah LIVE di platform 🎉";
     } 
     else if(status === "APPROVED"){
-      finalText = "Your request to distribute your release has been approved by our admin team. The release has been successfully verified. We appreciate your diligence in ensuring accuracy and legal compliance. The release will proceed to all stores as planned. Thank you for your attention to detail and adherence to our standards.";
+      finalText = "Release sudah disetujui, menunggu tanggal rilis";
     } 
     else if(status === "REJECTED"){
-      finalText = "Your request to distribute your release has been rejected. After careful review, we have concluded that your request does not meet our approval requirements, and scan results show that you do not own the content. We recommend re-evaluating the content and addressing all conditions and legal implications. Thank you for your understanding and cooperation. If you have any questions or you have a 100% clear license and contract with the owner, please contact our support.";
+      finalText = "Release ditolak. Silakan cek detail.";
     } 
     else {
       finalText = "Release sedang dalam proses review";
@@ -609,27 +605,51 @@ text.style.color = status === "REJECTED" ? "#ef4444" :
 
   text.innerHTML = finalText;
 
-  // tampilkan
-  card.style.opacity = "1";
-  card.style.transform = "translate(-50%, -50%) scale(1)";
-  card.style.pointerEvents = "auto";
-
-  // auto hide
-  setTimeout(() => {
-    card.style.opacity = "0";
-    card.style.transform = "translate(-50%, -50%) scale(0.9)";
-    card.style.pointerEvents = "none";
-  }, 3000);
 }
 function handleBellClick(el, status, message){
-  // efek klik (gelap dikit)
-  el.style.filter = "brightness(0.6)";
+  const rect = el.getBoundingClientRect();
+  const card = document.getElementById("launchCard");
+
+  // efek klik
+  el.style.transform = "scale(0.85)";
   setTimeout(() => {
-    el.style.filter = "brightness(1)";
-  }, 150);
+    el.style.transform = "scale(1)";
+  }, 120);
 
   showLaunchInfo(status, message);
+
+  // posisi (SMART)
+  const cardWidth = 220;
+
+  let left = rect.left + (rect.width / 2) - (cardWidth / 2);
+  let top = rect.bottom + 10;
+
+  // biar gak keluar layar kanan
+  if(left + cardWidth > window.innerWidth){
+    left = window.innerWidth - cardWidth - 10;
+  }
+
+  // biar gak keluar kiri
+  if(left < 10){
+    left = 10;
+  }
+
+  card.style.top = top + "px";
+  card.style.left = left + "px";
+
+  card.style.opacity = "1";
+card.style.transform = "translateY(0)";
+card.style.pointerEvents = "auto";
 }
+document.addEventListener("click", function(e){
+  const card = document.getElementById("launchCard");
+
+  if(!card.contains(e.target)){
+    card.style.opacity = "0";
+    card.style.transform = "translateY(10px)";
+    card.style.pointerEvents = "none";
+  }
+});
     function goReleaseDetail(rid) { location.href="../release-detail?rid="+rid; }
   </script>
 </body>
