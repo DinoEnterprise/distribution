@@ -207,10 +207,20 @@ function openPlatform(uid,rid){
 function setReleaseStatus(uid,rid,status){
   db.ref(`releases/${uid}/${rid}/status`).set(status).then(()=>{
 
-    // update data di array tanpa reload
     const item = releasesData.find(r => r.uid===uid && r.rid===rid);
+
     if(item){
       item.status = status;
+
+      // 🔥 BUKA EMAIL DRAFT (hanya approve/reject)
+      if(status === "approved" || status === "rejected"){
+        openEmailDraft(
+          item.email,
+          item.artist || "-",
+          item.title || "-",
+          status
+        );
+      }
     }
 
     const filteredItem = filteredData.find(r => r.uid===uid && r.rid===rid);
@@ -218,12 +228,61 @@ function setReleaseStatus(uid,rid,status){
       filteredItem.status = status;
     }
 
-    // render ulang halaman yang sama
     renderTablePage(currentPage);
-
   });
 }
+function openEmailDraft(email, artist, title, status){
+  let subject = "";
+  let body = "";
 
+  if(status === "approved"){
+  subject = "Your Release Has Been Approved";
+
+  body = 
+`Hello,
+
+Your release has been approved.
+
+---------------------------
+Release Details
+---------------------------
+Title  : ${title}
+Artist : ${artist}
+
+Your music will now be processed and delivered to platforms.
+
+— Dynotic Distribution`;
+}
+
+if(status === "rejected"){
+  subject = "Your Release Has Been Rejected";
+
+  body = 
+`Hello,
+
+Your release has been rejected.
+
+---------------------------
+Release Details
+---------------------------
+Title  : ${title}
+Artist : ${artist}
+
+---------------------------
+Reason
+---------------------------
+Your release is not eligible for distribution because it may contain content that infringes on another artist or rights holder.
+
+If you have a valid license, please contact our support team and provide proof.
+
+— Dynotic Distribution`;
+}
+
+  // encode biar aman di URL
+  const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g, "\r\n"))}`;
+
+  window.location.href = mailto;
+}
 function deleteRelease(uid,rid){
   if(confirm("Apakah yakin ingin menghapus rilisan ini?")){
     db.ref(`releases/${uid}/${rid}`).remove().then(()=>loadReleases());
