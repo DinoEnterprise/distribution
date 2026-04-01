@@ -308,25 +308,7 @@
   <header>
     <img src="../assets/dynotic-distribution.png" alt="Dynotic Distribution">
   </header>
-<div id="launchCard" style="
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%, -50%) scale(0.9);
-  background:#fff;
-  padding:16px;
-  border-radius:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.15);
-  width:85%;
-  max-width:320px;
-  opacity:0;
-  pointer-events:none;
-  transition:0.25s ease;
-  z-index:999;
-">
-<div id="launchText" style="font-size:13px;line-height:1.5">
-</div>
-</div>
+
   <!-- Create New Release Card -->
   <div class="card clickable" onclick="goCreateRelease()">
     <div class="release-row">
@@ -511,35 +493,11 @@ list.innerHTML += `
       <div style="flex:1">
         <div class="release-row">
           <div class="release-title">${r.title || "-"}</div>
-        <div style="display:flex;align-items:center;gap:6px;">
-
-  <!-- 🔔 ICON LONCENG -->
- <div 
-  onclick="event.stopPropagation(); handleBellClick(this, '${displayStatus}', '${r.adminMessage || ""}')"
-  style="
-    width:26px;
-    height:26px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    background:transparent;
-    color:${c};
-    font-size:16px;
-    transition:0.2s;
-  "
->
-  🔔
-</div>
-
-  <!-- STATUS -->
-  <div class="release-status ${statusClass}" 
-       style="border:1px solid ${c};color:${c}">
-    ${displayStatus}
-  </div>
-  </div>
-</div>
+          <div class="release-status ${statusClass}" 
+               style="border:1px solid ${c};color:${c}">
+            ${displayStatus}
+          </div>
+        </div>
 
         <div class="release-meta">
           <b>${r.artist || "-"}</b>${featuring}<br>
@@ -581,55 +539,6 @@ window.prevPage = () => {
         render(currentPage);
       });
     }
-    function showLaunchInfo(status, message){
-  const card = document.getElementById("launchCard");
-  const text = document.getElementById("launchText");
-text.style.color = status === "REJECTED" ? "#ef4444" :
-                   status === "APPROVED" ? "#10b981" :
-                   status === "LIVE" ? "#22c55e" :
-                   "#444";
-  let finalText = "";
-
-  if(message){
-    finalText = message; // dari admin
-  } else {
-    if(status === "LIVE"){
-      finalText = "Release sudah LIVE di platform 🎉";
-    } 
-    else if(status === "APPROVED"){
-      finalText = "Your request to distribute your release has been approved by our admin team. The release has been successfully verified. We appreciate your diligence in ensuring accuracy and legal compliance. The release will proceed to all stores as planned. Thank you for your attention to detail and adherence to our standards.";
-    } 
-    else if(status === "REJECTED"){
-      finalText = "Your request to distribute your release has been rejected. After careful review, we have concluded that your request does not meet our approval requirements, and scan results show that you do not own the content. We recommend re-evaluating the content and addressing all conditions and legal implications. Thank you for your understanding and cooperation. If you have any questions or you have a 100% clear license and contract with the owner, please contact our support.";
-    } 
-    else {
-      finalText = "Release sedang dalam proses review";
-    }
-  }
-
-  text.innerHTML = finalText;
-
-  // tampilkan
-  card.style.opacity = "1";
-  card.style.transform = "translate(-50%, -50%) scale(1)";
-  card.style.pointerEvents = "auto";
-
-  // auto hide
-  setTimeout(() => {
-    card.style.opacity = "0";
-    card.style.transform = "translate(-50%, -50%) scale(0.9)";
-    card.style.pointerEvents = "none";
-  }, 3000);
-}
-function handleBellClick(el, status, message){
-  // efek klik (gelap dikit)
-  el.style.filter = "brightness(0.6)";
-  setTimeout(() => {
-    el.style.filter = "brightness(1)";
-  }, 150);
-
-  showLaunchInfo(status, message);
-}
     function goReleaseDetail(rid) { location.href="../release-detail?rid="+rid; }
   </script>
 </body>
