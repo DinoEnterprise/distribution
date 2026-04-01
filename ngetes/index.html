@@ -175,10 +175,10 @@ firebase.auth().onAuthStateChanged(user=>{
 const stepsData = {
   1: ()=>true,
   2: ()=>{
-    return document.getElementById("title")?.value &&
-           document.getElementById("artist")?.value &&
-           document.getElementById("fullname")?.value;
-  },
+  return document.getElementById("title")?.value &&
+         document.getElementById("artist")?.value &&
+         document.getElementById("publisher")?.value;
+},
   3: ()=>document.getElementById("audio")?.dataset.url && document.getElementById("cover")?.dataset.url
 };
 
@@ -190,8 +190,13 @@ function loadStep2Fields(){
   s.innerHTML += `
     <div class="label">Judul Lagu *</div><input id="title">
     <div class="label">Version</div><input id="version" placeholder="Optional">
+    <div class="label">Song ID (Publisher) *</div>
+    <input id="publisher" placeholder="Wajib" >
+    <small style="font-size:12px; color:#555;">
+      Cek Song ID <a href="https://dynotic.web.id/catalog" target="_blank">Disini</a>
+    </small>
     <div class="label">Artist Name *</div><input id="artist">
-    <div class="label">Full Name *</div><input id="fullname">
+    <div class="label">Nama Vocal (Untuk Pragita Prabawa) – Optional</div><input id="fullname">
     <div class="label">Featuring</div><input id="featuring" placeholder="Optional">
   `;
   s.innerHTML += `<button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
@@ -270,13 +275,15 @@ function loadPreview(){
   const coverUrl=document.getElementById("cover")?.dataset.url;
   let html=`<div><span>Type:</span> ${type.value}</div>
             <div><span>Judul Lagu:</span> ${title.value}</div>
+            <div><span>Song ID (Publisher):</span> ${publisher.value}</div>
             <div><span>Artist:</span> ${artist.value}</div>`;
   const featInput = document.getElementById("featuring");
   if(featInput?.value) html+=`<div><span>Featuring:</span> ${featInput.value}</div>`;
   html+=`<div><span>Audio:</span> ${audioUrl?"Uploaded ✔":"-"}</div>
          <div><span>Cover:</span> ${coverUrl?"Uploaded ✔":"-"}</div>
-         <div><span>Version:</span> ${version.value||"-"}</div>
-         <div><span>Full Name:</span> ${fullname.value}</div>`;
+         <div><span>Version:</span> ${version.value||"-"}</div>`;
+  const vocalName = fullname.value || "-";
+  html+=`<div><span>Nama Vocal:</span> ${vocalName}</div>`;
   previewBox.innerHTML=html;
 }
 
