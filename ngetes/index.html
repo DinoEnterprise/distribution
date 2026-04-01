@@ -585,7 +585,7 @@ if(featInput?.value){
       html+=`
 <div><span>Version:</span> ${version.value||"-"}</div>
 <div><span>Full Name:</span> ${fullname.value}</div>
-<div><span>Label:</span> ${label.value}</div>
+<div><span>Channel Youtube:</span> ${label.value}</div>
 `;
       previewBox.innerHTML=html;
     }
@@ -690,7 +690,7 @@ const feat = document.getElementById("featuring");
 if(spotify?.value) data.spotifyUrl = spotify.value;
 if(apple?.value) data.appleId = apple.value;
 if(feat?.value) data.featuring = feat.value;
-      data.releaseType=releaseType.value; data.version=version.value; data.fullname=fullname.value; data.label=label.value; data.release=release.value;
+       data.version=version.value; data.fullname=fullname.value; data.label=label.value;
       db.ref("releases/"+user.uid).push(data).then(()=>location.href="../releases")
         .catch(()=>{ btn.disabled=false; text.style.display="inline"; loader.style.display="none";});
     }
