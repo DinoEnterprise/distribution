@@ -189,14 +189,14 @@ function loadStep2Fields(){
   s.innerHTML="";
   s.innerHTML += `
     <div class="label">Judul Lagu *</div><input id="title">
-    <div class="label">Version</div><input id="version" placeholder="Optional">
     <div class="label">Song ID (Publisher) *</div>
-    <input id="publisher" placeholder="Wajib" >
-    <small style="font-size:12px; color:#555;">
-      Cek Song ID <a href="https://dynotic.web.id/catalog" target="_blank">Disini</a>
-    </small>
-    <div class="label">Artist Name *</div><input id="artist">
-    <div class="label">Nama Vocal (Untuk Pragita Prabawa) – Optional</div><input id="fullname">
+<input id="publisher" placeholder="Wajib">
+<div style="font-size:12px; color:#555; margin-bottom:16px;">
+  Cek Song ID <a href="https://dynotic.web.id/catalog" target="_blank">Disini</a>
+</div>
+        <div class="label">Artist Name *</div><input id="artist">
+    <div class="label">Version</div><input id="version" placeholder="Optional">
+    <div class="label">Nama Vocal (Khusus Pragita Prabawa)</div><input id="fullname" placeholder="Optional">
     <div class="label">Featuring</div><input id="featuring" placeholder="Optional">
   `;
   s.innerHTML += `<button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
@@ -296,16 +296,18 @@ function submitRelease(){
   const user=firebase.auth().currentUser;
   if(!user) return;
   let data = {
-    type:type.value,
-    title:title.value,
-    artist:artist.value,
-    audio:audio.dataset.url,
-    cover:cover.dataset.url,
-    version:version.value,
-    fullname:fullname.value,
-    status:"pending",
-    time:Date.now()
-  };
+  type:type.value,
+  title:title.value,
+  artist:artist.value,
+  publisher:publisher.value, // <--- baru
+  audio:audio.dataset.url,
+  cover:cover.dataset.url,
+  version:version.value,
+  fullname:fullname.value,
+  status:"pending",
+  time:Date.now()
+};
+
   if(featuring.value) data.featuring = featuring.value;
   db.ref("releases/"+user.uid).push(data)
     .then(()=>location.href="../releases")
