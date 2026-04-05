@@ -254,10 +254,25 @@ function attachUploadListeners(){
 
 // NAVIGATION
 function next(n){
-  if(n===1){ document.getElementById("type").value="original"; loadStep2Fields(); goto(2); return; }
-  if(n===2){ if(!stepsData[2]()) return alert("Lengkapi semua field wajib!"); }
-  if(n===3){ if(!stepsData[3]()) return alert("Tunggu sampai audio & cover selesai di-upload!"); loadPreview(); }
+  if(n===1){ 
+    document.getElementById("type").value="original"; 
+    loadStep2Fields(); 
+    goto(2); 
+    updateStepUI();
+    return; 
+  }
+
+  if(n===2){ 
+    if(!stepsData[2]()) return alert("Lengkapi semua field wajib!"); 
+  }
+
+  if(n===3){ 
+    if(!stepsData[3]()) return alert("Tunggu sampai audio & cover selesai di-upload!"); 
+    loadPreview(); 
+  }
+
   goto(n+1);
+  updateStepUI();
 }
 function back(n){ goto(n-1); }
 function goto(n){
@@ -267,8 +282,35 @@ function goto(n){
   for(let i=1;i<=4;i++) document.getElementById("s"+i).classList.remove("active");
   document.getElementById("s"+n).classList.add("active");
 }
-s1.onclick=()=>goto(1); s2.onclick=()=>goto(2); s3.onclick=()=>goto(3); s4.onclick=()=>goto(4);
+s1.onclick=()=>goto(1);
 
+s2.onclick=()=>{
+  if(!stepsData[1]()) return;
+  goto(2);
+};
+
+s3.onclick=()=>{
+  if(!stepsData[2]()) return alert("Lengkapi dulu data di Step 2!");
+  goto(3);
+};
+
+s4.onclick=()=>{
+  if(!stepsData[2]()) return alert("Lengkapi dulu data di Step 2!");
+  if(!stepsData[3]()) return alert("Upload audio & cover dulu!");
+  loadPreview();
+  goto(4);
+};
+function updateStepUI(){
+  const validStep2 = stepsData[2]();
+  const validStep3 = stepsData[3]();
+
+  document.getElementById("s3").style.opacity = validStep2 ? "1" : "0.4";
+  document.getElementById("s4").style.opacity = (validStep2 && validStep3) ? "1" : "0.4";
+
+  // ⬇️ TAMBAH INI
+  document.getElementById("s3").style.pointerEvents = validStep2 ? "auto" : "none";
+  document.getElementById("s4").style.pointerEvents = (validStep2 && validStep3) ? "auto" : "none";
+}
 // PREVIEW
 function loadPreview(){
   const audioUrl=document.getElementById("audio")?.dataset.url;
@@ -282,7 +324,7 @@ function loadPreview(){
   html+=`<div><span>Audio:</span> ${audioUrl?"Uploaded ✔":"-"}</div>
          <div><span>Cover:</span> ${coverUrl?"Uploaded ✔":"-"}</div>
          <div><span>Version:</span> ${version.value||"-"}</div>`;
-  const vocalName = fullname.value || "-";
+  const vocalName = document.getElementById("fullname")?.value || "-";
   html+=`<div><span>Nama Vocal:</span> ${vocalName}</div>`;
   previewBox.innerHTML=html;
 }
@@ -303,16 +345,19 @@ function submitRelease(){
   audio:audio.dataset.url,
   cover:cover.dataset.url,
   version:version.value,
-  fullname:fullname.value,
+  fullname:document.getElementById("fullname")?.value || "",
   status:"pending",
   time:Date.now()
 };
 
-  if(featuring.value) data.featuring = featuring.value;
+  const feat = document.getElementById("featuring")?.value;
+if(feat) data.featuring = feat;
   db.ref("releases/"+user.uid).push(data)
     .then(()=>location.href="../releases")
     .catch(()=>{ btn.disabled=false; text.style.display="inline"; loader.style.display="none"; });
 }
+document.addEventListener("input", updateStepUI);
+updateStepUI();
 </script>
 </body>
 </html>
