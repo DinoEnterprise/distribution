@@ -46,6 +46,10 @@
     .preview { background:#f9fafb; border-radius:16px; padding:16px; font-size:14px; line-height:1.7; }
     .preview div { margin-bottom:8px; }
     .preview span { color:#111; font-weight:600; }
+    .preview img:hover {
+  transform: scale(1.05);
+  transition: 0.3s;
+}
   </style>
 </head>
 <body>
@@ -228,10 +232,18 @@ function attachUploadListeners(){
     audioUploaded = false;
     audioName.textContent = file.name;
     audioWave.style.width = "0%";
-    uploadFile(file, percent=>{ audioWave.style.width = percent + "%"; }, url=>{
-      if(url){ audioInput.dataset.url = url; audioUploaded = true; checkAllUploaded(); }
-    });
-  });
+    uploadFile(file, percent=>{ 
+  audioWave.style.width = percent + "%"; 
+}, url=>{
+  if(url){ 
+    audioInput.dataset.url = url; 
+    audioUploaded = true; 
+    checkAllUploaded();
+    updateStepUI();
+  }
+});
+});
+
 
   // COVER
   coverInput.addEventListener("change", e=>{
@@ -247,9 +259,14 @@ function attachUploadListeners(){
     reader.readAsDataURL(file);
 
     uploadFile(file, ()=>{}, url=>{
-      if(url){ coverInput.dataset.url = url; coverUploaded = true; checkAllUploaded(); }
-    });
-  });
+  if(url){ 
+    coverInput.dataset.url = url; 
+    coverUploaded = true; 
+    checkAllUploaded();
+    updateStepUI();
+  }
+});
+});
 }
 
 // NAVIGATION
@@ -313,20 +330,29 @@ function updateStepUI(){
 }
 // PREVIEW
 function loadPreview(){
-  const audioUrl=document.getElementById("audio")?.dataset.url;
-  const coverUrl=document.getElementById("cover")?.dataset.url;
-  let html=`<div><span>Type:</span> ${type.value}</div>
-            <div><span>Judul Lagu:</span> ${title.value}</div>
-            <div><span>Song ID (Publisher):</span> ${publisher.value}</div>
-            <div><span>Artist:</span> ${artist.value}</div>`;
-  const featInput = document.getElementById("featuring");
-  if(featInput?.value) html+=`<div><span>Featuring:</span> ${featInput.value}</div>`;
-  html+=`<div><span>Audio:</span> ${audioUrl?"Uploaded ✔":"-"}</div>
-         <div><span>Cover:</span> ${coverUrl?"Uploaded ✔":"-"}</div>
-         <div><span>Version:</span> ${version.value||"-"}</div>`;
-  const vocalName = document.getElementById("fullname")?.value || "-";
-  html+=`<div><span>Nama Vocal:</span> ${vocalName}</div>`;
-  previewBox.innerHTML=html;
+  const audioUrl = document.getElementById("audio")?.dataset.url;
+  const coverUrl = document.getElementById("cover")?.dataset.url;
+
+  const titleVal = document.getElementById("title")?.value || "-";
+  const artistVal = document.getElementById("artist")?.value || "-";
+  const publisherVal = document.getElementById("publisher")?.value || "-";
+
+  let html = `
+    <div style="display:flex; gap:16px; align-items:center;">
+      <img src="${coverUrl}" style="width:80px; height:80px; border-radius:12px; object-fit:cover; border:1px solid #ddd;">
+      <div>
+        <div style="font-weight:700; font-size:16px;">${titleVal}</div>
+        <div style="font-size:13px; color:#666;">${artistVal}</div>
+      </div>
+    </div>
+
+    <hr style="margin:16px 0; border:none; border-top:1px solid #eee;">
+
+    <div><span>Song ID:</span> ${publisherVal}</div>
+    <div><span>Label:</span> Dynotic Distribution</div>
+  `;
+
+  previewBox.innerHTML = html;
 }
 
 // SUBMIT
