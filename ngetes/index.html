@@ -232,10 +232,18 @@ function attachUploadListeners(){
     audioUploaded = false;
     audioName.textContent = file.name;
     audioWave.style.width = "0%";
-    uploadFile(file, percent=>{ audioWave.style.width = percent + "%"; }, url=>{
-      if(url){ audioInput.dataset.url = url; audioUploaded = true; checkAllUploaded(); }
-    });
-  });
+    uploadFile(file, percent=>{ 
+  audioWave.style.width = percent + "%"; 
+}, url=>{
+  if(url){ 
+    audioInput.dataset.url = url; 
+    audioUploaded = true; 
+    checkAllUploaded();
+    updateStepUI();
+  }
+});
+});
+
 
   // COVER
   coverInput.addEventListener("change", e=>{
@@ -251,9 +259,14 @@ function attachUploadListeners(){
     reader.readAsDataURL(file);
 
     uploadFile(file, ()=>{}, url=>{
-      if(url){ coverInput.dataset.url = url; coverUploaded = true; checkAllUploaded(); }
-    });
-  });
+  if(url){ 
+    coverInput.dataset.url = url; 
+    coverUploaded = true; 
+    checkAllUploaded();
+    updateStepUI();
+  }
+});
+});
 }
 
 // NAVIGATION
