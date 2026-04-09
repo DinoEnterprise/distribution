@@ -217,12 +217,6 @@ function loadStep2Fields(){
 <input id="labelName" placeholder="e.g.Dynotic">
 
     <div class="label">Artist Name *</div><input id="artist">
-    
-<div class="label">Spotify URL</div>
-<input id="spotifyUrl" placeholder="Optional">
-
-<div class="label">Apple Music ID</div>
-<input id="appleId" placeholder="Optional">
 
 <div class="label">Genre <span class="req">*</span></div>
 <select id="genre">
@@ -290,6 +284,9 @@ function loadStep2Fields(){
 </div>
 
     <div class="label">Featuring</div><input id="featuring" placeholder="Optional">
+    
+    <div class="label">Producer</div>
+<input id="producer" placeholder="Optional">
   `;
   s.innerHTML += `<button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
                   <button type="button" class="btn" onclick="next(2)">Start Your Release</button>`;
@@ -452,6 +449,7 @@ function submitRelease(){
  releaseType: document.getElementById("releaseType").value, 
 title: document.getElementById("title").value,
 artist: document.getElementById("artist").value,
+genre: document.getElementById("genre").value,
   label: document.getElementById("labelName")?.value || "Unknown Label",
   audio: document.getElementById("audio").dataset.url,
 cover: document.getElementById("cover").dataset.url,
@@ -466,6 +464,10 @@ cover: document.getElementById("cover").dataset.url,
 
   const feat = document.getElementById("featuring")?.value;
 if(feat) data.featuring = feat;
+
+const prod = document.getElementById("producer")?.value;
+if(prod) data.producer = prod;
+
   db.ref("releases/"+user.uid).push(data)
     .then(()=>location.href="../releases")
     .catch(()=>{ btn.disabled=false; text.style.display="inline"; loader.style.display="none"; });
