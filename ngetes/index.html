@@ -267,6 +267,16 @@ function loadStep2Fields(){
   <option>World</option>
 </select>
 
+<div class="label">Release Type *</div>
+<select id="releaseType">
+  <option value="single" selected>Single</option>
+  <option value="ep">EP</option>
+  <option value="album">Album</option>
+</select>
+<div id="releaseWarning" style="font-size:12px; color:#555; margin-bottom:16px; display:none;">
+  EP and Album releases are not supported yet. Please contact the admin for manual distribution.
+</div>
+
     <div class="label">Version</div><input id="version" placeholder="Optional">
     <div class="label">Composer & Lyrics <span class="req">*</span></div>
 <input id="fullname" placeholder="e.g. John Doe, Jane Smith">
@@ -278,6 +288,15 @@ function loadStep2Fields(){
   `;
   s.innerHTML += `<button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
                   <button type="button" class="btn" onclick="next(2)">Continue</button>`;
+ document.getElementById("releaseType").addEventListener("change", e=>{
+  const val = e.target.value;
+  const warning = document.getElementById("releaseWarning");
+  if(val === "ep" || val === "album"){
+    warning.style.display = "block";
+  } else {
+    warning.style.display = "none";
+  }
+});                 
 }
 
 // UPLOAD LISTENERS
@@ -394,10 +413,10 @@ function loadPreview(){
 
   const titleVal = document.getElementById("title")?.value || "-";
   const artistVal = document.getElementById("artist")?.value || "-";
-  
+  const genreVal = document.getElementById("genre")?.value || "-";
   const labelVal = document.getElementById("labelName")?.value || "-";
 
-  let html = `
+  const html = `
   <div style="display:flex; gap:16px; align-items:center;">
     <img src="${coverUrl}" style="width:80px; height:80px; border-radius:12px; object-fit:cover; border:1px solid #ddd;">
     <div>
@@ -408,14 +427,11 @@ function loadPreview(){
 
   <hr style="margin:16px 0; border:none; border-top:1px solid #eee;">
 
-
+  <div><span>Genre:</span> ${genreVal}</div>
   <div><span>Label:</span> ${labelVal}</div>
   `;
-const genreVal = document.getElementById("genre")?.value || "-";
 
-html += `<div><span>Genre:</span> ${genreVal}</div>`;
-
-  previewBox.innerHTML = html;
+  document.getElementById("previewBox").innerHTML = html;
 }
 
 // SUBMIT
@@ -428,6 +444,7 @@ function submitRelease(){
   if(!user) return;
   let data = {
   type: document.getElementById("type").value,
+ releaseType: document.getElementById("releaseType").value, 
 title: document.getElementById("title").value,
 artist: document.getElementById("artist").value,
   label: document.getElementById("labelName")?.value || "Unknown Label",
