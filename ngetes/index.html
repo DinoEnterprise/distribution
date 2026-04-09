@@ -72,7 +72,7 @@
     <select id="type" hidden>
       <option value="original" selected>Original Asset</option>
     </select>
-    <button type="button" class="btn" onclick="next(1)">Continue</button>
+    <button type="button" class="btn" onclick="next(1)">Start</button>
   </div>
 
   <!-- STEP 2 -->
@@ -181,7 +181,8 @@ const stepsData = {
   2: ()=>{
   return document.getElementById("title")?.value &&
          document.getElementById("artist")?.value &&
-         document.getElementById("publisher")?.value;
+         document.getElementById("publisher")?.value &&
+         document.getElementById("labelName")?.value;
 },
   3: ()=>document.getElementById("audio")?.dataset.url && document.getElementById("cover")?.dataset.url
 };
@@ -193,12 +194,18 @@ function loadStep2Fields(){
   s.innerHTML="";
   s.innerHTML += `
     <div class="label">Judul Lagu *</div><input id="title">
+
+    <div class="label">Label *</div>
+    <input id="labelName" placeholder="Contoh: Dynotic Distribution / Betch Record">
+
     <div class="label">Song ID (Publisher) *</div>
-<input id="publisher" placeholder="Wajib">
-<div style="font-size:12px; color:#555; margin-bottom:16px;">
-  Cek Song ID <a href="https://dynotic.web.id/catalog" target="_blank">Disini</a>
-</div>
-        <div class="label">Artist Name *</div><input id="artist">
+    <input id="publisher" placeholder="Wajib">
+    <div style="font-size:12px; color:#555; margin-bottom:16px;">
+      Cek Song ID <a href="https://dynotic.web.id/catalog" target="_blank">Disini</a>
+    </div>
+
+    <div class="label">Artist Name *</div><input id="artist">
+
     <div class="label">Version</div><input id="version" placeholder="Optional">
     <div class="label">Nama Vocal (Khusus Pragita Prabawa)</div><input id="fullname" placeholder="Optional">
     <div class="label">Featuring</div><input id="featuring" placeholder="Optional">
@@ -336,20 +343,21 @@ function loadPreview(){
   const titleVal = document.getElementById("title")?.value || "-";
   const artistVal = document.getElementById("artist")?.value || "-";
   const publisherVal = document.getElementById("publisher")?.value || "-";
+  const labelVal = document.getElementById("labelName")?.value || "-";
 
   let html = `
-    <div style="display:flex; gap:16px; align-items:center;">
-      <img src="${coverUrl}" style="width:80px; height:80px; border-radius:12px; object-fit:cover; border:1px solid #ddd;">
-      <div>
-        <div style="font-weight:700; font-size:16px;">${titleVal}</div>
-        <div style="font-size:13px; color:#666;">${artistVal}</div>
-      </div>
+  <div style="display:flex; gap:16px; align-items:center;">
+    <img src="${coverUrl}" style="width:80px; height:80px; border-radius:12px; object-fit:cover; border:1px solid #ddd;">
+    <div>
+      <div style="font-weight:700; font-size:16px;">${titleVal}</div>
+      <div style="font-size:13px; color:#666;">${artistVal}</div>
     </div>
+  </div>
 
-    <hr style="margin:16px 0; border:none; border-top:1px solid #eee;">
+  <hr style="margin:16px 0; border:none; border-top:1px solid #eee;">
 
-    <div><span>Song ID:</span> ${publisherVal}</div>
-    <div><span>Label:</span> Dynotic Distribution</div>
+  <div><span>Song ID:</span> ${publisherVal}</div>
+  <div><span>Label:</span> ${labelVal}</div>
   `;
 
   previewBox.innerHTML = html;
@@ -364,13 +372,14 @@ function submitRelease(){
   const user=firebase.auth().currentUser;
   if(!user) return;
   let data = {
-  type:type.value,
-  title:title.value,
-  artist:artist.value,
-  publisher:publisher.value, // <--- baru
-  audio:audio.dataset.url,
-  cover:cover.dataset.url,
-  version:version.value,
+  type: document.getElementById("type").value,
+title: document.getElementById("title").value,
+artist: document.getElementById("artist").value,
+  label: document.getElementById("labelName")?.value || "Unknown Label",
+  publisher: document.getElementById("publisher").value,
+  audio: document.getElementById("audio").dataset.url,
+cover: document.getElementById("cover").dataset.url,
+  version: document.getElementById("version")?.value || "",
   fullname:document.getElementById("fullname")?.value || "",
   status:"pending",
   time:Date.now()
