@@ -134,7 +134,7 @@ const errorMsg = document.getElementById("errorMsg");
 // Silent login check
 auth.onAuthStateChanged(user=>{
   if(!user){
-    window.location.href="dynotic.web.id/nusantara-music";
+    window.location.href="../index.html";
   }
 });
 
@@ -159,7 +159,7 @@ resetBtn.addEventListener("click", ()=>{
 
   const user = auth.currentUser;
   if(!user){
-    window.location.href="../login";
+    window.location.href="../index.html";
     return;
   }
 
