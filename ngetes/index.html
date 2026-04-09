@@ -26,56 +26,7 @@
     .upload-inner{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative; }
     .upload-icon-img{ width:48px; height:48px; object-fit:contain; display:block; margin:0 auto; }
     .upload-text{ font-size:13px; color:#111; margin-top:6px; text-align:center; }
-    #coverOverlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backdrop-filter: blur(8px);
-  background: rgba(255,255,255,0.3);
-  border-radius: 18px;
-  overflow: hidden;
-  display: none;
-}
-
-/* garis shimmer */
-#coverOverlay::before {
-  content: "";
-  position: absolute;
-  width: 200%;
-  height: 100%;
-  background: repeating-linear-gradient(
-    45deg,
-    rgba(255,255,255,0.2) 0px,
-    rgba(255,255,255,0.2) 10px,
-    rgba(255,255,255,0.4) 10px,
-    rgba(255,255,255,0.4) 20px
-  );
-  animation: shimmer 1s linear infinite;
-}
-
-@keyframes shimmer {
-  from { transform: translateX(-50%); }
-  to { transform: translateX(0%); }
-}
-
-/* progress dari kiri ke kanan */
-#coverProgress {
-  position: absolute;
-  height: 100%;
-  width: 0%;
-  background: rgba(0,0,0,0.2);
-  backdrop-filter: blur(2px);
-  transition: width 0.2s;
-}
-   #coverPreview {
-  position:absolute;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  border-radius:18px;
-  display:none;
-  transition: filter 0.3s;
-}
+    #coverPreview{ position:absolute; width:100%; height:100%; object-fit:cover; border-radius:18px; display:none; }
     .input-error{ animation:shake 0.2s ease; border-color:#111 !important; }
     @keyframes shake { 0%{transform:translateX(0);} 25%{transform:translateX(-3px);} 50%{transform:translateX(3px);} 75%{transform:translateX(-3px);} 100%{transform:translateX(0);} }
     .upload-audio{ display:block; cursor:pointer; }
@@ -133,26 +84,15 @@
     <div style="margin-bottom:28px;">
       <div class="label" style="margin-bottom:12px;">Cover Art *</div>
       <label class="upload-box">
-  <input id="cover" type="file" accept="image/*" hidden>
-
-  <div class="upload-inner">
-
-    <!-- PREVIEW -->
-    <img id="coverPreview" />
-
-    <!-- OVERLAY PROGRESS -->
-    <div id="coverOverlay">
-      <div id="coverProgress"></div>
-    </div>
-
-    <!-- PLACEHOLDER -->
-    <div id="coverPlaceholder">
-      <img src="../assets/upload-icon.png" class="upload-icon-img">
-      <div class="upload-text">Upload Cover (JPG / PNG)</div>
-    </div>
-
-  </div>
-</label>
+        <input id="cover" type="file" accept="image/*" hidden>
+        <div class="upload-inner">
+          <img id="coverPreview" />
+          <div id="coverPlaceholder">
+            <img src="../assets/upload-icon.png" class="upload-icon-img">
+            <div class="upload-text">Upload Cover (JPG / PNG)</div>
+          </div>
+        </div>
+      </label>
     </div>
 
     <!-- AUDIO UPLOAD -->
@@ -329,30 +269,10 @@ function attachUploadListeners(){
     };
     reader.readAsDataURL(file);
 
-   const coverOverlay = document.getElementById("coverOverlay");
-const coverProgress = document.getElementById("coverProgress");
-
-coverOverlay.style.display = "block";
-
-uploadFile(file, percent=>{
-  coverProgress.style.width = percent + "%";
-
-  // efek blur berkurang
-  const blurValue = 10 - (percent / 10);
-  coverPreview.style.filter = `blur(${blurValue}px)`;
-
-}, url=>{
+    uploadFile(file, ()=>{}, url=>{
   if(url){ 
     coverInput.dataset.url = url; 
-    coverUploaded = true;
-
-    coverProgress.style.width = "100%";
-    coverPreview.style.filter = "blur(0px)";
-
-    setTimeout(()=>{
-      coverOverlay.style.display = "none";
-    }, 300);
-
+    coverUploaded = true; 
     checkAllUploaded();
     updateStepUI();
   }
