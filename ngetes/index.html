@@ -12,9 +12,26 @@
     @keyframes fade { from{opacity:0; transform:translateY(15px);} to{opacity:1;} }
     header { padding: 12px 20px; display: flex; align-items: center; background: #fff; border-bottom: 1px solid #eee; position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; }
     header img { height: 50px; }
-    .steps { display:flex; justify-content:space-between; margin-bottom:25px; position:relative; }
-    .steps::before { content:""; position:absolute; top:50%; left:5%; right:5%; height:3px; background:#e5e7eb; z-index:0; }
-    .step { width:38px; height:38px; border-radius:50%; background:#e5e7eb; display:flex; align-items:center; justify-content:center; font-weight:700; color:#666; z-index:1; cursor:pointer; }
+.steps {
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:25px;
+  position:relative;
+}
+
+.step {
+  pointer-events: none;
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:#e5e7eb;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  color:#666;
+  z-index:1;
+}
     .step.active { background:#111; color:#fff; box-shadow:0 6px 18px rgba(0,0,0,0.25); }
     .section { animation:fade 0.4s; }
     .label { font-size:13px; font-weight:600; margin-bottom:6px; }
@@ -310,24 +327,6 @@ function goto(n){
   for(let i=1;i<=4;i++) document.getElementById("s"+i).classList.remove("active");
   document.getElementById("s"+n).classList.add("active");
 }
-s1.onclick=()=>goto(1);
-
-s2.onclick=()=>{
-  if(!stepsData[1]()) return;
-  goto(2);
-};
-
-s3.onclick=()=>{
-  if(!stepsData[2]()) return alert("Lengkapi dulu data di Step 2!");
-  goto(3);
-};
-
-s4.onclick=()=>{
-  if(!stepsData[2]()) return alert("Lengkapi dulu data di Step 2!");
-  if(!stepsData[3]()) return alert("Upload audio & cover dulu!");
-  loadPreview();
-  goto(4);
-};
 function updateStepUI(){
   const validStep2 = stepsData[2]();
   const validStep3 = stepsData[3]();
