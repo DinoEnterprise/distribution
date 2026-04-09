@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Original Asset | Dynotic Distribution</title>
+  <title>Cover to Master | Dynotic Distribution</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; font-family:"Outfit",sans-serif;}
@@ -197,9 +197,10 @@ const stepsData = {
   1: ()=>true,
 2: ()=>{
   return document.getElementById("title")?.value &&
-         document.getElementById("artist")?.value &&
-         document.getElementById("labelName")?.value &&
-         document.getElementById("fullname")?.value;
+       document.getElementById("artist")?.value &&
+       document.getElementById("labelName")?.value &&
+       document.getElementById("fullname")?.value &&
+       document.getElementById("genre")?.value;
 },
   3: ()=>document.getElementById("audio")?.dataset.url && document.getElementById("cover")?.dataset.url
 };
@@ -216,6 +217,55 @@ function loadStep2Fields(){
     <input id="labelName" placeholder="Dynotic Distribution">
 
     <div class="label">Artist Name *</div><input id="artist">
+
+<div class="label">Genre *</div>
+<select id="genre">
+  <option value="">Select Genre</option>
+  <option>Alternative</option>
+  <option>Anime</option>
+  <option>Antiques & Collectibles</option>
+  <option>Blues</option>
+  <option>Bossa Nova</option>
+  <option>Childrens Music</option>
+  <option>Chill Out</option>
+  <option>Christian</option>
+  <option>Classical</option>
+  <option>Comedy</option>
+  <option>Country</option>
+  <option>Dance</option>
+  <option>Dancehall</option>
+  <option>Devotional</option>
+  <option>Disco</option>
+  <option>Easy Listening</option>
+  <option>Educational</option>
+  <option>Electronic</option>
+  <option>Fitness & Workout</option>
+  <option>Folk</option>
+  <option>Health & Fitness</option>
+  <option>Holiday Music</option>
+  <option>House</option>
+  <option>Indian</option>
+  <option>Industrial</option>
+  <option>Inspirational</option>
+  <option>Instructional</option>
+  <option>Jazz</option>
+  <option>Latin</option>
+  <option>Lo-fi</option>
+  <option>Metal</option>
+  <option>Motown</option>
+  <option>Oldies</option>
+  <option>Pop</option>
+  <option>Phonk</option>
+  <option>R&B/Soul</option>
+  <option>Rap/Hip-Hop</option>
+  <option>Reggae</option>
+  <option>Rock</option>
+  <option>Samba</option>
+  <option>Soundtrack</option>
+  <option>Spoken Word</option>
+  <option>Unknown</option>
+  <option>World</option>
+</select>
 
     <div class="label">Version</div><input id="version" placeholder="Optional">
     <div class="label">Composer & Lyrics <span class="req">*</span></div>
@@ -361,6 +411,9 @@ function loadPreview(){
 
   <div><span>Label:</span> ${labelVal}</div>
   `;
+const genreVal = document.getElementById("genre")?.value || "-";
+
+html += `<div><span>Genre:</span> ${genreVal}</div>`;
 
   previewBox.innerHTML = html;
 }
