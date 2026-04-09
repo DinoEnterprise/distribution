@@ -237,14 +237,18 @@ function attachUploadListeners(){
     const file = e.target.files[0];
     if(!file) return;
     audioUploaded = false;
-    audioName.textContent = file.name;
+    audioName.textContent = "Uploading...";
     audioWave.style.width = "0%";
     uploadFile(file, percent=>{ 
   audioWave.style.width = percent + "%"; 
+  audioName.textContent = file.name + " (" + percent + "%)";
 }, url=>{
   if(url){ 
     audioInput.dataset.url = url; 
     audioUploaded = true; 
+
+  audioName.textContent = file.name + " (Done ✓)";
+
     checkAllUploaded();
     updateStepUI();
   }
