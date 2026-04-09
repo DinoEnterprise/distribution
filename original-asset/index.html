@@ -284,6 +284,9 @@ function loadStep2Fields(){
 </div>
 
     <div class="label">Featuring</div><input id="featuring" placeholder="Optional">
+    
+    <div class="label">Producer</div>
+<input id="producer" placeholder="Optional">
   `;
   s.innerHTML += `<button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
                   <button type="button" class="btn" onclick="next(2)">Start Your Release</button>`;
@@ -461,6 +464,10 @@ cover: document.getElementById("cover").dataset.url,
 
   const feat = document.getElementById("featuring")?.value;
 if(feat) data.featuring = feat;
+
+const prod = document.getElementById("producer")?.value;
+if(prod) data.producer = prod;
+
   db.ref("releases/"+user.uid).push(data)
     .then(()=>location.href="../releases")
     .catch(()=>{ btn.disabled=false; text.style.display="inline"; loader.style.display="none"; });
