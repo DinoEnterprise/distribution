@@ -216,7 +216,14 @@ function loadStep2Fields(){
   <div class="label">Label <span class="req">*</span></div>
 <input id="labelName" placeholder="e.g.Dynotic">
 
-    <div class="label">Artist Name *</div><input id="artist">
+<div class="label">Artist Name <span class="req">*</span></div>
+<input id="artist">
+    
+<div class="label">Spotify URL</div>
+<input id="spotifyUrl" placeholder="https://open.spotify.com/...">
+
+<div class="label">Apple Music URL</div>
+<input id="appleUrl" placeholder="https://music.apple.com/...">
 
 <div class="label">Genre <span class="req">*</span></div>
 <select id="genre">
@@ -415,6 +422,7 @@ function loadPreview(){
 
   const titleVal = document.getElementById("title")?.value || "-";
   const artistVal = document.getElementById("artist")?.value || "-";
+  
   const genreVal = document.getElementById("genre")?.value || "-";
   const labelVal = document.getElementById("labelName")?.value || "-";
 
@@ -453,6 +461,8 @@ genre: document.getElementById("genre").value,
   label: document.getElementById("labelName")?.value || "Unknown Label",
   audio: document.getElementById("audio").dataset.url,
 cover: document.getElementById("cover").dataset.url,
+spotifyUrl: document.getElementById("spotifyUrl")?.value || "",
+  appleUrl: document.getElementById("appleUrl")?.value || "",
   version: document.getElementById("version")?.value || "",
   fullname: document.getElementById("fullname")?.value
   .split(",")
