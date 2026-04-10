@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Account | Dynotic Distribution</title>
+<title>Account | Sixthgrade Labs</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;user-select:none;}
@@ -45,7 +45,7 @@ header img{height:50px;}
   border:1px solid #ececec;
   box-shadow:0 8px 18px rgba(0,0,0,.05);
   transition:.3s, transform 0.3s ease;
-  animation:bounceIn 0.5s ease forwards;
+  animation: fadeIn 0.5s ease forwards;
 }
 .card:hover{transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,.07);}
 
@@ -282,7 +282,7 @@ const auth = firebase.auth();
 const db = firebase.database();
 
 auth.onAuthStateChanged(user=>{
-  if(!user) location.href="../index.html";
+  if(!user) location.href="../login";
   else loadProfile(user.uid);
 });
 
@@ -326,7 +326,7 @@ if(d.payment){
 
 function logout(){
   auth.signOut().then(()=>{
-    location.href = "../index.html";
+    location.href = "../login";
   });
 }
 
