@@ -235,48 +235,50 @@ function openEmailDraft(email, artist, title, status){
   let subject = "";
   let body = "";
 
-  if(status === "approved"){
-  subject = "Your Release Has Been Approved";
+if(status === "approved"){
+  subject = `Approved - Congrats! Your release has been sent to the store: ${title}`;
+
 
   body = 
 `Hello,
 
-Your release has been approved.
+Great news!
 
----------------------------
+Your release has been approved and is now being processed for distribution to all platforms.
+
 Release Details
----------------------------
 Title  : ${title}
 Artist : ${artist}
 
-Your music will now be processed and delivered to platforms.
+Your music will be delivered to digital stores shortly.
 
-— Dynotic Distribution`;
+If you have any questions, feel free to contact our support team.
+
+Best regards,
+Nazwa
+QC Team Dynotic`;
 }
 
 if(status === "rejected"){
-  subject = "Your Release Has Been Rejected";
+  subject = `Reject - Your release has been Rejected: ${title}`;
 
   body = 
 `Hello,
 
-Your release has been rejected.
+We regret to inform you that your release has been rejected.
 
----------------------------
 Release Details
----------------------------
 Title  : ${title}
 Artist : ${artist}
 
----------------------------
-Reason
----------------------------
-Your release is not eligible for distribution because it may contain content that infringes on another artist or rights holder.
+Reason:
+Your release has been rejected because it may contain content that infringes on another artist’s rights or lacks proper licensing.
 
-If you have a valid license, please contact our support team and provide proof.
+If you believe this is a mistake, please contact our support team and provide valid proof of ownership or license.
 
-— Dynotic Distribution`;
-}
+Best regards,
+Nazwa
+QC Team Dynotic`;
 
   // encode biar aman di URL
   const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g, "\r\n"))}`;
