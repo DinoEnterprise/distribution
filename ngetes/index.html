@@ -1,153 +1,143 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cover to Master | Dynotic Distribution</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:"Outfit",sans-serif;}
-    body { background: #f1f2f7; min-height:100vh; padding-top:74px; }
-    .wrap { width:92%; margin:18px auto; background:rgba(255,255,255,0.95); border-radius:24px; padding:22px; box-shadow:0 20px 40px rgba(0,0,0,0.18); animation:fade 0.4s ease; }
-    @keyframes fade { from{opacity:0; transform:translateY(15px);} to{opacity:1;} }
-    header { padding: 12px 20px; display: flex; align-items: center; background: #fff; border-bottom: 1px solid #eee; position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; }
-    header img { height: 50px; }
-.steps {
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | Dynotic Distribution</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{ box-sizing:border-box; font-family:'Outfit',sans-serif; margin:0; padding:0; }
+
+body{
+  min-height:100vh;
   display:flex;
-  justify-content:space-between;
-  margin-bottom:25px;
-  position:relative;
+  justify-content:center;
+  align-items:center;
+  background: linear-gradient(180deg, #e5e7eb, #d1d5db);
+  padding:15px;
 }
 
-.step {
-  pointer-events: none;
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  background:#e5e7eb;
+/* CARD */
+.container{
+  width:100%;
+  max-width:420px;
+  background:#fff;
+  border-radius:26px;
+  padding:32px 26px;
+  text-align:center;
+  border:1px solid rgba(0,0,0,0.05);
+  box-shadow:0 10px 30px rgba(0,0,0,0.12), 0 30px 60px rgba(0,0,0,0.08);
+  animation:enter .6s ease;
+}
+.container:hover{ transform:translateY(-3px); transition:.3s; }
+@keyframes enter{ from{opacity:0; transform:translateY(40px)} to{opacity:1; transform:none} }
+
+/* LOGO */
+.logo{ width:70px; margin-bottom:16px; }
+h2{ margin-bottom:20px; font-size:22px; font-weight:700; color:#222; }
+
+/* INPUT */
+.field{ position:relative; margin-bottom:15px; width:100%; }
+input{
+  width:100%;
+  padding:14px 44px 14px 16px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  font-size:15px;
+  outline:none;
+  transition:.2s;
+}
+input:focus{
+  border:1px solid #111;
+  box-shadow:0 0 0 3px rgba(0,0,0,0.08);
+}
+
+/* TOGGLE PASSWORD */
+.toggle{
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  font-size:18px;
+  user-select:none;
+  padding:4px;
+  border-radius:6px;
+  transition:.2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.toggle:active, .toggle:focus{ outline:2px solid #111; }
+
+/* BUTTON */
+button{
+  letter-spacing:.3px;
+  width:100%;
+  padding:15px;
+  border-radius:14px;
+  font-size:16px;
+  font-weight:700;
+  color:#fff;
+  background:#000;
+  border:1px solid #000;
+  cursor:pointer;
+  transition:.2s;
+}
+button:hover{ background:#111; }
+button:focus, button:active{ outline:2px solid #000; }
+button:active{ transform:scale(.96); }
+
+/* ERROR */
+#error{ margin-top:10px; font-size:14px; color:#e53e3e; min-height:20px; }
+
+/* LOADER */
+.loader{
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,.9);
   display:flex;
   align-items:center;
   justify-content:center;
   font-weight:700;
-  color:#666;
-  z-index:1;
+  font-size:16px;
+  color:#111;
+  opacity:0;
+  pointer-events:none;
+  transition:.3s;
 }
-    .step.active { background:#111; color:#fff; box-shadow:0 6px 18px rgba(0,0,0,0.25); }
-    .section { animation:fade 0.4s; }
-    .label { font-size:13px; font-weight:600; margin-bottom:6px; }
-    .req { color:red; }
-    input, select { width:100%; padding:14px; border-radius:14px; border:1px solid #ddd; margin-bottom:16px; font-size:14px; }
-    input:focus, select:focus { outline:none; border-color:#111; box-shadow:0 0 0 3px rgba(0,0,0,0.08); }
-    .upload-box{ display:block; width:200px; aspect-ratio:1/1; border:2px dashed #111; border-radius:20px; cursor:pointer; transition:0.3s; box-shadow:0 8px 20px rgba(0,0,0,0.08); background:#fff; }
-    .upload-box:hover{ background:#f5f5f5; }
-    .upload-inner{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative; }
-    .upload-icon-img{ width:48px; height:48px; object-fit:contain; display:block; margin:0 auto; }
-    .upload-text{ font-size:13px; color:#111; margin-top:6px; text-align:center; }
-    #coverPreview{ position:absolute; width:100%; height:100%; object-fit:cover; border-radius:18px; display:none; }
-    .input-error{ animation:shake 0.2s ease; border-color:#111 !important; }
-    @keyframes shake { 0%{transform:translateX(0);} 25%{transform:translateX(-3px);} 50%{transform:translateX(3px);} 75%{transform:translateX(-3px);} 100%{transform:translateX(0);} }
-    .upload-audio{ display:block; cursor:pointer; }
-    .audio-box{ display:flex; align-items:center; gap:14px; padding:16px; border-radius:18px; background:#f9fafb; border:1px solid #e5e7eb; transition:0.3s; }
-    .audio-box:active{ transform:scale(0.98); }
-    .audio-box:hover{ border-color:#111; background:#f3f4ff; }
-    .audio-icon-img{ width:26px; height:26px; object-fit:contain; }
-    .audio-name{ font-weight:600; font-size:14px; }
-    .audio-sub{ font-size:12px; color:#888; }
-    .progress-wrapper{ margin-top:14px; width:100%; height:8px; background:#e5e7eb; border-radius:6px; overflow:hidden; }
-    .progress-bar{ height:100%; width:0%; background:#111; transition:width 0.3s; }
-    .btn { width:100%; padding:15px; border:none; border-radius:16px; font-weight:700; color:#fff; background:#111; cursor:pointer; }
-    .btn.gray{ background:rgba(255,255,255,0.6); color:#111; border:1.5px solid #111; backdrop-filter:blur(6px); }
-    .btn:hover:not(.gray){ background:#000; }
-    .btn.gray:hover{ background:#111; color:#fff; }
-    .btn:active { transform:scale(0.96); background:#000; }
-    .preview { background:#f9fafb; border-radius:16px; padding:16px; font-size:14px; line-height:1.7; }
-    .preview div { margin-bottom:8px; }
-    .preview span { color:#111; font-weight:600; }
-    .preview img:hover {
-  transform: scale(1.05);
-  transition: 0.3s;
-}
-  </style>
+.loader.active{ opacity:1; pointer-events:auto; }
+
+/* ANIMATION EXIT */
+.fade-out{ animation:exit .5s ease forwards; }
+@keyframes exit{ to{opacity:0; transform:scale(.95);} }
+</style>
 </head>
+
 <body>
-<header>
-  <img src="../assets/dynotic-distribution.png">
-</header>
 
-<div class="wrap">
-  <!-- STEP PROGRESS -->
-  <div class="steps">
-    <div class="step active" id="s1">1</div>
-    <div class="step" id="s2">2</div>
-    <div class="step" id="s3">3</div>
-    <div class="step" id="s4">4</div>
+<div class="container" id="card">
+  <img src="../assets/dynotic-distribution.png" class="logo">
+  <h2>Login Dynotic</h2>
+
+  <div class="field">
+    <input id="email" type="email" placeholder="Email">
   </div>
 
-  <!-- STEP 1 -->
-  <div id="step1" class="section">
-    <div class="label">Cover To Master <span class="req">*</span></div>
-    <select id="type" hidden>
-      <option value="original" selected>Original Asset</option>
-    </select>
-    <button type="button" class="btn" onclick="next(1)">Start</button>
+  <div class="field">
+    <input id="pass" type="password" placeholder="Password">
+    <div class="toggle" id="eye" tabindex="0" onclick="togglePass()">𖠂</div>
   </div>
 
-  <!-- STEP 2 -->
-  <div id="step2" class="section" hidden></div>
-
-  <!-- STEP 3 -->
-  <div id="step3" class="section" hidden>
-    <!-- COVER UPLOAD -->
-    <div style="margin-bottom:28px;">
-      <div class="label" style="margin-bottom:12px;">Cover Art *</div>
-      <label class="upload-box">
-        <input id="cover" type="file" accept="image/*" hidden>
-        <div class="upload-inner">
-          <img id="coverPreview" />
-          <div id="coverPlaceholder">
-            <img src="../assets/upload-icon.png" class="upload-icon-img">
-            <div class="upload-text">Upload Cover (JPG / PNG)</div>
-          </div>
-        </div>
-      </label>
-    </div>
-
-    <!-- AUDIO UPLOAD -->
-    <div style="margin-bottom:28px;">
-      <div class="label" style="margin-bottom:12px;">Audio File *</div>
-      <label class="upload-audio">
-        <input id="audio" type="file" accept="audio/*" hidden>
-        <div class="audio-box">
-          <img src="../assets/audio-icon.png" class="audio-icon-img">
-          <div class="audio-info">
-            <div id="audioName" class="audio-name">No file selected</div>
-            <div class="audio-sub">MP3 / WAV</div>
-          </div>
-        </div>
-      </label>
-      <div class="progress-wrapper">
-        <div id="audioWave" class="progress-bar"></div>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:12px;">
-      <button type="button" class="btn gray" onclick="back(3)" style="flex:1;">Back</button>
-      <button type="button" class="btn" id="previewBtn" onclick="loadPreview(); goto(4)" disabled style="flex:2;">Preview</button>
-    </div>
+  <div style="text-align:right; margin-bottom:15px;">
+<a href="../forgot-password" style="font-size:14px; color:#555; text-decoration:underline;">Forgot password?</a>
   </div>
 
-  <!-- STEP 4 -->
-  <div id="step4" class="section" hidden>
-    <div class="preview" id="previewBox"></div>
-    <br>
-    <button class="btn gray" onclick="back(4)">Edit</button>
-    <br><br>
-    <button class="btn" id="submitBtn" onclick="submitRelease()">
-      <span id="btnText">Submit Release</span>
-      <span id="btnLoader" style="display:none;">Loading...</span>
-    </button>
-  </div>
+  <button onclick="login()">Login</button>
+  <div id="error"></div>
 </div>
+
+<div class="loader" id="loader">Dynotic Distribution…</div>
 
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -160,313 +150,120 @@ firebase.initializeApp({
   authDomain: "dynopay-2513c.firebaseapp.com",
   databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
+
 const db = firebase.database();
-const WORKER_URL = "https://upload-assets.dynotic-bot.workers.dev/";
 
-function uploadFile(file, progressCallback, doneCallback){
-  const formData = new FormData();
-  formData.append("file", file);
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", WORKER_URL, true);
+const errorEl = document.getElementById("error");
+const emailInput = document.getElementById("email");
+const passInput = document.getElementById("pass");
+const btn = document.querySelector("button");
 
-  xhr.upload.onprogress = function(e){
-    if(e.lengthComputable){
-      const percent = Math.round((e.loaded / e.total) * 100);
-      progressCallback(percent);
-    }
-  };
+emailInput.addEventListener("input", () => errorEl.textContent = "");
+passInput.addEventListener("input", () => errorEl.textContent = "");
 
-  xhr.onload = function(){
-    if(xhr.status === 200){
-      const data = JSON.parse(xhr.responseText);
-      if(data.success){ doneCallback(data.url); }
-      else { alert("Upload gagal: " + data.error); doneCallback(null); }
-    } else { alert("Upload gagal!"); doneCallback(null); }
-  };
-
-  xhr.onerror = function(){ alert("Upload error!"); doneCallback(null); };
-  xhr.send(formData);
-}
-
-firebase.auth().onAuthStateChanged(user=>{
-  if(!user) location.href="../login";
-});
-
-// STEP VALIDATION
-const stepsData = {
-  1: ()=>true,
-2: ()=>{
-  return document.getElementById("title")?.value &&
-       document.getElementById("artist")?.value &&
-       document.getElementById("labelName")?.value &&
-       document.getElementById("fullname")?.value &&
-       document.getElementById("genre")?.value;
-},
-  3: ()=>document.getElementById("audio")?.dataset.url && document.getElementById("cover")?.dataset.url
-};
-
-function hideAll(){ for(let i=1;i<=4;i++) document.getElementById("step"+i).hidden=true; }
-
-function loadStep2Fields(){
-  const s = document.getElementById("step2");
-  s.innerHTML="";
-  s.innerHTML += `
-    <div class="label">Judul Lagu *</div><input id="title">
-
-    <div class="label">Label *</div>
-    <input id="labelName" placeholder="Dynotic Distribution">
-
-    <div class="label">Artist Name *</div><input id="artist">
-
-<div class="label">Genre *</div>
-<select id="genre">
-  <option value="">Select Genre</option>
-  <option>Alternative</option>
-  <option>Anime</option>
-  <option>Antiques & Collectibles</option>
-  <option>Blues</option>
-  <option>Bossa Nova</option>
-  <option>Childrens Music</option>
-  <option>Chill Out</option>
-  <option>Christian</option>
-  <option>Classical</option>
-  <option>Comedy</option>
-  <option>Country</option>
-  <option>Dance</option>
-  <option>Dancehall</option>
-  <option>Devotional</option>
-  <option>Disco</option>
-  <option>Easy Listening</option>
-  <option>Educational</option>
-  <option>Electronic</option>
-  <option>Fitness & Workout</option>
-  <option>Folk</option>
-  <option>Health & Fitness</option>
-  <option>Holiday Music</option>
-  <option>House</option>
-  <option>Indian</option>
-  <option>Industrial</option>
-  <option>Inspirational</option>
-  <option>Instructional</option>
-  <option>Jazz</option>
-  <option>Latin</option>
-  <option>Lo-fi</option>
-  <option>Metal</option>
-  <option>Motown</option>
-  <option>Oldies</option>
-  <option>Pop</option>
-  <option>Phonk</option>
-  <option>R&B/Soul</option>
-  <option>Rap/Hip-Hop</option>
-  <option>Reggae</option>
-  <option>Rock</option>
-  <option>Samba</option>
-  <option>Soundtrack</option>
-  <option>Spoken Word</option>
-  <option>Unknown</option>
-  <option>World</option>
-</select>
-
-<div class="label">Release Type *</div>
-<select id="releaseType">
-  <option value="single" selected>Single</option>
-  <option value="ep">EP</option>
-  <option value="album">Album</option>
-</select>
-<div id="releaseWarning" style="font-size:12px; color:#555; margin-bottom:16px; display:none;">
-  EP and Album releases are not supported yet. Please contact the admin for manual distribution.
-</div>
-
-    <div class="label">Version</div><input id="version" placeholder="Optional">
-    <div class="label">Composer & Lyrics <span class="req">*</span></div>
-<input id="fullname" placeholder="e.g. John Doe, Jane Smith">
-<div style="font-size:12px; color:#555; margin-bottom:16px;">
-  Separate multiple names with commas
-</div>
-
-    <div class="label">Featuring</div><input id="featuring" placeholder="Optional">
-  `;
-  s.innerHTML += `<button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
-                  <button type="button" class="btn" onclick="next(2)">Continue</button>`;
- document.getElementById("releaseType").addEventListener("change", e=>{
-  const val = e.target.value;
-  const warning = document.getElementById("releaseWarning");
-  if(val === "ep" || val === "album"){
-    warning.style.display = "block";
+function togglePass(){
+  if(passInput.type === "password"){
+    passInput.type = "text";
+    document.getElementById("eye").textContent = "⌒";
   } else {
-    warning.style.display = "none";
+    passInput.type = "password";
+    document.getElementById("eye").textContent = "𖠂";
   }
-});                 
 }
 
-// UPLOAD LISTENERS
-let uploadListenerAttached = false;
-function attachUploadListeners(){
-  if(uploadListenerAttached) return;
-  uploadListenerAttached = true;
+// 🔥 FIXED LOGIN LOGIC
+async function login(){
+  if(btn.disabled) return;
 
-  const audioInput = document.getElementById("audio");
-  const coverInput = document.getElementById("cover");
-  const previewBtn = document.getElementById("previewBtn");
-  const audioWave = document.getElementById("audioWave");
-  const audioName = document.getElementById("audioName");
-  const coverPreview = document.getElementById("coverPreview");
+  const email = emailInput.value.trim();
+  const pass = passInput.value.trim();
 
-  let audioUploaded = false;
-  let coverUploaded = false;
-
-  function checkAllUploaded(){ previewBtn.disabled = !(audioUploaded && coverUploaded); }
-
-  // AUDIO
-  audioInput.addEventListener("change", e=>{
-    const file = e.target.files[0];
-    if(!file) return;
-    audioUploaded = false;
-    audioName.textContent = "Uploading...";
-    audioWave.style.width = "0%";
-    uploadFile(file, percent=>{ 
-  audioWave.style.width = percent + "%"; 
-  audioName.textContent = file.name + " (" + percent + "%)";
-}, url=>{
-  if(url){ 
-    audioInput.dataset.url = url; 
-    audioUploaded = true; 
-
-  audioName.textContent = file.name + " (Done ✓)";
-
-    checkAllUploaded();
-    updateStepUI();
+  if(!email || !pass){
+    errorEl.textContent = "Email and password are required";
+    return;
   }
+
+  try {
+    btn.disabled = true;
+    btn.textContent = "Signing in...";
+
+    await firebase.auth()
+      .setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
+    const userCredential = await firebase.auth()
+      .signInWithEmailAndPassword(email, pass);
+
+    const user = userCredential.user;
+
+    const snapshot = await db.ref("users/" + user.uid).once("value");
+    const data = snapshot.val();
+
+    if(!data){
+      throw new Error("no_user_data");
+    }
+
+    if(data.status !== "active"){
+      await firebase.auth().signOut();
+      throw new Error("inactive");
+    }
+
+    // update last login (FIXED)
+    await db.ref("users/" + user.uid + "/lastLogin")
+      .set(Date.now());
+      
+      await db.ref("users/" + user.uid + "/loginTime")
+  .set(Date.now());
+
+    // 🔥 ROLE SYSTEM (READY FOR ADMIN / ARTIST)
+let redirect = "../home";
+
+if(data?.role === "admin"){
+  redirect = "../admin";
+} else {
+  redirect = "../home";
+}
+
+    document.getElementById("loader").classList.add("active");
+    document.getElementById("card").classList.add("fade-out");
+
+    setTimeout(() => {
+      window.location.replace(redirect);
+    }, 600);
+
+  } catch (error) {
+
+    if(error.message === "inactive"){
+      errorEl.textContent = "Account is inactive. Contact admin";
+    }
+    else if(error.message === "no_user_data"){
+      errorEl.textContent = "User data not found";
+    }
+    else {
+      switch(error.code){
+        case "auth/user-not-found":
+          errorEl.textContent = "User not found";
+          break;
+        case "auth/wrong-password":
+          errorEl.textContent = "Incorrect password";
+          break;
+        case "auth/invalid-email":
+          errorEl.textContent = "Invalid email address";
+          break;
+        default:
+          errorEl.textContent = "Login failed. Try again";
+      }
+    }
+
+    btn.disabled = false;
+    btn.textContent = "Login";
+  }
+}
+
+document.addEventListener("keydown", e => {
+  if(e.key === "Enter") login();
 });
-});
 
-
-  // COVER
-  coverInput.addEventListener("change", e=>{
-    const file = e.target.files[0];
-    if(!file) return;
-    coverUploaded = false;
-    const reader = new FileReader();
-    reader.onload = ev=>{
-      coverPreview.src = ev.target.result;
-      coverPreview.style.display = "block";
-      document.getElementById("coverPlaceholder").style.display = "none";
-    };
-    reader.readAsDataURL(file);
-
-    uploadFile(file, ()=>{}, url=>{
-  if(url){ 
-    coverInput.dataset.url = url; 
-    coverUploaded = true; 
-    checkAllUploaded();
-    updateStepUI();
-  }
-});
-});
-}
-
-// NAVIGATION
-function next(n){
-  if(n===1){ 
-    document.getElementById("type").value="original"; 
-    loadStep2Fields(); 
-    goto(2); 
-    updateStepUI();
-    return; 
-  }
-
-  if(n===2){ 
-    if(!stepsData[2]()) return alert("Lengkapi semua field wajib!"); 
-  }
-
-  if(n===3){ 
-    if(!stepsData[3]()) return alert("Tunggu sampai audio & cover selesai di-upload!"); 
-    loadPreview(); 
-  }
-
-  goto(n+1);
-  updateStepUI();
-}
-function back(n){ goto(n-1); }
-function goto(n){
-  hideAll();
-  document.getElementById("step"+n).hidden=false;
-  if(n===3) attachUploadListeners();
-  for(let i=1;i<=4;i++) document.getElementById("s"+i).classList.remove("active");
-  document.getElementById("s"+n).classList.add("active");
-}
-function updateStepUI(){
-  const validStep2 = stepsData[2]();
-  const validStep3 = stepsData[3]();
-
-  document.getElementById("s3").style.opacity = validStep2 ? "1" : "0.4";
-  document.getElementById("s4").style.opacity = (validStep2 && validStep3) ? "1" : "0.4";
-
-  // ⬇️ TAMBAH INI
-  document.getElementById("s3").style.pointerEvents = validStep2 ? "auto" : "none";
-  document.getElementById("s4").style.pointerEvents = (validStep2 && validStep3) ? "auto" : "none";
-}
-// PREVIEW
-function loadPreview(){
-  const audioUrl = document.getElementById("audio")?.dataset.url;
-  const coverUrl = document.getElementById("cover")?.dataset.url;
-
-  const titleVal = document.getElementById("title")?.value || "-";
-  const artistVal = document.getElementById("artist")?.value || "-";
-  const genreVal = document.getElementById("genre")?.value || "-";
-  const labelVal = document.getElementById("labelName")?.value || "-";
-
-  const html = `
-  <div style="display:flex; gap:16px; align-items:center;">
-    <img src="${coverUrl}" style="width:80px; height:80px; border-radius:12px; object-fit:cover; border:1px solid #ddd;">
-    <div>
-      <div style="font-weight:700; font-size:16px;">${titleVal}</div>
-      <div style="font-size:13px; color:#666;">${artistVal}</div>
-    </div>
-  </div>
-
-  <hr style="margin:16px 0; border:none; border-top:1px solid #eee;">
-
-  <div><span>Genre:</span> ${genreVal}</div>
-  <div><span>Label:</span> ${labelVal}</div>
-  `;
-
-  document.getElementById("previewBox").innerHTML = html;
-}
-
-// SUBMIT
-function submitRelease(){
-  const btn=document.getElementById("submitBtn");
-  const text=document.getElementById("btnText");
-  const loader=document.getElementById("btnLoader");
-  btn.disabled=true; text.style.display="none"; loader.style.display="inline";
-  const user=firebase.auth().currentUser;
-  if(!user) return;
-  let data = {
-  type: document.getElementById("type").value,
- releaseType: document.getElementById("releaseType").value, 
-title: document.getElementById("title").value,
-artist: document.getElementById("artist").value,
-  label: document.getElementById("labelName")?.value || "Unknown Label",
-  audio: document.getElementById("audio").dataset.url,
-cover: document.getElementById("cover").dataset.url,
-  version: document.getElementById("version")?.value || "",
-  fullname: document.getElementById("fullname")?.value
-  .split(",")
-  .map(n => n.trim())
-  .filter(n => n !== ""),
-  status:"pending",
-  time:Date.now()
-};
-
-  const feat = document.getElementById("featuring")?.value;
-if(feat) data.featuring = feat;
-  db.ref("releases/"+user.uid).push(data)
-    .then(()=>location.href="../releases")
-    .catch(()=>{ btn.disabled=false; text.style.display="inline"; loader.style.display="none"; });
-}
-document.addEventListener("input", updateStepUI);
-updateStepUI();
 </script>
+
 </body>
 </html>
