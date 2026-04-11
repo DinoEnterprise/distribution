@@ -215,12 +215,13 @@ async function login(){
   .set(Date.now());
 
     // 🔥 ROLE SYSTEM (READY FOR ADMIN / ARTIST)
+const adminSnap = await db.ref("admins/" + user.uid).once("value");
+const isAdmin = adminSnap.val() === true;
+
 let redirect = "../home";
 
-if(data?.role === "admin"){
+if (isAdmin) {
   redirect = "../admin";
-} else {
-  redirect = "../home";
 }
 
     document.getElementById("loader").classList.add("active");
