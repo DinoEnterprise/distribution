@@ -145,6 +145,7 @@ button:active{ transform:scale(.96); }
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <script>
+// Initialize Firebase
 firebase.initializeApp({
   apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
   authDomain: "dynopay-2513c.firebaseapp.com",
@@ -152,59 +153,32 @@ firebase.initializeApp({
 });
 
 const db = firebase.database();
-
-let authChecked = false;
-
-firebase.auth().onAuthStateChanged(async (user) => {
-  if (authChecked) return;
-  if (loginInProgress) return; // 🔥 penting banget
-
-  authChecked = true;
-
-  if (!user) return;
-
-  try {
-    const snap = await db.ref("users/" + user.uid).once("value");
-    const data = snap.val();
-
-    if (!data || data.status !== "active") {
-      await firebase.auth().signOut();
-      return;
-    }
-
-    const adminSnap = await db.ref("admins/" + user.uid).once("value");
-    const isAdmin = adminSnap.val() === true;
-
-    document.getElementById("card").style.display = "none";
-
-    window.location.replace(isAdmin ? "../admin" : "../home");
-
-  } catch (e) {
-    console.error(e);
-  }
-});
+let loginInProgress = false;
+// Ambil elemen
 const errorEl = document.getElementById("error");
 const emailInput = document.getElementById("email");
 const passInput = document.getElementById("pass");
 const btn = document.querySelector("button");
 
-emailInput.addEventListener("input", () => errorEl.textContent = "");
-passInput.addEventListener("input", () => errorEl.textContent = "");
+// Pasang listener input sekali saja
+emailInput.addEventListener("input", () => { errorEl.textContent = ""; });
+passInput.addEventListener("input", () => { errorEl.textContent = ""; });
 
+// Toggle password
 function togglePass(){
-  if(passInput.type === "password"){
-    passInput.type = "text";
-    document.getElementById("eye").textContent = "⌒";
-  } else {
-    passInput.type = "password";
-    document.getElementById("eye").textContent = "𖠂";
+  if(passInput.type==="password"){
+    passInput.type="text";
+    document.getElementById("eye").textContent="⌒";
+  }else{
+    passInput.type="password";
+    document.getElementById("eye").textContent="𖠂";
   }
 }
 
-// 🔥 FIXED LOGIN LOGIC
-async function login(){
+// Login
+function login(){
+  loginInProgress = true;
   if(btn.disabled) return;
- loginInProgress = true; 
 
   const email = emailInput.value.trim();
   const pass = passInput.value.trim();
@@ -214,86 +188,60 @@ async function login(){
     return;
   }
 
-  try {
-    btn.disabled = true;
-    btn.textContent = "Signing in...";
+  btn.disabled = true;
+  btn.textContent = "Signing in...";
 
-    await firebase.auth()
-      .setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+  firebase.auth()
+    .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    .then(() => firebase.auth().signInWithEmailAndPassword(email, pass))
+    .then(userCredential => {
+      const user = userCredential.user;
+      return db.ref("users/" + user.uid).once("value");
+    })
+    .then(snapshot => {
+      const data = snapshot.val();
+      if(!data || data.status !== "active"){
+        firebase.auth().signOut();
+        errorEl.textContent = "Account is inactive. Please contact the admin";
+        btn.disabled = false;
+        btn.textContent = "Login";
+        return;
+      }
 
-    const userCredential = await firebase.auth()
-      .signInWithEmailAndPassword(email, pass);
+      const uid = firebase.auth().currentUser.uid;
+db.ref("users/" + uid + "/lastLogin").set(Date.now());
 
-    const user = userCredential.user;
+      document.getElementById("loader").classList.add("active");
+      document.getElementById("card").classList.add("fade-out");
 
-    const snapshot = await db.ref("users/" + user.uid).once("value");
-    const data = snapshot.val();
-
-    if(!data){
-      throw new Error("no_user_data");
-    }
-
-    if(data.status !== "active"){
-      await firebase.auth().signOut();
-      throw new Error("inactive");
-    }
-
-    // update last login (FIXED)
-    await db.ref("users/" + user.uid + "/lastLogin")
-      .set(Date.now());
-      
-      await db.ref("users/" + user.uid + "/loginTime")
-  .set(Date.now());
-
-    // 🔥 ROLE SYSTEM (READY FOR ADMIN / ARTIST)
-let redirect = "../home";
-
-if(data?.role === "admin"){
-  redirect = "../admin";
-} else {
-  redirect = "../home";
-}
-
-    document.getElementById("loader").classList.add("active");
-    document.getElementById("card").classList.add("fade-out");
-
-    setTimeout(() => {
-      window.location.replace(redirect);
-    }, 600);
-
-  } catch (error) {
-
-    if(error.message === "inactive"){
-      errorEl.textContent = "Account is inactive. Contact admin";
-    }
-    else if(error.message === "no_user_data"){
-      errorEl.textContent = "User data not found";
-    }
-    else {
+      setTimeout(() => window.location.replace("../home"), 600);
+    })
+    .catch(error => {
       switch(error.code){
         case "auth/user-not-found":
-          errorEl.textContent = "User not found";
-          break;
+          errorEl.textContent="User not found"; break;
         case "auth/wrong-password":
-          errorEl.textContent = "Incorrect password";
-          break;
+          errorEl.textContent="Incorrect password"; break;
         case "auth/invalid-email":
-          errorEl.textContent = "Invalid email address";
-          break;
+          errorEl.textContent="Invalid email address"; break;
         default:
-          errorEl.textContent = "Login failed. Try again";
+          errorEl.textContent="An error occurred. Please try again";
       }
-    }
-
-    btn.disabled = false;
-    btn.textContent = "Login";
-  }
+      btn.disabled = false;
+      btn.textContent = "Login";
+    });
 }
 
+// Enter key
 document.addEventListener("keydown", e => {
   if(e.key === "Enter") login();
 });
 
+// Auto redirect
+firebase.auth().onAuthStateChanged(user => {
+  if (loginInProgress) return;
+  if (user) window.location.replace("../home");
+});
 </script>
 
 </body>
