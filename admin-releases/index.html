@@ -235,11 +235,10 @@ function openEmailDraft(email, artist, title, status){
   let subject = "";
   let body = "";
 
-if(status === "approved"){
-  subject = `Approved - Congrats! Your release has been sent to the store: ${title}`;
+  if(status === "approved"){
+    subject = `Approved - Congrats! Your release has been sent to the store: ${title}`;
 
-
-  body = 
+    body = 
 `Hello,
 
 Great news!
@@ -257,12 +256,12 @@ If you have any questions, feel free to contact our support team.
 Best regards,
 Nazwa
 QC Team Dynotic`;
-}
+  }
 
-if(status === "rejected"){
-  subject = `Reject - Your release has been Rejected: ${title}`;
+  if(status === "rejected"){
+    subject = `Reject - Your release has been Rejected: ${title}`;
 
-  body = 
+    body = 
 `Hello,
 
 We regret to inform you that your release has been rejected.
@@ -279,8 +278,9 @@ If you believe this is a mistake, please contact our support team and provide va
 Best regards,
 Nazwa
 QC Team Dynotic`;
+  }
 
-  // encode biar aman di URL
+  // 🔥 PENTING: taruh di luar IF biar keduanya jalan
   const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g, "\r\n"))}`;
 
   window.location.href = mailto;
