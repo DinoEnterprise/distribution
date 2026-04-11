@@ -180,7 +180,7 @@ header h2{font-size:18px;color:#111;}
   <div style="font-weight:700;margin-bottom:12px;">Actions</div>
 
   <div class="action-group">
-<button id="editBtn" class="btn" style="display:none;">Edit Release</button>
+    <button id="editBtn" class="btn">Edit Release</button>
 
     <button id="deleteBtn" class="btn danger" style="display:none;">
       Delete
@@ -348,7 +348,7 @@ function loadRelease(uid, rid){
       return; 
     }
     
-const statusLower = (d.status || "").toLowerCase();
+const statusLower = (d.status || "pending").toLowerCase();
     document.getElementById("releaseTitle").innerText = d.title || "-";
     document.getElementById("releaseArtist").innerText = d.artist || "-";
   document.getElementById("releaseLabel").innerText = d.label || "-";
@@ -370,18 +370,8 @@ let color = "#3b82f6";
 const now = new Date();
 const releaseDateObj = d.date ? new Date(d.date) : null;
 
-if (statusLower === "proposal") {
-  text = "PROPOSAL";
-  color = "#f59e0b";
-}
-
-else if (statusLower === "process") {
-  text = "PROCESS";
-  color = "#3b82f6";
-}
-
-else if (statusLower === "approved") {
-  if (releaseDateObj && now >= releaseDateObj) {
+if(d.status === "approved"){
+  if(releaseDateObj && now >= releaseDateObj){
     text = "LIVE";
     color = "#22c55e";
   } else {
@@ -390,7 +380,7 @@ else if (statusLower === "approved") {
   }
 }
 
-else if (statusLower === "rejected") {
+if(d.status === "rejected"){
   text = "REJECTED";
   color = "#ef4444";
 }
@@ -410,32 +400,21 @@ editBtn.onclick = editRelease;
 deleteBtn.onclick = deleteRelease;
 takedownBtn.onclick = takedownRelease;
 
-
 const isLive = releaseDateObj && now >= releaseDateObj;
 
-// reset semua
-editBtn.style.display = "none";
-deleteBtn.style.display = "none";
-takedownBtn.style.display = "none";
-
-if (statusLower === "proposal") {
-  editBtn.style.display = "block";
+// DELETE → process & rejected
+if(statusLower === "pending" || statusLower === "rejected"){
   deleteBtn.style.display = "block";
 }
 
-else if (statusLower === "process") {
-  // semua locked
+// TAKEDOWN → approved & live
+if(statusLower === "approved" || isLive){
+  takedownBtn.style.display = "block";
 }
 
-else if (statusLower === "approved" || isLive) {
-  if (isLive) {
-    takedownBtn.style.display = "block";
-  }
-}
-
-else if (statusLower === "rejected") {
-  editBtn.style.display = "block";
-  deleteBtn.style.display = "block";
+// EDIT → hide saat approved & live
+if(statusLower === "approved" || isLive){
+  editBtn.style.display = "none";
 }
     const cover = document.getElementById("coverArt");
 
@@ -454,7 +433,7 @@ const input = document.getElementById("smartlinkInput");
 const openBtn = document.getElementById("openBtn");
 const empty = document.getElementById("emptySmartlink");
 
-if (d.smartlink?.trim()) {
+if(d.smartlink && d.smartlink.trim() !== ""){
   input.style.display = "block";
   openBtn.style.display = "block";
   empty.style.display = "none";
@@ -537,7 +516,7 @@ function renderPlatforms(data){
   const wrap = document.getElementById("platformList");
   wrap.innerHTML = "";
   platforms.forEach(p=>{
-    let st = data?.[p]; // jangan default ke 'process'
+    let st = data[p]; // jangan default ke 'process'
     if(!st) return; // jika platform tidak ada, skip
 
     let color = "#f59e0b";
