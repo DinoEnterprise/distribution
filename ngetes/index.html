@@ -157,16 +157,18 @@ let authChecked = false;
 
 firebase.auth().onAuthStateChanged(async (user) => {
   if (authChecked) return;
+  if (loginInProgress) return; // 🔥 penting banget
+
   authChecked = true;
 
   if (!user) return;
 
-  setTimeout(async () => {
+  try {
     const snap = await db.ref("users/" + user.uid).once("value");
     const data = snap.val();
 
     if (!data || data.status !== "active") {
-      firebase.auth().signOut();
+      await firebase.auth().signOut();
       return;
     }
 
@@ -176,7 +178,10 @@ firebase.auth().onAuthStateChanged(async (user) => {
     document.getElementById("card").style.display = "none";
 
     window.location.replace(isAdmin ? "../admin" : "../home");
-  }, 200);
+
+  } catch (e) {
+    console.error(e);
+  }
 });
 const errorEl = document.getElementById("error");
 const emailInput = document.getElementById("email");
@@ -199,6 +204,7 @@ function togglePass(){
 // 🔥 FIXED LOGIN LOGIC
 async function login(){
   if(btn.disabled) return;
+ loginInProgress = true; 
 
   const email = emailInput.value.trim();
   const pass = passInput.value.trim();
