@@ -115,7 +115,7 @@
 
     <div style="display:flex;gap:12px;">
       <button type="button" class="btn gray" onclick="back(3)" style="flex:1;">Back</button>
-      <button type="button" class="btn" id="previewBtn" onclick="loadPreview(); goto(4)" disabled style="flex:2;">Preview</button>
+      <button type="button" class="btn" id="previewBtn" onclick="if(!stepsData[3]()) return alert('Upload dulu!'); loadPreview(); goto(4)" disabled style="flex:2;">Preview</button>
     </div>
   </div>
 
@@ -176,14 +176,24 @@ firebase.auth().onAuthStateChanged(user=>{
 });
 
 // STEP VALIDATION
+
 const stepsData = {
   1: ()=>true,
-  2: ()=>{
-  return document.getElementById("title")?.value &&
-         document.getElementById("artist")?.value &&
-         document.getElementById("publisher")?.value;
+
+2: ()=>{
+  const title = document.getElementById("title");
+  const artist = document.getElementById("artist");
+  const publisher = document.getElementById("publisher");
+  const label = document.getElementById("label");
+  const version = document.getElementById("version");
+
+  return title?.value && artist?.value && publisher?.value && label?.value && version?.value;
 },
-  3: ()=>document.getElementById("audio")?.dataset.url && document.getElementById("cover")?.dataset.url
+
+  3: () => {
+  return !!document.getElementById("audio")?.dataset?.url &&
+         !!document.getElementById("cover")?.dataset?.url;
+}
 };
 
 function hideAll(){ for(let i=1;i<=4;i++) document.getElementById("step"+i).hidden=true; }
@@ -191,20 +201,43 @@ function hideAll(){ for(let i=1;i<=4;i++) document.getElementById("step"+i).hidd
 function loadStep2Fields(){
   const s = document.getElementById("step2");
   s.innerHTML="";
+
   s.innerHTML += `
-    <div class="label">Judul Lagu *</div><input id="title">
+    <div class="label">Judul Lagu *</div>
+    <input id="title">
+
     <div class="label">Song ID (Publisher) *</div>
-<input id="publisher" placeholder="Wajib">
-<div style="font-size:12px; color:#555; margin-bottom:16px;">
-  Cek Song ID <a href="https://dynotic.web.id/catalog" target="_blank">Disini</a>
-</div>
-        <div class="label">Artist Name *</div><input id="artist">
-    <div class="label">Version</div><input id="version" placeholder="Optional">
-    <div class="label">Nama Vocal (Khusus Pragita Prabawa)</div><input id="fullname" placeholder="Optional">
-    <div class="label">Featuring</div><input id="featuring" placeholder="Optional">
+    <input id="publisher" placeholder="Wajib">
+
+    <div style="font-size:12px; color:#555; margin-bottom:16px;">
+      Cek Song ID <a href="https://dynotic.web.id/catalog" target="_blank">Disini</a>
+    </div>
+
+    <div class="label">Artist Name *</div>
+    <input id="artist">
+
+<div class="label">Nama Label *</div>
+<input id="label" placeholder="Nama Label">
+
+    <div class="label">Version *</div>
+    <select id="version">
+      <option value="">Pilih Version</option>
+      <option value="Remix">Remix</option>
+      <option value="Cover">Cover</option>
+    </select>
+
+
+    <div class="label">Nama Vocal (Opsional)</div>
+    <input id="fullname" placeholder="Optional">
+
+    <div class="label">Featuring</div>
+    <input id="featuring" placeholder="Optional">
   `;
-  s.innerHTML += `<button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
-                  <button type="button" class="btn" onclick="next(2)">Continue</button>`;
+
+  s.innerHTML += `
+    <button type="button" class="btn gray" onclick="back(2)">Back</button><br><br>
+    <button type="button" class="btn" onclick="next(2)">Continue</button>
+  `;
 }
 
 // UPLOAD LISTENERS
@@ -330,26 +363,28 @@ function updateStepUI(){
 }
 // PREVIEW
 function loadPreview(){
-  const audioUrl = document.getElementById("audio")?.dataset.url;
-  const coverUrl = document.getElementById("cover")?.dataset.url;
+  const previewBox = document.getElementById("previewBox");
 
   const titleVal = document.getElementById("title")?.value || "-";
   const artistVal = document.getElementById("artist")?.value || "-";
   const publisherVal = document.getElementById("publisher")?.value || "-";
+  const labelVal = document.getElementById("label")?.value || "-";
+
+  const coverUrl = document.getElementById("cover")?.dataset.url || "";
 
   let html = `
     <div style="display:flex; gap:16px; align-items:center;">
-      <img src="${coverUrl}" style="width:80px; height:80px; border-radius:12px; object-fit:cover; border:1px solid #ddd;">
+      <img src="${coverUrl}" style="width:80px;height:80px;border-radius:12px;object-fit:cover;">
       <div>
-        <div style="font-weight:700; font-size:16px;">${titleVal}</div>
-        <div style="font-size:13px; color:#666;">${artistVal}</div>
+        <div style="font-weight:700">${titleVal}</div>
+        <div style="font-size:13px;color:#666">${artistVal}</div>
       </div>
     </div>
 
-    <hr style="margin:16px 0; border:none; border-top:1px solid #eee;">
+    <hr style="margin:16px 0;border-top:1px solid #eee;">
 
     <div><span>Song ID:</span> ${publisherVal}</div>
-    <div><span>Label:</span> Dynotic Distribution</div>
+    <div><span>Label:</span> ${labelVal}</div>
   `;
 
   previewBox.innerHTML = html;
@@ -360,27 +395,38 @@ function submitRelease(){
   const btn=document.getElementById("submitBtn");
   const text=document.getElementById("btnText");
   const loader=document.getElementById("btnLoader");
-  btn.disabled=true; text.style.display="none"; loader.style.display="inline";
+
+  btn.disabled=true;
+  text.style.display="none";
+  loader.style.display="inline";
+
   const user=firebase.auth().currentUser;
   if(!user) return;
-  let data = {
-  type:type.value,
-  title:title.value,
-  artist:artist.value,
-  publisher:publisher.value, // <--- baru
-  audio:audio.dataset.url,
-  cover:cover.dataset.url,
-  version:version.value,
-  fullname:document.getElementById("fullname")?.value || "",
-  status:"pending",
-  time:Date.now()
-};
+
+  const data = {
+    type: document.getElementById("type").value,
+    title: document.getElementById("title").value,
+    artist: document.getElementById("artist").value,
+    publisher: document.getElementById("publisher").value,
+    version: document.getElementById("version").value,
+    label: document.getElementById("label").value,
+    audio: document.getElementById("audio").dataset.url,
+    cover: document.getElementById("cover").dataset.url,
+    fullname: document.getElementById("fullname")?.value || "",
+    status: "proposal",
+    time: Date.now()
+  };
 
   const feat = document.getElementById("featuring")?.value;
-if(feat) data.featuring = feat;
+  if(feat) data.featuring = feat;
+
   db.ref("releases/"+user.uid).push(data)
     .then(()=>location.href="../releases")
-    .catch(()=>{ btn.disabled=false; text.style.display="inline"; loader.style.display="none"; });
+    .catch(()=>{
+      btn.disabled=false;
+      text.style.display="inline";
+      loader.style.display="none";
+    });
 }
 document.addEventListener("input", updateStepUI);
 updateStepUI();
