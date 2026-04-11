@@ -151,8 +151,9 @@ firebase.initializeApp({
   authDomain: "dynopay-2513c.firebaseapp.com",
   databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
-const db = firebase.database();
 
+const db = firebase.database();
+let loginInProgress = false;
 // Ambil elemen
 const errorEl = document.getElementById("error");
 const emailInput = document.getElementById("email");
@@ -176,6 +177,7 @@ function togglePass(){
 
 // Login
 function login(){
+  loginInProgress = true;
   if(btn.disabled) return;
 
   const email = emailInput.value.trim();
@@ -206,7 +208,8 @@ function login(){
         return;
       }
 
-      db.ref("users/" + snapshot.key + "/lastLogin").set(Date.now());
+      const uid = firebase.auth().currentUser.uid;
+db.ref("users/" + uid + "/lastLogin").set(Date.now());
 
       document.getElementById("loader").classList.add("active");
       document.getElementById("card").classList.add("fade-out");
@@ -236,7 +239,8 @@ document.addEventListener("keydown", e => {
 
 // Auto redirect
 firebase.auth().onAuthStateChanged(user => {
-  if(user) window.location.replace("../home");
+  if (loginInProgress) return;
+  if (user) window.location.replace("../home");
 });
 </script>
 
