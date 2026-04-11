@@ -153,6 +153,31 @@ firebase.initializeApp({
 
 const db = firebase.database();
 
+let authChecked = false;
+
+firebase.auth().onAuthStateChanged(async (user) => {
+  if (authChecked) return;
+  authChecked = true;
+
+  if (!user) return;
+
+  setTimeout(async () => {
+    const snap = await db.ref("users/" + user.uid).once("value");
+    const data = snap.val();
+
+    if (!data || data.status !== "active") {
+      firebase.auth().signOut();
+      return;
+    }
+
+    const adminSnap = await db.ref("admins/" + user.uid).once("value");
+    const isAdmin = adminSnap.val() === true;
+
+    document.getElementById("card").style.display = "none";
+
+    window.location.replace(isAdmin ? "../admin" : "../home");
+  }, 200);
+});
 const errorEl = document.getElementById("error");
 const emailInput = document.getElementById("email");
 const passInput = document.getElementById("pass");
