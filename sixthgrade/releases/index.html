@@ -370,11 +370,11 @@
     const db = firebase.database();
 
     firebase.auth().onAuthStateChanged(user => {
-      if(!user) location.href="../login";
+      if(!user) location.href="../index.html";
       else loadReleases(user.uid);
     });
 
-    function logout() { firebase.auth().signOut().then(()=>location.href="../login"); }
+    function logout() { firebase.auth().signOut().then(()=>location.href="../index.html"); }
     function releasesClick() { console.log("Releases active — tidak reload"); }
     function accountClick() { location.href="../account"; }
     function goCreateRelease() { location.href="../create-release"; }
@@ -437,21 +437,32 @@ let statusClass = "process";
 const now = new Date();
 const releaseDateObj = r.date ? new Date(r.date) : null;
 
-if (r.status === "approved") {
+if (r.status === "proposal") {
+  displayStatus = "PROPOSAL";
+  c = "#f59e0b";
+  statusClass = "";
+}
+
+else if (r.status === "process") {
+  displayStatus = "PROCESS";
+  c = "#3b82f6";
+  statusClass = "process";
+}
+
+else if (r.status === "approved") {
 
   if (releaseDateObj && now >= releaseDateObj) {
-    // ✅ SUDAH RILIS
     displayStatus = "LIVE";
-    c = "#22c55e"; // hijau terang
+    c = "#22c55e";
   } else {
-    // ⏳ BELUM RILIS
     displayStatus = "APPROVED";
     c = "#10b981";
   }
 
   statusClass = "";
+}
 
-} else if (r.status === "rejected") {
+else if (r.status === "rejected") {
   displayStatus = "REJECTED";
   c = "#ef4444";
   statusClass = "";
