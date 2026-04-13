@@ -3,7 +3,7 @@
 <head>
  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
 <meta charset="UTF-8">
-<title>Admin Panel - DynoPay (Releases)</title>
+<title>Admin Panel - Dynotic Collective (Releases)</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -38,7 +38,35 @@ button.action-btn {
   cursor: pointer;
 }
 button.action-btn:hover { background: #f0f0f0; }
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+}
 
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 350px;
+}
+
+.option-list button {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: #f9f9f9;
+}
 .table-container {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch; /* smooth scroll di mobile */
@@ -110,7 +138,27 @@ tr:hover {
 </head>
 
 <body>
+<div id="approveModal" class="modal">
+  <div class="modal-content">
+    <h3>Approve Release</h3>
 
+    <p>Pilih tipe approval:</p>
+
+    <div class="option-list">
+      <button onclick="selectType('original')">Original</button>
+      <button onclick="selectType('publisher')">Publisher</button>
+    </div>
+
+    <div id="publisherList" style="display:none; margin-top:10px;">
+      <p>Pilih Publisher:</p>
+      <div class="option-list" id="publisherOptions"></div>
+    </div>
+
+    <div style="margin-top:15px; display:flex; justify-content:flex-end;">
+      <button onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
 <!-- RELEASES -->
 <div class="card" style="padding-bottom: 50px;"> <!-- kasih padding bawah supaya tombol Prev/Next tidak nempel -->
 <h3>Releases</h3>
@@ -182,55 +230,62 @@ auth.onAuthStateChanged(user => {
     auth.signOut().then(()=>location.href="../admin");
   });
 });
+let selectedUID = "";
+let selectedRID = "";
+
 function openApproveOptions(uid, rid){
-  const type = prompt(
-`Pilih tipe approval:
+  selectedUID = uid;
+  selectedRID = rid;
 
-1 = Original
-2 = Publisher
+  document.getElementById("approveModal").style.display = "flex";
+  document.getElementById("publisherList").style.display = "none";
+}
+function closeModal(){
+  document.getElementById("approveModal").style.display = "none";
+}
 
-Masukkan angka:`
-  );
-
-  if(type === "1"){
-    confirmRelease(uid, rid, "approved");
+function selectType(type){
+  if(type === "original"){
+    closeModal();
+    confirmRelease(selectedUID, selectedRID, "approved");
   }
 
-  else if(type === "2"){
-
-    const publishers = [
-      "MAHAR PUSTAKA NUSANTARA",
-      "Pragita Prabawa Pustaka",
-      "Nadaku Musik",
-      "Royal Publikasi Indo",
-      "Alfa Pustaka Nada",
-      "Pustaka Jeka",
-      "Pustaka Cipta Kreasi",
-      "Star Cipta Musikindo",
-      "Sora Music Publisher",
-      "Proaktif Digital Kreasi",
-      "18 Musik",
-      "Sony Music Publishing Indonesia",
-      "NAGASWARA"
-    ];
-
-    let listText = "Pilih Publisher:\n\n";
-    publishers.forEach((p, i)=>{
-      listText += `${i+1} = ${p}\n`;
-    });
-
-    const choice = prompt(listText + "\nMasukkan angka:");
-
-    const index = parseInt(choice) - 1;
-    const publisherName = publishers[index];
-
-    if(!publisherName){
-      alert("Publisher tidak valid!");
-      return;
-    }
-
-    confirmPublisherRelease(uid, rid, publisherName);
+  if(type === "publisher"){
+    showPublisherList();
   }
+}
+
+function showPublisherList(){
+  const publishers = [
+    "MAHAR PUSTAKA NUSANTARA",
+    "Pragita Prabawa Pustaka",
+    "Nadaku Musik",
+    "Royal Publikasi Indo",
+    "Alfa Pustaka Nada",
+    "Pustaka Jeka",
+    "Pustaka Cipta Kreasi",
+    "Star Cipta Musikindo",
+    "Sora Music Publisher",
+    "Proaktif Digital Kreasi",
+    "18 Musik",
+    "Sony Music Publishing Indonesia",
+    "NAGASWARA"
+  ];
+
+  const container = document.getElementById("publisherOptions");
+  container.innerHTML = "";
+
+  publishers.forEach(p=>{
+    const btn = document.createElement("button");
+    btn.innerText = p;
+    btn.onclick = () => {
+      closeModal();
+      confirmPublisherRelease(selectedUID, selectedRID, p);
+    };
+    container.appendChild(btn);
+  });
+
+  document.getElementById("publisherList").style.display = "block";
 }
 function openPublisherEmail(email, title, publisher){
   const subject = `Cover to Master Approval – ${title}`;
