@@ -182,7 +182,94 @@ auth.onAuthStateChanged(user => {
     auth.signOut().then(()=>location.href="../admin");
   });
 });
+function openApproveOptions(uid, rid){
+  const type = prompt(
+`Pilih tipe approval:
 
+1 = Original
+2 = Publisher
+
+Masukkan angka:`
+  );
+
+  if(type === "1"){
+    confirmRelease(uid, rid, "approved");
+  }
+
+  else if(type === "2"){
+
+    const publishers = [
+      "MAHAR PUSTAKA NUSANTARA",
+      "Pragita Prabawa Pustaka",
+      "Nadaku Musik",
+      "Royal Publikasi Indo",
+      "Alfa Pustaka Nada",
+      "Pustaka Jeka",
+      "Pustaka Cipta Kreasi",
+      "Star Cipta Musikindo",
+      "Sora Music Publisher",
+      "Proaktif Digital Kreasi",
+      "18 Musik",
+      "Sony Music Publishing Indonesia",
+      "NAGASWARA"
+    ];
+
+    let listText = "Pilih Publisher:\n\n";
+    publishers.forEach((p, i)=>{
+      listText += `${i+1} = ${p}\n`;
+    });
+
+    const choice = prompt(listText + "\nMasukkan angka:");
+
+    const index = parseInt(choice) - 1;
+    const publisherName = publishers[index];
+
+    if(!publisherName){
+      alert("Publisher tidak valid!");
+      return;
+    }
+
+    confirmPublisherRelease(uid, rid, publisherName);
+  }
+}
+function openPublisherEmail(email, title, publisher){
+  const subject = `Cover to Master Approval – ${title}`;
+
+  const body =
+`Salam Dynotic Collective,
+
+Kami informasikan bahwa pengajuan penggunaan lagu dengan judul "${title}" telah disetujui oleh publisher ${publisher}.
+
+Untuk informasi mengenai jadwal rilis, akan kami informasikan melalui email setelah proses penjadwalan selesai dilakukan.
+
+Jika ada pertanyaan, silakan hubungi kami melalui email:
+admin@dynotic.web.id
+
+Best regards,
+Risna Wati
+Cover to Master Team`;
+
+  const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g, "\r\n"))}`;
+
+  window.location.href = mailto;
+}
+function confirmPublisherRelease(uid, rid, publisher){
+  if(!confirm("Approve sebagai Publisher?")) return;
+
+  db.ref(`releases/${uid}/${rid}/status`).set("approved");
+
+  const item = releasesData.find(r => r.uid===uid && r.rid===rid);
+
+  if(item){
+    openPublisherEmail(
+      item.email,
+      item.title,
+      publisher
+    );
+  }
+
+  renderTablePage(currentPage);
+}
 function confirmRelease(uid, rid, status){
   let text = "";
 
@@ -366,7 +453,7 @@ function renderTablePage(page){
       <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
 <div class="menu-dropdown">
   <button onclick="confirmRelease('${d.uid}','${d.rid}','proses')">Proses</button>
-  <button onclick="confirmRelease('${d.uid}','${d.rid}','approved')">Approve</button>
+  <button onclick="openApproveOptions('${d.uid}','${d.rid}')">Approve</button>
   <button onclick="confirmRelease('${d.uid}','${d.rid}','rejected')">Reject</button>
   <button onclick="deleteRelease('${d.uid}','${d.rid}')">Delete</button>
 </div>
