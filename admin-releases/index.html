@@ -430,8 +430,11 @@ function loadReleases(){
 
     releasesData = all;        // simpan semua data
     filteredData = all.slice(); // set awal filteredData = semua data
-    currentPage = 1;
-    renderTablePage(currentPage);
+    const savedPage = localStorage.getItem("lastPage");
+currentPage = savedPage ? parseInt(savedPage) : 1;
+
+renderTablePage(currentPage);
+localStorage.removeItem("lastPage");
   });
 }
 
@@ -499,12 +502,8 @@ document.getElementById("releaseSearch").addEventListener("input", function() {
     (d.artist||"").toLowerCase().includes(query) ||
     (d.title||"").toLowerCase().includes(query)
   );
-
-  const savedPage = localStorage.getItem("lastPage");
-currentPage = savedPage ? parseInt(savedPage) : 1;
-
+  currentPage = 1;
 renderTablePage(currentPage);
-localStorage.removeItem("lastPage");
 });
 loadReleases();
 </script>
