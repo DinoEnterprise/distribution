@@ -296,6 +296,7 @@ function confirmRelease(uid, rid, status){
 }
 
 function openPlatform(uid,rid){
+  localStorage.setItem("lastPage", currentPage); // simpan page
   location.href = `../admin-platform?uid=${uid}&rid=${rid}`;
 }
 
@@ -499,8 +500,11 @@ document.getElementById("releaseSearch").addEventListener("input", function() {
     (d.title||"").toLowerCase().includes(query)
   );
 
-  currentPage = 1;
-  renderTablePage(currentPage);
+  const savedPage = localStorage.getItem("lastPage");
+currentPage = savedPage ? parseInt(savedPage) : 1;
+
+renderTablePage(currentPage);
+localStorage.removeItem("lastPage");
 });
 loadReleases();
 </script>
