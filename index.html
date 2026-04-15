@@ -1,271 +1,484 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dynotic Collective</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dynotic collective | Music Distribution Platform for Artists</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&display=swap" rel="stylesheet">
+    <!-- Default favicon -->
+<link rel="icon" type="image/png" href="/assets/favicon.png">
 
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!-- Android / Chrome -->
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-android.png">
 
-<!-- Favicon -->
-<link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+<!-- iPhone / iPad -->
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-iphone.png">
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif}
-body{
-  background:
-    radial-gradient(circle at 20% 20%, rgba(138,43,226,.18), transparent 60%),
-    radial-gradient(circle at 80% 80%, rgba(59,130,246,.18), transparent 60%),
-    #000;
-  color:#fff;
-  overflow-x:hidden;
+<!-- PWA icon besar -->
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/icon-512.png">
+
+<!-- Web App Manifest -->
+<link rel="manifest" href="/assets/site.webmanifest">
+
+<link rel="mask-icon" href="/assets/favicon.png" color="#ff9f2a">
+
+<link rel="canonical" href="https://dynotic.web.id/">
+<!-- Theme warna browser -->
+<meta name="theme-color" content="#4F46E5">
+
+<meta name="description" content="Dynotic collective is a free music distribution platform for independent artists. Upload your music to Spotify, Apple Music, TikTok and 150+ stores worldwide.">
+
+<meta name="keywords" content="
+Dynotic collective, Dynotic Music, Dynotic Distribution,
+music distribution platform, free music distribution,
+upload music to spotify free, digital music distributor,
+independent artist platform, music aggregator,
+distribute music worldwide, spotify apple music tiktok distribution,
+royalty tracking, youtube content id music
+">
+<meta property="og:title" content="Dynotic Collective | Music Distribution Platform">
+<meta property="og:description" content="Upload music to Spotify, Apple Music, TikTok and 150+ stores worldwide.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://dynotic.web.id/assets/icon-512.png">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Dynotic Collective">
+<meta name="twitter:description" content="Music distribution platform for independent artists.">
+<meta name="twitter:image" content="https://dynotic.web.id/assets/icon-512.png">
+
+<meta property="og:url" content="https://dynotic.web.id/">
+
+<meta name="author" content="Dynotic">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Dynotic Collective",
+  "url": "https://dynotic.web.id",
+  "logo": "https://dynotic.web.id/assets/icon-512.png"
 }
-
-/* ===== ANIMATION ===== */
-.animate{
-  opacity:0;
-  transform:translateY(26px);
-  transition:opacity .9s ease, transform .9s ease;
-}
-.animate.show{
-  opacity:1;
-  transform:translateY(0);
-}
-.delay-1{transition-delay:.1s}
-.delay-2{transition-delay:.2s}
-.delay-3{transition-delay:.3s}
-.delay-4{transition-delay:.4s}
-.delay-5{transition-delay:.5s}
-
-/* ===== HEADER ===== */
-header{
-  padding:22px 32px;
-  position:relative;
-}
-
-header img{
-  position:absolute;
-  left:20px;
-  top:65%;
-  transform:translateY(-50%);
-  height:36px;
-  width:auto;
-}
-
-/* ===== HERO ===== */
-.hero{
-  padding:90px 20px 70px;
-  text-align:center;
-  max-width:900px;
-  margin:auto;
-}
-.hero h2{
-  font-size:3rem;
-  font-weight:700;
-  margin-bottom:18px;
-}
-.hero p{
-  font-size:1.05rem;
-  opacity:.85;
-  line-height:1.6;
-}
-.hero button{
-  margin-top:34px;
-  padding:16px 42px;
-  border-radius:999px;
-  border:none;
-  cursor:pointer;
-  color:#fff;
-  font-weight:600;
-  background:linear-gradient(135deg,#8b5cf6,#3b82f6);
-  box-shadow:0 0 30px rgba(139,92,246,.45);
-}
-.hero button:hover{
-  box-shadow:0 0 45px rgba(139,92,246,.7);
-}
-
-/* ===== SECTION ===== */
-section{
-  padding:80px 24px;
-  max-width:1200px;
-  margin:auto;
-}
-section h3{
-  text-align:center;
-  font-size:2.2rem;
-  margin-bottom:50px;
-}
-
-/* ===== FEATURES ===== */
-.features{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:24px;
-}
-.feature{
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:22px;
-  padding:26px;
-}
-.feature h4{margin-bottom:10px;font-size:1.2rem}
-.feature p{font-size:.95rem;opacity:.8;line-height:1.5}
-
-/* ===== REVIEWS ===== */
-.reviews{
-  position:relative;
-  overflow:hidden;
-  padding:0 10px;
-  mask-image:linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
-}
-.review-track{
-  display:flex;
-  gap:18px;
-  padding:20px 0;
-  scroll-snap-type:x mandatory;
-  overflow-x:auto;
-  scroll-behavior:smooth;
-}
-.review-track::-webkit-scrollbar{display:none}
-.review{
-  scroll-snap-align:center;
-  min-width:280px;
-  max-width:280px;
-  background:rgba(255,255,255,.07);
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:20px;
-  padding:20px;
-  transform:translateY(20px) scale(.96);
-}
-.review.show{transform:translateY(0) scale(1)}
-.review h5{font-size:1rem;margin-bottom:8px}
-.review span{font-size:.85rem;opacity:.75;line-height:1.5;display:block}
-
-/* ===== DOTS ===== */
-.dots{display:flex;justify-content:center;gap:8px;margin-top:18px}
-.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3)}
-.dot.active{background:#8b5cf6}
-
-/* ===== CONTACT ===== */
-.contact{text-align:center}
-.contact p{opacity:.8;margin-bottom:26px}
-.contact a{
-  display:inline-block;
-  padding:14px 36px;
-  border-radius:999px;
-  border:2px solid #8b5cf6;
-  color:#fff;
-  text-decoration:none;
-  font-weight:600;
-}
-.contact a:hover{background:#8b5cf6}
-
-/* ===== FOOTER ===== */
-footer{
-  padding:30px 20px;
-  text-align:center;
-  opacity:.6;
-  font-size:.85rem;
-}
-
-/* ===== MOBILE ===== */
-@media(max-width:600px){
-  .hero h2{font-size:2.2rem}
-}
-</style>
-</head>
-
-<body>
-
-<header class="animate">
-  <img src="assets/dynoticlogo.png" alt="Dynotic Logo">
-</header>
-
-<div class="hero animate delay-1">
-  <h2>Dynotic Collective</h2>
-  <p>
-    Unlock your potential, allow yourself to be heard and
-monetize your creativity
-  </p>
-  <button onclick="location.href='register'">Apply Now</button>
-</div>
-
-<section class="animate">
-  <h3>What We Offer</h3>
-  <div class="features">
-    <div class="feature animate delay-1"><h4>Personal Manager</h4><p>We provide a personal manager who guides your growth and handles release planning.</p></div>
-    <div class="feature animate delay-2"><h4>Free Track Promotion</h4><p>High-quality organic promotion without cutting your royalties.</p></div>
-    <div class="feature animate delay-3"><h4>Help In Finishing Tracks</h4><p>Professional feedback and refinement to maximize your track’s results.</p></div>
-    <div class="feature animate delay-4"><h4>Development And Support</h4><p>Join a supportive artist community focused on long-term growth.</p></div>
-    <div class="feature animate delay-5"><h4>Free Cover Design</h4><p>Artwork and visuals provided 100% free by our design team.</p></div>
-    <div class="feature animate delay-3"><h4>Pitch a Release to Playlists</h4><p>Two-stage pitching: distribution-level and direct playlist editors.</p></div>
-  </div>
-</section>
-
-<section class="animate">
-  <h3>What Artists Say</h3>
-  <div class="reviews">
-    <div class="review-track" id="track">
-
-      <div class="review animate"><h5>Dryzz</h5><span>Dynotic really helped my music reach new listeners organically. The growth feels natural and transparent.</span></div>
-      <div class="review animate"><h5>heyDarryl</h5><span>The promotion feels real and consistent. I can focus fully on creating music.</span></div>
-      <div class="review animate"><h5>XDYNZ</h5><span>The support team actually listens and helps improve tracks before release.</span></div>
-      <div class="review animate"><h5>riruu</h5><span>Release process is smooth, clear, and stress-free from start to finish.</span></div>
-      <div class="review animate"><h5>Nozeki</h5><span>A good environment for indie artists who want to grow seriously.</span></div>
-      <div class="review animate"><h5>Rinawa</h5><span>Dynotic helped me understand branding, timing, and release strategy better.</span></div>
-      <div class="review animate"><h5>Lee</h5><span>Exposure increased gradually and consistently with real listeners.</span></div>
-      <div class="review animate"><h5>Ch1ppi</h5><span>Feels like working with people who actually care about the music.</span></div>
-      <div class="review animate"><h5>Bulan Anatasya</h5><span>The community is supportive and very welcoming for new artists.</span></div>
-      <div class="review animate"><h5>Catmood</h5><span>Professional, responsive, and transparent. A real label experience.</span></div>
-
-    </div>
-  </div>
-  <div class="dots" id="dots"></div>
-</section>
-
-<section class="contact animate">
-  <h3>Contact</h3>
-  <p>Need more info or ready to work with Dynotic?</p>
-  <a href="faq2">Contact</a>
-</section>
-
-<footer class="animate">
-  © Dynotic Collective 2025
-</footer>
-
-<script>
-const observer=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){e.target.classList.add('show')}
-  })
-},{threshold:.15});
-document.querySelectorAll('.animate').forEach(el=>observer.observe(el));
-
-const track=document.getElementById('track');
-const cards=document.querySelectorAll('.review');
-const dotsWrap=document.getElementById('dots');
-let index=0;
-
-cards.forEach((_,i)=>{
-  const d=document.createElement('div');
-  d.className='dot'+(i===0?' active':'');
-  dotsWrap.appendChild(d);
-});
-const dots=[...document.querySelectorAll('.dot')];
-
-function goTo(i){
-  track.scrollTo({
-    left:cards[i].offsetLeft-track.offsetWidth/2+cards[i].offsetWidth/2,
-    behavior:'smooth'
-  });
-  dots.forEach(d=>d.classList.remove('active'));
-  dots[i].classList.add('active');
-  index=i;
-}
-let auto=setInterval(()=>goTo((index+1)%cards.length),2800);
-track.addEventListener('touchstart',()=>clearInterval(auto));
-track.addEventListener('mousedown',()=>clearInterval(auto));
 </script>
 
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+:root {
+  --accent: #6366F1;
+  --accent-soft: rgba(99,102,241,0.15);
+
+  --bg: #000000;
+  --surface: #0a0a0a;
+  --border: rgba(255,255,255,0.08);
+  --text-main: #ffffff;
+  --text-dim: #71717a;
+}
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+        body {
+scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+        body::before {
+  content: "";
+  position: fixed;
+  top: -20%;
+  left: -20%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(99,102,241,0.05), transparent 70%);
+  filter: blur(100px);
+  z-index: -1;
+}
+       section {
+  scroll-margin-top: 80px;
+    min-height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 6% 60px;
+}
+html {
+    scroll-behavior: smooth;
+}
+.container {
+  max-width: 1100px;
+  margin: auto;
+  width: 100%;
+  padding: 0 20px;
+}
+        
+/* ANIMATION BASE */
+.fade-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s ease;
+}
+
+.fade-up.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* HERO ANIMATION */
+.hero h1 {
+  animation: fadeHero 1s ease forwards;
+}
+
+.hero p {
+  opacity: 0;
+  animation: fadeHero 1s ease forwards;
+  animation-delay: 0.3s;
+}
+
+.cta-group {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+
+@keyframes fadeHero {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* BUTTON GLOW */
+.btn-primary {
+  box-shadow: 0 20px 40px rgba(99,102,241,0.05);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 20px 40px rgba(99,102,241,0.05);
+}
+
+/* CARD HOVER EFFECT */
+.feature-card:hover {
+  transform: translateY(-8px) scale(1.02);
+border-color: var(--accent);
+box-shadow: 0 0 20px rgba(99,102,241,0.08);  
+}
+.feature-card {
+    background: linear-gradient(145deg, #0a0a0a, #050505);
+    padding: 40px;
+    border-radius: 20px;
+    border: 1px solid rgba(99,102,241,0.2);
+    transition: 0.3s;
+}
+.feature-card i {
+  color: var(--accent);
+  filter: drop-shadow(0 0 6px rgba(99,102,241,0.15));
+}
+        /* --- UI Elements --- */
+        .btn {
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.3s;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary { background: var(--accent); color: white; }
+        
+        .btn-outline { border: 1px solid var(--border); color: white; margin-left: 10px; }
+        .btn:hover { transform: translateY(-2px); opacity: 0.9; }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 20px 6%;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
+        }
+
+        .logo { font-weight: 800; font-size: 1.2rem; letter-spacing: -1px; }
+
+        /* --- Hero --- */
+.hero {
+    padding: 0 6%;
+    text-align: center;
+    background: radial-gradient(
+  circle at 50% 20%,
+  rgba(99,102,241,0.25) 0%,
+  rgba(99,102,241,0.08) 40%,
+  #000 70%
+);
+}
+
+        .hero h1 { font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 800; letter-spacing: -3px; line-height: 1; margin-bottom: 25px; }
+        .hero p { color: var(--text-dim); max-width: 700px; margin: 0 auto 40px; font-size: 1.2rem; }
+
+        /* --- Trusted By / Platforms --- */
+       
+
+        .platforms-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+            opacity: 0.6;
+            filter: grayscale(1);
+        }
+
+        .platform-item { font-weight: 800; font-size: 1.2rem; }
+
+        /* --- Why Choose Section --- */
+.platforms,
+.why-choose {
+  padding: 0;
+}
+        .section-title { text-align: center; margin-bottom: 80px; }
+        .section-title h2 { font-size: 3rem; font-weight: 800; letter-spacing: -2px; }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+        }
+
+        .feature-card:hover { border-color: var(--accent); }
+        .feature-card i { color: var(--accent); margin-bottom: 20px; display: block; }
+        .feature-card h3 { font-size: 1.5rem; margin-bottom: 15px; }
+        .feature-card p { color: var(--text-dim); }
+
+        /* --- Simple Plan Section --- */
+        .plan-box {
+            background: linear-gradient(145deg, #111, #000);
+            max-width: 600px; margin: 80px auto;
+            padding: 60px; border-radius: 30px; border: 1px solid var(--accent);
+            text-align: center;
+        }
+
+        /* --- Footer --- */
+        footer {
+  min-height: 100vh;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 120px 6%;
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 768px) {
+    nav {
+        padding: 12px 16px;
+    }
+
+    .logo {
+        font-size: 1rem;
+    }
+
+    .nav-auth .btn {
+        padding: 8px 14px !important;
+        font-size: 0.75rem !important;
+    }
+
+    .hero {
+        padding: 0;
+    }
+
+    .hero h1 {
+        font-size: 2.4rem;
+        line-height: 1.2;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .btn-outline {
+        margin: 10px 0 0;
+    }
+
+    .features-grid {
+        gap: 14px;
+    }
+
+
+
+    .plan-box {
+        padding: 25px 18px;
+        margin: 40px 0;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">Dynotic Collective</div>
+        <div class="nav-auth">
+           <a href="/login" class="btn btn-outline" style="padding: 10px 20px; font-size: 0.8rem;">Login</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+        <h1>Sell Your Music <br>Worldwide.</h1>
+        <p>Upload your music to Spotify, Apple Music, TikTok, and 150+ digital stores. Keep control of your career with Dynotic Collective.</p>
+        <div class="cta-group">
+<a href="/register" class="btn btn-primary">Request Access</a>
+<a href="#pricing" class="btn btn-outline">How Access Works</a>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.85rem; color: var(--text-dim);">No credit card required to sign up.</p>
+      </div>
+</section>
+
+   <section class="platforms fade-up">
+       <div class="container">
+        <p style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 2px; color: var(--text-dim);">Trusted by major platforms</p>
+        <div class="platforms-grid">
+            <div class="platform-item">Spotify</div>
+            <div class="platform-item">Apple Music</div>
+            <div class="platform-item">TikTok</div>
+            <div class="platform-item">YouTube Music</div>
+            <div class="platform-item">Amazon Music</div>
+        </div>
+        </div>
+    </section>
+
+<section class="why-choose fade-up" id="features">
+  <div class="container">
+
+    <div class="section-title">
+      <p style="color: var(--accent); font-weight: 700;">WHY CHOOSE Dynotic Collective?</p>
+      <h2>Everything you need to succeed.</h2>
+    </div>
+
+    <div class="features-grid">
+
+      <div class="feature-card fade-up">
+        <i data-lucide="percent" size="32"></i>
+        <h3>80% Royalties</h3>
+        <p>We believe in fair partnership. We only take a small commission to maintain the infrastructure while you keep the majority.</p>
+      </div>
+
+      <div class="feature-card fade-up">
+        <i data-lucide="users" size="32"></i>
+        <h3>Unlimited Artist</h3>
+        <p>Manage multiple artist profiles under one dashboard. Perfect for collective and independent labels.</p>
+      </div>
+
+      <div class="feature-card fade-up">
+        <i data-lucide="infinity" size="32"></i>
+        <h3>Unlimited Release</h3>
+        <p>Upload as many singles, EPs, or albums as you want. There are no monthly or yearly limits.</p>
+      </div>
+
+      <div class="feature-card fade-up">
+        <i data-lucide="zap" size="32"></i>
+        <h3>Fast Support</h3>
+        <p>Our dedicated team is ready to help you with technical issues and distribution questions in record time.</p>
+      </div>
+
+      <div class="feature-card fade-up">
+        <i data-lucide="youtube" size="32"></i>
+        <h3>YouTube Content ID</h3>
+        <p>Protect and monetize your music on YouTube. We collect royalties whenever your tracks are used in videos.</p>
+      </div>
+
+      <div class="feature-card fade-up">
+        <i data-lucide="globe" size="32"></i>
+        <h3>Global Distribution</h3>
+        <p>Your music in over 150+ digital stores and streaming services across the globe.</p>
+      </div>
+
+    </div> <!-- END features-grid -->
+
+  </div> <!-- END container -->
+</section>
+
+
+<section class="plans fade-up" id="pricing">
+  <div class="container">
+    
+    <div class="section-title">
+      <p style="color: var(--accent); font-weight: 700;">PRICING</p>
+      <h2>Simple & Exclusive Access</h2>
+    </div>
+
+    <div class="plan-box">
+      <h2 style="margin-bottom: 10px;">Dynotic Access</h2>
+
+<a href="/register" style="text-decoration: none; color: inherit;">
+  <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 20px; cursor: pointer;">
+    Invite Only
+  </div>
+</a>
+
+      <p style="color: var(--text-dim); margin-bottom: 30px;">
+        Access dynotic Collective through invitation. Built for serious artists and labels.
+      </p>
+
+      <a href="/register" class="btn btn-primary" style="width: 100%;">
+        Request Access
+      </a>
+    </div>
+
+  </div>
+</section>
+
+    <footer>
+        <div class="logo">Dynotic Collective</div>
+        <p style="margin: 20px 0; color: var(--text-dim);">© 2026 Dynotic. Simple, Honest, Independent.</p>
+        <div style="display: flex; justify-content: center; gap: 30px; color: var(--text-dim);">
+            <i data-lucide="instagram" size="20"></i>
+            <i data-lucide="twitter" size="20"></i>
+            <i data-lucide="youtube" size="20"></i>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+<script>
+const elements = document.querySelectorAll(".fade-up");
+
+elements.forEach((el, i) => {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        setTimeout(() => {
+          entry.target.classList.add("show");
+        }, i * 120);
+
+        observer.unobserve(entry.target);
+        
+      }
+    });
+  });
+  observer.observe(el);
+});
+</script>
 </body>
 </html>
