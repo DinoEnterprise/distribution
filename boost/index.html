@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube Exposure System | Dynotic Distribution</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif;}
+
+body {
+  opacity: 0;
+  animation: fadeIn 0.5s ease forwards;
+  background:#0f0f0f;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.container {
+  width:95%;
+  max-width:420px;
+  background:#18181b;
+  border-radius:24px;
+  padding:24px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.4);
+
+  animation: cardEnter 0.7s cubic-bezier(.2,.8,.2,1);
+  animation-delay: 0.1s;
+  animation-fill-mode: both;
+}
+
+h1{
+  font-size:20px;
+  margin-bottom:20px;
+}
+
+.label{
+  font-size:13px;
+  margin-bottom:6px;
+  color:#aaa;
+}
+.toast{
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #22c55e;
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.toast.show{
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+input, select{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:1px solid #333;
+  background:#111;
+  color:#fff;
+  margin-bottom:16px;
+}
+
+.upload-box{
+  border:2px dashed #3f3f46;
+  border-radius:20px;
+  padding:40px 20px;
+  cursor:pointer;
+  margin:14px 0 24px;
+  background:#111;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  transition:0.25s;
+
+  animation: uploadEnter 0.8s ease;
+}
+
+@keyframes uploadEnter {
+  from {
+    opacity: 0;
+    transform: translateY(25px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.upload-box:hover{
+  border-color:#6366f1;
+  background:#141422;
+  box-shadow: 0 0 20px rgba(99,102,241,0.15);
+}
+
+.upload-box:active{
+  transform: scale(0.96);
+}
+
+.upload-box.active{
+  border-color:#22c55e;
+  background:#052e1a;
+  box-shadow: 0 0 20px rgba(34,197,94,0.2);
+}
+
+/* WRAPPER DALAM */
+.upload-inner{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  gap:8px; /* ⬅️ ini yang bikin gak pecah */
+}
+
+/* ICON */
+.upload-icon{
+  font-size:36px;
+  line-height:1; /* ⬅️ biar gak turun naik */
+}
+
+/* TEXT */
+.upload-title{
+  font-size:14px;
+  font-weight:600;
+}
+
+.upload-sub{
+  font-size:12px;
+  color:#888;
+}
+.btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:#6366f1;
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.btn:disabled{
+  opacity:0.5;
+}
+</style>
+</head>
+
+<body>
+  
+<div id="toast" class="toast">Berhasil dikirim!</div>
+
+<div class="container">
+  <h1>YouTube Exposure System</h1>
+
+  <div class="label">Upload MP3 *</div>
+<label class="upload-box" id="uploadBox">
+  <input type="file" id="audio" accept="audio/*" hidden>
+
+  <div class="upload-inner">
+    <div class="upload-icon">🎵</div>
+    <div class="upload-title" id="fileText">Upload your track</div>
+    <div class="upload-sub">MP3 / WAV • Max 20MB</div>
+  </div>
+</label>
+
+  <div class="label">Nama Artist *</div>
+  <input type="text" id="artist" placeholder="Nama artist">
+
+  <div class="label">Pilih Label *</div>
+  <select id="label">
+    <option value="">Pilih Label</option>
+    <option>Dynotic</option>
+    <option>Clouditz Media Vietnam</option>
+    <option>Sixthgrade Labs</option>
+    <option>Nusantara Music Publisher</option>
+    <option>Sundrift Music</option>
+    <option>Pixely Digital Solutions</option>
+  </select>
+
+  <button class="btn" id="submitBtn">Submit</button>
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain: "dynopay-2513c.firebaseapp.com",
+  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db = firebase.database();
+const WORKER_URL = "https://upload-assets.dynotic-bot.workers.dev/";
+
+let uploadedUrl = "";
+
+// Upload file
+
+const uploadBox = document.getElementById("uploadBox");
+
+document.getElementById("audio").addEventListener("change", e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+
+  const text = document.getElementById("fileText");
+  text.innerText = "Uploading...";
+  text.style.opacity = "0.6";
+
+  uploadBox.classList.remove("active");
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  fetch(WORKER_URL, {
+    method:"POST",
+    body:formData
+  })
+  .then(res=>res.json())
+  .then(data=>{
+    if(data.success){
+      uploadedUrl = data.url;
+
+      text.innerText = "Uploaded ✓";
+      text.style.opacity = "1";
+
+      uploadBox.classList.add("active"); // 🔥 efek hijau
+    } else {
+      showToast("Upload gagal ❌");
+    }
+  });
+});
+const btn = document.getElementById("submitBtn");
+
+btn.disabled = true; // ⬅️ taruh di sini
+function showToast(message){
+  const toast = document.getElementById("toast");
+  toast.innerText = message;
+  toast.classList.add("show");
+
+  setTimeout(()=>{
+    toast.classList.remove("show");
+  }, 2500);
+}
+function checkForm(){
+  const artist = document.getElementById("artist").value;
+  const label = document.getElementById("label").value;
+
+  btn.disabled = !(uploadedUrl && artist && label);
+}
+
+document.getElementById("artist").addEventListener("input", checkForm);
+document.getElementById("label").addEventListener("change", checkForm);
+// Submit
+document.getElementById("submitBtn").onclick = ()=>{
+  const artist = document.getElementById("artist").value;
+  const label = document.getElementById("label").value;
+
+  if(!uploadedUrl || !artist || !label){
+    showToast("Lengkapi semua field ⚠️");
+return;
+  }
+
+  db.ref("promo_submissions").push({
+    artist: artist,
+    label: label,
+    audio: uploadedUrl,
+    status: "pending",
+    time: Date.now()
+  });
+
+  showToast("Submission berhasil dikirim✓");
+
+setTimeout(()=>{
+  location.reload();
+}, 2000);
+};
+</script>
+
+</body>
+</html>
