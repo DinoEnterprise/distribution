@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- TITLE -->
+<title>Artwork Generator | Dynotic</title>
+
+<!-- FAVICON SET -->
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/favicon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="../assets/favicon-512.png">
+
+<!-- APPLE ICON -->
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-apple.png">
+
+<!-- OPEN GRAPH (PREVIEW LINK WHATSAPP / DISCORD / IG) -->
+<meta property="og:title" content="Dynotic Artwork Generator">
+<meta property="og:description" content="Create aesthetic cover art instantly for your music releases.">
+<meta property="og:image" content="https://dynotic.web.id/assets/icon-512.png">
+<meta property="og:url" content="https://dynotic.web.id/artwork">
+<meta property="og:type" content="website">
+
+<!-- TWITTER / X PREVIEW -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Dynotic Artwork Generator">
+<meta name="twitter:description" content="Make clean, aesthetic music cover art in seconds.">
+<meta name="twitter:image" content="https://dynotic.web.id/assets/icon-512.png">
+
+<!-- THEME COLOR -->
+<meta name="theme-color" content="#18181b">
+
+<!-- SEO BASIC -->
+<meta name="description" content="Dynotic Artwork Generator - Create music cover art easily">
+<meta name="robots" content="index, follow">
+
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Outfit", sans-serif;
+    }
+
+    body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: #0f0f0f;
+  color: #fff;
+  margin: 0;
+  min-height: auto;
+margin: 20px auto;
+border-radius: 20px;
+}
+
+.container {
+  animation: fadeUp 0.6s ease-out;
+  width: 100%;
+  max-width: 900px;   /* ini bikin tidak terlalu besar */
+  margin: 0 auto;     /* ini bikin tetap center */
+  min-height: 100vh;
+  padding: 24px;
+  background: #18181b;
+}
+
+input, select, .upload, canvas, button {
+  animation: fadeItem 0.5s ease-out;
+  animation-fill-mode: both;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeItem {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+    h1 {
+      font-size: 20px;
+      margin-bottom: 18px;
+    }
+
+    .label {
+      font-size: 13px;
+      color: #aaa;
+      margin-bottom: 6px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 14px;
+      border-radius: 14px;
+      border: 1px solid #333;
+      background: #111;
+      color: #fff;
+    }
+
+    .upload {
+      border: 2px dashed #333;
+      padding: 30px;
+      text-align: center;
+      border-radius: 16px;
+      margin-bottom: 14px;
+      cursor: pointer;
+      background: #111;
+    }
+
+    .upload:hover {
+      border-color: #6366f1;
+    }
+
+    canvas {
+      width: 100%;
+      border-radius: 14px;
+      margin: 14px 0;
+      background: #000;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #6366f1;
+      color: #fff;
+    }
+
+    button:active {
+      transform: scale(.97);
+    }
+
+    .small {
+      font-size: 11px;
+      color: #888;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Artwork Generator</h1>
+
+    <div class="label">Judul</div>
+    <input id="title" placeholder="Nama lagu">
+
+    <div class="label">Nama Artist</div>
+    <input id="artist" placeholder="Nama artist">
+
+    <div class="label">Upload Image (Square)</div>
+    <div class="upload" onclick="document.getElementById('imgInput').click()">
+      Klik untuk upload gambar
+    </div>
+
+    <div id="fileName" style="font-size:12px;color:#888;margin-bottom:10px">
+      Belum ada file
+    </div>
+
+    <input type="file" id="imgInput" accept="image/*" hidden>
+
+    <div class="label">Posisi Text</div>
+    <select id="pos">
+      <option value="center">Center</option>
+      <option value="top-left">Top Left</option>
+      <option value="top-right">Top Right</option>
+      <option value="bottom-left">Bottom Left</option>
+      <option value="bottom-right">Bottom Right</option>
+    </select>
+
+    <div style="font-size:11px;color:#666;margin-bottom:6px;text-transform:uppercase">
+      Live Preview
+    </div>
+
+    <canvas id="canvas" width="1000" height="1000"></canvas>
+
+    <br><br>
+
+    <button onclick="download()">Download Image</button>
+
+    <div class="small">Dynotic Artwork Generator v1</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    let img = new Image();
+    let croppedImg = null;
+
+    document.getElementById("imgInput").addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      document.getElementById("fileName").textContent = "Uploaded: " + file.name;
+
+      const reader = new FileReader();
+      reader.onload = ev => {
+        img = new Image();
+        img.onload = () => {
+          croppedImg = cropToSquare(img);
+          drawPreview();
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function cropToSquare(image) {
+      const size = Math.min(image.width, image.height);
+
+      const temp = document.createElement("canvas");
+      temp.width = size;
+      temp.height = size;
+
+      const tctx = temp.getContext("2d");
+
+      const x = (image.width - size) / 2;
+      const y = (image.height - size) / 2;
+
+      tctx.drawImage(image, x, y, size, size, 0, 0, size, size);
+
+      const out = new Image();
+
+      out.onload = () => drawPreview();
+      out.src = temp.toDataURL("image/png");
+
+      return out;
+    }
+
+    function drawPreview() {
+      const title = document.getElementById("title").value;
+      const artist = document.getElementById("artist").value;
+      const pos = document.getElementById("pos").value;
+
+      ctx.clearRect(0, 0, 1000, 1000);
+
+      if (croppedImg) {
+        ctx.drawImage(croppedImg, 0, 0, 1000, 1000);
+      } else {
+        ctx.fillStyle = "#111";
+        ctx.fillRect(0, 0, 1000, 1000);
+      }
+
+      ctx.fillStyle = "rgba(0,0,0,0.45)";
+      ctx.fillRect(0, 0, 1000, 1000);
+
+      ctx.fillStyle = "#fff";
+
+      let x = 50, y = 120;
+      ctx.textAlign = "left";
+
+      if (pos === "center") {
+        ctx.textAlign = "center";
+
+        ctx.font = "bold 70px Outfit";
+        ctx.fillText(title, 500, 470);
+
+        ctx.font = "40px Outfit";
+        ctx.fillText(artist, 500, 530);
+
+        return;
+      }
+
+      if (pos === "top-left") { x = 60; y = 120; }
+      if (pos === "top-right") { ctx.textAlign = "right"; x = 940; y = 120; }
+      if (pos === "bottom-left") { x = 60; y = 850; }
+      if (pos === "bottom-right") { ctx.textAlign = "right"; x = 940; y = 850; }
+
+      ctx.font = "bold 70px Outfit";
+      ctx.fillText(title, x, y);
+
+      ctx.font = "40px Outfit";
+      ctx.fillText(artist, x, y + 60);
+    }
+
+    document.getElementById("title").addEventListener("input", drawPreview);
+    document.getElementById("artist").addEventListener("input", drawPreview);
+    document.getElementById("pos").addEventListener("change", drawPreview);
+
+    function download() {
+      const exportCanvas = document.createElement("canvas");
+      exportCanvas.width = 3000;
+      exportCanvas.height = 3000;
+
+      const ectx = exportCanvas.getContext("2d");
+
+      if (croppedImg) {
+        ectx.drawImage(croppedImg, 0, 0, 3000, 3000);
+      } else {
+        ectx.fillStyle = "#111";
+        ectx.fillRect(0, 0, 3000, 3000);
+      }
+
+      ectx.fillStyle = "rgba(0,0,0,0.45)";
+      ectx.fillRect(0, 0, 3000, 3000);
+
+      const title = document.getElementById("title").value;
+      const artist = document.getElementById("artist").value;
+      const pos = document.getElementById("pos").value;
+
+      ectx.fillStyle = "#fff";
+
+      let x = 150, y = 300;
+      ectx.textAlign = "left";
+
+      if (pos === "center") {
+        ectx.textAlign = "center";
+
+        ectx.font = "bold 180px Outfit";
+        ectx.fillText(title, 1500, 1400);
+
+        ectx.font = "120px Outfit";
+        ectx.fillText(artist, 1500, 1550);
+      } else {
+        if (pos === "top-left") { x = 150; y = 300; }
+        if (pos === "top-right") { ectx.textAlign = "right"; x = 2850; y = 300; }
+        if (pos === "bottom-left") { x = 150; y = 2700; }
+        if (pos === "bottom-right") { ectx.textAlign = "right"; x = 2850; y = 2700; }
+
+        ectx.font = "bold 180px Outfit";
+        ectx.fillText(title, x, y);
+
+        ectx.font = "120px Outfit";
+        ectx.fillText(artist, x, y + 180);
+      }
+
+      const link = document.createElement("a");
+      link.download = "artwork.jpg";
+      link.href = exportCanvas.toDataURL("image/jpeg", 0.95);
+      link.click();
+    }
+
+    drawPreview();
+  </script>
+</body>
+</html>
