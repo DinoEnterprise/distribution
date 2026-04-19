@@ -1,248 +1,571 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login | Dynotic Distribution</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home | Dynotic Distribution</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/favicon-android.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-iphone.png">
 
-<style>
-*{ box-sizing:border-box; font-family:'Outfit',sans-serif; margin:0; padding:0; }
+<!-- Preview (Open Graph) -->
+<meta property="og:title" content="Dynotic Dashboard">
+<meta property="og:description" content="Manage your music releases, royalties, and submissions in one place.">
+<meta property="og:image" content="https://dynotic.web.id/assets/icon-512.png">
+<meta property="og:url" content="https://dynotic.web.id/dashboard">
+<meta property="og:type" content="website">
 
-body{
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background: linear-gradient(180deg, #e5e7eb, #d1d5db);
-  padding:15px;
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Dynotic Dashboard">
+<meta name="twitter:description" content="Artist dashboard for managing releases and earnings.">
+<meta name="twitter:image" content="https://dynotic.web.id/assets/icon-512.png">
+
+<!-- Theme -->
+<meta name="theme-color" content="#667eea">
+
+<meta name="robots" content="noindex, nofollow">
+
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Global Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Outfit", sans-serif;
+    }
+
+    body {
+      background: #f1f2f7;
+      min-height: 100vh;
+      color: #111;
+      animation: fadeIn .5s ease;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      padding-top: 74px; /* space for fixed header */
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounceIn {
+      0% { transform: translateY(-20px); opacity: 0; }
+      50% { transform: translateY(10px); opacity: 1; }
+      70% { transform: translateY(-5px); }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Header */
+    header {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    header img {
+      height: 50px;
+    }
+
+    /* Notification Button */
+    .notif-btn {
+      margin-left: auto;
+      position: relative;
+      width: 50px;
+      height: 50px;
+    }
+
+    .notif-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: -4px;
+      right: -6px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: #ef4444;
+      color: #fff;
+      display: none;
+    }
+.release-status.process {
+  animation: pulse 1.2s infinite;
+}
+.release-item {
+  display: flex;
+  gap: 12px;
 }
 
-/* CARD */
-.container{
-  width:100%;
-  max-width:420px;
-  background:#fff;
-  border-radius:26px;
-  padding:32px 26px;
-  text-align:center;
-  border:1px solid rgba(0,0,0,0.05);
-  box-shadow:0 10px 30px rgba(0,0,0,0.12), 0 30px 60px rgba(0,0,0,0.08);
-  animation:enter .6s ease;
-}
-.container:hover{ transform:translateY(-3px); transition:.3s; }
-@keyframes enter{ from{opacity:0; transform:translateY(40px)} to{opacity:1; transform:none} }
-
-/* LOGO */
-.logo{ width:70px; margin-bottom:16px; }
-h2{ margin-bottom:20px; font-size:22px; font-weight:700; color:#222; }
-
-/* INPUT */
-.field{ position:relative; margin-bottom:15px; width:100%; }
-input{
-  width:100%;
-  padding:14px 44px 14px 16px;
-  border-radius:12px;
-  border:1px solid #ddd;
-  font-size:15px;
-  outline:none;
-  transition:.2s;
-}
-input:focus{
-  border:1px solid #111;
-  box-shadow:0 0 0 3px rgba(0,0,0,0.08);
+.release-cover {
+  width: 46px;
+  height: 46px;
+  border-radius: 8px;
+  background: #f1f2f7;
+  flex-shrink: 0;
 }
 
-/* TOGGLE PASSWORD */
-.toggle{
-  position:absolute;
-  right:12px;
-  top:50%;
-  transform:translateY(-50%);
-  cursor:pointer;
-  font-size:18px;
-  user-select:none;
-  padding:4px;
-  border-radius:6px;
-  transition:.2s;
-  -webkit-tap-highlight-color:transparent;
+.release-cover img {
+  width: 46px;
+  height: 46px;
+  object-fit: cover;
+  border-radius: 6px;
 }
-.toggle:active, .toggle:focus{ outline:2px solid #111; }
 
-/* BUTTON */
-button{
-  letter-spacing:.3px;
-  width:100%;
-  padding:15px;
-  border-radius:14px;
-  font-size:16px;
-  font-weight:700;
-  color:#fff;
-  background:#000;
-  border:1px solid #000;
-  cursor:pointer;
-  transition:.2s;
+.release-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
 }
-button:hover{ background:#111; }
-button:focus, button:active{ outline:2px solid #000; }
-button:active{ transform:scale(.96); }
 
-/* ERROR */
-#error{ margin-top:10px; font-size:14px; color:#e53e3e; min-height:20px; }
-
-/* LOADER */
-.loader{
-  position:fixed;
-  inset:0;
-  background:rgba(255,255,255,.9);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:700;
-  font-size:16px;
-  color:#111;
-  opacity:0;
-  pointer-events:none;
-  transition:.3s;
+.release-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.3;
 }
-.loader.active{ opacity:1; pointer-events:auto; }
 
-/* ANIMATION EXIT */
-.fade-out{ animation:exit .5s ease forwards; }
-@keyframes exit{ to{opacity:0; transform:scale(.95);} }
-</style>
+.release-meta {
+  font-size: 12px;
+  color: #777;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.release-status {
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+    /* Message Popup */
+    .message-popup {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    .message-popup.show { display: flex; }
+
+.message-card {
+  width: 85%;
+  max-width: 340px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px;
+  /* animation: bounceIn .4s ease; */
+}
+
+
+    .message-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .message-text {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.4;
+    }
+
+    .message-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .view-btn {
+      background: #667eea;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .close-btn {
+      background: #eee;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    /* Cards */
+.card {
+  width: 90%;
+  margin: 35px auto;
+  background: #fff;
+  border-radius: 20px;
+  padding: 25px;
+  border: 1px solid #ececec;
+  box-shadow: 0 8px 18px rgba(0,0,0,.05);
+  transition: .3s;
+  /* animation: bounceIn .6s ease; */
+}
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 22px rgba(0,0,0,.08);
+    }
+
+    .artist-name {
+      font-size: 15px;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    .balance-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 10px;
+    }
+
+    .card-value {
+      font-size: 33px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 15px;
+    }
+
+    /* Profile Menu */
+    .profile-menu {
+      position: fixed;
+      bottom: 60px;
+      right: 20px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.12);
+      display: none;
+      width: 180px;
+      z-index: 10;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: .25s ease;
+    }
+
+    .profile-menu.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .profile-menu div {
+      padding: 12px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    .profile-menu div:last-child { border-bottom: none; }
+    .profile-menu div:hover { background: #f1f2f7; }
+
+    /* Clickable */
+    .clickable {
+      cursor: pointer;
+      transition: .12s;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .clickable:active {
+      transform: scale(.94);
+      filter: brightness(85%);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,.2);
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      background: #fff;
+      border-top: 1px solid #eee;
+      padding: 10px 0;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
+
+    .nav-item {
+      text-align: center;
+      font-size: 13px;
+      opacity: .75;
+      padding: 4px 14px;
+      border-radius: 12px;
+    }
+
+    .nav-item img {
+      width: 28px;
+      display: block;
+      margin: auto auto 4px;
+    }
+
+    .nav-item:hover { opacity: 1; }
+  .nav-item.active {
+  font-weight: 700;      /* teks jadi tebal */
+  color: #111;           /* ganti jadi hitam */
+  position: relative;
+}
+
+.nav-item.active::before {
+  content: "";
+  position: absolute;
+  bottom: 0;             /* di bawah teks */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;            /* lebar kotak */
+  height: 4px;           /* tinggi kotak */
+  border-radius: 8px;    /* biar agak bulat sudutnya */
+  background-color: #111; /* warna kotak */
+}
+    .nav-item.active img { filter: brightness(1.2); }
+
+    /* Buttons */
+    button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      cursor: pointer;
+    }
+
+    button:hover { filter: brightness(90%); }
+    button:active {
+      filter: brightness(70%);
+      transform: scale(.95);
+    }
+
+    /* Release Row */
+    .release-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .release-title { max-width: 75%; line-height: 1.3; }
+    .release-status { white-space: nowrap; flex-shrink: 0; }
+
+  </style>
 </head>
 
 <body>
 
-<div class="container" id="card">
-  <img src="../assets/dynotic-distribution.png" class="logo">
-  <h2>Login Dynotic</h2>
+  <!-- Header -->
+  <header>
+    <img src="../assets/dynotic-distribution.png">
+    <div id="notifBtn" class="notif-btn clickable" onclick="openMessages()">
+      <img src="../assets/message.png">
+      <span id="notifBadge" class="notif-badge">0</span>
+    </div>
+  </header>
 
-  <div class="field">
-    <input id="email" type="email" placeholder="Email">
+  <!-- Message Popup -->
+  <div id="messagePopup" class="message-popup">
+    <div class="message-card">
+      <div class="message-title" id="msgTitle"></div>
+      <div class="message-text" id="msgText"></div>
+      <div class="message-actions">
+        <button class="view-btn" onclick="viewMessage()">View</button>
+        <button class="close-btn" onclick="closeMessage()">✕</button>
+      </div>
+    </div>
   </div>
 
-  <div class="field">
-    <input id="pass" type="password" placeholder="Password">
-    <div class="toggle" id="eye" tabindex="0" onclick="togglePass()">𖠂</div>
-  </div>
-
-  <div style="text-align:right; margin-bottom:15px;">
-<a href="../forgot-password" style="font-size:14px; color:#555; text-decoration:underline;">Forgot password?</a>
-  </div>
-
-  <button onclick="login()">Login</button>
-  <div id="error"></div>
+  <!-- Main Wallet -->
+  <div class="card clickable" onclick="goRekapan()">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div id="namaArtis" class="artist-name">Hi, --</div>
+        <div class="balance-title">Main Wallet Balance</div>
+        <div id="saldo" class="card-value">Rp 0</div>
+        <div style="font-size:11px;color:#888;margin-top:6px">
+  Tap Detail to view royalty breakdown
 </div>
+      </div>
+     <div onclick="goRekapan()" class="clickable"
+style="padding:10px 14px;border-radius:12px;background:#111;color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;">
+  <img src="../assets/history.png" style="width:16px">
+  Detail
+</div>
+    </div>
+  </div>
 
-<div class="loader" id="loader">Dynotic Distribution…</div>
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-<script>
-// Initialize Firebase
-firebase.initializeApp({
-  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain: "dynopay-2513c.firebaseapp.com",
-  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
+  <div style="height:120px"></div>
 
-const db = firebase.database();
-let loginInProgress = false;
-// Ambil elemen
-const errorEl = document.getElementById("error");
-const emailInput = document.getElementById("email");
-const passInput = document.getElementById("pass");
-const btn = document.querySelector("button");
+  <!-- Profile Menu -->
+  <div id="profileMenu" class="profile-menu">
+    <div class="clickable" onclick="goAccount()">Account</div>
+    <div class="clickable" onclick="logout()">Log Out</div>
+  </div>
 
-// Pasang listener input sekali saja
-emailInput.addEventListener("input", () => { errorEl.textContent = ""; });
-passInput.addEventListener("input", () => { errorEl.textContent = ""; });
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-item clickable active" onclick="homeClick()">
+      <img src="../assets/home.png"> Home
+    </div>
+    <div class="nav-item clickable" onclick="goReleases()">
+      <img src="../assets/releases.png"> Releases
+    </div>
+    <div class="nav-item clickable" onclick="accountClick()">
+      <img src="../assets/account.png"> Account
+    </div>
+  </div>
 
-// Toggle password
-function togglePass(){
-  if(passInput.type==="password"){
-    passInput.type="text";
-    document.getElementById("eye").textContent="⌒";
-  }else{
-    passInput.type="password";
-    document.getElementById("eye").textContent="𖠂";
-  }
-}
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-// Login
-function login(){
-  loginInProgress = true;
-  if(btn.disabled) return;
+  <script>
+    firebase.initializeApp({
+      apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+      authDomain: "dynopay-2513c.firebaseapp.com",
+      databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+    });
 
-  const email = emailInput.value.trim();
-  const pass = passInput.value.trim();
+    const db = firebase.database();
+    let targetSaldo = 0;
 
-  if(!email || !pass){
-    errorEl.textContent = "Email and password are required";
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) location.href = "../login";
+      else {
+        
+        loadMessages(user.uid);
+
+        db.ref("users/" + user.uid).once("value").then(snap => {
+          if (snap.exists()) {
+            const d = snap.val();
+            targetSaldo = Number(d.saldo || 0);
+            namaArtis.textContent = "Hi, " + (d.nama || "Artist");
+            animateSaldo();
+          }
+        });
+      }
+    });
+
+    function animateSaldo() {
+      let angka = 0;
+      const step = Math.ceil(targetSaldo / 15);
+      const i = setInterval(() => {
+        if (angka < targetSaldo) {
+          angka += step;
+          if (angka > targetSaldo) angka = targetSaldo;
+          saldo.textContent = "Rp " + angka.toLocaleString("id-ID");
+        } else clearInterval(i);
+      }, 15);
+    }
+
+    function logout() { firebase.auth().signOut().then(() => location.href="../login"); }
+    function goReleases() { location.href = "../releases"; }
+    function accountClick() { location.href = "../account"; }
+    function toggleProfileMenu() { profileMenu.classList.toggle("show"); }
+    function homeClick() { console.log("Dashboard active — tidak reload"); }
+    function goRekapan() { location.href = "../income"; }
+
+
+    /* Messages */
+    let messagesQueue=[], currentMsgIndex=0;
+
+    function loadMessages(uid){
+      db.ref("messages_inbox/"+uid).on("value", snap=>{
+        messagesQueue=[];
+        snap.forEach(i=>{ const m=i.val(); if(!m.read) messagesQueue.push({...m,key:i.key}); });
+        notifBadge.style.display=messagesQueue.length>0?"block":"none";
+        if(messagesQueue.length>0) notifBadge.textContent=messagesQueue.length;
+      });
+    }
+
+    function openMessages(){ if(messagesQueue.length===0) return; currentMsgIndex=0; showCurrentMessage(); }
+    function showCurrentMessage() {
+  if(currentMsgIndex >= messagesQueue.length) {
+    messagePopup.classList.remove("show");
     return;
   }
-
-  btn.disabled = true;
-  btn.textContent = "Signing in...";
-
-  firebase.auth()
-    .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-    .then(() => firebase.auth().signInWithEmailAndPassword(email, pass))
-    .then(userCredential => {
-      const user = userCredential.user;
-      return db.ref("users/" + user.uid).once("value");
-    })
-    .then(snapshot => {
-      const data = snapshot.val();
-      if(!data || data.status !== "active"){
-        firebase.auth().signOut();
-        errorEl.textContent = "Account is inactive. Please contact the admin";
-        btn.disabled = false;
-        btn.textContent = "Login";
-        return;
-      }
-
-      const uid = firebase.auth().currentUser.uid;
-db.ref("users/" + uid + "/lastLogin").set(Date.now());
-
-      document.getElementById("loader").classList.add("active");
-      document.getElementById("card").classList.add("fade-out");
-
-      setTimeout(() => window.location.replace("../home"), 600);
-    })
-    .catch(error => {
-      switch(error.code){
-        case "auth/user-not-found":
-          errorEl.textContent="User not found"; break;
-        case "auth/wrong-password":
-          errorEl.textContent="Incorrect password"; break;
-        case "auth/invalid-email":
-          errorEl.textContent="Invalid email address"; break;
-        default:
-          errorEl.textContent="An error occurred. Please try again";
-      }
-      btn.disabled = false;
-      btn.textContent = "Login";
-    });
+  const m = messagesQueue[currentMsgIndex];
+  msgTitle.textContent = m.subject || "-";
+  msgText.textContent = m.body || "-";
+  messagePopup.style.display = 'flex';
+  fadeInElement(document.querySelector('.message-card'), 250);
 }
 
-// Enter key
-document.addEventListener("keydown", e => {
-  if(e.key === "Enter") login();
-});
+// Fungsi global untuk menutup pesan
+function closeMessage() {
+  const m = messagesQueue[currentMsgIndex];
+  if(m) db.ref("messages_inbox/" + firebase.auth().currentUser.uid + "/" + m.key + "/read").set(true);
+  currentMsgIndex++;
+  showCurrentMessage();
+}
+    function fadeInElement(el, duration = 350) {
+  el.style.opacity = 0;
+  el.style.transform = 'translateY(12px)';
+  el.style.display = 'block';
+  const start = performance.now();
 
-// Auto redirect
-firebase.auth().onAuthStateChanged(user => {
-  if (loginInProgress) return;
-  if (user) window.location.replace("../home");
+  function animate(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    el.style.opacity = progress;
+    el.style.transform = `translateY(${12 * (1 - progress)}px)`;
+    if(progress < 1) requestAnimationFrame(animate);
+  }
+
+  requestAnimationFrame(animate);
+}
+
+// Animasi untuk semua card saat load
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.card').forEach((c, idx) => {
+    setTimeout(() => fadeInElement(c), idx * 100);
+  });
 });
-</script>
+    function viewMessage(){ const m=messagesQueue[currentMsgIndex]; db.ref("messages_inbox/"+firebase.auth().currentUser.uid+"/"+m.key+"/read").set(true); closeMessage(); }
+  </script>
 
 </body>
 </html>
