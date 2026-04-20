@@ -557,7 +557,7 @@ style="padding:10px 14px;border-radius:12px;background:#111;color:#fff;font-size
     let targetSaldo = 0;
 
     firebase.auth().onAuthStateChanged(user => {
-      if (!user) location.href = "../login";
+      if (!user) location.href = "../index.html";
       else {
         
         loadMessages(user.uid);
@@ -585,7 +585,7 @@ style="padding:10px 14px;border-radius:12px;background:#111;color:#fff;font-size
       }, 15);
     }
 
-    function logout() { firebase.auth().signOut().then(() => location.href="../login"); }
+    function logout() { firebase.auth().signOut().then(() => location.href="../index.html"); }
     function goReleases() { location.href = "../releases"; }
     function accountClick() { location.href = "../account"; }
     function toggleProfileMenu() { profileMenu.classList.toggle("show"); }
