@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Request OAC | Dynotic</title>
+<title>Request OAC | Dynotic Distribution</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -126,12 +126,12 @@ firebase.auth().onAuthStateChanged(user=>{
 });
 
 function isValidChannelID(id){
-  return /^UC[a-zA-Z0-9_-]{22}$/.test(id);
+  return /^UC[a-zA-Z0-9_-]{20,30}$/.test(id);
 }
 function submitOAC(){
   const email = document.getElementById("email").value.trim();
 const artist = document.getElementById("artist").value.trim();
-const channel = document.getElementById("channel").value.trim();
+const channel = document.getElementById("channel").value.trim().replace(/\s/g, "");
   const label = document.getElementById("label").value.trim();
   const msg = document.getElementById("msg");
 
