@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Request OAC | Dynotic Distribution</title>
+<title>Request OAC | Dynotic</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -155,20 +155,23 @@ if(!isValidChannelID(channel)){
     time: Date.now()
   };
 
-  db.ref("oac/" + user.uid).set(data).then(()=>{
-    msg.innerHTML = "<div class='success'>Request berhasil dikirim</div>";
-    
-document.getElementById("email").value="";
-    document.getElementById("artist").value="";
-    document.getElementById("channel").value="";
-    
-    document.getElementById("label").value="";
-    
-    setTimeout(()=>{
-  location.href = "../oac";
-}, 1200);
+  db.ref("oac/" + user.uid).set(data)
+.then(()=>{
+  msg.innerHTML = "<div class='success'>Request berhasil dikirim</div>";
 
-  });
+  document.getElementById("email").value="";
+  document.getElementById("artist").value="";
+  document.getElementById("channel").value="";
+  document.getElementById("label").value="";
+
+  setTimeout(()=>{
+    location.href = "../oac";
+  }, 1200);
+})
+.catch(err=>{
+  console.error(err);
+  msg.innerHTML = "<span style='color:red'>Gagal kirim: " + err.message + "</span>";
+});
 }
 </script>
 
