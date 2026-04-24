@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin OAC | Dynotic</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif}
+
+body{
+  background:#f1f2f7;
+  padding-top:70px;
+}
+
+/* HEADER */
+header{
+  position:fixed;
+  top:0;
+  width:100%;
+  background:#fff;
+  padding:14px;
+  border-bottom:1px solid #eee;
+  text-align:center;
+  font-weight:700;
+}
+
+/* CARD */
+.card{
+  width:90%;
+  margin:15px auto;
+  background:#fff;
+  padding:16px;
+  border-radius:16px;
+  border:1px solid #eee;
+  box-shadow:0 6px 14px rgba(0,0,0,.05);
+}
+
+/* STATUS */
+.status{
+  font-size:12px;
+  font-weight:600;
+}
+
+/* BUTTON */
+.btn{
+  padding:6px 12px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  font-size:12px;
+  margin-right:5px;
+}
+
+.approve{background:#22c55e;color:#fff;}
+.reject{background:#ef4444;color:#fff;}
+.proses{background:#f59e0b;color:#fff;}
+.delete{background:#111;color:#fff;}
+</style>
+</head>
+
+<body>
+
+<header>Admin OAC Panel</header>
+
+<div id="list"></div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain: "dynopay-2513c.firebaseapp.com",
+  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db = firebase.database();
+
+/* 🔐 ADMIN ONLY */
+const ADMIN_EMAILS = [
+  "risnawaty1602@gmail.com"
+];
+
+firebase.auth().onAuthStateChanged(user=>{
+  if(!user){
+    location.href="../login";
+    return;
+  }
+
+  if(!ADMIN_EMAILS.includes(user.email)){
+    alert("Akses ditolak (Admin only)");
+    location.href="../";
+    return;
+  }
+
+  loadAllOAC();
+});
+
+/* LOAD ALL DATA */
+function loadAllOAC(){
+  const list = document.getElementById("list");
+
+  db.ref("oac").on("value", snap=>{
+    if(!snap.exists()){
+      list.innerHTML = "Tidak ada request";
+      return;
+    }
+
+    let html = "";
+
+    snap.forEach(userSnap=>{
+      const uid = userSnap.key;
+      const data = userSnap.val();
+
+      Object.entries(data).forEach(([id, d])=>{
+
+        let status = d.status || "proses";
+        let color = "#f59e0b";
+
+        if(status === "approved") color = "#22c55e";
+        else if(status === "rejected") color = "#ef4444";
+
+        html += `
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;">
+              <b>${d.artist}</b>
+              <span style="font-size:12px;color:#666;">
+                ${new Date(d.time).toLocaleDateString()}
+              </span>
+            </div>
+
+            <div style="font-size:13px;margin-top:6px;">
+              Email: ${d.email}
+            </div>
+
+            <div style="font-size:13px;">
+              Channel: ${d.channel}
+            </div>
+
+            <div class="status" style="margin-top:6px;color:${color}">
+              ${status.toUpperCase()}
+            </div>
+
+            <div style="margin-top:10px;">
+              <button class="btn proses" onclick="updateStatus('${uid}','${id}','proses')">Proses</button>
+              <button class="btn approve" onclick="updateStatus('${uid}','${id}','approved')">Approve</button>
+              <button class="btn reject" onclick="updateStatus('${uid}','${id}','rejected')">Reject</button>
+              <button class="btn delete" onclick="deleteData('${uid}','${id}')">Delete</button>
+            </div>
+          </div>
+        `;
+      });
+    });
+
+    list.innerHTML = html;
+  });
+}
+
+/* UPDATE STATUS */
+function updateStatus(uid,id,status){
+  db.ref(`oac/${uid}/${id}/status`).set(status);
+}
+
+/* DELETE */
+function deleteData(uid,id){
+  if(confirm("Hapus request ini?")){
+    db.ref(`oac/${uid}/${id}`).remove();
+  }
+}
+</script>
+
+</body>
+</html>
