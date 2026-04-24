@@ -35,7 +35,90 @@ tr{
   0%{opacity:0; transform:translateY(30px);}
   100%{opacity:1; transform:translateY(0);}
 }
+#submitBtn:active{
+  transform:scale(0.97);
+}
 
+.input:focus{
+  border-color:#111;
+  box-shadow:0 0 0 3px rgba(0,0,0,0.05);
+}
+/* MODAL */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  backdrop-filter:blur(6px);
+  z-index:999;
+  align-items:center;
+  justify-content:center;
+  animation:fadeIn .25s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+.modal-card{
+  width:90%;
+  max-width:420px;
+  background:#fff;
+  padding:22px;
+  border-radius:20px;
+  box-shadow:0 20px 50px rgba(0,0,0,.15);
+  animation:scaleUp .25s ease;
+}
+
+@keyframes scaleUp{
+  from{transform:scale(.9); opacity:0;}
+  to{transform:scale(1); opacity:1;}
+}
+
+.modal-card h3{
+  font-size:18px;
+  margin-bottom:12px;
+  font-weight:700;
+}
+
+/* BUTTON GROUP */
+.btn-group{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+.btn-group button{
+  flex:1;
+  padding:12px;
+  border-radius:12px;
+  font-weight:700;
+  border:none;
+  cursor:pointer;
+  transition:.2s;
+}
+
+/* SUBMIT */
+#submitBtn{
+  background:#111;
+  color:#fff;
+}
+
+#submitBtn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 15px rgba(0,0,0,.2);
+}
+
+/* CANCEL */
+.cancel{
+  background:#f3f4f6;
+  color:#111;
+}
+
+.cancel:hover{
+  background:#e5e7eb;
+}
 /* HEADER */
 header{
   position:fixed;
@@ -212,11 +295,11 @@ tr:hover td{
 
 </div>
 <!-- MODAL -->
-<div id="modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;">
-  
-  <div style="background:#fff;padding:20px;border-radius:16px;width:90%;max-width:400px;">
+<div id="modal" class="modal">
+
+  <div class="modal-card">
     
-    <h3 style="margin-bottom:10px">Pengajuan Cover</h3>
+    <h3>Pengajuan Cover</h3>
 
     <input id="m_songId" disabled class="input">
     <input id="m_title" disabled class="input">
@@ -229,11 +312,15 @@ tr:hover td{
     <input id="m_label" class="input" placeholder="Label">
     <input id="m_channel" class="input" placeholder="Channel YouTube">
 
-    <button onclick="submitRequest()">Submit</button>
-    <button onclick="closeModal()" style="margin-top:6px;background:#eee;color:#111;">Cancel</button>
+    <div class="btn-group">
+      <button id="submitBtn" onclick="submitRequest()">Submit</button>
+      <button class="cancel" onclick="closeModal()">Cancel</button>
+    </div>
 
   </div>
 </div>
+
+  
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -404,22 +491,29 @@ function submitRequest(){
     alert("Isi data wajib");
     return;
   }
-const btn = document.querySelector("#modal button");
+const btn = document.getElementById("submitBtn");
 btn.disabled = true;
-btn.innerText = "Sending...";
+btn.innerHTML = "Processing...";
+btn.style.opacity = "0.7";
   firebase.database().ref("coverRequests").push(data)
 .then(()=>{
-  alert("Berhasil dikirim");
-  btn.innerText = "Success ✓";
-  
+  btn.innerHTML = "Success ✓";
+  btn.style.opacity = "1";
+
   document.getElementById("m_email").value = "";
   document.getElementById("m_cover").value = "";
   document.getElementById("m_label").value = "";
   document.getElementById("m_channel").value = "";
 
+  // delay biar keliatan success
   setTimeout(()=>{
     closeModal();
-  }, 800);
+
+    // reset button
+    btn.disabled = false;
+    btn.innerHTML = "Submit";
+    btn.style.opacity = "1";
+  }, 1200);
 })
 
 .catch(err=>{
