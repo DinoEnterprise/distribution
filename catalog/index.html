@@ -27,7 +27,9 @@ html, body{
   overflow-x:hidden;
   padding-top:70px;
 }
-
+tr{
+  cursor:pointer;
+}
 /* ANIMATION */
 @keyframes fadeSlideUp{
   0%{opacity:0; transform:translateY(30px);}
@@ -51,7 +53,13 @@ header{
   backdrop-filter:blur(10px);
   opacity:0;
 }
-
+.input{
+  width:100%;
+  padding:10px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  margin-bottom:8px;
+}
 /* SEARCH */
 .filter-wrapper{
   width:95%;
@@ -203,7 +211,39 @@ tr:hover td{
   </div>
 
 </div>
+<!-- MODAL -->
+<div id="modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;">
+  
+  <div style="background:#fff;padding:20px;border-radius:16px;width:90%;max-width:400px;">
+    
+    <h3 style="margin-bottom:10px">Pengajuan Cover</h3>
 
+    <input id="m_songId" disabled class="input">
+    <input id="m_title" disabled class="input">
+    <input id="m_composer" disabled class="input">
+    <input id="m_publisher" disabled class="input">
+    <input id="m_performer" disabled class="input">
+
+    <input id="m_email" class="input" placeholder="Email">
+    <input id="m_cover" class="input" placeholder="Nama Pengcover">
+    <input id="m_label" class="input" placeholder="Label">
+    <input id="m_channel" class="input" placeholder="Channel YouTube">
+
+    <button onclick="submitRequest()">Submit</button>
+    <button onclick="closeModal()" style="margin-top:6px;background:#eee;color:#111;">Cancel</button>
+
+  </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain: "dynopay-2513c.firebaseapp.com",
+  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+</script>
 <script>
 const itemsPerPage = 50;
 let currentPage = 1;
@@ -275,10 +315,12 @@ function renderTransactions(){
 
   pageItems.forEach((t,i)=>{
     const tr = document.createElement('tr');
+    
+tr.onclick = () => openModal(t);
 
     const yt = t.youtube === "-" 
-      ? "-" 
-      : `<a href="${t.youtube}" target="_blank" style="color:#2563eb;">Link</a>`;
+  ? "-" 
+  : `<a href="${t.youtube}" target="_blank" onclick="event.stopPropagation()" style="color:#2563eb;">Link</a>`;
 
     tr.innerHTML = `
   <td>${t.songId}</td>
@@ -329,7 +371,64 @@ nextBtn.onclick = ()=>{
     renderTransactions();
   }
 };
+function openModal(t){
+  document.getElementById("modal").style.display = "flex";
 
+  document.getElementById("m_songId").value = t.songId;
+  document.getElementById("m_title").value = t.title;
+  document.getElementById("m_composer").value = t.composer;
+  document.getElementById("m_publisher").value = t.publisher;
+  document.getElementById("m_performer").value = t.performer;
+}
+function closeModal(){
+  document.getElementById("modal").style.display = "none";
+}
+function submitRequest(){
+  const data = {
+    songId: document.getElementById("m_songId").value,
+    title: document.getElementById("m_title").value,
+    composer: document.getElementById("m_composer").value,
+    publisher: document.getElementById("m_publisher").value,
+    performer: document.getElementById("m_performer").value,
+
+    email: document.getElementById("m_email").value,
+    cover: document.getElementById("m_cover").value,
+    label: document.getElementById("m_label").value,
+    channel: document.getElementById("m_channel").value,
+
+    status: "proses",
+    time: Date.now()
+  };
+
+  if(!data.email || !data.cover || !data.channel){
+    alert("Isi data wajib");
+    return;
+  }
+const btn = document.querySelector("#modal button");
+btn.disabled = true;
+btn.innerText = "Sending...";
+  firebase.database().ref("coverRequests").push(data)
+.then(()=>{
+  alert("Berhasil dikirim");
+  btn.innerText = "Success ✓";
+  
+  document.getElementById("m_email").value = "";
+  document.getElementById("m_cover").value = "";
+  document.getElementById("m_label").value = "";
+  document.getElementById("m_channel").value = "";
+
+  setTimeout(()=>{
+    closeModal();
+  }, 800);
+})
+
+.catch(err=>{
+  alert("Gagal: " + err.message);
+
+  btn.disabled = false;
+  btn.innerText = "Submit";
+});
+}
 /* PAGE ANIMATION */
 function triggerPageAnimation(){
   [header, filterWrapper, tableWrapper, pagination].forEach((el,i)=>{
