@@ -93,7 +93,7 @@ button{
     Isi data dengan benar untuk pengajuan OAC ke YouTube
   </div>
 
- <input class="input" id="email" placeholder="Email">
+
 <input class="input" id="artist" placeholder="Artist Name">
 <input class="input" id="channel" placeholder="Channel ID (UCxxxx)">
 <div style="font-size:11px;color:#888;margin-top:-8px;margin-bottom:10px">
@@ -102,7 +102,7 @@ button{
  
   <input class="input" id="label" placeholder="Label (optional)">
 
-  <button onclick="submitOAC()">Submit Request</button>
+<button id="submitBtn" onclick="submitOAC()">Submit Request</button>
 
   <div id="msg" style="margin-top:15px"></div>
 </div>
@@ -129,49 +129,58 @@ function isValidChannelID(id){
   return /^UC[a-zA-Z0-9_-]{20,30}$/.test(id);
 }
 function submitOAC(){
-  const email = document.getElementById("email").value.trim();
-const artist = document.getElementById("artist").value.trim();
-const channel = document.getElementById("channel").value.trim().replace(/\s/g, "");
-  const label = document.getElementById("label").value.trim();
-  const msg = document.getElementById("msg");
-
-  if(!email || !artist || !channel){
-    msg.innerHTML = "<span style='color:red'>Isi data wajib dulu</span>";
-    return;
-  }
-if(!isValidChannelID(channel)){
-  msg.innerHTML = "<span style='color:red'>Channel ID harus format UCxxxx</span>";
-  return;
-}
   const user = firebase.auth().currentUser;
   if(!user) return;
 
+  const email = user.email;
+  const artist = document.getElementById("artist").value.trim();
+  const channel = document.getElementById("channel").value.trim().replace(/\s/g, "");
+  const label = document.getElementById("label").value.trim();
+  const msg = document.getElementById("msg");
+
+  if(!artist || !channel){
+    msg.innerHTML = "<span style='color:red'>Isi data wajib dulu</span>";
+    return;
+  }
+
+  if(!isValidChannelID(channel)){
+    msg.innerHTML = "<span style='color:red'>Channel ID harus format UCxxxx</span>";
+    return;
+  }
+
   const data = {
-  email,
-  artist,
-  channel,
-  label,
+    email,
+    artist,
+    channel,
+    label,
     status: "pending",
     time: Date.now()
   };
 
-  db.ref("oac/" + user.uid).set(data)
-.then(()=>{
-  msg.innerHTML = "<div class='success'>Request berhasil dikirim</div>";
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  btn.innerText = "Sending...";
 
-  document.getElementById("email").value="";
-  document.getElementById("artist").value="";
-  document.getElementById("channel").value="";
-  document.getElementById("label").value="";
+  db.ref("oac/" + user.uid).push(data)
+  .then(()=>{
+    msg.innerHTML = "<div class='success'>Request berhasil dikirim</div>";
+    btn.innerText = "Success ✓";
 
-  setTimeout(()=>{
-    location.href = "../oac";
-  }, 1200);
-})
-.catch(err=>{
-  console.error(err);
-  msg.innerHTML = "<span style='color:red'>Gagal kirim: " + err.message + "</span>";
-});
+    document.getElementById("artist").value="";
+    document.getElementById("channel").value="";
+    document.getElementById("label").value="";
+
+    setTimeout(()=>{
+      location.href = "../oac";
+    }, 1200);
+  })
+  .catch(err=>{
+    console.error(err);
+    msg.innerHTML = "<span style='color:red'>Gagal kirim: " + err.message + "</span>";
+
+    btn.disabled = false;
+    btn.innerText = "Submit Request";
+  });
 }
 </script>
 
