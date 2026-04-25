@@ -198,7 +198,7 @@ function loadAdminRoyalty(){
 </td>
 
 <td>
-  <span class="status ${d.type==='Sales Report' ? 'report' : 'payment'}">
+  <span class="status ${d.type === 'Sales Report' ? 'report' : d.type === 'Payment' ? 'payment' : ''}">
     ${d.type}
   </span>
 </td>
@@ -206,11 +206,11 @@ function loadAdminRoyalty(){
 <td>${d.period || '-'}</td>
 
 <td style="font-size:12px;color:#666">
-  ${d.date || '-'}
+${d.date ? new Date(d.date).toLocaleDateString("id-ID") : "-"}
 </td>
 
 <td style="font-weight:600;color:${d.value < 0 ? '#dc2626' : '#111'}">
-  Rp ${Number(d.value).toLocaleString("id-ID")}
+  Rp ${Number(d.value || 0).toLocaleString("id-ID")}
 </td>
 
 <td>
