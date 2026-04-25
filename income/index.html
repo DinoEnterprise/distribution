@@ -237,7 +237,7 @@ snap.forEach(item => {
 
 // 🔥 terbaru di atas
 dataArray.sort((a, b) => {
-  return new Date(b.date) - new Date(a.date);
+  return (b.date || "").localeCompare(a.date || "");
 });
 
 dataArray.forEach(d => {
