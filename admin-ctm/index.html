@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - Cover Requests</title>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<style>
+body{
+  font-family:'Outfit',sans-serif;
+  background:#f1f2f7;
+  margin:0;
+  padding:15px;
+}
+
+.card{
+  background:#fff;
+  padding:15px;
+  border-radius:12px;
+  box-shadow:0 3px 10px rgba(0,0,0,.05);
+}
+
+h3{margin-bottom:10px;}
+
+input{
+  width:100%;
+  padding:8px;
+  margin-bottom:10px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+/* TABLE */
+.table-container{
+  overflow-x:auto;
+  max-height:400px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+
+th,td{
+  padding:10px;
+  border-bottom:1px solid #eee;
+}
+
+th{
+  background:#f9f9f9;
+}
+
+tr:hover{
+  background:#f5f5f5;
+}
+
+/* BUTTON */
+button{
+  padding:6px 10px;
+  border:1px solid #000;
+  background:#fff;
+  cursor:pointer;
+  font-size:12px;
+}
+
+/* PAGINATION */
+.pagination{
+  margin-top:10px;
+  display:flex;
+  justify-content:center;
+  gap:10px;
+}
+
+/* MODAL */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  backdrop-filter:blur(6px);
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-card{
+  background:#fff;
+  padding:20px;
+  border-radius:14px;
+  width:90%;
+  max-width:420px;
+}
+
+.btn-group{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+.btn-group button{
+  flex:1;
+  border:none;
+  border-radius:8px;
+  padding:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h3>Cover Requests</h3>
+
+  <input type="text" id="search" placeholder="Search title / email / cover">
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Song</th>
+          <th>Cover</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="pagination">
+    <button id="prev">Prev</button>
+    <span id="pageInfo"></span>
+    <button id="next">Next</button>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div id="detailModal" class="modal">
+  <div class="modal-card">
+    <h3>Detail Pengajuan</h3>
+
+    <div id="detailContent" style="font-size:13px;line-height:1.6;"></div>
+
+    <div class="btn-group">
+      <button onclick="updateStatus('approved')" style="background:#16a34a;color:#fff;">Approve</button>
+      <button onclick="updateStatus('rejected')" style="background:#dc2626;color:#fff;">Reject</button>
+    </div>
+
+    <div class="btn-group">
+      <button onclick="deleteData(currentId)">Delete</button>
+      <button onclick="closeDetail()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSy...",
+  authDomain:"dynopay-2513c.firebaseapp.com",
+  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db = firebase.database();
+const auth = firebase.auth();
+
+let dataAll = [];
+let dataFiltered = [];
+let page = 1;
+const perPage = 10;
+let currentId = null;
+
+// 🔐 ADMIN CHECK
+auth.onAuthStateChanged(user=>{
+  if(!user){
+    location.href="../admin";
+    return;
+  }
+
+  db.ref("admins/"+user.uid).once("value").then(snap=>{
+    if(!snap.exists()){
+      alert("Bukan admin");
+      auth.signOut();
+      location.href="../admin";
+    }
+  });
+});
+
+// LOAD DATA
+function loadData(){
+  db.ref("coverRequests").once("value").then(snap=>{
+    let arr = [];
+
+    snap.forEach(item=>{
+      arr.push({
+        id:item.key,
+        ...item.val()
+      });
+    });
+
+    arr.sort((a,b)=>(b.time||0)-(a.time||0));
+
+    dataAll = arr;
+    dataFiltered = arr;
+
+    render();
+  });
+}
+
+// RENDER
+function render(){
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = "";
+
+  const start = (page-1)*perPage;
+  const list = dataFiltered.slice(start,start+perPage);
+
+  list.forEach(d=>{
+    tbody.innerHTML += `
+<tr>
+  <td>${d.title||"-"}</td>
+  <td>${d.cover||"-"}</td>
+  <td>${d.email||"-"}</td>
+  <td>${d.status||"proses"}</td>
+  <td>
+    <button onclick="showDetail('${d.id}')">Detail</button>
+  </td>
+</tr>
+    `;
+  });
+
+  document.getElementById("pageInfo").innerText =
+    `Page ${page} of ${Math.ceil(dataFiltered.length/perPage)}`;
+}
+
+// DETAIL
+function showDetail(id){
+  const d = dataAll.find(x=>x.id===id);
+  currentId = id;
+
+  document.getElementById("detailModal").style.display="flex";
+
+  document.getElementById("detailContent").innerHTML=`
+<b>${d.title}</b><br><br>
+
+Song ID: ${d.songId}<br>
+Composer: ${d.composer}<br>
+Publisher: ${d.publisher}<br>
+Performer: ${d.performer}<br><br>
+
+Cover: ${d.cover}<br>
+Email: ${d.email}<br>
+Label: ${d.label||"-"}<br>
+Channel: ${d.channel}<br><br>
+
+Status: ${d.status}
+  `;
+}
+
+// CLOSE
+function closeDetail(){
+  document.getElementById("detailModal").style.display="none";
+}
+
+// UPDATE STATUS
+function updateStatus(status){
+  if(!currentId) return;
+
+  db.ref("coverRequests/"+currentId).update({
+    status:status
+  }).then(()=>{
+    closeDetail();
+    loadData();
+  });
+}
+
+// DELETE
+function deleteData(id){
+  if(confirm("Hapus pengajuan?")){
+    db.ref("coverRequests/"+id).remove().then(()=>{
+      closeDetail();
+      loadData();
+    });
+  }
+}
+
+// SEARCH
+document.getElementById("search").addEventListener("input",function(){
+  const q = this.value.toLowerCase();
+
+  dataFiltered = dataAll.filter(d =>
+    (d.title||"").toLowerCase().includes(q) ||
+    (d.cover||"").toLowerCase().includes(q) ||
+    (d.email||"").toLowerCase().includes(q)
+  );
+
+  page = 1;
+  render();
+});
+
+// PAGINATION
+document.getElementById("prev").onclick=()=>{
+  if(page>1){page--;render();}
+};
+
+document.getElementById("next").onclick=()=>{
+  if(page < Math.ceil(dataFiltered.length/perPage)){
+    page++;render();
+  }
+};
+
+loadData();
+</script>
+
+</body>
+</html>
