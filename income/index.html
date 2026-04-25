@@ -236,8 +236,7 @@ snap.forEach(item => {
 });
 
 // 🔥 terbaru di atas
-dataArray.sort((a, b) => {
-  return (b.date || "").localeCompare(a.date || "");
+dataArray.sort((a, b) => b.key.localeCompare(a.key));
 });
 
 dataArray.forEach(d => {
