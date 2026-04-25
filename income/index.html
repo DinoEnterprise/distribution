@@ -204,58 +204,53 @@
 });
 
     // Panggil loadIncome
-    loadIncome(uid);
+    loadIncome(uid, user.email);
   }
 });
 
 // Fungsi loadIncome di sini, di luar auth
-function loadIncome(uid) {
+function loadIncome(uid, email) {
   const incomeList = document.getElementById("incomeList");
-  incomeList.innerHTML = ""; // reset
+  incomeList.innerHTML = "";
 
-  db.ref("royalties")
-    .orderByChild("uid")
-    .equalTo(uid)
-    .once("value")
-    .then(snap => {
-      if (!snap.exists()) {
-        incomeList.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#777">Belum ada laporan</td></tr>`;
-        return;
+  db.ref("royalties").once("value").then(snap => {
+    if (!snap.exists()) {
+      incomeList.innerHTML = `<tr><td colspan="6">Belum ada laporan</td></tr>`;
+      return;
+    }
+
+    let rows = "";
+
+    snap.forEach(item => {
+      const d = item.val();
+      const key = item.key;
+      
+      // 🔥 FIX PENTING
+if ((d.uid && d.uid === uid) || (d.email && d.email === email)) {
+  // OK tampilkan
+} else {
+  return;
+}
+
+      let statusText = "";
+      let icon = "";
+
+      if (d.type === "Sales Report") {
+        statusText = "Accepted";
+        icon = "../assets/report.png";
+      } else if (d.type === "Payment") {
+        statusText = "Paid";
+        icon = "../assets/invoice.png";
+      } else {
+        statusText = "Pending";
       }
 
-let rows = "";
-
-snap.forEach(item => {
-  const d = item.val();
-  const key = item.key;
-
-  let statusText = "";
-  let icon = "";
-
-  if (d.type === "Sales Report") {
-    statusText = "Accepted";
-    icon = "../assets/report.png";
-  } else if (d.type === "Payment") {
-    statusText = "Paid";
-    icon = "../assets/invoice.png";
-  } else {
-    statusText = "Pending";
-  }
-
-  rows += `
+      rows += `
 <tr>
-  <td style="font-weight:600">${d.type || "-"}</td>
-
+  <td>${d.type || "-"}</td>
   <td>${d.period || "-"}</td>
-
-  <td style="font-size:12px;color:#666">
-    ${d.date ? new Date(d.date).toLocaleDateString("id-ID") : "-"}
-  </td>
-
-  <td style="font-weight:600">
-    Rp ${Number(d.value || 0).toLocaleString("id-ID")}
-  </td>
-
+  <td>${d.date || "-"}</td>
+  <td>Rp ${Number(d.value || 0).toLocaleString("id-ID")}</td>
   <td>
     <span class="status ${
       statusText === "Accepted" ? "accepted" :
@@ -264,7 +259,6 @@ snap.forEach(item => {
       ${statusText}
     </span>
   </td>
-
   <td>
     ${
       d.type === "Payment"
@@ -276,11 +270,10 @@ snap.forEach(item => {
   </td>
 </tr>
 `;
-});
-
-incomeList.innerHTML = rows;
-      });
     });
+
+    incomeList.innerHTML = rows;
+  });
 }
    
 
