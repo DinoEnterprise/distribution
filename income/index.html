@@ -221,31 +221,42 @@ function loadIncome(uid, email) {
 
     let rows = "";
 
-    snap.forEach(item => {
-      const d = item.val();
-      const key = item.key;
-      
-      // 🔥 FIX PENTING
-if ((d.uid && d.uid === uid) || (d.email && d.email === email)) {
-  // OK tampilkan
-} else {
-  return;
-}
+    let dataArray = [];
 
-      let statusText = "";
-      let icon = "";
+snap.forEach(item => {
+  const val = item.val();
 
-      if (d.type === "Sales Report") {
-        statusText = "Accepted";
-        icon = "../assets/report.png";
-      } else if (d.type === "Payment") {
-        statusText = "Paid";
-        icon = "../assets/invoice.png";
-      } else {
-        statusText = "Pending";
-      }
+  // 🔥 FILTER DI SINI (lebih efisien & rapi)
+  if ((val.uid && val.uid === uid) || (val.email && val.email === email)) {
+    dataArray.push({
+      key: item.key,
+      ...val
+    });
+  }
+});
 
-      rows += `
+// 🔥 terbaru di atas
+dataArray.sort((a, b) => {
+  return new Date(b.date) - new Date(a.date);
+});
+
+dataArray.forEach(d => {
+  const key = d.key;
+
+  let statusText = "";
+  let icon = "";
+
+  if (d.type === "Sales Report") {
+    statusText = "Accepted";
+    icon = "../assets/report.png";
+  } else if (d.type === "Payment") {
+    statusText = "Paid";
+    icon = "../assets/invoice.png";
+  } else {
+    statusText = "Pending";
+  }
+
+  rows += `
 <tr>
   <td>${d.type || "-"}</td>
   <td>${d.period || "-"}</td>
@@ -270,7 +281,7 @@ if ((d.uid && d.uid === uid) || (d.email && d.email === email)) {
   </td>
 </tr>
 `;
-    });
+});
 
     incomeList.innerHTML = rows;
   });
