@@ -219,37 +219,37 @@ function loadIncome(uid) {
     .once("value")
     .then(snap => {
       if (!snap.exists()) {
-        incomeList.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada laporan</td></tr>`;
+        incomeList.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#777">Belum ada laporan</td></tr>`;
         return;
       }
 
-      snap.forEach(item => {
-        const d = item.val();
+let rows = "";
 
-        // Status
-        let statusText = "";
-        let icon = "";
-        if (d.type === "Sales Report") {
-          statusText = "Accepted";
-          icon = "../assets/report.png";
-        } else if (d.type === "Payment") {
-          statusText = "Paid";
-          icon = "../assets/invoice.png";
-        } else {
-          statusText = "Pending";
-        }
+snap.forEach(item => {
+  const d = item.val();
+  const key = item.key;
 
-        incomeList.innerHTML = `
+  let statusText = "";
+  let icon = "";
+
+  if (d.type === "Sales Report") {
+    statusText = "Accepted";
+    icon = "../assets/report.png";
+  } else if (d.type === "Payment") {
+    statusText = "Paid";
+    icon = "../assets/invoice.png";
+  } else {
+    statusText = "Pending";
+  }
+
+  rows += `
 <tr>
-  <td>
-    <div style="font-weight:600">${d.type}</div>
-    <div style="font-size:12px;color:#888">
-      ${d.period || "-"}
-    </div>
-  </td>
+  <td style="font-weight:600">${d.type || "-"}</td>
+
+  <td>${d.period || "-"}</td>
 
   <td style="font-size:12px;color:#666">
-    ${d.generate || d.date || "-"}
+    ${d.date ? new Date(d.date).toLocaleDateString("id-ID") : "-"}
   </td>
 
   <td style="font-weight:600">
@@ -267,15 +267,18 @@ function loadIncome(uid) {
 
   <td>
     ${
-      d.type === "Payment" 
-        ? `<img src="${icon}" class="download-icon" onclick="window.open('../invoice?id=${item.key}','_blank')">`
+      d.type === "Payment"
+        ? `<img src="${icon}" class="download-icon" onclick="window.open('../invoice?id=${key}','_blank')">`
         : d.type === "Sales Report" && d.downloadUrl
           ? `<img src="${icon}" class="download-icon" onclick="downloadFile('${d.downloadUrl}')">`
           : '-'
     }
   </td>
 </tr>
-` + incomeList.innerHTML;
+`;
+});
+
+incomeList.innerHTML = rows;
       });
     });
 }
