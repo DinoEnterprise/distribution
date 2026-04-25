@@ -16,7 +16,43 @@ form label{font-size:14px;margin-top:12px;display:block;color:#333;}
 form input, form select{padding:10px 14px;margin-top:6px;width:100%;border:1px solid #ccc;border-radius:8px;font-size:14px;}
 form button{margin-top:16px;padding:10px 16px;background:#111;color:#fff;border:none;border-radius:12px;font-size:14px;cursor:pointer;transition:0.2s;}
 form button:hover{filter:brightness(0.9);}
-table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.05);}
+.status{
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:600;
+}
+
+.status.report{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.status.payment{
+  background:#dbeafe;
+  color:#1e40af;
+}
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  background:#fff;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 8px 25px rgba(0,0,0,.06);
+}
+
+tr{
+  transition:0.2s;
+}
+
+tr:hover{
+  background:#f9fafb;
+}
+
+td{
+  vertical-align:middle;
+}
 thead{background:#f9f9f9;}
 th, td{padding:12px;text-align:left;border-bottom:1px solid #eee;font-size:14px;}
 th{font-weight:600;}
@@ -42,6 +78,8 @@ td button:hover{filter:brightness(0.9);}
   <label>Tanggal</label>
   <input type="date" id="date" required>
 
+<label>Period</label>
+<input type="text" id="period" placeholder="Contoh: Feb 2025" required>
   <label>Value</label>
   <input type="number" id="value" placeholder="Value (contoh: 450000)" required>
 
@@ -61,15 +99,17 @@ td button:hover{filter:brightness(0.9);}
 <table>
   <thead>
     <tr>
-      <th>Users</th>
-      <th>Date</th>
-      <th>Value</th>
-      <th>Status</th>
-      <th>Download</th>
+<th>Users</th>
+<th>Report</th>
+<th>Period</th>
+<th>Generated</th>
+<th>Value</th>
+<th>Status</th>
+<th>Download</th>
     </tr>
   </thead>
   <tbody id="adminRoyaltyList">
-    <tr><td colspan="5" style="text-align:center;color:#777">Memuat data...</td></tr>
+    <tr><td colspan="7" style="text-align:center;color:#777">Memuat data...</td></tr>
   </tbody>
 </table>
 
@@ -120,7 +160,8 @@ function deleteRoyalty(key){
 }
 function loadAdminRoyalty(){
   const list = document.getElementById("adminRoyaltyList");
-  list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Memuat data...</td></tr>`;
+  list.innerHTML = `<tr><td colspan="7"
+  style="text-align:center;color:#777">Memuat data...</td></tr>`;
 
   // preload semua users
   db.ref("users").once("value").then(userSnap=>{
@@ -132,7 +173,7 @@ function loadAdminRoyalty(){
 
     db.ref("royalties").once("value").then(snap=>{
       if(!snap.exists()){
-        list.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777">Belum ada data</td></tr>`;
+        list.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#777">Belum ada data</td></tr>`;
         return;
       }
 
@@ -145,21 +186,46 @@ function loadAdminRoyalty(){
         if(!user.email && d.email) user = emailMap[d.email] || {};
 
         rows.push(`
-          <tr>
-<td>
-  <span style="color:${d.type==='Sales Report'?'green':'blue'};font-weight:600">
-    ${d.type}
-  </span> • ${user.email || d.email || 'Unknown'} • ${user.nama || ''}
+<tr>
+
+<td class="user-cell">
+  <div style="font-weight:600">
+    ${user.nama || 'Unknown'}
+  </div>
+  <div style="font-size:12px;color:#888">
+    ${user.email || d.email || '-'}
+  </div>
 </td>
-<td>${d.date}</td>
-<td>Rp ${Number(d.value).toLocaleString("id-ID")}</td>
-<td>Accepted</td>
+
+<td>
+  <span class="status ${d.type==='Sales Report' ? 'report' : 'payment'}">
+    ${d.type}
+  </span>
+</td>
+
+<td>${d.period || '-'}</td>
+
+<td style="font-size:12px;color:#666">
+  ${d.date || '-'}
+</td>
+
+<td style="font-weight:600;color:${d.value < 0 ? '#dc2626' : '#111'}">
+  Rp ${Number(d.value).toLocaleString("id-ID")}
+</td>
+
+<td>
+  <span class="status ${d.type==='Payment' ? 'payment' : 'report'}">
+    ${d.type === 'Payment' ? 'Paid' : 'Accepted'}
+  </span>
+</td>
+
 <td>
   ${d.downloadUrl ? `<button onclick="downloadFile('${d.downloadUrl}')">⬇</button>` : '-'}
-  <button onclick="deleteRoyalty('${key}')" style="background:#ff4d4f;margin-left:6px;">🗑</button>
+  <button onclick="deleteRoyalty('${key}')" style="background:#dc2626;margin-left:6px;">🗑</button>
 </td>
-          </tr>
-        `);
+
+</tr>
+`);
       });
 
       rows.reverse();
@@ -173,6 +239,7 @@ document.getElementById("royaltyForm").addEventListener("submit", function(e){
 
   const uid = document.getElementById("memberSelect").value;
   const email = document.getElementById("memberSelect").selectedOptions[0].dataset.email;
+  const period = document.getElementById("period").value;
   const date = document.getElementById("date").value;
   const type = document.getElementById("reportType").value;
   const value = Number(document.getElementById("value").value);
@@ -181,7 +248,15 @@ document.getElementById("royaltyForm").addEventListener("submit", function(e){
   const newKey = db.ref("royalties").push().key;
   let finalValue = (type==="Payment") ? -Math.abs(value) : value;
 
-  db.ref("royalties/"+newKey).set({uid,email,date,value:finalValue,downloadUrl,type})
+  db.ref("royalties/"+newKey).set({
+  uid,
+  email,
+  date,
+  period,
+  value:finalValue,
+  downloadUrl,
+  type
+})
     .then(()=>{ loadAdminRoyalty(); this.reset(); })
     .catch(err=>{ console.error("Gagal tambah royalty:",err); });
 });
