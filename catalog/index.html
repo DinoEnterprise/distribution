@@ -27,9 +27,10 @@ html, body{
   overflow-x:hidden;
   padding-top:70px;
 }
-tr{
-  cursor:pointer;
+.table-wrapper{
+  border:1px solid #e5e7eb;
 }
+
 /* ANIMATION */
 @keyframes fadeSlideUp{
   0%{opacity:0; transform:translateY(30px);}
@@ -42,6 +43,38 @@ tr{
 .input:focus{
   border-color:#111;
   box-shadow:0 0 0 3px rgba(0,0,0,0.05);
+}
+th:first-child{
+  color:#111;
+  letter-spacing:0.5px;
+}
+.song-id{
+  cursor:pointer;
+  font-weight:700;
+  font-size:12px;
+  color:#111;
+  background:#f3f4f6;
+  padding:6px 12px;
+  border-radius:999px;
+  display:inline-block;
+  letter-spacing:0.5px;
+  transition:all .25s ease;
+  border:1px solid #e5e7eb;
+}
+
+/* hover row -> Song ID nyala */
+tr{
+  transition:all .2s ease;
+}
+
+tr:hover{
+  transform:translateY(-2px) scale(1.01);
+  box-shadow:0 8px 20px rgba(0,0,0,.06);
+}
+
+/* klik effect */
+.song-id:active{
+  transform:scale(0.95);
 }
 /* MODAL */
 .modal{
@@ -129,8 +162,13 @@ header{
   border-bottom:1px solid #e5e7eb;
   padding:12px 5%;
   z-index:100;
+  
   display:flex;
-  justify-content:center;
+  justify-content:center;   /* tetap center */
+  align-items:center;
+
+  text-align:center;        /* 🔥 ini yang bikin teks ikut tengah */
+  
   font-size:clamp(1.8rem,4vw,2.5rem);
   font-weight:700;
   backdrop-filter:blur(10px);
@@ -201,7 +239,10 @@ th{
   background:#f9fafb;
   font-weight:700;
 }
-
+tr:hover{
+  transform:scale(1.01);
+  box-shadow:0 5px 15px rgba(0,0,0,.05);
+}
 tr:hover td{
   background:#f3f4f6;
 }
@@ -260,8 +301,14 @@ tr:hover td{
 
 <body>
 
-<header id="header">Song Catalog</header>
-
+<header id="header">
+  <div>
+    Song Catalog
+    <div style="font-size:12px;color:#666;font-weight:500;margin-top:2px">
+      Klik <span style="background:#111;color:#fff;padding:2px 8px;border-radius:6px;">Song ID</span> untuk ajukan permohonan
+    </div>
+  </div>
+</header>
 <div class="filter-wrapper" id="filterWrapper">
   <div class="filter-box">
     <input type="text" id="searchInput" placeholder="Search...">
@@ -294,6 +341,7 @@ tr:hover td{
   </div>
 
 </div>
+
 <!-- MODAL -->
 <div id="modal" class="modal">
 
@@ -410,7 +458,9 @@ tr.onclick = () => openModal(t);
   : `<a href="${t.youtube}" target="_blank" onclick="event.stopPropagation()" style="color:#2563eb;">Link</a>`;
 
     tr.innerHTML = `
-  <td>${t.songId}</td>
+<td>
+  <span class="song-id">${t.songId}</span>
+</td>
   <td>${t.title}</td>
   <td>${t.composer}</td>
   <td>${t.publisher}</td>
