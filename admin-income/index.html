@@ -193,46 +193,52 @@ function deleteRoyalty(key){
 }
 function sendRoyaltyEmail(email, name, type, period, value){
 
+  const dashboardLink = "https://dynotic.web.id/income";
+
   let subject = "";
   let body = "";
 
-  // SALES REPORT (tanpa jumlah)
   if(type === "Sales Report"){
     subject = "Sales Report Available - Dynotic Distribution";
 
-    body = `
-Hello ${name},
+    body =
+`Hello ${name},
 
-Your sales report is now available.
+Your Sales Report is now available.
 
-Type: Sales Report
-Period: ${period}
+Details:
+• Type   : Sales Report
+• Period : ${period}
+• Status : Ready
 
-Please check your dashboard.
+View your report here:
+${dashboardLink}
 
-Best Regards,
-Risna Wati, Dynotic Distribution
-    `;
+Best regards,
+Risna Wati
+Dynotic Distribution`;
   }
 
-  // PAYMENT (tampilkan jumlah)
   else if(type === "Payment"){
-    subject = "Payment Received - Dynotic Distribution";
+    subject = "Payment Processed - Dynotic Distribution";
 
-    body = `
-Hello ${name},
+    body =
+`Hello ${name},
 
-You have received a payment.
+Your payment has been successfully processed.
 
-Type: Payment
-Period: ${period}
-Amount: Rp ${Number(value).toLocaleString("id-ID")}
+Details:
+• Type   : Payment
+• Period : ${period}
+• Amount : Rp ${Number(value).toLocaleString("id-ID")}
+• Status : Completed
 
-This amount will be transferred to your account.
+Check your dashboard:
+${dashboardLink}
 
-Best Regards,
-Risna Wati, Dynotic Distribution
-    `;
+Best regards,
+Risna Wati
+Dynotic Distribution`;
   }
 
   const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
