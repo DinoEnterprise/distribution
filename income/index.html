@@ -221,12 +221,12 @@ th, td{
       <table>
         <thead>
           <tr>
-            <th>Report</th>
-            <th>Period</th>
-            <th>Generated</th>
-            <th>Value</th>
-            <th>Status</th>
-            <th>Download</th>
+            <th>REPORT</th>
+            <th>PERIOD</th>
+            <th>GENERATED</th>
+            <th>VALUE</th>
+            <th>STATUS</th>
+            <th>ACTION</th>
           </tr>
         </thead>
 
@@ -355,7 +355,13 @@ dataArray.forEach(d => {
    
 
 function downloadFile(url){
-  window.open(url,"_blank","noopener");
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "";
+  a.target = "_blank";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
   </script>
 </body>
