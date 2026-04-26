@@ -66,6 +66,30 @@
   height: 28px; /* atau 28px */
   cursor: pointer;
 }
+.table-wrapper{
+  width:95%;
+  max-width:1200px;
+  margin:16px auto;
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.06);
+  padding:10px;
+}
+
+.table-scroll{
+  overflow-x:auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table{
+  width:100%;
+  min-width:800px;
+  border-collapse:collapse;
+}
+
+th, td{
+  white-space: nowrap;
+}
     /* Table (hidden for normal users) */
     .table-card {
   display: block; /* tampilkan tabel untuk user */
@@ -162,22 +186,30 @@
 
   <!-- Table Income (Hidden for admin) -->
   <div class="table-card">
-    <table>
-      <thead>
-        <tr>
-          <th>Report</th>
-<th>Period</th>
-<th>Generated</th>
-          <th>Value</th>
-          <th>Status</th>
-          <th>Download</th>
-        </tr>
-      </thead>
-      <tbody id="incomeList">
-        <!-- Data akan di-load dari Firebase -->
-      </tbody>
-    </table>
+  <div class="table-wrapper">
+    <div class="table-scroll">
+
+      <table>
+        <thead>
+          <tr>
+            <th>Report</th>
+            <th>Period</th>
+            <th>Generated</th>
+            <th>Value</th>
+            <th>Status</th>
+            <th>Download</th>
+          </tr>
+        </thead>
+
+        <tbody id="incomeList">
+          <!-- Data Firebase -->
+        </tbody>
+
+      </table>
+
+    </div>
   </div>
+</div>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
