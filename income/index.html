@@ -228,16 +228,15 @@ snap.forEach(item => {
 
   // 🔥 FILTER DI SINI (lebih efisien & rapi)
   if ((val.uid && val.uid === uid) || (val.email && val.email === email)) {
-dataArray.push({
-  key: item.key,
-  ...val,
-  time: val.time || Date.parse(val.date || "") || 0
-});
+    dataArray.push({
+      key: item.key,
+      ...val
+    });
   }
 });
 
 // 🔥 terbaru di atas
-dataArray.sort((a, b) => (b.time || 0) - (a.time || 0));
+dataArray.sort((a, b) => b.key.localeCompare(a.key));
 
 dataArray.forEach(d => {
   const key = d.key;
