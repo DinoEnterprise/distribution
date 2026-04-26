@@ -146,7 +146,40 @@ function loadMembers(){
     });
   });
 }
+function sendEmailByType(key, type){
 
+  db.ref("royalties/" + key).once("value").then(snap=>{
+    const d = snap.val();
+
+    db.ref("users/" + d.uid).once("value").then(userSnap=>{
+      const user = userSnap.val() || {};
+
+      const email = user.email || d.email;
+      const name = user.nama || "User";
+
+      sendRoyaltyEmail(
+        email,
+        name,
+        type,
+        d.period,
+        d.value
+      );
+    });
+  });
+
+}
+function openEmailMenu(key){
+
+  const choice = confirm(
+    "Send Email?\n\nOK = Sales Report Email\nCancel = Payment Email"
+  );
+
+  if(choice){
+    sendEmailByType(key, "Sales Report");
+  } else {
+    sendEmailByType(key, "Payment");
+  }
+}
 function downloadFile(url){
   if(url && url.startsWith("http")) window.open(url,"_blank");
   else alert("Link download tidak valid");
@@ -157,6 +190,54 @@ function deleteRoyalty(key){
       .then(()=> loadAdminRoyalty())
       .catch(err=> console.error("Gagal hapus:",err));
   }
+}
+function sendRoyaltyEmail(email, name, type, period, value){
+
+  let subject = "";
+  let body = "";
+
+  // SALES REPORT (tanpa jumlah)
+  if(type === "Sales Report"){
+    subject = "Sales Report Available - Dynotic Distribution";
+
+    body = `
+Hello ${name},
+
+Your sales report is now available.
+
+Type: Sales Report
+Period: ${period}
+
+Please check your dashboard.
+
+Best Regards,
+Risna Wati, Dynotic Distribution
+    `;
+  }
+
+  // PAYMENT (tampilkan jumlah)
+  else if(type === "Payment"){
+    subject = "Payment Received - Dynotic Distribution";
+
+    body = `
+Hello ${name},
+
+You have received a payment.
+
+Type: Payment
+Period: ${period}
+Amount: Rp ${Number(value).toLocaleString("id-ID")}
+
+This amount will be transferred to your account.
+
+Best Regards,
+Risna Wati, Dynotic Distribution
+    `;
+  }
+
+  const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  window.open(mailtoLink, "_blank");
 }
 function loadAdminRoyalty(){
   const list = document.getElementById("adminRoyaltyList");
@@ -221,7 +302,14 @@ ${d.date ? new Date(d.date).toLocaleDateString("id-ID") : "-"}
 
 <td>
   ${d.downloadUrl ? `<button onclick="downloadFile('${d.downloadUrl}')">⬇</button>` : '-'}
-  <button onclick="deleteRoyalty('${key}')" style="background:#dc2626;margin-left:6px;">🗑</button>
+
+  <button onclick="openEmailMenu('${key}')">
+    ✉
+  </button>
+
+  <button onclick="deleteRoyalty('${key}')" style="background:#dc2626;margin-left:6px;">
+    🗑
+  </button>
 </td>
 
 </tr>
@@ -257,7 +345,17 @@ document.getElementById("royaltyForm").addEventListener("submit", function(e){
   downloadUrl,
   type
 })
-    .then(()=>{ loadAdminRoyalty(); this.reset(); })
+.then(()=>{
+
+  const selected = document.getElementById("memberSelect");
+  const email = selected.selectedOptions[0].dataset.email;
+  const name = selected.selectedOptions[0].text;
+
+  sendRoyaltyEmail(email, name, type, period, finalValue);
+
+  loadAdminRoyalty();
+  this.reset();
+})
     .catch(err=>{ console.error("Gagal tambah royalty:",err); });
 });
 </script>
