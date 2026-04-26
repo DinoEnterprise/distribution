@@ -209,14 +209,20 @@ Your Sales Report is now available.
 Details:
 • Type   : Sales Report
 • Period : ${period}
-• Status : Ready
+• Status : Accepted
+
+Minimum payout requirement:
+• Rp 50.000
+
+Note:
+Earnings will be eligible for withdrawal once total balance reaches the minimum threshold.
 
 View your report here:
 ${dashboardLink}
 
 Best regards,
 Risna Wati
-Dynotic Distribution`;
+Dynotic Distribution Team`;
   }
 
   else if(type === "Payment"){
@@ -231,7 +237,7 @@ Details:
 • Type   : Payment
 • Period : ${period}
 • Amount : Rp ${Number(value).toLocaleString("id-ID")}
-• Status : Completed
+• Status : Paid
 
 Check your dashboard:
 ${dashboardLink}
