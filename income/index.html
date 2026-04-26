@@ -34,7 +34,36 @@
     header img {
       height: 50px;
     }
+td.action-cell{
+  text-align: center;
+  vertical-align: middle;
+}
 
+.action-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+
+  background: #f5f6fa;
+  border: 1px solid #e6e8ef;
+  transition: 0.2s;
+}
+
+.action-btn:hover{
+  background: #e9ecf5;
+  transform: scale(1.02);
+}
+
+.action-btn img{
+  width: 18px;
+  height: 18px;
+}
     /* Card Total & Withdraw */
     .card {
       width: 90%;
@@ -300,15 +329,22 @@ dataArray.forEach(d => {
       ${statusText}
     </span>
   </td>
-  <td>
-    ${
-      d.type === "Payment"
-        ? `<img src="${icon}" class="download-icon" onclick="window.open('../invoice?id=${key}','_blank')">`
-        : d.type === "Sales Report" && d.downloadUrl
-          ? `<img src="${icon}" class="download-icon" onclick="downloadFile('${d.downloadUrl}')">`
-          : '-'
-    }
-  </td>
+  
+<td class="action-cell">
+  ${
+    d.type === "Payment"
+      ? `<div class="action-btn" onclick="window.open('../invoice?id=${key}','_blank')">
+           <img src="../assets/invoice.png">
+           My Invoice
+         </div>`
+      : d.type === "Sales Report" && d.downloadUrl
+        ? `<div class="action-btn" onclick="downloadFile('${d.downloadUrl}')">
+             <img src="../assets/report.png">
+             Report
+           </div>`
+        : '-'
+  }
+</td>
 </tr>
 `;
 });
