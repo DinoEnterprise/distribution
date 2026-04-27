@@ -281,7 +281,7 @@ function updateStatus(status){
 
       const body = `Salam Dynotic Collective,
 
-Kami informasikan bahwa pengajuan penggunaan lagu dengan judul "${d.title}" oleh ${d.cover} telah disetujui oleh publisher ${d.publisher}.
+Kami informasikan bahwa pengajuan penggunaan lagu dengan judul "${d.title}" dari Artist ${d.cover} telah disetujui oleh publisher ${d.publisher}.
 
 Silahkan submit Track Asset & Cover Art di dashboard masing-masing & tunggu email tanggal rilis.
 
@@ -295,7 +295,7 @@ Cover to Master Team`;
       const mailtoLink =
         `mailto:${d.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-      window.open(mailtoLink);
+      window.location.href = mailtoLink;
     }
 
     closeDetail();
