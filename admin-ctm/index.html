@@ -277,18 +277,30 @@ function updateStatus(status){
   }).then(()=>{
 
     if(status === "approved"){
-      const subject = `Cover to Master Approval – ${d.title}`;
+      const subject = `Cover to Master Approved – ${d.title}`;
 
-      const body = `Salam Dynotic Collective,
+const body = `Halo ${d.cover || "Artist"},
 
-Kami informasikan bahwa pengajuan penggunaan lagu dengan judul "${d.title}" dari Artist ${d.cover} telah disetujui oleh publisher ${d.publisher}.
+Kami dari Dynotic Collective menginformasikan bahwa pengajuan Cover to Master untuk lagu:
 
-Silahkan submit Track Asset & Cover Art di dashboard masing-masing & tunggu email tanggal rilis.
+"${d.title}"
+by ${d.cover || "Artist"}
+
+Telah **DISETUJUI** oleh publisher (${d.publisher}).
+
+Langkah selanjutnya:
+Silakan login ke dashboard Anda dan segera submit:
+- Track Asset (Audio)
+- Cover Artwork
+
+Tim kami akan memproses dan mengirimkan jadwal rilis melalui email selanjutnya.
 
 Jika ada pertanyaan, silakan hubungi:
 admin@dynotic.web.id
 
-Best regards,
+Terima kasih atas kepercayaan Anda.
+
+Best regards,  
 Alvarez Joshua
 Cover to Master Team`;
 
