@@ -1,334 +1,511 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel - Cover Requests</title>
-
+<title>Admin Panel - DynoPay (Releases)</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <style>
-body{
-  font-family:'Outfit',sans-serif;
-  background:#f1f2f7;
-  margin:0;
-  padding:15px;
+body {
+  font-family: 'Outfit', sans-serif;
+  background: #f1f2f7;
+  margin: 0;
+  padding: 15px;
+}
+h3 {
+  margin-bottom: 8px;
+  font-size: 18px;
+  color: #111;
+}
+.card {
+  background: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 10px rgba(0,0,0,.05);
 }
 
-.card{
-  background:#fff;
-  padding:15px;
-  border-radius:12px;
-  box-shadow:0 3px 10px rgba(0,0,0,.05);
+button.action-btn {
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+  font-size: 12px;
+  margin-right: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+button.action-btn:hover { background: #f0f0f0; }
+
+.table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* smooth scroll di mobile */
+  max-height: 400px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 100%; /* sebelumnya 600px, diganti agar responsive */
+}
+th, td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;
+}
+th {
+  background: #f9f9f9;
+  font-weight: 600;
+}
+tr:hover {
+  background: #f5f5f5;
 }
 
-h3{margin-bottom:10px;}
-
-input{
-  width:100%;
-  padding:8px;
-  margin-bottom:10px;
-  border-radius:6px;
-  border:1px solid #ccc;
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 12px;
 }
 
-/* TABLE */
-.table-container{
-  overflow-x:auto;
-  max-height:400px;
+.menu-wrap {
+  position: relative;
+  display: inline-block;
 }
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:13px;
+.menu-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
 }
-
-th,td{
-  padding:10px;
-  border-bottom:1px solid #eee;
+.menu-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  min-width: 120px;
+  z-index: 99;
+  box-shadow: 0 4px 10px rgba(0,0,0,.1);
 }
-
-th{
-  background:#f9f9f9;
+.menu-dropdown button {
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 12px;
+  font-size: 13px;
+  text-align: left;
 }
-
-tr:hover{
-  background:#f5f5f5;
+.menu-dropdown button:nth-child(3){
+  color:#ef4444;
+  font-weight:700;
 }
-
-/* BUTTON */
-button{
-  padding:6px 10px;
-  border:1px solid #000;
-  background:#fff;
-  cursor:pointer;
-  font-size:12px;
-}
-
-/* PAGINATION */
-.pagination{
-  margin-top:10px;
-  display:flex;
-  justify-content:center;
-  gap:10px;
-}
-
-/* MODAL */
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.4);
-  backdrop-filter:blur(6px);
-  justify-content:center;
-  align-items:center;
-}
-
-.modal-card{
-  background:#fff;
-  padding:20px;
-  border-radius:14px;
-  width:90%;
-  max-width:420px;
-}
-
-.btn-group{
-  display:flex;
-  gap:10px;
-  margin-top:10px;
-}
-
-.btn-group button{
-  flex:1;
-  border:none;
-  border-radius:8px;
-  padding:10px;
+.menu-dropdown button:hover {
+  background: #f5f5f5;
 }
 </style>
 </head>
 
 <body>
 
-<div class="card">
-  <h3>Cover Requests</h3>
-
-  <input type="text" id="search" placeholder="Search title / email / cover">
-
-  <div class="table-container">
-    <table>
-      <thead>
-        <tr>
-          <th>Song</th>
-          <th>Cover</th>
-          <th>Email</th>
-          <th>Status</th>
-          <th>Aksi</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
-  </div>
-
-  <div class="pagination">
-    <button id="prev">Prev</button>
-    <span id="pageInfo"></span>
-    <button id="next">Next</button>
-  </div>
+<!-- RELEASES -->
+<div class="card" style="padding-bottom: 50px;"> <!-- kasih padding bawah supaya tombol Prev/Next tidak nempel -->
+<h3>Releases</h3>
+<input type="text" id="releaseSearch" placeholder="Search song, artist and email" 
+       style="width:100%; padding:8px; margin-bottom:8px; border-radius:6px; border:1px solid #ccc;">
+<div class="table-container">
+<table id="releaseTable">
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Artist</th>
+      <th>Title</th>
+      <th>Status</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
 </div>
 
-<!-- DETAIL MODAL -->
-<div id="detailModal" class="modal">
-  <div class="modal-card">
-    <h3>Detail Pengajuan</h3>
-
-    <div id="detailContent" style="font-size:13px;line-height:1.6;"></div>
-
-    <div class="btn-group">
-      <button onclick="updateStatus('approved')" style="background:#16a34a;color:#fff;">Approve</button>
-      <button onclick="updateStatus('rejected')" style="background:#dc2626;color:#fff;">Reject</button>
-    </div>
-
-    <div class="btn-group">
-      <button onclick="deleteData(currentId)">Delete</button>
-      <button onclick="closeDetail()">Close</button>
-    </div>
-  </div>
+<!-- Pagination -->
+<div style="margin-top: 10px; display:flex; justify-content:center; gap:10px;">
+  <button id="prevPage" style="padding:6px 12px;">Prev</button>
+  <span id="pageInfo" style="align-self:center;"></span>
+  <button id="nextPage" style="padding:6px 12px;">Next</button>
+</div>
 </div>
 
 <script>
-  firebase.initializeApp({
-  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain: "dynopay-2513c.firebaseapp.com",
-  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+let isRegistering = false;
+let tempArtists = [];
+let releasesData = [];
+let filteredData = [];
+let currentPage = 1;
+const perPage = 10; // jumlah baris per halaman
+firebase.initializeApp({
+ apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+ authDomain:"dynopay-2513c.firebaseapp.com",
+ databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 
-const db = firebase.database();
-const auth = firebase.auth();
+const auth=firebase.auth();
+const db=firebase.database();
+const secondaryApp = firebase.initializeApp(
+  firebase.app().options,
+  "Secondary"
+);
+const secondaryAuth = secondaryApp.auth();
 
-let dataAll = [];
-let dataFiltered = [];
-let page = 1;
-const perPage = 10;
-let currentId = null;
+auth.onAuthStateChanged(user => {
+  if(isRegistering) return;
 
-// 🔐 ADMIN CHECK
-auth.onAuthStateChanged(user=>{
-  if(!user){
-    location.href="../admin";
+  if (!user) {
+    location.href = "../admin";
     return;
   }
 
-  db.ref("admins/"+user.uid).once("value").then(snap=>{
-    if(!snap.exists()){
-      alert("Bukan admin");
-      auth.signOut();
-      location.href="../admin";
+  const uid = user.uid;
+
+  db.ref("admins/"+uid).once("value")
+  .then(snapshot=>{
+    if (!snapshot.exists()) {
+      alert("⚠ Anda bukan admin!");
+      auth.signOut().then(()=>location.href="../admin");
     }
+  })
+  .catch(err=>{
+    console.error(err);
+    auth.signOut().then(()=>location.href="../admin");
   });
 });
+function openApproveOptions(uid, rid){
+  const type = prompt(
+`Pilih tipe approval:
 
-// LOAD DATA
-function loadData(){
-  db.ref("coverRequests").once("value").then(snap=>{
-    let arr = [];
+1 = Original
+2 = Publisher
 
-    snap.forEach(item=>{
-      arr.push({
-        id:item.key,
-        ...item.val()
-      });
+Masukkan angka:`
+  );
+
+  if(type === "1"){
+    confirmRelease(uid, rid, "approved");
+  }
+
+  else if(type === "2"){
+
+    const publishers = [
+      "MAHAR PUSTAKA NUSANTARA",
+      "Pragita Prabawa Pustaka",
+      "Nadaku Musik",
+      "Royal Publikasi Indo",
+      "Alfa Pustaka Nada",
+      "Pustaka Jeka",
+      "Pustaka Cipta Kreasi",
+      "Star Cipta Musikindo",
+      "Sora Music Publisher",
+      "Proaktif Digital Kreasi",
+      "18 Musik",
+      "Sony Music Publishing Indonesia",
+      "NAGASWARA"
+    ];
+
+    let listText = "Pilih Publisher:\n\n";
+    publishers.forEach((p, i)=>{
+      listText += `${i+1} = ${p}\n`;
     });
 
-    arr.sort((a,b)=>(b.time||0)-(a.time||0));
+    const choice = prompt(listText + "\nMasukkan angka:");
 
-    dataAll = arr;
-    dataFiltered = arr;
+    const index = parseInt(choice) - 1;
+    const publisherName = publishers[index];
 
-    render();
+    if(!publisherName){
+      alert("Publisher tidak valid!");
+      return;
+    }
+
+    confirmPublisherRelease(uid, rid, publisherName);
+  }
+}
+function openPublisherEmail(email, title, publisher){
+  const subject = `Cover to Master Approval – ${title}`;
+
+  const body =
+`Salam Dynotic Collective,
+
+Kami informasikan bahwa pengajuan penggunaan lagu dengan judul "${title}" telah disetujui oleh publisher ${publisher}.
+
+Untuk informasi mengenai jadwal rilis, akan kami informasikan melalui email setelah proses penjadwalan selesai dilakukan.
+
+Jika ada pertanyaan, silakan hubungi kami melalui email:
+admin@dynotic.web.id
+
+Best regards,
+Risna Wati
+Cover to Master Team`;
+
+  const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g, "\r\n"))}`;
+
+  window.location.href = mailto;
+}
+function confirmPublisherRelease(uid, rid, publisher){
+  if(!confirm("Approve sebagai Publisher?")) return;
+
+  db.ref(`releases/${uid}/${rid}/status`).set("approved").then(()=>{
+
+    const item = releasesData.find(r => r.uid===uid && r.rid===rid);
+
+    if(item){
+      item.status = "approved"; // 🔥 FIX UTAMA
+      openPublisherEmail(
+        item.email,
+        item.title,
+        publisher
+      );
+    }
+
+    const filteredItem = filteredData.find(r => r.uid===uid && r.rid===rid);
+    if(filteredItem){
+      filteredItem.status = "approved"; // 🔥 FIX JUGA DI SINI
+    }
+
+    renderTablePage(currentPage);
   });
 }
 
-// RENDER
-function render(){
-  const tbody = document.getElementById("tbody");
+function confirmRelease(uid, rid, status){
+  let text = "";
+
+  if(status === "approved"){
+    text = "Yakin APPROVE rilis ini?";
+  }
+  else if(status === "rejected"){
+    text = "⚠ Yakin REJECT rilis ini?\nAksi ini tidak bisa dibatalkan!";
+  }
+  else if(status === "proses"){
+    text = "Tandai rilisan ini sebagai PROSES?";
+  }
+
+  if(!confirm(text)) return;
+  setReleaseStatus(uid, rid, status);
+}
+
+function openPlatform(uid,rid){
+  localStorage.setItem("lastPage", currentPage); // simpan page
+  location.href = `../admin-platform?uid=${uid}&rid=${rid}`;
+}
+
+function setReleaseStatus(uid,rid,status){
+  db.ref(`releases/${uid}/${rid}/status`).set(status).then(()=>{
+
+    const item = releasesData.find(r => r.uid===uid && r.rid===rid);
+
+    if(item){
+      item.status = status;
+
+      // 🔥 BUKA EMAIL DRAFT (hanya approve/reject)
+      if(status === "approved" || status === "rejected"){
+        openEmailDraft(
+          item.email,
+          item.artist || "-",
+          item.title || "-",
+          status
+        );
+      }
+    }
+
+    const filteredItem = filteredData.find(r => r.uid===uid && r.rid===rid);
+    if(filteredItem){
+      filteredItem.status = status;
+    }
+
+    renderTablePage(currentPage);
+  });
+}
+function openEmailDraft(email, artist, title, status){
+  let subject = "";
+  let body = "";
+
+  if(status === "approved"){
+    subject = `Approved - Congrats! Your release has been sent to the store: ${title}`;
+
+    body = 
+`Hello,
+
+Great news!
+
+Your release has been approved and is now being processed for distribution to all platforms.
+
+Release Details
+Title  : ${title}
+Artist : ${artist}
+
+Your music will be delivered to digital stores shortly.
+
+If you have any questions, feel free to contact our support team.
+
+Best regards,
+Nazwa
+QC Team Dynotic`;
+  }
+
+  if(status === "rejected"){
+    subject = `Reject - Your release has been Rejected: ${title}`;
+
+    body = 
+`Hello,
+
+We regret to inform you that your release has been rejected.
+
+Release Details
+Title  : ${title}
+Artist : ${artist}
+
+Reason:
+Your release has been rejected because it may contain content that infringes on another artist’s rights or lacks proper licensing.
+
+If you believe this is a mistake, please contact our support team and provide valid proof of ownership or license.
+
+Best regards,
+Nazwa
+QC Team Dynotic`;
+  }
+
+  // 🔥 PENTING: taruh di luar IF biar keduanya jalan
+  const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g, "\r\n"))}`;
+
+  window.location.href = mailto;
+}
+function deleteRelease(uid,rid){
+  if(confirm("Apakah yakin ingin menghapus rilisan ini?")){
+    db.ref(`releases/${uid}/${rid}`).remove().then(()=>loadReleases());
+  }
+}
+
+function getStatusColor(status){
+  if(status=="approved") return "#10b981";   // hijau
+  if(status=="rejected") return "#ef4444";   // merah
+  if(status=="proses") return "#3b82f6";     // biru
+  return "#f59e0b"; // pending (kuning)
+}
+
+function toggleMenu(btn){
+  document.querySelectorAll(".menu-dropdown").forEach(m=>{
+    if(m!==btn.nextElementSibling){
+      m.style.display="none";
+    }
+  });
+  const menu = btn.nextElementSibling;
+  menu.style.display = menu.style.display==="block" ? "none" : "block";
+}
+
+function loadReleases(){
+  Promise.all([
+    db.ref("users").once("value"),
+    db.ref("releases").once("value")
+  ]).then(([userSnap, releaseSnap])=>{
+    let userEmailMap = {};
+    userSnap.forEach(u=>{
+      userEmailMap[u.key] = u.val().email;
+    });
+
+    let all = [];
+    releaseSnap.forEach(u=>{
+      u.forEach(r=>{
+        all.push({
+          uid: u.key,
+          rid: r.key,
+          email: userEmailMap[u.key] || "-",
+          ...r.val()
+        });
+      });
+    });
+
+    all.sort((a,b)=>(b.time||0)-(a.time||0));
+
+    releasesData = all;        // simpan semua data
+    filteredData = all.slice(); // set awal filteredData = semua data
+    const savedPage = localStorage.getItem("lastPage");
+currentPage = savedPage ? parseInt(savedPage) : 1;
+
+renderTablePage(currentPage);
+localStorage.removeItem("lastPage");
+  });
+}
+
+function renderTablePage(page){
+  const tbody = document.querySelector("#releaseTable tbody");
   tbody.innerHTML = "";
 
-  const start = (page-1)*perPage;
-  const list = dataFiltered.slice(start,start+perPage);
+  const start = (page - 1) * perPage;
+  const end = start + perPage;
+  const pageData = filteredData.slice(start, end);
 
-  list.forEach(d=>{
+  pageData.forEach(d=>{
     tbody.innerHTML += `
 <tr>
-  <td>${d.title||"-"}</td>
-  <td>${d.cover||"-"}</td>
-  <td>${d.email||"-"}</td>
-  <td>${d.status||"proses"}</td>
+  <td>${d.email}</td>
+  <td>${d.artist || "-"}</td>
+  <td>${d.title || "-"}</td>
   <td>
-    <button onclick="showDetail('${d.id}')">Detail</button>
+    <span class="status-badge"
+      style="border:1px solid ${getStatusColor(d.status)};
+      color:${getStatusColor(d.status)}">
+      ${(d.status || "pending").toUpperCase()}
+    </span>
+  </td>
+  <td style="display:flex;gap:6px;align-items:center">
+    <button class="action-btn" onclick="openPlatform('${d.uid}','${d.rid}')">Detail</button>
+    <div class="menu-wrap">
+      <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
+<div class="menu-dropdown">
+  <button onclick="confirmRelease('${d.uid}','${d.rid}','proses')">Proses</button>
+  <button onclick="openApproveOptions('${d.uid}','${d.rid}')">Approve</button>
+  <button onclick="confirmRelease('${d.uid}','${d.rid}','rejected')">Reject</button>
+  <button onclick="deleteRelease('${d.uid}','${d.rid}')">Delete</button>
+</div>
+    </div>
   </td>
 </tr>
     `;
   });
 
-  document.getElementById("pageInfo").innerText =
-    `Page ${page} of ${Math.ceil(dataFiltered.length/perPage)}`;
+  document.getElementById("pageInfo").innerText = `Page ${currentPage} of ${Math.ceil(filteredData.length/perPage)}`;
+  document.getElementById("prevPage").disabled = currentPage === 1;
+  document.getElementById("nextPage").disabled = currentPage >= Math.ceil(filteredData.length/perPage);
 }
 
-// DETAIL
-function showDetail(id){
-  const d = dataAll.find(x=>x.id===id);
-  currentId = id;
-
-  document.getElementById("detailModal").style.display="flex";
-
-  document.getElementById("detailContent").innerHTML=`
-<b>${d.title}</b><br><br>
-
-Song ID: ${d.songId}<br>
-Composer: ${d.composer}<br>
-Publisher: ${d.publisher}<br>
-Performer: ${d.performer}<br><br>
-
-Cover: ${d.cover}<br>
-Email: ${d.email}<br>
-Label: ${d.label||"-"}<br>
-Channel: ${d.channel}<br><br>
-
-Status: ${d.status}
-  `;
-}
-
-// CLOSE
-function closeDetail(){
-  document.getElementById("detailModal").style.display="none";
-}
-
-// UPDATE STATUS
-function updateStatus(status){
-  if(!currentId) return;
-
-  const d = dataAll.find(x=>x.id===currentId);
-
-  db.ref("coverRequests/"+currentId).update({
-    status:status
-  }).then(()=>{
-
-    if(status === "approved"){
-      const subject = `Cover to Master Approval – ${d.title}`;
-
-      const body = `Salam Dynotic Collective,
-
-Kami informasikan bahwa pengajuan penggunaan lagu dengan judul "${d.title}" oleh ${d.cover} telah disetujui oleh publisher ${d.publisher}.
-
-Silahkan submit Track Asset & Cover Art di dashboard masing-masing & tunggu email tanggal rilis.
-
-Jika ada pertanyaan, silakan hubungi:
-admin@dynotic.web.id
-
-Best regards,
-Alvarez Joshua
-Cover to Master Team`;
-
-      const mailtoLink =
-        `mailto:${d.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-      window.open(mailtoLink);
-    }
-
-    closeDetail();
-    loadData();
-  });
-}
-
-// SEARCH
-document.getElementById("search").addEventListener("input",function(){
-  const q = this.value.toLowerCase();
-
-  dataFiltered = dataAll.filter(d =>
-    (d.title||"").toLowerCase().includes(q) ||
-    (d.cover||"").toLowerCase().includes(q) ||
-    (d.email||"").toLowerCase().includes(q)
-  );
-
-  page = 1;
-  render();
+document.getElementById("prevPage").addEventListener("click", ()=>{
+  if(currentPage > 1){
+    currentPage--;
+    renderTablePage(currentPage);
+  }
 });
 
-// PAGINATION
-document.getElementById("prev").onclick=()=>{
-  if(page>1){page--;render();}
-};
-
-document.getElementById("next").onclick=()=>{
-  if(page < Math.ceil(dataFiltered.length/perPage)){
-    page++;render();
+document.getElementById("nextPage").addEventListener("click", ()=>{
+  if(currentPage < Math.ceil(filteredData.length/perPage)){
+    currentPage++;
+    renderTablePage(currentPage);
   }
-};
+});
 
-loadData();
+document.getElementById("releaseSearch").addEventListener("input", function() {
+  const query = this.value.toLowerCase();
+
+  filteredData = releasesData.filter(d =>
+    d.email.toLowerCase().includes(query) ||
+    (d.artist||"").toLowerCase().includes(query) ||
+    (d.title||"").toLowerCase().includes(query)
+  );
+  currentPage = 1;
+renderTablePage(currentPage);
+});
+loadReleases();
 </script>
 
 </body>
