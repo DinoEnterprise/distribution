@@ -270,22 +270,37 @@ function closeDetail(){
 function updateStatus(status){
   if(!currentId) return;
 
+  const d = dataAll.find(x=>x.id===currentId);
+
   db.ref("coverRequests/"+currentId).update({
     status:status
   }).then(()=>{
+
+    if(status === "approved"){
+      const subject = `Cover to Master Approval – ${d.title}`;
+
+      const body = `Salam Dynotic Collective,
+
+Kami informasikan bahwa pengajuan penggunaan lagu dengan judul "${d.title}" oleh ${d.cover} telah disetujui oleh publisher ${d.publisher}.
+
+Silahkan submit Track Asset & Cover Art di dashboard masing-masing & tunggu email tanggal rilis.
+
+Jika ada pertanyaan, silakan hubungi:
+admin@dynotic.web.id
+
+Best regards,
+Alvarez Joshua
+Cover to Master Team`;
+
+      const mailtoLink =
+        `mailto:${d.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+      window.open(mailtoLink);
+    }
+
     closeDetail();
     loadData();
   });
-}
-
-// DELETE
-function deleteData(id){
-  if(confirm("Hapus pengajuan?")){
-    db.ref("coverRequests/"+id).remove().then(()=>{
-      closeDetail();
-      loadData();
-    });
-  }
 }
 
 // SEARCH
