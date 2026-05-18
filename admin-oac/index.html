@@ -90,7 +90,6 @@ th {
 .menu-dropdown button:hover {
   background: #f5f5f5;
 }
-
 </style>
 </head>
 
@@ -119,7 +118,7 @@ th {
 
 <script>
 
-// ✅ FIX: prevent double init
+// ✅ INIT FIREBASE (ANTI DOUBLE)
 if (!firebase.apps.length) {
   firebase.initializeApp({
     apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
@@ -134,9 +133,10 @@ const auth = firebase.auth();
 let allData = [];
 let filtered = [];
 
-// ✅ AUTH FIX (anti logout brutal)
+// ✅ AUTH (ANTI LOGOUT)
 auth.onAuthStateChanged(user => {
   if(user){
+    console.log("LOGIN:", user.uid);
     checkAdmin(user.uid);
   } else {
     console.log("Menunggu session...");
@@ -149,6 +149,7 @@ function checkAdmin(uid){
       alert("⚠ Kamu bukan admin!");
       auth.signOut();
     } else {
+      console.log("ADMIN VALID");
       loadOAC();
     }
   });
@@ -185,6 +186,8 @@ function setStatus(uid,id,status){
   if(!confirm(text)) return;
 
   db.ref(`oac/${uid}/${id}/status`).set(status).then(()=>{
+    console.log("STATUS UPDATED");
+
     const item = allData.find(x=>x.uid===uid && x.id===id);
     if(item) item.status = status;
 
@@ -195,20 +198,36 @@ function setStatus(uid,id,status){
   });
 }
 
-// load semua data OAC
+// 🔥 LOAD REALTIME (FIX UTAMA)
 function loadOAC(){
-  db.ref("oac").once("value").then(snap=>{
+  console.log("LOAD OAC JALAN");
+
+  db.ref("oac").on("value", snap => {
+
     let arr = [];
+
+    if(!snap.exists()){
+      console.log("OAC kosong");
+      document.getElementById("tbody").innerHTML =
+        `<tr><td colspan="4">Belum ada request</td></tr>`;
+      return;
+    }
 
     snap.forEach(userSnap=>{
       userSnap.forEach(req=>{
-        arr.push({
-          uid: userSnap.key,
-          id: req.key,
-          ...req.val()
-        });
+        const val = req.val();
+
+        if(val){
+          arr.push({
+            uid: userSnap.key,
+            id: req.key,
+            ...val
+          });
+        }
       });
     });
+
+    console.log("DATA MASUK:", arr);
 
     arr.sort((a,b)=>(b.time||0)-(a.time||0));
 
@@ -223,6 +242,11 @@ function loadOAC(){
 function render(){
   const tbody = document.getElementById("tbody");
   tbody.innerHTML = "";
+
+  if(filtered.length === 0){
+    tbody.innerHTML = `<tr><td colspan="4">Tidak ada data</td></tr>`;
+    return;
+  }
 
   filtered.forEach(d=>{
     tbody.innerHTML += `
