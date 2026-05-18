@@ -186,10 +186,17 @@ function setStatus(uid,id,status){
   if(!confirm(text)) return;
 
   db.ref(`oac/${uid}/${id}/status`).set(status).then(()=>{
-    console.log("STATUS UPDATED");
 
     const item = allData.find(x=>x.uid===uid && x.id===id);
-    if(item) item.status = status;
+
+    if(item){
+      item.status = status;
+
+      // 🔥 AUTO EMAIL
+      if(item.email){
+        sendOACEmail(item, status);
+      }
+    }
 
     const f = filtered.find(x=>x.uid===uid && x.id===id);
     if(f) f.status = status;
@@ -199,6 +206,70 @@ function setStatus(uid,id,status){
 }
 
 // 🔥 LOAD REALTIME (FIX UTAMA)
+function sendOACEmail(data, status){
+  const name = data.artist || "Artist";
+
+  let subject = "";
+  let body = "";
+
+  if(status === "approved"){
+    subject = "OAC Request Approved";
+
+    body = `Hello ${name},
+
+We are pleased to inform you that your Official Artist Channel (OAC) request has been successfully approved.
+
+Channel Details:
+https://www.youtube.com/channel/${data.channel}
+
+Your request has been forwarded to the YouTube team for final processing.
+
+Please note that activation may take a few days depending on YouTube’s review timeline.
+
+Best regards,
+Dynoticcollective`;
+  }
+
+  else if(status === "review"){
+    subject = "OAC Request Under Review";
+
+    body = `Hello ${name},
+
+Your Official Artist Channel (OAC) request is currently under review by the YouTube team.
+
+Channel Details:
+https://www.youtube.com/channel/${data.channel}
+
+We will notify you once there is an update.
+
+Thank you for your patience.
+
+Best regards,
+Dynoticcollective`;
+  }
+
+  else if(status === "rejected"){
+    subject = "OAC Request Not Approved";
+
+    body = `Hello ${name},
+
+We regret to inform you that your Official Artist Channel (OAC) request was not approved.
+
+Channel Details:
+https://www.youtube.com/channel/${data.channel}
+
+Please review your channel information and submit a new request if applicable.
+
+Best regards,
+Dynoticcollective`;
+  }
+
+  const mailto = `mailto:${data.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g,"\r\n"))}`;
+
+  setTimeout(()=>{
+    window.location.href = mailto;
+  }, 300);
+}
 function loadOAC(){
   console.log("LOAD OAC JALAN");
 
