@@ -36,14 +36,7 @@ html, body{
   0%{opacity:0; transform:translateY(30px);}
   100%{opacity:1; transform:translateY(0);}
 }
-#submitBtn:active{
-  transform:scale(0.97);
-}
 
-.input:focus{
-  border-color:#111;
-  box-shadow:0 0 0 3px rgba(0,0,0,0.05);
-}
 th:first-child{
   color:#111;
   letter-spacing:0.5px;
@@ -115,11 +108,10 @@ tr:hover{
   font-weight:700;
 }
 
-/* BUTTON GROUP */
 .btn-group{
   display:flex;
   gap:10px;
-  margin-top:10px;
+  margin-top:18px;
 }
 
 .btn-group button{
@@ -132,7 +124,6 @@ tr:hover{
   transition:.2s;
 }
 
-/* SUBMIT */
 #submitBtn{
   background:#111;
   color:#fff;
@@ -143,7 +134,6 @@ tr:hover{
   box-shadow:0 6px 15px rgba(0,0,0,.2);
 }
 
-/* CANCEL */
 .cancel{
   background:#f3f4f6;
   color:#111;
@@ -174,13 +164,7 @@ header{
   backdrop-filter:blur(10px);
   opacity:0;
 }
-.input{
-  width:100%;
-  padding:10px;
-  border:1px solid #ddd;
-  border-radius:10px;
-  margin-bottom:8px;
-}
+
 /* SEARCH */
 .filter-wrapper{
   width:95%;
@@ -346,39 +330,47 @@ tr:hover td{
 <div id="modal" class="modal">
 
   <div class="modal-card">
-    
-    <h3>Pengajuan Cover</h3>
 
-    <input id="m_songId" disabled class="input">
-    <input id="m_title" disabled class="input">
-    <input id="m_composer" disabled class="input">
-    <input id="m_publisher" disabled class="input">
-    <input id="m_performer" disabled class="input">
+    <h3>Detail Lagu</h3>
 
-    <input id="m_email" class="input" placeholder="Email Kamu">
-    <input id="m_cover" class="input" placeholder="Nama Artis Kamu">
-    <input id="m_label" class="input" placeholder="Label">
-    <input id="m_channel" class="input" placeholder="Channel YouTube kamu">
+    <div style="margin-bottom:8px;">
+      <small style="color:#888;">Song ID</small>
+      <div id="m_songId" style="font-weight:700;"></div>
+    </div>
+
+    <div style="margin-bottom:8px;">
+      <small style="color:#888;">Judul Lagu</small>
+      <div id="m_title" style="font-weight:600;"></div>
+    </div>
+
+    <div style="margin-bottom:8px;">
+      <small style="color:#888;">Composer</small>
+      <div id="m_composer" style="font-weight:600;"></div>
+    </div>
+
+    <div style="margin-bottom:8px;">
+      <small style="color:#888;">Publisher</small>
+      <div id="m_publisher" style="font-weight:600;"></div>
+    </div>
+
+    <div style="margin-bottom:8px;">
+      <small style="color:#888;">Performer</small>
+      <div id="m_performer" style="font-weight:600;"></div>
+    </div>
 
     <div class="btn-group">
-      <button id="submitBtn" onclick="submitRequest()">Submit</button>
-      <button class="cancel" onclick="closeModal()">Cancel</button>
+      <button id="submitBtn" onclick="submitRequest()">
+        Ajukan Cover
+      </button>
+
+      <button class="cancel" onclick="closeModal()">
+        Tutup
+      </button>
     </div>
 
   </div>
 </div>
-
   
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-<script>
-firebase.initializeApp({
-  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain: "dynopay-2513c.firebaseapp.com",
-  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
-</script>
 <script>
 const itemsPerPage = 50;
 let currentPage = 1;
@@ -400,20 +392,19 @@ async function loadData(){
   try{
     const sources = [
   "nagaswara.json",
-      "mahar-pustaka.json",
-      "18musik.json",
-      "nadaku-musik.json",
-      "royal-publikasi.json",
-      "alfa-pustaka.json",
-        "pustaka-cipta.json",
-      "star-cipta.json",
-      "sora-music.json",
-      "pragita-prabawa.json",
-      "sora-music.json",
+  "mahar-pustaka.json",
+  "18musik.json",
+  "nadaku-musik.json",
+  "royal-publikasi.json",
+  "alfa-pustaka.json",
+  "pustaka-cipta.json",
+  "star-cipta.json",
+  "sora-music.json",
+  "pragita-prabawa.json",
   "proaktif-digital.json",
-  "sony-music.json"
+  "sony-music.json",
+  "istana-publishing.json"
 ];
-
     const results = await Promise.all(
       sources.map(url => fetch(url).then(res => res.json()))
     );
@@ -511,67 +502,17 @@ nextBtn.onclick = ()=>{
 function openModal(t){
   document.getElementById("modal").style.display = "flex";
 
-  document.getElementById("m_songId").value = t.songId;
-  document.getElementById("m_title").value = t.title;
-  document.getElementById("m_composer").value = t.composer;
-  document.getElementById("m_publisher").value = t.publisher;
-  document.getElementById("m_performer").value = t.performer;
+  document.getElementById("m_songId").textContent = t.songId;
+  document.getElementById("m_title").textContent = t.title;
+  document.getElementById("m_composer").textContent = t.composer;
+  document.getElementById("m_publisher").textContent = t.publisher;
+  document.getElementById("m_performer").textContent = t.performer;
 }
 function closeModal(){
   document.getElementById("modal").style.display = "none";
 }
 function submitRequest(){
-  const data = {
-    songId: document.getElementById("m_songId").value,
-    title: document.getElementById("m_title").value,
-    composer: document.getElementById("m_composer").value,
-    publisher: document.getElementById("m_publisher").value,
-    performer: document.getElementById("m_performer").value,
-
-    email: document.getElementById("m_email").value,
-    cover: document.getElementById("m_cover").value,
-    label: document.getElementById("m_label").value,
-    channel: document.getElementById("m_channel").value,
-
-    status: "proses",
-    time: Date.now()
-  };
-
-  if(!data.email || !data.cover || !data.channel){
-    alert("Isi data wajib");
-    return;
-  }
-const btn = document.getElementById("submitBtn");
-btn.disabled = true;
-btn.innerHTML = "Processing...";
-btn.style.opacity = "0.7";
-  firebase.database().ref("coverRequests").push(data)
-.then(()=>{
-  btn.innerHTML = "Success ✓";
-  btn.style.opacity = "1";
-
-  document.getElementById("m_email").value = "";
-  document.getElementById("m_cover").value = "";
-  document.getElementById("m_label").value = "";
-  document.getElementById("m_channel").value = "";
-
-  // delay biar keliatan success
-  setTimeout(()=>{
-    closeModal();
-
-    // reset button
-    btn.disabled = false;
-    btn.innerHTML = "Submit";
-    btn.style.opacity = "1";
-  }, 1200);
-})
-
-.catch(err=>{
-  alert("Gagal: " + err.message);
-
-  btn.disabled = false;
-  btn.innerText = "Submit";
-});
+  window.location.href = "https://dynotic.web.id/login";
 }
 /* PAGE ANIMATION */
 function triggerPageAnimation(){
