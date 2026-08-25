@@ -113,7 +113,24 @@ td.action-cell{
   transform:none;
   box-shadow:none;
 }
+.invoice-action{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:7px;
+}
 
+.invoice-minimum-info{
+  font-size:11px;
+  color:#92400e;
+  text-align:right;
+  line-height:1.4;
+  display:none;
+}
+
+.invoice-minimum-info strong{
+  font-weight:700;
+}
 /* INVOICE MODAL */
 .invoice-modal{
   display:none;
@@ -319,13 +336,20 @@ th, td{
 <div class="card">
   <div class="balance" id="totalBalance">Total: Rp 0</div>
 
-  <button id="invoiceBtn" onclick="openInvoiceModal()">
-    Ajukan Invoice
-  </button>
+  <div class="invoice-action">
+    <button id="invoiceBtn" onclick="openInvoiceModal()">
+      Ajukan Invoice
+    </button>
+
+    <div id="invoiceMinimumInfo" class="invoice-minimum-info">
+      Belum memenuhi jumlah minimum<br>
+      Minimum pengajuan invoice: <strong>Rp 100.000</strong>
+    </div>
+  </div>
 </div>
 
-  <!-- Table Income (Hidden for admin) -->
-  <div class="table-card">
+<!-- Table Income -->
+<div class="table-card">
   <div class="table-wrapper">
     <div class="table-scroll">
 
@@ -426,12 +450,22 @@ let currentUser = null;
   // Tombol invoice hanya aktif jika saldo >= Rp100.000
   const invoiceBtn = document.getElementById("invoiceBtn");
 
-  if (currentSaldo < MIN_INVOICE) {
-    invoiceBtn.disabled = true;
-    invoiceBtn.title = "Saldo minimum Rp100.000";
-  } else {
-    invoiceBtn.disabled = false;
-  }
+  const minimumInfo = document.getElementById("invoiceMinimumInfo");
+
+if (currentSaldo < MIN_INVOICE) {
+
+  invoiceBtn.disabled = true;
+  invoiceBtn.title = "Saldo minimum Rp100.000";
+
+  minimumInfo.style.display = "block";
+
+} else {
+
+  invoiceBtn.disabled = false;
+  invoiceBtn.title = "";
+
+  minimumInfo.style.display = "none";
+}
 });
     // Panggil loadIncome
     loadIncome(uid, user.email);
@@ -615,7 +649,28 @@ dataArray.forEach(d => {
       error.style.display = "block";
     });
 } 
+function openInvoiceModal(){
 
+  if(currentSaldo < MIN_INVOICE){
+    alert(
+      "Saldo belum mencapai minimum invoice.\n\n" +
+      "Minimum: Rp " + MIN_INVOICE.toLocaleString("id-ID")
+    );
+    return;
+  }
+
+  document.getElementById("invoiceBalance").innerText =
+    "Rp " + currentSaldo.toLocaleString("id-ID");
+
+  document.getElementById("invoiceAmount").value = "";
+  document.getElementById("invoiceError").style.display = "none";
+
+  document.getElementById("invoiceModal").style.display = "flex";
+}
+
+function closeInvoiceModal(){
+  document.getElementById("invoiceModal").style.display = "none";
+}
 function downloadFile(url){
   const a = document.createElement("a");
   a.href = url;
