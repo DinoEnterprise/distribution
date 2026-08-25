@@ -91,6 +91,113 @@ td.action-cell{
       border-radius: 12px;
       cursor: pointer;
     }
+    #invoiceBtn{
+  padding:10px 16px;
+  background:#111;
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:600;
+  transition:.2s;
+}
+
+#invoiceBtn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 15px rgba(0,0,0,.15);
+}
+
+#invoiceBtn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  transform:none;
+  box-shadow:none;
+}
+
+/* INVOICE MODAL */
+.invoice-modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  backdrop-filter:blur(6px);
+  z-index:2000;
+  align-items:center;
+  justify-content:center;
+}
+
+.invoice-card{
+  width:90%;
+  max-width:420px;
+  background:#fff;
+  padding:22px;
+  border-radius:20px;
+  box-shadow:0 20px 50px rgba(0,0,0,.2);
+}
+
+.invoice-card h3{
+  margin-bottom:18px;
+}
+
+.invoice-info{
+  background:#f5f6fa;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:15px;
+}
+
+.invoice-card label{
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+.invoice-card input{
+  width:100%;
+  padding:11px 12px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  outline:none;
+  font-size:14px;
+  margin-bottom:5px;
+}
+
+.invoice-card input:focus{
+  border-color:#111;
+}
+
+.invoice-buttons{
+  display:flex;
+  gap:10px;
+  margin-top:18px;
+}
+
+.invoice-buttons button{
+  flex:1;
+  padding:11px;
+  border:none;
+  border-radius:11px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.invoice-submit{
+  background:#111;
+  color:#fff;
+}
+
+.invoice-cancel{
+  background:#f1f2f7;
+  color:#111;
+}
+
+.invoice-error{
+  color:#dc2626;
+  font-size:12px;
+  margin-top:5px;
+  display:none;
+}
 .download-icon {
   height: 28px; /* atau 28px */
   cursor: pointer;
@@ -211,6 +318,10 @@ th, td{
   <!-- Card Total + Withdraw -->
 <div class="card">
   <div class="balance" id="totalBalance">Total: Rp 0</div>
+
+  <button id="invoiceBtn" onclick="openInvoiceModal()">
+    Ajukan Invoice
+  </button>
 </div>
 
   <!-- Table Income (Hidden for admin) -->
@@ -239,7 +350,51 @@ th, td{
     </div>
   </div>
 </div>
+<!-- AJUKAN INVOICE MODAL -->
+<div class="invoice-modal" id="invoiceModal">
 
+  <div class="invoice-card">
+
+    <h3>Ajukan Invoice</h3>
+
+    <div class="invoice-info">
+      <small>Saldo tersedia</small>
+      <div id="invoiceBalance"
+           style="font-size:18px;font-weight:700;margin-top:4px;">
+        Rp 0
+      </div>
+    </div>
+
+    <label for="invoiceAmount">
+      Jumlah Invoice
+    </label>
+
+    <input
+      type="number"
+      id="invoiceAmount"
+      placeholder="Minimal Rp 100.000"
+      min="100000"
+    >
+
+    <div class="invoice-error" id="invoiceError"></div>
+
+    <div class="invoice-buttons">
+      <button
+        class="invoice-cancel"
+        onclick="closeInvoiceModal()">
+        Batal
+      </button>
+
+      <button
+        class="invoice-submit"
+        onclick="submitInvoice()">
+        Ajukan Invoice
+      </button>
+    </div>
+
+  </div>
+
+</div>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -251,7 +406,10 @@ th, td{
     });
 
     const db = firebase.database();
+const MIN_INVOICE = 100000;
 
+let currentSaldo = 0;
+let currentUser = null;
     firebase.auth().onAuthStateChanged(user => {
   if (!user) window.location.href = "../login";
   else {
@@ -259,11 +417,22 @@ th, td{
 
     // Ambil saldo
     db.ref("users/" + uid + "/saldo").once("value").then(snap => {
-  const saldo = Number(snap.val() || 0);
-  document.getElementById("totalBalance").innerText =
-    "Total: Rp " + saldo.toLocaleString("id-ID");
-});
+  currentSaldo = Number(snap.val() || 0);
+  currentUser = user;
 
+  document.getElementById("totalBalance").innerText =
+    "Total: Rp " + currentSaldo.toLocaleString("id-ID");
+
+  // Tombol invoice hanya aktif jika saldo >= Rp100.000
+  const invoiceBtn = document.getElementById("invoiceBtn");
+
+  if (currentSaldo < MIN_INVOICE) {
+    invoiceBtn.disabled = true;
+    invoiceBtn.title = "Saldo minimum Rp100.000";
+  } else {
+    invoiceBtn.disabled = false;
+  }
+});
     // Panggil loadIncome
     loadIncome(uid, user.email);
   }
@@ -352,7 +521,100 @@ dataArray.forEach(d => {
     incomeList.innerHTML = rows;
   });
 }
-   
+  function submitInvoice(){
+
+  const amount = Number(
+    document.getElementById("invoiceAmount").value
+  );
+
+  const error = document.getElementById("invoiceError");
+
+  error.style.display = "none";
+
+  // Cek user
+  if(!currentUser){
+    error.innerText = "Akun belum siap. Silakan refresh halaman.";
+    error.style.display = "block";
+    return;
+  }
+
+  // Validasi minimum
+  if(!amount || amount < MIN_INVOICE){
+    error.innerText = "Jumlah invoice minimal Rp100.000.";
+    error.style.display = "block";
+    return;
+  }
+
+  // Tidak boleh lebih besar dari saldo
+  if(amount > currentSaldo){
+    error.innerText = "Jumlah invoice melebihi saldo tersedia.";
+    error.style.display = "block";
+    return;
+  }
+
+  // Cek invoice Pending milik user
+  db.ref("invoice_requests")
+    .orderByChild("uid")
+    .equalTo(currentUser.uid)
+    .once("value")
+    .then(snap => {
+
+      let hasPending = false;
+
+      snap.forEach(item => {
+        const data = item.val();
+
+        if(data.status === "Pending"){
+          hasPending = true;
+        }
+      });
+
+      // Masih ada invoice pending
+      if(hasPending){
+        error.innerText =
+          "Anda masih memiliki pengajuan invoice yang sedang diproses. Silakan tunggu hingga selesai.";
+
+        error.style.display = "block";
+        return;
+      }
+
+      // Buat invoice request
+      const requestData = {
+        uid: currentUser.uid,
+        email: currentUser.email,
+        amount: amount,
+        status: "Pending",
+        createdAt: firebase.database.ServerValue.TIMESTAMP
+      };
+
+      return db.ref("invoice_requests").push(requestData);
+
+    })
+    .then(result => {
+
+      // Kalau sebelumnya ditolak karena pending,
+      // result tidak akan ada
+      if(!result) return;
+
+      alert(
+        "Pengajuan invoice berhasil dikirim.\n\n" +
+        "Jumlah: Rp " +
+        amount.toLocaleString("id-ID")
+      );
+
+      closeInvoiceModal();
+
+    })
+    .catch(err => {
+
+      console.error(err);
+
+      error.innerText =
+        "Gagal mengajukan invoice. Silakan coba lagi.";
+
+      error.style.display = "block";
+    });
+} 
 
 function downloadFile(url){
   const a = document.createElement("a");
