@@ -568,63 +568,50 @@ function editSaldo(uid){
 
     const currentSaldo = Number(snap.val() || 0);
 
-    const action = prompt(
-      "Saldo saat ini: Rp " + currentSaldo.toLocaleString("id-ID") +
+    const amountInput = prompt(
+      "Saldo saat ini: Rp " +
+      currentSaldo.toLocaleString("id-ID") +
       "\n\n" +
-      "Ketik:\n" +
-      "1 = Tambah saldo\n" +
-      "2 = Kurangi saldo"
+      "Masukkan nominal perubahan:\n" +
+      "Contoh: +100000 untuk menambah\n" +
+      "Contoh: -50000 untuk mengurangi"
     );
 
-    if(action === null) return;
+    if(amountInput === null) return;
 
-    if(action !== "1" && action !== "2"){
-      alert("⚠ Pilihan tidak valid.");
+    const amount = Number(amountInput);
+
+    if(isNaN(amount) || amount === 0){
+      alert("⚠ Masukkan angka yang valid.");
       return;
     }
 
-    let amount = prompt(
-      action === "1"
-        ? "Tambah berapa?\n\nSaldo saat ini: Rp " + currentSaldo.toLocaleString("id-ID")
-        : "Kurangi berapa?\n\nSaldo saat ini: Rp " + currentSaldo.toLocaleString("id-ID")
-    );
+    const newSaldo = currentSaldo + amount;
 
-    if(amount === null) return;
-
-    amount = Number(amount);
-
-    if(!amount || amount <= 0 || isNaN(amount)){
-      alert("⚠ Nominal harus berupa angka lebih dari 0.");
+    if(newSaldo < 0){
+      alert(
+        "⚠ Saldo tidak mencukupi.\n\n" +
+        "Saldo saat ini: Rp " +
+        currentSaldo.toLocaleString("id-ID") +
+        "\n" +
+        "Saldo hasil: Rp " +
+        newSaldo.toLocaleString("id-ID")
+      );
       return;
     }
 
-    let newSaldo;
-
-    if(action === "1"){
-      newSaldo = currentSaldo + amount;
-    } else {
-      newSaldo = currentSaldo - amount;
-
-      if(newSaldo < 0){
-        alert(
-          "⚠ Saldo tidak mencukupi.\n\n" +
-          "Saldo saat ini: Rp " + currentSaldo.toLocaleString("id-ID") +
-          "\nYang ingin dikurangi: Rp " + amount.toLocaleString("id-ID")
-        );
-        return;
-      }
-    }
-
-    const actionText = action === "1" ? "ditambahkan" : "dikurangi";
+    const actionText = amount > 0 ? "ditambahkan" : "dikurangi";
 
     if(!confirm(
       "Konfirmasi perubahan saldo\n\n" +
-      "Saldo sekarang: Rp " + currentSaldo.toLocaleString("id-ID") +
+      "Saldo saat ini: Rp " +
+      currentSaldo.toLocaleString("id-ID") +
       "\n" +
-      (action === "1" ? "Tambah: Rp " : "Kurangi: Rp ") +
-      amount.toLocaleString("id-ID") +
+      (amount > 0 ? "Tambah: Rp " : "Kurangi: Rp ") +
+      Math.abs(amount).toLocaleString("id-ID") +
       "\n" +
-      "Saldo hasil: Rp " + newSaldo.toLocaleString("id-ID") +
+      "Saldo hasil: Rp " +
+      newSaldo.toLocaleString("id-ID") +
       "\n\nLanjutkan?"
     )) return;
 
@@ -632,8 +619,10 @@ function editSaldo(uid){
       .then(() => {
         alert(
           "✔ Saldo berhasil " + actionText + ".\n\n" +
-          "Saldo sekarang: Rp " + newSaldo.toLocaleString("id-ID")
+          "Saldo sekarang: Rp " +
+          newSaldo.toLocaleString("id-ID")
         );
+
         loadMembers();
       })
       .catch(err => {
