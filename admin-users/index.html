@@ -57,7 +57,84 @@ button.action-btn {
   padding: 6px 10px;
 }
 button.action-btn:hover { background: #f0f0f0; }
+/* SALDO MODAL */
+.saldo-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
 
+.saldo-box {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-sizing: border-box;
+  box-shadow: 0 10px 35px rgba(0,0,0,.2);
+}
+
+.saldo-box h3 {
+  margin: 0 0 5px;
+  font-size: 18px;
+}
+
+.saldo-current {
+  background: #f5f5f7;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 15px 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.saldo-current strong {
+  display: block;
+  color: #111;
+  font-size: 18px;
+  margin-top: 3px;
+}
+
+.saldo-box label {
+  display: block;
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.saldo-box select,
+.saldo-box input {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.saldo-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.saldo-buttons button {
+  margin-top: 0;
+}
+
+.saldo-cancel {
+  background: #f1f1f1;
+  color: #111;
+  border: none;
+}
+
+.saldo-save {
+  background: #111;
+  color: #fff;
+  border: none;
+}
 .table-container {
   max-height: 500px;
   overflow-y: auto;
@@ -153,7 +230,51 @@ tr:hover { background: #f5f5f5; }
     </div>
   </div>
 </div>
+<!-- EDIT SALDO MODAL -->
+<div id="saldoModal" class="saldo-modal">
+  <div class="saldo-box">
 
+    <h3>Edit Saldo</h3>
+    <div style="font-size:13px;color:#777;">
+      Ubah saldo user
+    </div>
+
+    <div class="saldo-current">
+      Saldo saat ini
+      <strong id="modalCurrentSaldo">Rp 0</strong>
+    </div>
+
+    <label>Jenis perubahan</label>
+    <select id="saldoAction">
+      <option value="add">＋ Tambah Saldo</option>
+      <option value="subtract">－ Kurangi Saldo</option>
+    </select>
+
+    <label>Nominal</label>
+    <input
+      id="saldoAmount"
+      type="number"
+      min="1"
+      placeholder="Contoh: 100000"
+    >
+
+    <div class="saldo-buttons">
+      <button
+        class="saldo-cancel"
+        onclick="closeSaldoModal()">
+        Batal
+      </button>
+
+      <button
+        class="saldo-save"
+        onclick="saveSaldo()">
+        Simpan
+      </button>
+    </div>
+
+  </div>
+</div>
+  
 <script>
 firebase.initializeApp({
   apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
@@ -563,77 +684,129 @@ function toggleMenu(btn){
 document.addEventListener("click", e=>{ if(!e.target.closest(".menu-wrap")) document.querySelectorAll(".menu-dropdown").forEach(m=>m.style.display="none"); });
 
 // Edit saldo
+// EDIT SALDO MODAL
+let saldoEditingUid = null;
+let saldoCurrentValue = 0;
+
 function editSaldo(uid){
-  db.ref(`users/${uid}/saldo`).once("value").then(snap => {
 
-    const currentSaldo = Number(snap.val() || 0);
+  db.ref(`users/${uid}/saldo`).once("value")
+    .then(snap => {
 
-    const amountInput = prompt(
+      saldoEditingUid = uid;
+      saldoCurrentValue = Number(snap.val() || 0);
+
+      document.getElementById("modalCurrentSaldo").textContent =
+        "Rp " + saldoCurrentValue.toLocaleString("id-ID");
+
+      document.getElementById("saldoAction").value = "add";
+      document.getElementById("saldoAmount").value = "";
+
+      document.getElementById("saldoModal").style.display = "flex";
+
+      setTimeout(() => {
+        document.getElementById("saldoAmount").focus();
+      }, 100);
+
+    })
+    .catch(err => {
+      console.error(err);
+      alert("❌ Gagal mengambil saldo.");
+    });
+}
+
+
+function closeSaldoModal(){
+
+  document.getElementById("saldoModal").style.display = "none";
+
+  saldoEditingUid = null;
+  saldoCurrentValue = 0;
+
+  document.getElementById("saldoAmount").value = "";
+}
+
+
+function saveSaldo(){
+
+  if(!saldoEditingUid) return;
+
+  const action =
+    document.getElementById("saldoAction").value;
+
+  const amount =
+    Number(document.getElementById("saldoAmount").value);
+
+  if(!amount || amount <= 0 || isNaN(amount)){
+    alert("⚠ Nominal harus lebih dari 0.");
+    return;
+  }
+
+  let newSaldo;
+
+  if(action === "add"){
+    newSaldo = saldoCurrentValue + amount;
+  }else{
+    newSaldo = saldoCurrentValue - amount;
+  }
+
+  if(newSaldo < 0){
+
+    alert(
+      "⚠ Saldo tidak mencukupi.\n\n" +
       "Saldo saat ini: Rp " +
-      currentSaldo.toLocaleString("id-ID") +
-      "\n\n" +
-      "Masukkan nominal perubahan:\n" +
-      "Contoh: +100000 untuk menambah\n" +
-      "Contoh: -50000 untuk mengurangi"
+      saldoCurrentValue.toLocaleString("id-ID") +
+      "\n" +
+      "Yang dikurangi: Rp " +
+      amount.toLocaleString("id-ID")
     );
 
-    if(amountInput === null) return;
+    return;
+  }
 
-    const amount = Number(amountInput);
+  const actionText =
+    action === "add"
+      ? "menambahkan"
+      : "mengurangi";
 
-    if(isNaN(amount) || amount === 0){
-      alert("⚠ Masukkan angka yang valid.");
-      return;
-    }
+  if(!confirm(
+    "Konfirmasi perubahan saldo\n\n" +
+    "Saldo saat ini: Rp " +
+    saldoCurrentValue.toLocaleString("id-ID") +
+    "\n" +
+    (action === "add" ? "＋ Tambah: Rp " : "－ Kurangi: Rp ") +
+    amount.toLocaleString("id-ID") +
+    "\n" +
+    "Saldo setelah perubahan: Rp " +
+    newSaldo.toLocaleString("id-ID") +
+    "\n\n" +
+    "Lanjutkan?"
+  )) return;
 
-    const newSaldo = currentSaldo + amount;
+  db.ref(`users/${saldoEditingUid}/saldo`)
+    .set(newSaldo)
+    .then(() => {
 
-    if(newSaldo < 0){
+      closeSaldoModal();
+
       alert(
-        "⚠ Saldo tidak mencukupi.\n\n" +
-        "Saldo saat ini: Rp " +
-        currentSaldo.toLocaleString("id-ID") +
-        "\n" +
-        "Saldo hasil: Rp " +
+        "✔ Berhasil " +
+        actionText +
+        " saldo.\n\n" +
+        "Saldo sekarang: Rp " +
         newSaldo.toLocaleString("id-ID")
       );
-      return;
-    }
 
-    const actionText = amount > 0 ? "ditambahkan" : "dikurangi";
+      loadMembers();
 
-    if(!confirm(
-      "Konfirmasi perubahan saldo\n\n" +
-      "Saldo saat ini: Rp " +
-      currentSaldo.toLocaleString("id-ID") +
-      "\n" +
-      (amount > 0 ? "Tambah: Rp " : "Kurangi: Rp ") +
-      Math.abs(amount).toLocaleString("id-ID") +
-      "\n" +
-      "Saldo hasil: Rp " +
-      newSaldo.toLocaleString("id-ID") +
-      "\n\nLanjutkan?"
-    )) return;
+    })
+    .catch(err => {
 
-    db.ref(`users/${uid}/saldo`).set(newSaldo)
-      .then(() => {
-        alert(
-          "✔ Saldo berhasil " + actionText + ".\n\n" +
-          "Saldo sekarang: Rp " +
-          newSaldo.toLocaleString("id-ID")
-        );
+      console.error(err);
 
-        loadMembers();
-      })
-      .catch(err => {
-        console.error(err);
-        alert("❌ Gagal memperbarui saldo.");
-      });
+      alert("❌ Gagal memperbarui saldo.");
 
-  }).catch(err => {
-    console.error(err);
-    alert("❌ Gagal mengambil saldo.");
-  });
+    });
 }
 function toggleStatus(uid, currentStatus){
   const newStatus = currentStatus === 'active' ? 'non-active' : 'active';
