@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Artists & Account | Dynotic Admin</title>
+<title>Users | Dynotic Admin</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -232,57 +232,325 @@ let firstKey = null;
 let lastKey = null;
 let pageStack = [];
 let searchTerm = "";
-document.getElementById("searchInput").addEventListener("input", e=>{
-  searchTerm=e.target.value.toLowerCase();
-  firstKey=null; lastKey=null; pageStack=[];
+
+// SEARCH
+document.getElementById("searchInput").addEventListener("input", e => {
+  searchTerm = e.target.value.trim().toLowerCase();
+
+  // Reset pagination
+  firstKey = null;
+  lastKey = null;
+  pageStack = [];
+
   loadMembers();
 });
 
+
 // LOAD MEMBERS
-function loadMembers(direction="init"){
+function loadMembers(direction = "init") {
+
   const tbody = document.querySelector("#memberTable tbody");
-  tbody.innerHTML="";
-  let ref = db.ref("users").orderByKey().limitToFirst(pageSize);
+  tbody.innerHTML = "";
 
-  if(direction==="next" && lastKey){ pageStack.push(firstKey); ref=db.ref("users").orderByKey().startAfter(lastKey).limitToFirst(pageSize); }
-  if(direction==="prev" && pageStack.length){ const prevKey=pageStack.pop(); ref=db.ref("users").orderByKey().startAfter(prevKey).limitToFirst(pageSize); }
+  // =====================================================
+  // JIKA ADA PENCARIAN → CARI DI SELURUH USER
+  // =====================================================
+  if (searchTerm) {
 
-  ref.once("value", snap=>{
-    if(!snap.exists()) return;
-    let keys=[];
-    snap.forEach(u=>{
-      const d=u.val();
-      const namaLower=(d.nama||"").toLowerCase();
-      const emailLower=(d.email||"").toLowerCase();
-      if(searchTerm && !namaLower.includes(searchTerm) && !emailLower.includes(searchTerm)) return;
-      keys.push(u.key);
-      const saldoFormatted="Rp "+(d.saldo||0).toLocaleString();
-      const statusLabel = d.status==="active" ? "<span class='status-badge' style='background:#34d399;color:#fff'>Active</span>" :
-                                               "<span class='status-badge' style='background:#f87171;color:#fff'>Non-Active</span>";
+    db.ref("users").once("value").then(snap => {
 
-      const tr=document.createElement("tr");
-      tr.innerHTML=`
-        <td>${d.nama}</td>
-        <td>${d.email||"-"}</td>
-        <td>${saldoFormatted}</td>
-        <td>${statusLabel}</td>
-        <td style="display:flex;gap:6px;align-items:center">
-          <button class="action-btn" onclick="window.location.href='../admin-userdetail?uid=${u.key}'">Detail</button>
-          <div class="menu-wrap">
-            <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
-<div class="menu-dropdown">
-  <button onclick="toggleStatus('${u.key}', '${d.status}')">
-    ${d.status === 'active' ? 'Disable' : 'Activate'}
-  </button>
-  <button onclick="editSaldo('${u.key}')">Edit Saldo</button>
-  <button onclick="deleteMember('${u.key}')">Hapus</button>
-            </div>
-          </div>
-        </td>`;
-      tbody.appendChild(tr);
+      if (!snap.exists()) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align:center;">
+              User tidak ditemukan
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let found = false;
+
+      snap.forEach(u => {
+
+        const d = u.val();
+
+        const namaLower = String(d.nama || "").toLowerCase();
+        const emailLower = String(d.email || "").toLowerCase();
+
+        // Cari berdasarkan nama ATAU email
+        if (
+          namaLower.includes(searchTerm) ||
+          emailLower.includes(searchTerm)
+        ) {
+
+          found = true;
+
+          const saldo = Number(d.saldo || 0);
+
+          const saldoFormatted =
+            "Rp " + saldo.toLocaleString("id-ID");
+
+          const statusLabel =
+            d.status === "active"
+              ? `<span class="status-badge"
+                   style="background:#34d399;color:#fff">
+                   Active
+                 </span>`
+              : `<span class="status-badge"
+                   style="background:#f87171;color:#fff">
+                   Non-Active
+                 </span>`;
+
+          const tr = document.createElement("tr");
+
+          tr.innerHTML = `
+            <td>${d.nama || "-"}</td>
+
+            <td>${d.email || "-"}</td>
+
+            <td>${saldoFormatted}</td>
+
+            <td>${statusLabel}</td>
+
+            <td style="display:flex;gap:6px;align-items:center">
+
+              <button
+                class="action-btn"
+                onclick="window.location.href='../admin-userdetail?uid=${u.key}'">
+                Detail
+              </button>
+
+              <div class="menu-wrap">
+
+                <button
+                  class="menu-btn"
+                  onclick="toggleMenu(this)">
+                  ⋮
+                </button>
+
+                <div class="menu-dropdown">
+
+                  <button
+                    onclick="toggleStatus('${u.key}', '${d.status}')">
+                    ${d.status === "active" ? "Disable" : "Activate"}
+                  </button>
+
+                  <button
+                    onclick="editSaldo('${u.key}')">
+                    Edit Saldo
+                  </button>
+
+                  <button
+                    onclick="deleteMember('${u.key}')">
+                    Hapus
+                  </button>
+
+                </div>
+
+              </div>
+
+            </td>
+          `;
+
+          tbody.appendChild(tr);
+        }
+      });
+
+
+      // Tidak ditemukan
+      if (!found) {
+
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5"
+                style="text-align:center;padding:20px;">
+              User "<strong>${searchTerm}</strong>" tidak ditemukan
+            </td>
+          </tr>
+        `;
+
+      }
+
+    }).catch(err => {
+
+      console.error(err);
+
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5"
+              style="text-align:center;color:red;">
+            Gagal mencari user
+          </td>
+        </tr>
+      `;
+
     });
-    firstKey=keys[0];
-    lastKey=keys[keys.length-1];
+
+    return;
+  }
+
+
+  // =====================================================
+  // TIDAK ADA SEARCH → PAKAI PAGINATION NORMAL
+  // =====================================================
+
+  let ref = db
+    .ref("users")
+    .orderByKey()
+    .limitToFirst(pageSize);
+
+
+  // NEXT
+  if (direction === "next" && lastKey) {
+
+    pageStack.push(firstKey);
+
+    ref = db
+      .ref("users")
+      .orderByKey()
+      .startAfter(lastKey)
+      .limitToFirst(pageSize);
+  }
+
+
+  // PREVIOUS
+  if (direction === "prev" && pageStack.length) {
+
+    const prevKey = pageStack.pop();
+
+    ref = db
+      .ref("users")
+      .orderByKey()
+      .startAt(prevKey)
+      .limitToFirst(pageSize);
+  }
+
+
+  ref.once("value").then(snap => {
+
+    if (!snap.exists()) {
+
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5"
+              style="text-align:center;">
+            Tidak ada user
+          </td>
+        </tr>
+      `;
+
+      return;
+    }
+
+
+    let keys = [];
+
+
+    snap.forEach(u => {
+
+      const d = u.val();
+
+      keys.push(u.key);
+
+
+      const saldo =
+        Number(d.saldo || 0);
+
+      const saldoFormatted =
+        "Rp " + saldo.toLocaleString("id-ID");
+
+
+      const statusLabel =
+        d.status === "active"
+          ? `<span class="status-badge"
+               style="background:#34d399;color:#fff">
+               Active
+             </span>`
+          : `<span class="status-badge"
+               style="background:#f87171;color:#fff">
+               Non-Active
+             </span>`;
+
+
+      const tr = document.createElement("tr");
+
+
+      tr.innerHTML = `
+
+        <td>${d.nama || "-"}</td>
+
+        <td>${d.email || "-"}</td>
+
+        <td>${saldoFormatted}</td>
+
+        <td>${statusLabel}</td>
+
+        <td style="display:flex;gap:6px;align-items:center">
+
+          <button
+            class="action-btn"
+            onclick="window.location.href='../admin-userdetail?uid=${u.key}'">
+            Detail
+          </button>
+
+          <div class="menu-wrap">
+
+            <button
+              class="menu-btn"
+              onclick="toggleMenu(this)">
+              ⋮
+            </button>
+
+            <div class="menu-dropdown">
+
+              <button
+                onclick="toggleStatus('${u.key}', '${d.status}')">
+                ${d.status === "active"
+                  ? "Disable"
+                  : "Activate"}
+              </button>
+
+              <button
+                onclick="editSaldo('${u.key}')">
+                Edit Saldo
+              </button>
+
+              <button
+                onclick="deleteMember('${u.key}')">
+                Hapus
+              </button>
+
+            </div>
+
+          </div>
+
+        </td>
+      `;
+
+
+      tbody.appendChild(tr);
+
+    });
+
+
+    firstKey = keys[0];
+    lastKey = keys[keys.length - 1];
+
+  }).catch(err => {
+
+    console.error(err);
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5"
+            style="text-align:center;color:red;">
+          Gagal memuat user
+        </td>
+      </tr>
+    `;
+
   });
 }
 
@@ -296,11 +564,76 @@ document.addEventListener("click", e=>{ if(!e.target.closest(".menu-wrap")) docu
 
 // Edit saldo
 function editSaldo(uid){
-  let newSaldo=prompt("Masukkan saldo baru:");
-  if(newSaldo===null) return;
-  newSaldo=Number(newSaldo);
-  if(isNaN(newSaldo)){ alert("⚠ Harus angka!"); return; }
-  db.ref(`users/${uid}/saldo`).set(newSaldo).then(()=>{ alert("✔ Saldo diperbarui"); loadMembers(); });
+  db.ref(`users/${uid}/saldo`).once("value").then(snap => {
+
+    const currentSaldo = Number(snap.val() || 0);
+
+    const amountInput = prompt(
+      "Saldo saat ini: Rp " +
+      currentSaldo.toLocaleString("id-ID") +
+      "\n\n" +
+      "Masukkan nominal perubahan:\n" +
+      "Contoh: +100000 untuk menambah\n" +
+      "Contoh: -50000 untuk mengurangi"
+    );
+
+    if(amountInput === null) return;
+
+    const amount = Number(amountInput);
+
+    if(isNaN(amount) || amount === 0){
+      alert("⚠ Masukkan angka yang valid.");
+      return;
+    }
+
+    const newSaldo = currentSaldo + amount;
+
+    if(newSaldo < 0){
+      alert(
+        "⚠ Saldo tidak mencukupi.\n\n" +
+        "Saldo saat ini: Rp " +
+        currentSaldo.toLocaleString("id-ID") +
+        "\n" +
+        "Saldo hasil: Rp " +
+        newSaldo.toLocaleString("id-ID")
+      );
+      return;
+    }
+
+    const actionText = amount > 0 ? "ditambahkan" : "dikurangi";
+
+    if(!confirm(
+      "Konfirmasi perubahan saldo\n\n" +
+      "Saldo saat ini: Rp " +
+      currentSaldo.toLocaleString("id-ID") +
+      "\n" +
+      (amount > 0 ? "Tambah: Rp " : "Kurangi: Rp ") +
+      Math.abs(amount).toLocaleString("id-ID") +
+      "\n" +
+      "Saldo hasil: Rp " +
+      newSaldo.toLocaleString("id-ID") +
+      "\n\nLanjutkan?"
+    )) return;
+
+    db.ref(`users/${uid}/saldo`).set(newSaldo)
+      .then(() => {
+        alert(
+          "✔ Saldo berhasil " + actionText + ".\n\n" +
+          "Saldo sekarang: Rp " +
+          newSaldo.toLocaleString("id-ID")
+        );
+
+        loadMembers();
+      })
+      .catch(err => {
+        console.error(err);
+        alert("❌ Gagal memperbarui saldo.");
+      });
+
+  }).catch(err => {
+    console.error(err);
+    alert("❌ Gagal mengambil saldo.");
+  });
 }
 function toggleStatus(uid, currentStatus){
   const newStatus = currentStatus === 'active' ? 'non-active' : 'active';
