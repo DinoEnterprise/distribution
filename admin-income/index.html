@@ -32,6 +32,134 @@ form button:hover{filter:brightness(0.9);}
   background:#dbeafe;
   color:#1e40af;
 }
+  /* =========================
+   CUSTOM MEMBER SEARCH
+========================= */
+
+.member-picker{
+  position:relative;
+  width:100%;
+}
+
+.member-input-wrap{
+  position:relative;
+}
+
+#memberSearch{
+  width:100%;
+  padding:11px 42px 11px 14px;
+  border:1px solid #d5d7df;
+  border-radius:10px;
+  font-size:14px;
+  outline:none;
+  background:#fff;
+  transition:.2s;
+}
+
+#memberSearch:focus{
+  border-color:#667eea;
+  box-shadow:0 0 0 3px rgba(102,126,234,.10);
+}
+
+#memberSearch.selected{
+  color:#111;
+  font-weight:500;
+}
+
+.clear-member{
+  display:none;
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  border:0;
+  background:transparent;
+  color:#999;
+  font-size:20px;
+  cursor:pointer;
+  padding:0 5px;
+}
+
+.clear-member:hover{
+  color:#111;
+}
+
+.member-dropdown{
+  display:none;
+  position:absolute;
+  top:calc(100% + 6px);
+  left:0;
+  right:0;
+  max-height:260px;
+  overflow-y:auto;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,.10);
+  z-index:100;
+  padding:6px;
+}
+
+.member-dropdown.show{
+  display:block;
+}
+
+.member-option{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 12px;
+  border-radius:9px;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.member-option:hover{
+  background:#f4f5f9;
+}
+
+.member-avatar{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:#eef0ff;
+  color:#667eea;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:600;
+  font-size:14px;
+  flex-shrink:0;
+}
+
+.member-info{
+  min-width:0;
+}
+
+.member-name{
+  font-size:14px;
+  font-weight:600;
+  color:#222;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.member-email{
+  font-size:12px;
+  color:#888;
+  margin-top:2px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.member-empty{
+  padding:20px;
+  text-align:center;
+  color:#999;
+  font-size:13px;
+}
 table{
   width:100%;
   border-collapse:separate;
@@ -71,10 +199,24 @@ td button:hover{filter:brightness(0.9);}
 
 <form id="royaltyForm">
   <label>Member</label>
-  <select id="memberSelect" required>
-    <option value="">-- Pilih Member --</option>
-  </select>
 
+<div class="member-picker" id="memberPicker">
+
+  <div class="member-input-wrap">
+    <input
+      type="text"
+      id="memberSearch"
+      placeholder="Cari nama atau email..."
+      autocomplete="off"
+    >
+    <button type="button" id="clearMember" class="clear-member">×</button>
+  </div>
+
+  <div class="member-dropdown" id="memberDropdown"></div>
+
+  <input type="hidden" id="memberSelect" required>
+
+</div>
   <label>Tanggal</label>
   <input type="date" id="date" required>
 
@@ -135,17 +277,181 @@ firebase.auth().onAuthStateChanged(user=>{
   }
 });
 
+let allMembers = [];
+
 function loadMembers(){
-  const sel = document.getElementById("memberSelect");
+
   db.ref("users").once("value").then(snap=>{
-    sel.innerHTML = `<option value="">-- Pilih Member --</option>`;
+
     const users = snap.val() || {};
-    Object.keys(users).forEach(uid=>{
-      const u = users[uid];
-      sel.innerHTML += `<option value="${uid}" data-email="${u.email}">${u.email} • ${u.nama}</option>`;
-    });
+
+    allMembers = Object.keys(users).map(uid => ({
+      uid: uid,
+      email: users[uid].email || "",
+      nama: users[uid].nama || "Unknown"
+    }));
+
+    renderMemberDropdown(allMembers);
   });
 }
+
+
+function renderMemberDropdown(members){
+
+  const dropdown = document.getElementById("memberDropdown");
+
+  if(!members.length){
+
+    dropdown.innerHTML = `
+      <div class="member-empty">
+        Member tidak ditemukan
+      </div>
+    `;
+
+    return;
+  }
+
+  dropdown.innerHTML = members.map(user => {
+
+    const initial = (user.nama || user.email || "?")
+      .charAt(0)
+      .toUpperCase();
+
+    return `
+      <div
+        class="member-option"
+        data-uid="${user.uid}"
+        data-email="${user.email}"
+        data-name="${user.nama}"
+      >
+
+        <div class="member-avatar">
+          ${initial}
+        </div>
+
+        <div class="member-info">
+
+          <div class="member-name">
+            ${escapeHtml(user.nama)}
+          </div>
+
+          <div class="member-email">
+            ${escapeHtml(user.email)}
+          </div>
+
+        </div>
+
+      </div>
+    `;
+
+  }).join("");
+}
+
+
+function escapeHtml(text){
+
+  return String(text || "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+
+const memberSearch = document.getElementById("memberSearch");
+const memberDropdown = document.getElementById("memberDropdown");
+const clearMember = document.getElementById("clearMember");
+
+
+memberSearch.addEventListener("focus", function(){
+
+  memberDropdown.classList.add("show");
+
+  if(!this.value){
+    renderMemberDropdown(allMembers);
+  }
+
+});
+
+
+memberSearch.addEventListener("input", function(){
+
+  const keyword = this.value.toLowerCase().trim();
+
+  // Kalau sedang mengetik ulang pilihan
+  document.getElementById("memberSelect").value = "";
+
+  clearMember.style.display = keyword ? "block" : "none";
+
+  const filtered = allMembers.filter(user => {
+
+    const name = String(user.nama || "").toLowerCase();
+const email = String(user.email || "").toLowerCase();
+
+    return name.includes(keyword) || email.includes(keyword);
+
+  });
+
+  renderMemberDropdown(filtered);
+  memberDropdown.classList.add("show");
+
+});
+
+
+memberDropdown.addEventListener("click", function(e){
+
+  const option = e.target.closest(".member-option");
+
+  if(!option) return;
+
+  const uid = option.dataset.uid;
+  const email = option.dataset.email;
+  const name = option.dataset.name;
+
+  // Simpan UID ke hidden input
+  document.getElementById("memberSelect").value = uid;
+
+  // Tampilkan nama + email di input
+  memberSearch.value = `${name} • ${email}`;
+
+  memberSearch.classList.add("selected");
+
+  clearMember.style.display = "block";
+
+  memberDropdown.classList.remove("show");
+
+});
+
+
+clearMember.addEventListener("click", function(){
+
+  memberSearch.value = "";
+
+  memberSearch.classList.remove("selected");
+
+  document.getElementById("memberSelect").value = "";
+
+  clearMember.style.display = "none";
+
+  memberSearch.focus();
+
+  renderMemberDropdown(allMembers);
+
+  memberDropdown.classList.add("show");
+
+});
+
+
+document.addEventListener("click", function(e){
+
+  if(!document.getElementById("memberPicker").contains(e.target)){
+
+    memberDropdown.classList.remove("show");
+
+  }
+
+});
 function sendEmailByType(key, type){
 
   db.ref("royalties/" + key).once("value").then(snap=>{
@@ -335,10 +641,26 @@ list.innerHTML = rows.join('');
 }
 
 document.getElementById("royaltyForm").addEventListener("submit", function(e){
+
   e.preventDefault();
 
   const uid = document.getElementById("memberSelect").value;
-  const email = document.getElementById("memberSelect").selectedOptions[0].dataset.email;
+
+  if(!uid){
+    alert("Silakan pilih member terlebih dahulu.");
+    return;
+  }
+
+  const member = allMembers.find(user => user.uid === uid);
+
+  if(!member){
+    alert("Member tidak ditemukan.");
+    return;
+  }
+
+  const email = member.email;
+  const name = member.nama;
+
   const period = document.getElementById("period").value;
   const date = document.getElementById("date").value;
   const type = document.getElementById("reportType").value;
@@ -346,29 +668,48 @@ document.getElementById("royaltyForm").addEventListener("submit", function(e){
   const downloadUrl = document.getElementById("downloadUrl").value;
 
   const newKey = db.ref("royalties").push().key;
-  let finalValue = (type==="Payment") ? -Math.abs(value) : value;
 
-  db.ref("royalties/"+newKey).set({
-  uid,
-  email,
-  date,
-  period,
-  value:finalValue,
-  downloadUrl,
-  type
-})
-.then(()=>{
+  let finalValue =
+    (type === "Payment")
+      ? -Math.abs(value)
+      : value;
 
-  const selected = document.getElementById("memberSelect");
-  const email = selected.selectedOptions[0].dataset.email;
-  const name = selected.selectedOptions[0].text;
+  db.ref("royalties/" + newKey).set({
 
-  sendRoyaltyEmail(email, name, type, period, finalValue);
+    uid,
+    email,
+    date,
+    period,
+    value: finalValue,
+    downloadUrl,
+    type
 
-  loadAdminRoyalty();
-  this.reset();
-})
-    .catch(err=>{ console.error("Gagal tambah royalty:",err); });
+  }).then(()=>{
+
+    sendRoyaltyEmail(
+      email,
+      name,
+      type,
+      period,
+      finalValue
+    );
+
+    loadAdminRoyalty();
+
+    this.reset();
+
+    // Reset member picker
+    document.getElementById("memberSelect").value = "";
+    document.getElementById("memberSearch").value = "";
+    document.getElementById("memberSearch").classList.remove("selected");
+    document.getElementById("clearMember").style.display = "none";
+
+  }).catch(err=>{
+
+    console.error("Gagal tambah royalty:", err);
+
+  });
+
 });
 </script>
 
