@@ -8,7 +8,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Outfit",sans-serif
+}
 
 body{
   background:#f1f2f7;
@@ -25,11 +30,14 @@ header{
   border-bottom:1px solid #eee;
   position:fixed;
   top:0;
+  left:0;
   width:100%;
   z-index:1000;
 }
 
-header img{height:50px}
+header img{
+  height:50px;
+}
 
 /* CARD */
 .card{
@@ -49,35 +57,58 @@ button{
   border:none;
   border-radius:12px;
   font-weight:700;
+  font-size:14px;
   background:#111;
   color:#fff;
   cursor:pointer;
 }
 
-/* STATUS BOX */
-.status-box{
-  padding:14px;
-  border-radius:12px;
-  background:#f6f7fb;
+button:active{
+  transform:scale(.97);
+}
+
+/* INFO */
+.info-text{
   font-size:13px;
+  color:#666;
   line-height:1.6;
 }
 
-/* PROGRESS */
-.progress{
-  height:6px;
-  background:#eee;
-  border-radius:10px;
-  margin-top:10px;
-}
-.progress-bar{
-  height:100%;
-  width:0%;
-  border-radius:10px;
-  background:#111;
-  transition:0.3s;
+/* REQUIREMENTS */
+.requirement{
+  display:flex;
+  gap:10px;
+  margin-bottom:12px;
+  font-size:13px;
+  line-height:1.5;
 }
 
+.requirement:last-child{
+  margin-bottom:0;
+}
+
+.check{
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#111;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  flex-shrink:0;
+}
+
+/* NOTICE */
+.notice{
+  background:#f6f7fb;
+  border-radius:12px;
+  padding:14px;
+  font-size:12px;
+  color:#666;
+  line-height:1.6;
+}
 
 </style>
 </head>
@@ -89,135 +120,106 @@ button{
   <img src="../assets/dynotic-distribution.png">
 </header>
 
+
 <!-- HERO -->
 <div class="card" style="text-align:center;">
+
   <div style="font-size:20px;font-weight:700;margin-bottom:8px">
     Official Artist Channel
   </div>
-  <div style="font-size:13px;color:#666;margin-bottom:16px">
-    Upgrade channel YouTube kamu jadi Official Artist Channel
+
+  <div style="font-size:13px;color:#666;line-height:1.5">
+    Dapatkan Official Artist Channel untuk membangun identitas resmi
+    kamu sebagai artist di YouTube.
   </div>
 
-  <button onclick="goRequestOAC()">Request OAC</button>
 </div>
 
-<!-- STATUS -->
+
+<!-- WHAT IS OAC -->
 <div class="card">
-  <div style="font-weight:700;margin-bottom:12px">Your Status</div>
 
-  <div id="statusBox" class="status-box">
-    Loading...
+  <div style="font-weight:700;margin-bottom:10px">
+    What is OAC?
   </div>
+
+  <div class="info-text">
+    Official Artist Channel (OAC) adalah channel resmi artist di YouTube
+    yang menggabungkan konten musik dari berbagai channel menjadi satu
+    profil artist resmi.
+  </div>
+
 </div>
 
 
-
-<!-- INFO -->
+<!-- REQUIREMENTS -->
 <div class="card">
-  <div style="font-weight:700;margin-bottom:10px">What is OAC?</div>
-  <div style="font-size:13px;color:#666">
-    Official Artist Channel (OAC) adalah fitur YouTube yang menggabungkan semua channel musik kamu menjadi satu profil resmi artist.
+
+  <div style="font-weight:700;margin-bottom:14px">
+    OAC Requirements
   </div>
+
+  <div class="requirement">
+    <div class="check">✓</div>
+    <div>Memiliki channel YouTube artist yang aktif.</div>
+  </div>
+
+  <div class="requirement">
+    <div class="check">✓</div>
+    <div>Memiliki rilisan musik resmi yang didistribusikan melalui Dynotic.</div>
+  </div>
+
+  <div class="requirement">
+    <div class="check">✓</div>
+    <div>Channel harus merepresentasikan satu artist atau grup musik.</div>
+  </div>
+
+  <div class="requirement">
+    <div class="check">✓</div>
+    <div>Memenuhi persyaratan dan kebijakan YouTube.</div>
+  </div>
+
 </div>
 
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<!-- HOW TO APPLY -->
+<div class="card">
+
+  <div style="font-weight:700;margin-bottom:10px">
+    How to Apply
+  </div>
+
+  <div class="info-text">
+    Pengajuan Official Artist Channel tidak dilakukan secara langsung
+    melalui dashboard. Untuk mengajukan OAC, silakan hubungi
+    <b>manager atau pihak label yang menaungi kamu</b> untuk mengetahui
+    kelayakan dan proses pengajuan.
+  </div>
+
+  <div style="height:14px"></div>
+
+  <div class="notice">
+    <b>Note:</b><br>
+    Pengajuan OAC akan melalui proses pengecekan terlebih dahulu.
+    Persetujuan OAC tetap mengikuti kebijakan dan keputusan YouTube.
+  </div>
+
+</div>
+
 
 <script>
-firebase.initializeApp({
-  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-      authDomain: "dynopay-2513c.firebaseapp.com",
-      databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
-    });
 
-const db = firebase.database();
+function contactManager(){
 
-firebase.auth().onAuthStateChanged(user=>{
-  if(!user) location.href="../login";
-  else loadOAC(user.uid);
-});
+  /*
+    Untuk sementara diarahkan ke halaman/contact manager.
+    Nanti bisa diganti dengan sistem berdasarkan label masing-masing.
+  */
 
-function goRequestOAC(){
-  location.href="../oac-request";
+  location.href="../manager";
+
 }
 
-function loadOAC(uid){
-  const box = document.getElementById("statusBox");
-
-  db.ref("oac/" + uid).on("value", snap => {
-
-    if(!snap.exists()){
-      box.innerHTML = "Belum ada request OAC";
-      return;
-    }
-
-    const data = snap.val();
-    const list = Object.values(data || {});
-
-    let html = "";
-
-    list
-      .sort((a,b)=>b.time - a.time) // terbaru di atas
-      .forEach((d, i) => {
-
-        let status = d.status || "pending";
-        let color = "#f59e0b";
-        let progress = 33;
-
-        let displayStatus = "SUBMITTED";
-
-        if(status === "review") displayStatus = "IN REVIEW";
-        else if(status === "approved") displayStatus = "APPROVED";
-        else if(status === "rejected") displayStatus = "REJECTED";
-
-        if(status==="review"){
-          color="#3b82f6";
-          progress=66;
-        }
-        else if(status==="approved"){
-          color="#22c55e";
-          progress=100;
-        }
-        else if(status==="rejected"){
-          color="#ef4444";
-          progress=100;
-        }
-
-        html += `
-          <div style="margin-bottom:18px;padding:14px;border-radius:12px;background:#fff;border:1px solid #eee;">
-            
-            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-              <b>${d.artist}</b>
-              <span style="font-size:12px;color:#666">
-                ${new Date(d.time).toLocaleDateString()}
-              </span>
-            </div>
-
-            <div style="font-size:13px;margin-bottom:6px;">
-              Channel: ${d.channel}
-            </div>
-
-            <div style="font-size:12px;margin-bottom:6px;">
-              Status: 
-              <span style="color:${color};font-weight:600;">
-                ${displayStatus}
-              </span>
-            </div>
-
-            <div class="progress">
-              <div class="progress-bar" style="width:${progress}%;background:${color}"></div>
-            </div>
-
-          </div>
-        `;
-      });
-
-    box.innerHTML = html;
-  });
-}
 </script>
 
 </body>
