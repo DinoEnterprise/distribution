@@ -345,37 +345,66 @@ async function changeEmail(){
 
   }catch(error){
 
-    console.error(error);
+  console.error("FIREBASE ERROR:", error);
+  console.error("ERROR CODE:", error.code);
+  console.error("ERROR MESSAGE:", error.message);
 
-    let message =
-      "Gagal mengganti email. Silakan coba lagi.";
+  let message = "Gagal mengganti email.";
 
-    if(error.code === "auth/wrong-password"){
-      message = "Password saat ini salah.";
-    }
-
-    else if(error.code === "auth/invalid-credential"){
-      message = "Password saat ini salah atau kredensial sudah tidak valid.";
-    }
-
-    else if(error.code === "auth/email-already-in-use"){
-      message = "Email tersebut sudah digunakan oleh akun lain.";
-    }
-
-    else if(error.code === "auth/invalid-email"){
-      message = "Format email tidak valid.";
-    }
-
-    else if(error.code === "auth/requires-recent-login"){
-      message = "Silakan login kembali sebelum mengganti email.";
-    }
-
-    showMessage(message,"error");
-
-    button.disabled = false;
-    button.innerText = "Change Email";
-
+  if(error.code === "auth/wrong-password"){
+    message = "Password saat ini salah.";
   }
+
+  else if(error.code === "auth/invalid-credential"){
+    message = "Password saat ini salah atau kredensial tidak valid.";
+  }
+
+  else if(error.code === "auth/email-already-in-use"){
+    message = "Email tersebut sudah digunakan oleh akun lain.";
+  }
+
+  else if(error.code === "auth/invalid-email"){
+    message = "Format email tidak valid.";
+  }
+
+  else if(error.code === "auth/requires-recent-login"){
+    message = "Sesi login sudah terlalu lama. Silakan logout, login kembali, lalu coba lagi.";
+  }
+
+  else if(error.code === "auth/user-not-found"){
+    message = "Akun tidak ditemukan.";
+  }
+
+  else if(error.code === "auth/operation-not-allowed"){
+    message = "Perubahan email belum diizinkan di Firebase Authentication.";
+  }
+
+  else if(error.code === "auth/network-request-failed"){
+    message = "Koneksi ke Firebase gagal. Periksa internet.";
+  }
+
+  else if(error.code === "auth/too-many-requests"){
+    message = "Terlalu banyak percobaan. Coba lagi beberapa saat.";
+  }
+
+  else if(error.code === "auth/provider-already-linked"){
+    message = "Provider akun sudah terhubung.";
+  }
+
+  else if(error.code === "auth/invalid-user-token"){
+    message = "Sesi akun sudah tidak valid. Silakan login kembali.";
+  }
+
+  else if(error.message){
+    message = error.message;
+  }
+
+  showMessage(message,"error");
+
+  button.disabled = false;
+  button.innerText = "Change Email";
+
+}
 
 }
 
