@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Edit Account | Dynotic Distribution</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Outfit",sans-serif;
+}
+
+body{
+  background:#f1f2f7;
+  min-height:100vh;
+  color:#111;
+  padding-top:74px;
+}
+
+header{
+  padding:12px 20px;
+  display:flex;
+  align-items:center;
+  background:#fff;
+  border-bottom:1px solid #eee;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:1000;
+}
+
+header img{
+  height:50px;
+}
+
+.card{
+  width:90%;
+  max-width:600px;
+  margin:20px auto;
+  background:#fff;
+  border-radius:20px;
+  padding:25px;
+  border:1px solid #ececec;
+  box-shadow:0 8px 18px rgba(0,0,0,.05);
+}
+
+.card-header{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:22px;
+}
+
+.back{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  background:#f1f2f7;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-size:18px;
+}
+
+.title{
+  font-size:17px;
+  font-weight:700;
+}
+
+.input-group{
+  margin-bottom:16px;
+}
+
+label{
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:7px;
+}
+
+input{
+  width:100%;
+  padding:13px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  font-size:14px;
+  outline:none;
+  background:#f9f9f9;
+}
+
+input:focus{
+  border-color:#667eea;
+  background:#fff;
+}
+
+input[readonly]{
+  color:#777;
+  background:#f1f1f1;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:#111;
+  color:#fff;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  margin-top:5px;
+}
+
+button:active{
+  transform:scale(.97);
+}
+
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.message{
+  display:none;
+  margin-top:15px;
+  padding:12px 14px;
+  border-radius:12px;
+  font-size:13px;
+  line-height:1.5;
+}
+
+.info{
+  display:block;
+  background:#f1f2f7;
+  color:#555;
+  margin-bottom:18px;
+}
+
+.success{
+  background:#eaf8ef;
+  color:#187a3d;
+}
+
+.error{
+  background:#fff0f0;
+  color:#d93030;
+}
+
+.note{
+  margin-top:12px;
+  font-size:12px;
+  color:#777;
+  line-height:1.5;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <img src="../assets/dynotic-distribution.png" alt="Dynotic">
+</header>
+
+<div class="card">
+
+  <div class="card-header">
+    <div class="back" onclick="history.back()">‹</div>
+    <div class="title">Edit Account</div>
+  </div>
+
+  <div class="message info">
+    Email digunakan untuk login ke akun Dynotic. Mengganti email tidak akan menghapus ID, release, royalty, atau data akun lainnya.
+  </div>
+
+  <div class="input-group">
+    <label>Current Email</label>
+    <input id="currentEmail" type="email" readonly>
+  </div>
+
+  <div class="input-group">
+    <label>New Email</label>
+    <input id="newEmail" type="email" placeholder="Masukkan email baru" autocomplete="email">
+  </div>
+
+  <div class="input-group">
+    <label>Current Password</label>
+    <input id="password" type="password" placeholder="Masukkan password saat ini" autocomplete="current-password">
+  </div>
+
+  <button id="saveBtn" onclick="changeEmail()">
+    Change Email
+  </button>
+
+  <div id="message" class="message"></div>
+
+  <div class="note">
+    Untuk keamanan, password akun saat ini diperlukan sebelum email dapat diganti.
+  </div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+
+firebase.initializeApp({
+  apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain:"dynopay-2513c.firebaseapp.com",
+  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const auth = firebase.auth();
+const db = firebase.database();
+
+auth.onAuthStateChanged(user => {
+
+  if(!user){
+    location.href="../login";
+    return;
+  }
+
+  document.getElementById("currentEmail").value = user.email || "";
+
+});
+
+function showMessage(text,type){
+
+  const el = document.getElementById("message");
+
+  el.className = "message " + type;
+  el.innerText = text;
+  el.style.display = "block";
+
+}
+
+async function changeEmail(){
+
+  const user = auth.currentUser;
+
+  if(!user){
+    location.href="../login";
+    return;
+  }
+
+  const newEmail =
+    document.getElementById("newEmail").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
+  const button =
+    document.getElementById("saveBtn");
+
+  if(!newEmail){
+
+    showMessage(
+      "Masukkan email baru terlebih dahulu.",
+      "error"
+    );
+
+    return;
+  }
+
+  if(!password){
+
+    showMessage(
+      "Masukkan password akun kamu.",
+      "error"
+    );
+
+    return;
+  }
+
+  if(newEmail === user.email){
+
+    showMessage(
+      "Email baru sama dengan email saat ini.",
+      "error"
+    );
+
+    return;
+  }
+
+  button.disabled = true;
+  button.innerText = "Processing...";
+
+  try{
+
+    /*
+     * Re-authentication
+     * Memastikan perubahan email benar-benar
+     * dilakukan oleh pemilik akun.
+     */
+
+    const credential =
+      firebase.auth.EmailAuthProvider.credential(
+        user.email,
+        password
+      );
+
+    await user.reauthenticateWithCredential(credential);
+
+    /*
+     * Update email Firebase Authentication
+     */
+
+    await user.updateEmail(newEmail);
+
+    /*
+     * Tidak perlu memindahkan data release.
+     * UID tetap sama.
+     *
+     * Hanya jika email memang disimpan di
+     * users/{uid}, kita update field email.
+     */
+
+    await db.ref("users/" + user.uid).update({
+      email: newEmail
+    });
+
+    document.getElementById("currentEmail").value = newEmail;
+    document.getElementById("newEmail").value = "";
+    document.getElementById("password").value = "";
+
+    showMessage(
+      "Email berhasil diperbarui.",
+      "success"
+    );
+
+    button.innerText = "Email Updated";
+
+    setTimeout(() => {
+      window.location.href = "../account";
+    },1500);
+
+  }catch(error){
+
+    console.error(error);
+
+    let message =
+      "Gagal mengganti email. Silakan coba lagi.";
+
+    if(error.code === "auth/wrong-password"){
+      message = "Password saat ini salah.";
+    }
+
+    else if(error.code === "auth/invalid-credential"){
+      message = "Password saat ini salah atau kredensial sudah tidak valid.";
+    }
+
+    else if(error.code === "auth/email-already-in-use"){
+      message = "Email tersebut sudah digunakan oleh akun lain.";
+    }
+
+    else if(error.code === "auth/invalid-email"){
+      message = "Format email tidak valid.";
+    }
+
+    else if(error.code === "auth/requires-recent-login"){
+      message = "Silakan login kembali sebelum mengganti email.";
+    }
+
+    showMessage(message,"error");
+
+    button.disabled = false;
+    button.innerText = "Change Email";
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>
