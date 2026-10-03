@@ -36,7 +36,10 @@ input, select, button {
   outline: none;
   box-sizing: border-box;
 }
-input:focus, select:focus { border-color: #111; box-shadow: 0 0 6px rgba(0,0,0,.1); }
+input:focus, select:focus {
+  border-color: #111;
+  box-shadow: 0 0 6px rgba(0,0,0,.1);
+}
 
 button {
   cursor: pointer;
@@ -45,8 +48,13 @@ button {
   border-radius: 6px;
   outline: none;
 }
-button.register { background: #111; color: #fff; }
-button.register:hover { opacity: 0.9; }
+button.register {
+  background: #111;
+  color: #fff;
+}
+button.register:hover {
+  opacity: 0.9;
+}
 
 button.action-btn {
   background: #fff;
@@ -56,7 +64,10 @@ button.action-btn {
   margin-right: 4px;
   padding: 6px 10px;
 }
-button.action-btn:hover { background: #f0f0f0; }
+button.action-btn:hover {
+  background: #f0f0f0;
+}
+
 /* SALDO MODAL */
 .saldo-modal {
   display: none;
@@ -135,27 +146,34 @@ button.action-btn:hover { background: #f0f0f0; }
   color: #fff;
   border: none;
 }
+
 .table-container {
   max-height: 500px;
   overflow-y: auto;
   overflow-x: auto;
 }
+
 table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
   min-width: 600px;
 }
+
 th, td {
   text-align: left;
   padding: 8px 10px;
   border-bottom: 1px solid #eee;
 }
+
 th {
   background: #f9f9f9;
   font-weight: 600;
 }
-tr:hover { background: #f5f5f5; }
+
+tr:hover {
+  background: #f5f5f5;
+}
 
 .status-badge {
   padding: 2px 8px;
@@ -163,10 +181,24 @@ tr:hover { background: #f5f5f5; }
   font-weight: 600;
   font-size: 12px;
 }
-#msg {margin-top:6px;font-weight:600;}
 
-.menu-wrap { position: relative; display: inline-block; }
-.menu-btn { background: none; border: none; font-size: 18px; cursor: pointer; }
+#msg {
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+.menu-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
 .menu-dropdown {
   display: none;
   position: absolute;
@@ -178,6 +210,7 @@ tr:hover { background: #f5f5f5; }
   z-index: 99;
   box-shadow: 0 4px 10px rgba(0,0,0,.1);
 }
+
 .menu-dropdown button {
   width: 100%;
   border: none;
@@ -186,33 +219,69 @@ tr:hover { background: #f5f5f5; }
   font-size: 13px;
   text-align: left;
 }
-.menu-dropdown button:nth-child(2) { color:#ef4444; font-weight:700; }
-.menu-dropdown button:hover { background: #f5f5f5; }
+
+.menu-dropdown button:nth-child(2) {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.menu-dropdown button:hover {
+  background: #f5f5f5;
+}
 </style>
 </head>
+
 <body>
 
 <!-- ADD USER -->
 <div class="card">
   <h3>Add User</h3>
+
   <input id="newEmail" placeholder="Email">
+
   <input id="newName" placeholder="Name">
-  <input id="newPassword" placeholder="Password" type="password">
-  <input id="newBalance" placeholder="Balance">
+
+  <input
+    id="newPassword"
+    placeholder="Password"
+    type="password"
+  >
+
+  <input
+    id="newBalance"
+    placeholder="Balance"
+  >
+
   <select id="newStatus">
     <option value="active">Active</option>
     <option value="non-active">Non-Active</option>
   </select>
-  <button class="register" onclick="addUser()">Add User</button>
+
+  <button
+    class="register"
+    onclick="addUser()">
+    Add User
+  </button>
+
   <div id="msg"></div>
 </div>
 
+
 <!-- USERS TABLE -->
 <div class="card">
+
   <h3>Users</h3>
-  <input id="searchInput" placeholder="Search user..." style="margin-bottom:10px;">
+
+  <input
+    id="searchInput"
+    placeholder="Search user..."
+    style="margin-bottom:10px;"
+  >
+
   <div class="table-container">
+
     <table id="memberTable">
+
       <thead>
         <tr>
           <th>Name</th>
@@ -222,35 +291,72 @@ tr:hover { background: #f5f5f5; }
           <th>Action</th>
         </tr>
       </thead>
+
       <tbody></tbody>
+
     </table>
-    <div style="display:flex;justify-content:space-between;margin-top:10px">
-      <button onclick="loadMembers('prev')">Prev</button>
-      <button onclick="loadMembers('next')">Next</button>
+
+    <div
+      style="display:flex;justify-content:space-between;margin-top:10px">
+
+      <button onclick="loadMembers('prev')">
+        Prev
+      </button>
+
+      <button onclick="loadMembers('next')">
+        Next
+      </button>
+
     </div>
+
   </div>
 </div>
+
+
 <!-- EDIT SALDO MODAL -->
-<div id="saldoModal" class="saldo-modal">
+<div
+  id="saldoModal"
+  class="saldo-modal">
+
   <div class="saldo-box">
 
     <h3>Edit Saldo</h3>
-    <div style="font-size:13px;color:#777;">
+
+    <div
+      style="font-size:13px;color:#777;">
       Ubah saldo user
     </div>
 
     <div class="saldo-current">
+
       Saldo saat ini
-      <strong id="modalCurrentSaldo">Rp 0</strong>
+
+      <strong id="modalCurrentSaldo">
+        Rp 0
+      </strong>
+
     </div>
 
-    <label>Jenis perubahan</label>
+    <label>
+      Jenis perubahan
+    </label>
+
     <select id="saldoAction">
-      <option value="add">＋ Tambah Saldo</option>
-      <option value="subtract">－ Kurangi Saldo</option>
+
+      <option value="add">
+        ＋ Tambah Saldo
+      </option>
+
+      <option value="subtract">
+        － Kurangi Saldo
+      </option>
+
     </select>
 
-    <label>Nominal</label>
+    <label>
+      Nominal
+    </label>
+
     <input
       id="saldoAmount"
       type="number"
@@ -259,6 +365,7 @@ tr:hover { background: #f5f5f5; }
     >
 
     <div class="saldo-buttons">
+
       <button
         class="saldo-cancel"
         onclick="closeSaldoModal()">
@@ -270,568 +377,1445 @@ tr:hover { background: #f5f5f5; }
         onclick="saveSaldo()">
         Simpan
       </button>
+
     </div>
 
   </div>
 </div>
-  
+
+
 <script>
+
 firebase.initializeApp({
-  apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain:"dynopay-2513c.firebaseapp.com",
-  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+
+  apiKey:
+    "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+
+  authDomain:
+    "dynopay-2513c.firebaseapp.com",
+
+  databaseURL:
+    "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+
 });
 
-const auth = firebase.auth();
-const db = firebase.database();
-const secondaryApp = firebase.initializeApp(firebase.app().options, "Secondary");
-const secondaryAuth = secondaryApp.auth();
+
+const auth =
+  firebase.auth();
+
+const db =
+  firebase.database();
+
+
+const secondaryApp =
+  firebase.initializeApp(
+    firebase.app().options,
+    "Secondary"
+  );
+
+
+const secondaryAuth =
+  secondaryApp.auth();
+
 
 let isRegistering = false;
 
-// Auth check
+
+// =====================================================
+// AUTH CHECK
+// =====================================================
+
 auth.onAuthStateChanged(user => {
+
   if(isRegistering) return;
-  if(!user) { location.href="../admin"; return; }
-  db.ref("admins/"+user.uid).once("value").then(snapshot => {
-    if(!snapshot.exists()){ 
-      alert("⚠ Anda bukan admin!");
-      auth.signOut().then(()=>location.href="../admin");
-    }
-  }).catch(err => { console.error(err); auth.signOut().then(()=>location.href="../admin"); });
-});
 
-// ADD USER FUNCTION
-function addUser(){
-  if(isRegistering) return;
-  isRegistering = true;
-
-  const email = document.getElementById("newEmail").value.trim();
-  const name = document.getElementById("newName").value.trim();
-  const password = document.getElementById("newPassword").value.trim();
-  const balance = Number(document.getElementById("newBalance").value.trim());
-  const status = document.getElementById("newStatus").value;
-  const msg = document.getElementById("msg");
-
-  if(!email || !name || !password || isNaN(balance)){
-    msg.style.color="red"; msg.innerHTML="⚠ Semua field harus diisi dengan benar!";
-    isRegistering=false; return;
-  }
-
-  secondaryAuth.createUserWithEmailAndPassword(email,password)
-  .then(res=>{
-    const uid = res.user.uid;
-
-    // Kirim email verification
-    res.user.sendEmailVerification();
-
-    return db.ref("users/"+uid).set({
-      email: email,
-      nama: name,
-      saldo: balance,
-      status: status,
-      createdAt: Date.now()
-    });
-  })
-  .then(()=>{
-    msg.style.color="green"; msg.innerHTML="✔ User berhasil dibuat dan email verifikasi terkirim!";
-    ["newEmail","newName","newPassword","newBalance"].forEach(id=>document.getElementById(id).value="");
-    document.getElementById("newStatus").value="active";
-    secondaryAuth.signOut();
-    loadMembers();
-    isRegistering=false;
-  })
-  .catch(err=>{
-    msg.style.color="red"; msg.innerHTML="❌ "+err.message;
-    isRegistering=false;
-  });
-}
-
-// Pagination & Search
-let pageSize = 50;
-let firstKey = null;
-let lastKey = null;
-let pageStack = [];
-let searchTerm = "";
-
-// SEARCH
-document.getElementById("searchInput").addEventListener("input", e => {
-  searchTerm = e.target.value.trim().toLowerCase();
-
-  // Reset pagination
-  firstKey = null;
-  lastKey = null;
-  pageStack = [];
-
-  loadMembers();
-});
-
-
-// LOAD MEMBERS
-function loadMembers(direction = "init") {
-
-  const tbody = document.querySelector("#memberTable tbody");
-  tbody.innerHTML = "";
-
-  // =====================================================
-  // JIKA ADA PENCARIAN → CARI DI SELURUH USER
-  // =====================================================
-  if (searchTerm) {
-
-    db.ref("users").once("value").then(snap => {
-
-      if (!snap.exists()) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="5" style="text-align:center;">
-              User tidak ditemukan
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      let found = false;
-
-      snap.forEach(u => {
-
-        const d = u.val();
-
-        const namaLower = String(d.nama || "").toLowerCase();
-        const emailLower = String(d.email || "").toLowerCase();
-
-        // Cari berdasarkan nama ATAU email
-        if (
-          namaLower.includes(searchTerm) ||
-          emailLower.includes(searchTerm)
-        ) {
-
-          found = true;
-
-          const saldo = Number(d.saldo || 0);
-
-          const saldoFormatted =
-            "Rp " + saldo.toLocaleString("id-ID");
-
-          const statusLabel =
-            d.status === "active"
-              ? `<span class="status-badge"
-                   style="background:#34d399;color:#fff">
-                   Active
-                 </span>`
-              : `<span class="status-badge"
-                   style="background:#f87171;color:#fff">
-                   Non-Active
-                 </span>`;
-
-          const tr = document.createElement("tr");
-
-          tr.innerHTML = `
-            <td>${d.nama || "-"}</td>
-
-            <td>${d.email || "-"}</td>
-
-            <td>${saldoFormatted}</td>
-
-            <td>${statusLabel}</td>
-
-            <td style="display:flex;gap:6px;align-items:center">
-
-              <button
-                class="action-btn"
-                onclick="window.location.href='../admin-userdetail?uid=${u.key}'">
-                Detail
-              </button>
-
-              <div class="menu-wrap">
-
-                <button
-                  class="menu-btn"
-                  onclick="toggleMenu(this)">
-                  ⋮
-                </button>
-
-                <div class="menu-dropdown">
-
-                  <button
-                    onclick="toggleStatus('${u.key}', '${d.status}')">
-                    ${d.status === "active" ? "Disable" : "Activate"}
-                  </button>
-
-                  <button
-                    onclick="editSaldo('${u.key}')">
-                    Edit Saldo
-                  </button>
-
-                  <button
-                    onclick="deleteMember('${u.key}')">
-                    Hapus
-                  </button>
-
-                </div>
-
-              </div>
-
-            </td>
-          `;
-
-          tbody.appendChild(tr);
-        }
-      });
-
-
-      // Tidak ditemukan
-      if (!found) {
-
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="5"
-                style="text-align:center;padding:20px;">
-              User "<strong>${searchTerm}</strong>" tidak ditemukan
-            </td>
-          </tr>
-        `;
-
-      }
-
-    }).catch(err => {
-
-      console.error(err);
-
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="5"
-              style="text-align:center;color:red;">
-            Gagal mencari user
-          </td>
-        </tr>
-      `;
-
-    });
-
+  if(!user) {
+    location.href = "../admin";
     return;
   }
 
+  db.ref("admins/"+user.uid)
+    .once("value")
+    .then(snapshot => {
 
-  // =====================================================
-  // TIDAK ADA SEARCH → PAKAI PAGINATION NORMAL
-  // =====================================================
+      if(!snapshot.exists()){
 
-  let ref = db
-    .ref("users")
-    .orderByKey()
-    .limitToFirst(pageSize);
+        alert("⚠ Anda bukan admin!");
 
+        auth.signOut()
+          .then(() =>
+            location.href="../admin"
+          );
 
-  // NEXT
-  if (direction === "next" && lastKey) {
-
-    pageStack.push(firstKey);
-
-    ref = db
-      .ref("users")
-      .orderByKey()
-      .startAfter(lastKey)
-      .limitToFirst(pageSize);
-  }
-
-
-  // PREVIOUS
-  if (direction === "prev" && pageStack.length) {
-
-    const prevKey = pageStack.pop();
-
-    ref = db
-      .ref("users")
-      .orderByKey()
-      .startAt(prevKey)
-      .limitToFirst(pageSize);
-  }
-
-
-  ref.once("value").then(snap => {
-
-    if (!snap.exists()) {
-
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="5"
-              style="text-align:center;">
-            Tidak ada user
-          </td>
-        </tr>
-      `;
-
-      return;
-    }
-
-
-    let keys = [];
-
-
-    snap.forEach(u => {
-
-      const d = u.val();
-
-      keys.push(u.key);
-
-
-      const saldo =
-        Number(d.saldo || 0);
-
-      const saldoFormatted =
-        "Rp " + saldo.toLocaleString("id-ID");
-
-
-      const statusLabel =
-        d.status === "active"
-          ? `<span class="status-badge"
-               style="background:#34d399;color:#fff">
-               Active
-             </span>`
-          : `<span class="status-badge"
-               style="background:#f87171;color:#fff">
-               Non-Active
-             </span>`;
-
-
-      const tr = document.createElement("tr");
-
-
-      tr.innerHTML = `
-
-        <td>${d.nama || "-"}</td>
-
-        <td>${d.email || "-"}</td>
-
-        <td>${saldoFormatted}</td>
-
-        <td>${statusLabel}</td>
-
-        <td style="display:flex;gap:6px;align-items:center">
-
-          <button
-            class="action-btn"
-            onclick="window.location.href='../admin-userdetail?uid=${u.key}'">
-            Detail
-          </button>
-
-          <div class="menu-wrap">
-
-            <button
-              class="menu-btn"
-              onclick="toggleMenu(this)">
-              ⋮
-            </button>
-
-            <div class="menu-dropdown">
-
-              <button
-                onclick="toggleStatus('${u.key}', '${d.status}')">
-                ${d.status === "active"
-                  ? "Disable"
-                  : "Activate"}
-              </button>
-
-              <button
-                onclick="editSaldo('${u.key}')">
-                Edit Saldo
-              </button>
-
-              <button
-                onclick="deleteMember('${u.key}')">
-                Hapus
-              </button>
-
-            </div>
-
-          </div>
-
-        </td>
-      `;
-
-
-      tbody.appendChild(tr);
-
-    });
-
-
-    firstKey = keys[0];
-    lastKey = keys[keys.length - 1];
-
-  }).catch(err => {
-
-    console.error(err);
-
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="5"
-            style="text-align:center;color:red;">
-          Gagal memuat user
-        </td>
-      </tr>
-    `;
-
-  });
-}
-
-// Dropdown menu toggle
-function toggleMenu(btn){
-  document.querySelectorAll(".menu-dropdown").forEach(m=>{ if(m!==btn.nextElementSibling) m.style.display="none"; });
-  const menu=btn.nextElementSibling;
-  menu.style.display=menu.style.display==="block" ? "none" : "block";
-}
-document.addEventListener("click", e=>{ if(!e.target.closest(".menu-wrap")) document.querySelectorAll(".menu-dropdown").forEach(m=>m.style.display="none"); });
-
-// Edit saldo
-// EDIT SALDO MODAL
-let saldoEditingUid = null;
-let saldoCurrentValue = 0;
-
-function editSaldo(uid){
-
-  db.ref(`users/${uid}/saldo`).once("value")
-    .then(snap => {
-
-      saldoEditingUid = uid;
-      saldoCurrentValue = Number(snap.val() || 0);
-
-      document.getElementById("modalCurrentSaldo").textContent =
-        "Rp " + saldoCurrentValue.toLocaleString("id-ID");
-
-      document.getElementById("saldoAction").value = "add";
-      document.getElementById("saldoAmount").value = "";
-
-      document.getElementById("saldoModal").style.display = "flex";
-
-      setTimeout(() => {
-        document.getElementById("saldoAmount").focus();
-      }, 100);
+      }
 
     })
     .catch(err => {
+
       console.error(err);
-      alert("❌ Gagal mengambil saldo.");
+
+      auth.signOut()
+        .then(() =>
+          location.href="../admin"
+        );
+
     });
+
+});
+
+
+// =====================================================
+// ADD USER FUNCTION
+// =====================================================
+
+function addUser(){
+
+  if(isRegistering) return;
+
+  isRegistering = true;
+
+  const email =
+    document.getElementById("newEmail")
+      .value.trim();
+
+  const name =
+    document.getElementById("newName")
+      .value.trim();
+
+  const password =
+    document.getElementById("newPassword")
+      .value.trim();
+
+  const balance =
+    Number(
+      document.getElementById("newBalance")
+        .value.trim()
+    );
+
+  const status =
+    document.getElementById("newStatus")
+      .value;
+
+  const msg =
+    document.getElementById("msg");
+
+
+  if(
+    !email ||
+    !name ||
+    !password ||
+    isNaN(balance)
+  ){
+
+    msg.style.color="red";
+
+    msg.innerHTML =
+      "⚠ Semua field harus diisi dengan benar!";
+
+    isRegistering=false;
+
+    return;
+
+  }
+
+
+  secondaryAuth
+    .createUserWithEmailAndPassword(
+      email,
+      password
+    )
+
+    .then(res => {
+
+      const uid =
+        res.user.uid;
+
+
+      // Kirim email verification
+      res.user.sendEmailVerification();
+
+
+      return db
+        .ref("users/"+uid)
+        .set({
+
+          email: email,
+
+          nama: name,
+
+          saldo: balance,
+
+          status: status,
+
+          createdAt: Date.now()
+
+        });
+
+    })
+
+    .then(() => {
+
+      msg.style.color="green";
+
+      msg.innerHTML =
+        "✔ User berhasil dibuat dan email verifikasi terkirim!";
+
+
+      [
+        "newEmail",
+        "newName",
+        "newPassword",
+        "newBalance"
+      ].forEach(id =>
+        document.getElementById(id).value=""
+      );
+
+
+      document.getElementById(
+        "newStatus"
+      ).value="active";
+
+
+      secondaryAuth.signOut();
+
+      loadMembers();
+
+      isRegistering=false;
+
+    })
+
+    .catch(err => {
+
+      msg.style.color="red";
+
+      msg.innerHTML =
+        "❌ "+err.message;
+
+      isRegistering=false;
+
+    });
+
+}
+
+
+// =====================================================
+// PAGINATION & SEARCH
+// =====================================================
+
+let pageSize = 50;
+
+let firstKey = null;
+
+let lastKey = null;
+
+let pageStack = [];
+
+let searchTerm = "";
+
+
+// =====================================================
+// SEARCH
+// =====================================================
+
+document
+  .getElementById("searchInput")
+  .addEventListener("input", e => {
+
+    searchTerm =
+      e.target.value
+        .trim()
+        .toLowerCase();
+
+
+    // Reset pagination
+
+    firstKey = null;
+
+    lastKey = null;
+
+    pageStack = [];
+
+
+    loadMembers();
+
+  });
+
+
+// =====================================================
+// LOAD MEMBERS
+// =====================================================
+
+function loadMembers(
+  direction = "init"
+){
+
+  const tbody =
+    document.querySelector(
+      "#memberTable tbody"
+    );
+
+  tbody.innerHTML = "";
+
+
+  // =====================================================
+  // JIKA ADA PENCARIAN
+  // =====================================================
+
+  if(searchTerm){
+
+    db.ref("users")
+      .once("value")
+      .then(snap => {
+
+        if(!snap.exists()){
+
+          tbody.innerHTML = `
+            <tr>
+              <td
+                colspan="5"
+                style="text-align:center;">
+                User tidak ditemukan
+              </td>
+            </tr>
+          `;
+
+          return;
+
+        }
+
+
+        let found = false;
+
+
+        snap.forEach(u => {
+
+          const d =
+            u.val();
+
+
+          const namaLower =
+            String(
+              d.nama || ""
+            ).toLowerCase();
+
+
+          const emailLower =
+            String(
+              d.email || ""
+            ).toLowerCase();
+
+
+          // Cari berdasarkan nama ATAU email
+
+          if(
+            namaLower.includes(searchTerm) ||
+            emailLower.includes(searchTerm)
+          ){
+
+            found = true;
+
+
+            const saldo =
+              Number(
+                d.saldo || 0
+              );
+
+
+            const saldoFormatted =
+              "Rp " +
+              saldo.toLocaleString(
+                "id-ID"
+              );
+
+
+            const statusLabel =
+              d.status === "active"
+
+                ? `<span
+                     class="status-badge"
+                     style="background:#34d399;color:#fff">
+                     Active
+                   </span>`
+
+                : `<span
+                     class="status-badge"
+                     style="background:#f87171;color:#fff">
+                     Non-Active
+                   </span>`;
+
+
+            const tr =
+              document.createElement(
+                "tr"
+              );
+
+
+            tr.innerHTML = `
+
+              <td>
+                ${d.nama || "-"}
+              </td>
+
+              <td>
+                ${d.email || "-"}
+              </td>
+
+              <td>
+                ${saldoFormatted}
+              </td>
+
+              <td>
+                ${statusLabel}
+              </td>
+
+              <td
+                style="display:flex;gap:6px;align-items:center">
+
+                <button
+                  class="action-btn"
+                  onclick="window.location.href='../admin-userdetail?uid=${u.key}'">
+                  Detail
+                </button>
+
+
+                <div class="menu-wrap">
+
+                  <button
+                    class="menu-btn"
+                    onclick="toggleMenu(this)">
+                    ⋮
+                  </button>
+
+
+                  <div class="menu-dropdown">
+
+                    <button
+                      onclick="toggleStatus('${u.key}', '${d.status}')">
+                      ${
+                        d.status === "active"
+                          ? "Disable"
+                          : "Activate"
+                      }
+                    </button>
+
+
+                    <button
+                      onclick="editSaldo('${u.key}')">
+                      Edit Saldo
+                    </button>
+
+
+                    <button
+                      onclick="changeEmail('${u.key}', '${d.email || ""}')">
+                      Ganti Email
+                    </button>
+
+
+                    <button
+                      onclick="deleteMember('${u.key}')">
+                      Hapus
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </td>
+
+            `;
+
+
+            tbody.appendChild(tr);
+
+          }
+
+        });
+
+
+        // Tidak ditemukan
+
+        if(!found){
+
+          tbody.innerHTML = `
+
+            <tr>
+
+              <td
+                colspan="5"
+                style="text-align:center;padding:20px;">
+
+                User
+                "<strong>
+                  ${searchTerm}
+                </strong>"
+                tidak ditemukan
+
+              </td>
+
+            </tr>
+
+          `;
+
+        }
+
+      })
+
+      .catch(err => {
+
+        console.error(err);
+
+
+        tbody.innerHTML = `
+
+          <tr>
+
+            <td
+              colspan="5"
+              style="text-align:center;color:red;">
+
+              Gagal mencari user
+
+            </td>
+
+          </tr>
+
+        `;
+
+      });
+
+
+    return;
+
+  }
+
+
+  // =====================================================
+  // TIDAK ADA SEARCH
+  // =====================================================
+
+  let ref =
+    db
+      .ref("users")
+      .orderByKey()
+      .limitToFirst(pageSize);
+
+
+  // =====================================================
+  // NEXT
+  // =====================================================
+
+  if(
+    direction === "next" &&
+    lastKey
+  ){
+
+    pageStack.push(firstKey);
+
+
+    ref =
+      db
+        .ref("users")
+        .orderByKey()
+        .startAfter(lastKey)
+        .limitToFirst(pageSize);
+
+  }
+
+
+  // =====================================================
+  // PREVIOUS
+  // =====================================================
+
+  if(
+    direction === "prev" &&
+    pageStack.length
+  ){
+
+    const prevKey =
+      pageStack.pop();
+
+
+    ref =
+      db
+        .ref("users")
+        .orderByKey()
+        .startAt(prevKey)
+        .limitToFirst(pageSize);
+
+  }
+
+
+  ref.once("value")
+    .then(snap => {
+
+      if(!snap.exists()){
+
+        tbody.innerHTML = `
+
+          <tr>
+
+            <td
+              colspan="5"
+              style="text-align:center;">
+
+              Tidak ada user
+
+            </td>
+
+          </tr>
+
+        `;
+
+        return;
+
+      }
+
+
+      let keys = [];
+
+
+      snap.forEach(u => {
+
+        const d =
+          u.val();
+
+
+        keys.push(
+          u.key
+        );
+
+
+        const saldo =
+          Number(
+            d.saldo || 0
+          );
+
+
+        const saldoFormatted =
+          "Rp " +
+          saldo.toLocaleString(
+            "id-ID"
+          );
+
+
+        const statusLabel =
+          d.status === "active"
+
+            ? `<span
+                 class="status-badge"
+                 style="background:#34d399;color:#fff">
+                 Active
+               </span>`
+
+            : `<span
+                 class="status-badge"
+                 style="background:#f87171;color:#fff">
+                 Non-Active
+               </span>`;
+
+
+        const tr =
+          document.createElement(
+            "tr"
+          );
+
+
+        tr.innerHTML = `
+
+          <td>
+            ${d.nama || "-"}
+          </td>
+
+          <td>
+            ${d.email || "-"}
+          </td>
+
+          <td>
+            ${saldoFormatted}
+          </td>
+
+          <td>
+            ${statusLabel}
+          </td>
+
+          <td
+            style="display:flex;gap:6px;align-items:center">
+
+            <button
+              class="action-btn"
+              onclick="window.location.href='../admin-userdetail?uid=${u.key}'">
+              Detail
+            </button>
+
+
+            <div class="menu-wrap">
+
+              <button
+                class="menu-btn"
+                onclick="toggleMenu(this)">
+                ⋮
+              </button>
+
+
+              <div class="menu-dropdown">
+
+                <button
+                  onclick="toggleStatus('${u.key}', '${d.status}')">
+                  ${
+                    d.status === "active"
+                      ? "Disable"
+                      : "Activate"
+                  }
+                </button>
+
+
+                <button
+                  onclick="editSaldo('${u.key}')">
+                  Edit Saldo
+                </button>
+
+
+                <button
+                  onclick="changeEmail('${u.key}', '${d.email || ""}')">
+                  Ganti Email
+                </button>
+
+
+                <button
+                  onclick="deleteMember('${u.key}')">
+                  Hapus
+                </button>
+
+              </div>
+
+            </div>
+
+          </td>
+
+        `;
+
+
+        tbody.appendChild(tr);
+
+      });
+
+
+      firstKey =
+        keys[0];
+
+      lastKey =
+        keys[keys.length - 1];
+
+    })
+
+    .catch(err => {
+
+      console.error(err);
+
+
+      tbody.innerHTML = `
+
+        <tr>
+
+          <td
+            colspan="5"
+            style="text-align:center;color:red;">
+
+            Gagal memuat user
+
+          </td>
+
+        </tr>
+
+      `;
+
+    });
+
+}
+
+
+// =====================================================
+// DROPDOWN MENU TOGGLE
+// =====================================================
+
+function toggleMenu(btn){
+
+  document
+    .querySelectorAll(
+      ".menu-dropdown"
+    )
+    .forEach(m => {
+
+      if(
+        m !==
+        btn.nextElementSibling
+      ){
+
+        m.style.display =
+          "none";
+
+      }
+
+    });
+
+
+  const menu =
+    btn.nextElementSibling;
+
+
+  menu.style.display =
+    menu.style.display === "block"
+      ? "none"
+      : "block";
+
+}
+
+
+document.addEventListener(
+  "click",
+  e => {
+
+    if(
+      !e.target.closest(
+        ".menu-wrap"
+      )
+    ){
+
+      document
+        .querySelectorAll(
+          ".menu-dropdown"
+        )
+        .forEach(
+          m =>
+            m.style.display =
+              "none"
+        );
+
+    }
+
+  }
+);
+
+
+// =====================================================
+// EDIT SALDO
+// =====================================================
+
+let saldoEditingUid = null;
+
+let saldoCurrentValue = 0;
+
+
+function editSaldo(uid){
+
+  db.ref(
+    `users/${uid}/saldo`
+  )
+  .once("value")
+
+  .then(snap => {
+
+    saldoEditingUid =
+      uid;
+
+
+    saldoCurrentValue =
+      Number(
+        snap.val() || 0
+      );
+
+
+    document
+      .getElementById(
+        "modalCurrentSaldo"
+      )
+      .textContent =
+        "Rp " +
+        saldoCurrentValue
+          .toLocaleString(
+            "id-ID"
+          );
+
+
+    document
+      .getElementById(
+        "saldoAction"
+      )
+      .value =
+        "add";
+
+
+    document
+      .getElementById(
+        "saldoAmount"
+      )
+      .value =
+        "";
+
+
+    document
+      .getElementById(
+        "saldoModal"
+      )
+      .style.display =
+        "flex";
+
+
+    setTimeout(() => {
+
+      document
+        .getElementById(
+          "saldoAmount"
+        )
+        .focus();
+
+    }, 100);
+
+  })
+
+  .catch(err => {
+
+    console.error(err);
+
+    alert(
+      "❌ Gagal mengambil saldo."
+    );
+
+  });
+
 }
 
 
 function closeSaldoModal(){
 
-  document.getElementById("saldoModal").style.display = "none";
+  document
+    .getElementById(
+      "saldoModal"
+    )
+    .style.display =
+      "none";
 
-  saldoEditingUid = null;
-  saldoCurrentValue = 0;
 
-  document.getElementById("saldoAmount").value = "";
+  saldoEditingUid =
+    null;
+
+
+  saldoCurrentValue =
+    0;
+
+
+  document
+    .getElementById(
+      "saldoAmount"
+    )
+    .value =
+      "";
+
 }
 
 
 function saveSaldo(){
 
-  if(!saldoEditingUid) return;
+  if(!saldoEditingUid)
+    return;
+
 
   const action =
-    document.getElementById("saldoAction").value;
+    document
+      .getElementById(
+        "saldoAction"
+      )
+      .value;
+
 
   const amount =
-    Number(document.getElementById("saldoAmount").value);
+    Number(
+      document
+        .getElementById(
+          "saldoAmount"
+        )
+        .value
+    );
 
-  if(!amount || amount <= 0 || isNaN(amount)){
-    alert("⚠ Nominal harus lebih dari 0.");
+
+  if(
+    !amount ||
+    amount <= 0 ||
+    isNaN(amount)
+  ){
+
+    alert(
+      "⚠ Nominal harus lebih dari 0."
+    );
+
     return;
+
   }
+
 
   let newSaldo;
 
+
   if(action === "add"){
-    newSaldo = saldoCurrentValue + amount;
+
+    newSaldo =
+      saldoCurrentValue +
+      amount;
+
   }else{
-    newSaldo = saldoCurrentValue - amount;
+
+    newSaldo =
+      saldoCurrentValue -
+      amount;
+
   }
+
 
   if(newSaldo < 0){
 
     alert(
+
       "⚠ Saldo tidak mencukupi.\n\n" +
+
       "Saldo saat ini: Rp " +
-      saldoCurrentValue.toLocaleString("id-ID") +
+
+      saldoCurrentValue
+        .toLocaleString(
+          "id-ID"
+        ) +
+
       "\n" +
+
       "Yang dikurangi: Rp " +
-      amount.toLocaleString("id-ID")
+
+      amount
+        .toLocaleString(
+          "id-ID"
+        )
+
     );
 
     return;
+
   }
+
 
   const actionText =
     action === "add"
       ? "menambahkan"
       : "mengurangi";
 
+
   if(!confirm(
+
     "Konfirmasi perubahan saldo\n\n" +
+
     "Saldo saat ini: Rp " +
-    saldoCurrentValue.toLocaleString("id-ID") +
+
+    saldoCurrentValue
+      .toLocaleString(
+        "id-ID"
+      ) +
+
     "\n" +
-    (action === "add" ? "＋ Tambah: Rp " : "－ Kurangi: Rp ") +
-    amount.toLocaleString("id-ID") +
+
+    (
+      action === "add"
+        ? "＋ Tambah: Rp "
+        : "－ Kurangi: Rp "
+    ) +
+
+    amount
+      .toLocaleString(
+        "id-ID"
+      ) +
+
     "\n" +
+
     "Saldo setelah perubahan: Rp " +
-    newSaldo.toLocaleString("id-ID") +
+
+    newSaldo
+      .toLocaleString(
+        "id-ID"
+      ) +
+
     "\n\n" +
+
     "Lanjutkan?"
+
   )) return;
 
-  db.ref(`users/${saldoEditingUid}/saldo`)
-    .set(newSaldo)
-    .then(() => {
 
-      closeSaldoModal();
+  db.ref(
+    `users/${saldoEditingUid}/saldo`
+  )
+  .set(newSaldo)
+
+  .then(() => {
+
+    closeSaldoModal();
+
+
+    alert(
+
+      "✔ Berhasil " +
+
+      actionText +
+
+      " saldo.\n\n" +
+
+      "Saldo sekarang: Rp " +
+
+      newSaldo
+        .toLocaleString(
+          "id-ID"
+        )
+
+    );
+
+
+    loadMembers();
+
+  })
+
+  .catch(err => {
+
+    console.error(err);
+
+    alert(
+      "❌ Gagal memperbarui saldo."
+    );
+
+  });
+
+}
+
+
+// =====================================================
+// TOGGLE STATUS
+// =====================================================
+
+function toggleStatus(
+  uid,
+  currentStatus
+){
+
+  const newStatus =
+    currentStatus === "active"
+      ? "non-active"
+      : "active";
+
+
+  db.ref(
+    `users/${uid}/status`
+  )
+  .set(newStatus)
+
+  .then(() => {
+
+    alert(
+      `✔ User status changed to ${newStatus}`
+    );
+
+    loadMembers();
+
+  });
+
+}
+
+
+// =====================================================
+// DELETE MEMBER
+// =====================================================
+
+function deleteMember(uid){
+
+  if(
+    confirm(
+      "Apakah yakin ingin menghapus member ini?"
+    )
+  ){
+
+    db.ref(
+      `users/${uid}`
+    )
+    .remove()
+
+    .then(() =>
+      loadMembers()
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// RESET PASSWORD
+// =====================================================
+
+function resetPassword(email){
+
+  if(!email){
+
+    alert(
+      "Email tidak ditemukan"
+    );
+
+    return;
+
+  }
+
+
+  if(
+    !confirm(
+      `Kirim reset password ke:\n${email} ?`
+    )
+  ) return;
+
+
+  firebase.auth()
+    .sendPasswordResetEmail(
+      email
+    )
+
+    .then(() =>
+      alert(
+        "✔ Email reset password berhasil dikirim"
+      )
+    )
+
+    .catch(err =>
+      alert(
+        "❌ " +
+        err.message
+      )
+    );
+
+}
+
+
+// =====================================================
+// GANTI EMAIL USER
+// =====================================================
+
+async function changeEmail(
+  uid,
+  currentEmail
+){
+
+  const newEmail =
+    prompt(
+
+      "Email saat ini:\n" +
+
+      (currentEmail || "-") +
+
+      "\n\nMasukkan email baru:"
+
+    );
+
+
+  if(newEmail === null)
+    return;
+
+
+  const email =
+    newEmail
+      .trim()
+      .toLowerCase();
+
+
+  if(!email){
+
+    alert(
+      "⚠ Email baru wajib diisi."
+    );
+
+    return;
+
+  }
+
+
+  const emailRegex =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+  if(
+    !emailRegex.test(email)
+  ){
+
+    alert(
+      "⚠ Format email tidak valid."
+    );
+
+    return;
+
+  }
+
+
+  if(
+    email ===
+    String(
+      currentEmail || ""
+    )
+      .trim()
+      .toLowerCase()
+  ){
+
+    alert(
+      "⚠ Email baru sama dengan email sekarang."
+    );
+
+    return;
+
+  }
+
+
+  if(
+    !confirm(
+
+      "Ganti email akun ini?\n\n" +
+
+      "Email lama:\n" +
+
+      (currentEmail || "-") +
+
+      "\n\n" +
+
+      "Email baru:\n" +
+
+      email +
+
+      "\n\n" +
+
+      "UID akun tidak akan berubah."
+
+    )
+  ) return;
+
+
+  try{
+
+    const adminUser =
+      firebase.auth()
+        .currentUser;
+
+
+    if(!adminUser){
 
       alert(
-        "✔ Berhasil " +
-        actionText +
-        " saldo.\n\n" +
-        "Saldo sekarang: Rp " +
-        newSaldo.toLocaleString("id-ID")
+        "❌ Sesi admin tidak ditemukan.\n" +
+        "Silakan login ulang."
       );
 
-      loadMembers();
+      return;
 
-    })
-    .catch(err => {
+    }
 
-      console.error(err);
 
-      alert("❌ Gagal memperbarui saldo.");
+    const idToken =
+      await adminUser
+        .getIdToken(true);
 
-    });
+
+    const response =
+      await fetch(
+
+        "https://dynotic-auth-admin.dynotic-bot.workers.dev",
+
+        {
+
+          method: "POST",
+
+          headers: {
+
+            "Content-Type":
+              "application/json",
+
+            "Authorization":
+              `Bearer ${idToken}`
+
+          },
+
+          body:
+            JSON.stringify({
+
+              uid: uid,
+
+              newEmail: email
+
+            })
+
+        }
+
+      );
+
+
+    const result =
+      await response.json();
+
+
+    if(
+      !response.ok ||
+      !result.success
+    ){
+
+      throw new Error(
+
+        result.error ||
+        "Gagal mengubah email."
+
+      );
+
+    }
+
+
+    alert(
+
+      "✔ Email berhasil diubah!\n\n" +
+
+      "Email baru:\n" +
+
+      email
+
+    );
+
+
+    loadMembers();
+
+
+  }catch(err){
+
+    console.error(
+      "Change email error:",
+      err
+    );
+
+
+    alert(
+
+      "❌ Gagal mengubah email.\n\n" +
+
+      (
+        err.message ||
+        "Terjadi kesalahan."
+      )
+
+    );
+
+  }
+
 }
-function toggleStatus(uid, currentStatus){
-  const newStatus = currentStatus === 'active' ? 'non-active' : 'active';
-  db.ref(`users/${uid}/status`).set(newStatus)
-    .then(()=>{
-      
-      alert(`✔ User status changed to ${newStatus}`);
-      loadMembers();
-    });
-}
-// Delete member
-function deleteMember(uid){
-  if(confirm("Apakah yakin ingin menghapus member ini?")) db.ref(`users/${uid}`).remove().then(()=>loadMembers());
-}
 
-// Reset password
-function resetPassword(email){
-  if(!email){ alert("Email tidak ditemukan"); return; }
-  if(!confirm(`Kirim reset password ke:\n${email} ?`)) return;
-  firebase.auth().sendPasswordResetEmail(email).then(()=>alert("✔ Email reset password berhasil dikirim"))
-    .catch(err=>alert("❌ "+err.message));
-}
 
-// Initial load
+// =====================================================
+// INITIAL LOAD
+// =====================================================
+
 loadMembers();
+
 </script>
+
 </body>
 </html>
