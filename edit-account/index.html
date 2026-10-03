@@ -314,8 +314,15 @@ async function changeEmail(){
      * Update email Firebase Authentication
      */
 
-    await user.updateEmail(newEmail);
-
+    try {
+  await user.updateEmail(newEmail);
+  console.log("EMAIL BERHASIL DIUBAH");
+} catch (error) {
+  console.log("UPDATE EMAIL ERROR");
+  console.log("CODE:", error.code);
+  console.log("MESSAGE:", error.message);
+  throw error;
+}
     /*
      * Tidak perlu memindahkan data release.
      * UID tetap sama.
