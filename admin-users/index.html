@@ -1,24 +1,35 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
 <title>Users | Dynotic Admin</title>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
 <style>
+
 body {
   font-family: 'Outfit', sans-serif;
   background: #f1f2f7;
   margin: 0;
   padding: 15px;
 }
+
 h3 {
   margin-bottom: 8px;
   font-size: 18px;
   color: #111;
 }
+
 .card {
   background: #fff;
   padding: 15px;
@@ -26,7 +37,10 @@ h3 {
   margin-bottom: 15px;
   box-shadow: 0 3px 10px rgba(0,0,0,.05);
 }
-input, select, button {
+
+input,
+select,
+button {
   width: 100%;
   padding: 12px;
   margin-top: 8px;
@@ -36,7 +50,9 @@ input, select, button {
   outline: none;
   box-sizing: border-box;
 }
-input:focus, select:focus {
+
+input:focus,
+select:focus {
   border-color: #111;
   box-shadow: 0 0 6px rgba(0,0,0,.1);
 }
@@ -48,10 +64,12 @@ button {
   border-radius: 6px;
   outline: none;
 }
+
 button.register {
   background: #111;
   color: #fff;
 }
+
 button.register:hover {
   opacity: 0.9;
 }
@@ -64,11 +82,16 @@ button.action-btn {
   margin-right: 4px;
   padding: 6px 10px;
 }
+
 button.action-btn:hover {
   background: #f0f0f0;
 }
 
-/* SALDO MODAL */
+
+/* =====================================================
+   SALDO MODAL
+===================================================== */
+
 .saldo-modal {
   display: none;
   position: fixed;
@@ -147,6 +170,11 @@ button.action-btn:hover {
   border: none;
 }
 
+
+/* =====================================================
+   TABLE
+===================================================== */
+
 .table-container {
   max-height: 500px;
   overflow-y: auto;
@@ -160,7 +188,8 @@ table {
   min-width: 600px;
 }
 
-th, td {
+th,
+td {
   text-align: left;
   padding: 8px 10px;
   border-bottom: 1px solid #eee;
@@ -182,10 +211,20 @@ tr:hover {
   font-size: 12px;
 }
 
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
 #msg {
   margin-top: 6px;
   font-weight: 600;
 }
+
+
+/* =====================================================
+   MENU
+===================================================== */
 
 .menu-wrap {
   position: relative;
@@ -220,7 +259,7 @@ tr:hover {
   text-align: left;
 }
 
-.menu-dropdown button:nth-child(2) {
+.menu-dropdown button:nth-child(4) {
   color: #ef4444;
   font-weight: 700;
 }
@@ -228,18 +267,31 @@ tr:hover {
 .menu-dropdown button:hover {
   background: #f5f5f5;
 }
+
 </style>
+
 </head>
 
 <body>
 
-<!-- ADD USER -->
+
+<!-- =====================================================
+     ADD USER
+===================================================== -->
+
 <div class="card">
+
   <h3>Add User</h3>
 
-  <input id="newEmail" placeholder="Email">
+  <input
+    id="newEmail"
+    placeholder="Email"
+  >
 
-  <input id="newName" placeholder="Name">
+  <input
+    id="newName"
+    placeholder="Name"
+  >
 
   <input
     id="newPassword"
@@ -253,21 +305,33 @@ tr:hover {
   >
 
   <select id="newStatus">
-    <option value="active">Active</option>
-    <option value="non-active">Non-Active</option>
+
+    <option value="active">
+      Active
+    </option>
+
+    <option value="non-active">
+      Non-Active
+    </option>
+
   </select>
 
   <button
     class="register"
-    onclick="addUser()">
+    onclick="addUser()"
+  >
     Add User
   </button>
 
   <div id="msg"></div>
+
 </div>
 
 
-<!-- USERS TABLE -->
+<!-- =====================================================
+     USERS TABLE
+===================================================== -->
+
 <div class="card">
 
   <h3>Users</h3>
@@ -283,47 +347,86 @@ tr:hover {
     <table id="memberTable">
 
       <thead>
+
         <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Balance</th>
-          <th>Status</th>
-          <th>Action</th>
+
+          <th>
+            Name
+          </th>
+
+          <th>
+            Email
+          </th>
+
+          <th>
+            Balance
+          </th>
+
+          <th>
+            Status
+          </th>
+
+          <th>
+            Action
+          </th>
+
         </tr>
+
       </thead>
 
       <tbody></tbody>
 
     </table>
 
-    <div
-      style="display:flex;justify-content:space-between;margin-top:10px">
 
-      <button onclick="loadMembers('prev')">
+    <div
+      style="
+        display:flex;
+        justify-content:space-between;
+        margin-top:10px;
+      "
+    >
+
+      <button
+        onclick="loadMembers('prev')"
+      >
         Prev
       </button>
 
-      <button onclick="loadMembers('next')">
+      <button
+        onclick="loadMembers('next')"
+      >
         Next
       </button>
 
     </div>
 
   </div>
+
 </div>
 
 
-<!-- EDIT SALDO MODAL -->
+<!-- =====================================================
+     EDIT SALDO MODAL
+===================================================== -->
+
 <div
   id="saldoModal"
-  class="saldo-modal">
+  class="saldo-modal"
+>
 
   <div class="saldo-box">
 
-    <h3>Edit Saldo</h3>
+    <h3>
+      Edit Saldo
+    </h3>
 
     <div
-      style="font-size:13px;color:#777;">
+      style="
+        font-size:13px;
+        color:#777;
+      "
+    >
       Ubah saldo user
     </div>
 
@@ -368,23 +471,31 @@ tr:hover {
 
       <button
         class="saldo-cancel"
-        onclick="closeSaldoModal()">
+        onclick="closeSaldoModal()"
+      >
         Batal
       </button>
 
       <button
         class="saldo-save"
-        onclick="saveSaldo()">
+        onclick="saveSaldo()"
+      >
         Simpan
       </button>
 
     </div>
 
   </div>
+
 </div>
 
 
 <script>
+
+
+/* =====================================================
+   FIREBASE
+===================================================== */
 
 firebase.initializeApp({
 
@@ -403,9 +514,14 @@ firebase.initializeApp({
 const auth =
   firebase.auth();
 
+
 const db =
   firebase.database();
 
+
+/* =====================================================
+   SECONDARY FIREBASE APP
+===================================================== */
 
 const secondaryApp =
   firebase.initializeApp(
@@ -418,101 +534,150 @@ const secondaryAuth =
   secondaryApp.auth();
 
 
-let isRegistering = false;
+let isRegistering =
+  false;
 
 
-// =====================================================
-// AUTH CHECK
-// =====================================================
+/* =====================================================
+   AUTH CHECK
+===================================================== */
 
-auth.onAuthStateChanged(user => {
+auth.onAuthStateChanged(
+  user => {
 
-  if(isRegistering) return;
+    if (isRegistering) {
+      return;
+    }
 
-  if(!user) {
-    location.href = "../admin";
-    return;
-  }
 
-  db.ref("admins/"+user.uid)
+    if (!user) {
+
+      location.href =
+        "../admin";
+
+      return;
+
+    }
+
+
+    db.ref(
+      "admins/" + user.uid
+    )
     .once("value")
-    .then(snapshot => {
 
-      if(!snapshot.exists()){
+    .then(
+      snapshot => {
 
-        alert("⚠ Anda bukan admin!");
+        if (!snapshot.exists()) {
+
+          alert(
+            "⚠ Anda bukan admin!"
+          );
+
+          auth.signOut()
+            .then(
+              () =>
+                location.href =
+                  "../admin"
+            );
+
+        }
+
+      }
+    )
+
+    .catch(
+      err => {
+
+        console.error(
+          err
+        );
 
         auth.signOut()
-          .then(() =>
-            location.href="../admin"
+          .then(
+            () =>
+              location.href =
+                "../admin"
           );
 
       }
+    );
 
-    })
-    .catch(err => {
-
-      console.error(err);
-
-      auth.signOut()
-        .then(() =>
-          location.href="../admin"
-        );
-
-    });
-
-});
+  }
+);
 
 
-// =====================================================
-// ADD USER FUNCTION
-// =====================================================
+/* =====================================================
+   ADD USER
+===================================================== */
 
-function addUser(){
+function addUser() {
 
-  if(isRegistering) return;
+  if (isRegistering) {
+    return;
+  }
 
-  isRegistering = true;
+
+  isRegistering =
+    true;
+
 
   const email =
-    document.getElementById("newEmail")
-      .value.trim();
+    document
+      .getElementById("newEmail")
+      .value
+      .trim();
+
 
   const name =
-    document.getElementById("newName")
-      .value.trim();
+    document
+      .getElementById("newName")
+      .value
+      .trim();
+
 
   const password =
-    document.getElementById("newPassword")
-      .value.trim();
+    document
+      .getElementById("newPassword")
+      .value
+      .trim();
+
 
   const balance =
     Number(
-      document.getElementById("newBalance")
-        .value.trim()
+      document
+        .getElementById("newBalance")
+        .value
+        .trim()
     );
 
+
   const status =
-    document.getElementById("newStatus")
+    document
+      .getElementById("newStatus")
       .value;
 
+
   const msg =
-    document.getElementById("msg");
+    document
+      .getElementById("msg");
 
 
-  if(
+  if (
     !email ||
     !name ||
     !password ||
     isNaN(balance)
-  ){
+  ) {
 
-    msg.style.color="red";
+    msg.style.color =
+      "red";
 
     msg.innerHTML =
       "⚠ Semua field harus diisi dengan benar!";
 
-    isRegistering=false;
+    isRegistering =
+      false;
 
     return;
 
@@ -520,163 +685,583 @@ function addUser(){
 
 
   secondaryAuth
+
     .createUserWithEmailAndPassword(
       email,
       password
     )
 
-    .then(res => {
+    .then(
+      res => {
 
-      const uid =
-        res.user.uid;
-
-
-      // Kirim email verification
-      res.user.sendEmailVerification();
+        const uid =
+          res.user.uid;
 
 
-      return db
-        .ref("users/"+uid)
-        .set({
+        /*
+         * Kirim email verification
+         */
 
-          email: email,
-
-          nama: name,
-
-          saldo: balance,
-
-          status: status,
-
-          createdAt: Date.now()
-
-        });
-
-    })
-
-    .then(() => {
-
-      msg.style.color="green";
-
-      msg.innerHTML =
-        "✔ User berhasil dibuat dan email verifikasi terkirim!";
+        res.user
+          .sendEmailVerification();
 
 
-      [
-        "newEmail",
-        "newName",
-        "newPassword",
-        "newBalance"
-      ].forEach(id =>
-        document.getElementById(id).value=""
-      );
+        return db
+          .ref(
+            "users/" + uid
+          )
+          .set({
+
+            email:
+              email,
+
+            nama:
+              name,
+
+            saldo:
+              balance,
+
+            status:
+              status,
+
+            createdAt:
+              Date.now()
+
+          });
+
+      }
+    )
+
+    .then(
+      () => {
+
+        msg.style.color =
+          "green";
 
 
-      document.getElementById(
-        "newStatus"
-      ).value="active";
+        msg.innerHTML =
+          "✔ User berhasil dibuat dan email verifikasi terkirim!";
 
 
-      secondaryAuth.signOut();
+        [
+          "newEmail",
+          "newName",
+          "newPassword",
+          "newBalance"
+        ]
+        .forEach(
+          id =>
+            document
+              .getElementById(id)
+              .value = ""
+        );
 
-      loadMembers();
 
-      isRegistering=false;
+        document
+          .getElementById(
+            "newStatus"
+          )
+          .value =
+          "active";
 
-    })
 
-    .catch(err => {
+        secondaryAuth
+          .signOut();
 
-      msg.style.color="red";
 
-      msg.innerHTML =
-        "❌ "+err.message;
+        loadMembers();
 
-      isRegistering=false;
 
-    });
+        isRegistering =
+          false;
+
+      }
+    )
+
+    .catch(
+      err => {
+
+        msg.style.color =
+          "red";
+
+
+        msg.innerHTML =
+          "❌ " + err.message;
+
+
+        isRegistering =
+          false;
+
+      }
+    );
 
 }
 
 
-// =====================================================
-// PAGINATION & SEARCH
-// =====================================================
+/* =====================================================
+   PAGINATION
+===================================================== */
 
-let pageSize = 50;
+let pageSize =
+  50;
 
-let firstKey = null;
+let firstKey =
+  null;
 
-let lastKey = null;
+let lastKey =
+  null;
 
-let pageStack = [];
+let pageStack =
+  [];
 
-let searchTerm = "";
+let searchTerm =
+  "";
 
 
-// =====================================================
-// SEARCH
-// =====================================================
+/* =====================================================
+   SEARCH
+===================================================== */
 
 document
-  .getElementById("searchInput")
-  .addEventListener("input", e => {
+  .getElementById(
+    "searchInput"
+  )
+  .addEventListener(
+    "input",
+    e => {
 
-    searchTerm =
-      e.target.value
-        .trim()
-        .toLowerCase();
-
-
-    // Reset pagination
-
-    firstKey = null;
-
-    lastKey = null;
-
-    pageStack = [];
+      searchTerm =
+        e.target.value
+          .trim()
+          .toLowerCase();
 
 
-    loadMembers();
+      firstKey =
+        null;
 
-  });
+      lastKey =
+        null;
+
+      pageStack =
+        [];
 
 
-// =====================================================
-// LOAD MEMBERS
-// =====================================================
+      loadMembers();
+
+    }
+  );
+
+
+/* =====================================================
+   LOAD MEMBERS
+===================================================== */
 
 function loadMembers(
   direction = "init"
-){
+) {
 
   const tbody =
     document.querySelector(
       "#memberTable tbody"
     );
 
-  tbody.innerHTML = "";
+
+  tbody.innerHTML =
+    "";
 
 
-  // =====================================================
-  // JIKA ADA PENCARIAN
-  // =====================================================
+  /* ===================================================
+     SEARCH
+  =================================================== */
 
-  if(searchTerm){
+  if (searchTerm) {
 
     db.ref("users")
       .once("value")
-      .then(snap => {
 
-        if(!snap.exists()){
+      .then(
+        snap => {
+
+          if (!snap.exists()) {
+
+            tbody.innerHTML = `
+
+              <tr>
+
+                <td
+                  colspan="5"
+                  style="text-align:center;"
+                >
+                  User tidak ditemukan
+                </td>
+
+              </tr>
+
+            `;
+
+            return;
+
+          }
+
+
+          let found =
+            false;
+
+
+          snap.forEach(
+            u => {
+
+              const d =
+                u.val();
+
+
+              const namaLower =
+                String(
+                  d.nama || ""
+                )
+                .toLowerCase();
+
+
+              const emailLower =
+                String(
+                  d.email || ""
+                )
+                .toLowerCase();
+
+
+              if (
+                namaLower.includes(
+                  searchTerm
+                ) ||
+                emailLower.includes(
+                  searchTerm
+                )
+              ) {
+
+                found =
+                  true;
+
+
+                const saldo =
+                  Number(
+                    d.saldo || 0
+                  );
+
+
+                const saldoFormatted =
+                  "Rp " +
+                  saldo.toLocaleString(
+                    "id-ID"
+                  );
+
+
+                const statusLabel =
+                  d.status === "active"
+
+                    ? `
+                      <span
+                        class="status-badge"
+                        style="
+                          background:#34d399;
+                          color:#fff
+                        "
+                      >
+                        Active
+                      </span>
+                    `
+
+                    : `
+                      <span
+                        class="status-badge"
+                        style="
+                          background:#f87171;
+                          color:#fff
+                        "
+                      >
+                        Non-Active
+                      </span>
+                    `;
+
+
+                const tr =
+                  document.createElement(
+                    "tr"
+                  );
+
+
+                tr.innerHTML = `
+
+                  <td>
+                    ${d.nama || "-"}
+                  </td>
+
+                  <td>
+                    ${d.email || "-"}
+                  </td>
+
+                  <td>
+                    ${saldoFormatted}
+                  </td>
+
+                  <td>
+                    ${statusLabel}
+                  </td>
+
+                  <td
+                    style="
+                      display:flex;
+                      gap:6px;
+                      align-items:center
+                    "
+                  >
+
+                    <button
+                      class="action-btn"
+                      onclick="
+                        window.location.href=
+                        '../admin-userdetail?uid=${u.key}'
+                      "
+                    >
+                      Detail
+                    </button>
+
+
+                    <div class="menu-wrap">
+
+                      <button
+                        class="menu-btn"
+                        onclick="toggleMenu(this)"
+                      >
+                        ⋮
+                      </button>
+
+
+                      <div
+                        class="menu-dropdown"
+                      >
+
+                        <button
+                          onclick="
+                            toggleStatus(
+                              '${u.key}',
+                              '${d.status}'
+                            )
+                          "
+                        >
+                          ${
+                            d.status === "active"
+                              ? "Disable"
+                              : "Activate"
+                          }
+                        </button>
+
+
+                        <button
+                          onclick="
+                            editSaldo(
+                              '${u.key}'
+                            )
+                          "
+                        >
+                          Edit Saldo
+                        </button>
+
+
+                        <button
+                          onclick="
+                            changeEmail(
+                              '${u.key}',
+                              '${d.email || ""}'
+                            )
+                          "
+                        >
+                          Ganti Email
+                        </button>
+
+
+                        <button
+                          onclick="
+                            deleteMember(
+                              '${u.key}'
+                            )
+                          "
+                        >
+                          Hapus
+                        </button>
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+                `;
+
+
+                tbody.appendChild(
+                  tr
+                );
+
+              }
+
+            }
+          );
+
+
+          if (!found) {
+
+            tbody.innerHTML = `
+
+              <tr>
+
+                <td
+                  colspan="5"
+                  style="
+                    text-align:center;
+                    padding:20px;
+                  "
+                >
+
+                  User
+                  "<strong>
+                    ${searchTerm}
+                  </strong>"
+                  tidak ditemukan
+
+                </td>
+
+              </tr>
+
+            `;
+
+          }
+
+        }
+      )
+
+      .catch(
+        err => {
+
+          console.error(
+            err
+          );
+
 
           tbody.innerHTML = `
+
             <tr>
+
               <td
                 colspan="5"
-                style="text-align:center;">
-                User tidak ditemukan
+                style="
+                  text-align:center;
+                  color:red;
+                "
+              >
+                Gagal mencari user
               </td>
+
             </tr>
+
+          `;
+
+        }
+      );
+
+
+    return;
+
+  }
+
+
+  /* ===================================================
+     NORMAL LOAD
+  =================================================== */
+
+  let ref =
+    db
+      .ref("users")
+      .orderByKey()
+      .limitToFirst(
+        pageSize
+      );
+
+
+  /* ===================================================
+     NEXT
+  =================================================== */
+
+  if (
+    direction === "next" &&
+    lastKey
+  ) {
+
+    pageStack.push(
+      firstKey
+    );
+
+
+    ref =
+      db
+        .ref("users")
+        .orderByKey()
+        .startAfter(
+          lastKey
+        )
+        .limitToFirst(
+          pageSize
+        );
+
+  }
+
+
+  /* ===================================================
+     PREVIOUS
+  =================================================== */
+
+  if (
+    direction === "prev" &&
+    pageStack.length
+  ) {
+
+    const prevKey =
+      pageStack.pop();
+
+
+    ref =
+      db
+        .ref("users")
+        .orderByKey()
+        .startAt(
+          prevKey
+        )
+        .limitToFirst(
+          pageSize
+        );
+
+  }
+
+
+  ref.once("value")
+
+    .then(
+      snap => {
+
+        if (!snap.exists()) {
+
+          tbody.innerHTML = `
+
+            <tr>
+
+              <td
+                colspan="5"
+                style="text-align:center;"
+              >
+                Tidak ada user
+              </td>
+
+            </tr>
+
           `;
 
           return;
@@ -684,35 +1269,20 @@ function loadMembers(
         }
 
 
-        let found = false;
+        let keys =
+          [];
 
 
-        snap.forEach(u => {
+        snap.forEach(
+          u => {
 
-          const d =
-            u.val();
-
-
-          const namaLower =
-            String(
-              d.nama || ""
-            ).toLowerCase();
+            const d =
+              u.val();
 
 
-          const emailLower =
-            String(
-              d.email || ""
-            ).toLowerCase();
-
-
-          // Cari berdasarkan nama ATAU email
-
-          if(
-            namaLower.includes(searchTerm) ||
-            emailLower.includes(searchTerm)
-          ){
-
-            found = true;
+            keys.push(
+              u.key
+            );
 
 
             const saldo =
@@ -731,17 +1301,29 @@ function loadMembers(
             const statusLabel =
               d.status === "active"
 
-                ? `<span
-                     class="status-badge"
-                     style="background:#34d399;color:#fff">
-                     Active
-                   </span>`
+                ? `
+                  <span
+                    class="status-badge"
+                    style="
+                      background:#34d399;
+                      color:#fff
+                    "
+                  >
+                    Active
+                  </span>
+                `
 
-                : `<span
-                     class="status-badge"
-                     style="background:#f87171;color:#fff">
-                     Non-Active
-                   </span>`;
+                : `
+                  <span
+                    class="status-badge"
+                    style="
+                      background:#f87171;
+                      color:#fff
+                    "
+                  >
+                    Non-Active
+                  </span>
+                `;
 
 
             const tr =
@@ -769,11 +1351,20 @@ function loadMembers(
               </td>
 
               <td
-                style="display:flex;gap:6px;align-items:center">
+                style="
+                  display:flex;
+                  gap:6px;
+                  align-items:center
+                "
+              >
 
                 <button
                   class="action-btn"
-                  onclick="window.location.href='../admin-userdetail?uid=${u.key}'">
+                  onclick="
+                    window.location.href=
+                    '../admin-userdetail?uid=${u.key}'
+                  "
+                >
                   Detail
                 </button>
 
@@ -782,15 +1373,24 @@ function loadMembers(
 
                   <button
                     class="menu-btn"
-                    onclick="toggleMenu(this)">
+                    onclick="toggleMenu(this)"
+                  >
                     ⋮
                   </button>
 
 
-                  <div class="menu-dropdown">
+                  <div
+                    class="menu-dropdown"
+                  >
 
                     <button
-                      onclick="toggleStatus('${u.key}', '${d.status}')">
+                      onclick="
+                        toggleStatus(
+                          '${u.key}',
+                          '${d.status}'
+                        )
+                      "
+                    >
                       ${
                         d.status === "active"
                           ? "Disable"
@@ -800,19 +1400,35 @@ function loadMembers(
 
 
                     <button
-                      onclick="editSaldo('${u.key}')">
+                      onclick="
+                        editSaldo(
+                          '${u.key}'
+                        )
+                      "
+                    >
                       Edit Saldo
                     </button>
 
 
                     <button
-                      onclick="changeEmail('${u.key}', '${d.email || ""}')">
+                      onclick="
+                        changeEmail(
+                          '${u.key}',
+                          '${d.email || ""}'
+                        )
+                      "
+                    >
                       Ganti Email
                     </button>
 
 
                     <button
-                      onclick="deleteMember('${u.key}')">
+                      onclick="
+                        deleteMember(
+                          '${u.key}'
+                        )
+                      "
+                    >
                       Hapus
                     </button>
 
@@ -825,338 +1441,83 @@ function loadMembers(
             `;
 
 
-            tbody.appendChild(tr);
+            tbody.appendChild(
+              tr
+            );
 
           }
-
-        });
-
-
-        // Tidak ditemukan
-
-        if(!found){
-
-          tbody.innerHTML = `
-
-            <tr>
-
-              <td
-                colspan="5"
-                style="text-align:center;padding:20px;">
-
-                User
-                "<strong>
-                  ${searchTerm}
-                </strong>"
-                tidak ditemukan
-
-              </td>
-
-            </tr>
-
-          `;
-
-        }
-
-      })
-
-      .catch(err => {
-
-        console.error(err);
-
-
-        tbody.innerHTML = `
-
-          <tr>
-
-            <td
-              colspan="5"
-              style="text-align:center;color:red;">
-
-              Gagal mencari user
-
-            </td>
-
-          </tr>
-
-        `;
-
-      });
-
-
-    return;
-
-  }
-
-
-  // =====================================================
-  // TIDAK ADA SEARCH
-  // =====================================================
-
-  let ref =
-    db
-      .ref("users")
-      .orderByKey()
-      .limitToFirst(pageSize);
-
-
-  // =====================================================
-  // NEXT
-  // =====================================================
-
-  if(
-    direction === "next" &&
-    lastKey
-  ){
-
-    pageStack.push(firstKey);
-
-
-    ref =
-      db
-        .ref("users")
-        .orderByKey()
-        .startAfter(lastKey)
-        .limitToFirst(pageSize);
-
-  }
-
-
-  // =====================================================
-  // PREVIOUS
-  // =====================================================
-
-  if(
-    direction === "prev" &&
-    pageStack.length
-  ){
-
-    const prevKey =
-      pageStack.pop();
-
-
-    ref =
-      db
-        .ref("users")
-        .orderByKey()
-        .startAt(prevKey)
-        .limitToFirst(pageSize);
-
-  }
-
-
-  ref.once("value")
-    .then(snap => {
-
-      if(!snap.exists()){
-
-        tbody.innerHTML = `
-
-          <tr>
-
-            <td
-              colspan="5"
-              style="text-align:center;">
-
-              Tidak ada user
-
-            </td>
-
-          </tr>
-
-        `;
-
-        return;
-
-      }
-
-
-      let keys = [];
-
-
-      snap.forEach(u => {
-
-        const d =
-          u.val();
-
-
-        keys.push(
-          u.key
         );
 
 
-        const saldo =
-          Number(
-            d.saldo || 0
-          );
+        firstKey =
+          keys[0];
 
 
-        const saldoFormatted =
-          "Rp " +
-          saldo.toLocaleString(
-            "id-ID"
-          );
+        lastKey =
+          keys[
+            keys.length - 1
+          ];
+
+      }
+    )
+
+    .catch(
+      err => {
+
+        console.error(
+          err
+        );
 
 
-        const statusLabel =
-          d.status === "active"
+        tbody.innerHTML = `
 
-            ? `<span
-                 class="status-badge"
-                 style="background:#34d399;color:#fff">
-                 Active
-               </span>`
+          <tr>
 
-            : `<span
-                 class="status-badge"
-                 style="background:#f87171;color:#fff">
-                 Non-Active
-               </span>`;
+            <td
+              colspan="5"
+              style="
+                text-align:center;
+                color:red;
+              "
+            >
+              Gagal memuat user
+            </td>
 
-
-        const tr =
-          document.createElement(
-            "tr"
-          );
-
-
-        tr.innerHTML = `
-
-          <td>
-            ${d.nama || "-"}
-          </td>
-
-          <td>
-            ${d.email || "-"}
-          </td>
-
-          <td>
-            ${saldoFormatted}
-          </td>
-
-          <td>
-            ${statusLabel}
-          </td>
-
-          <td
-            style="display:flex;gap:6px;align-items:center">
-
-            <button
-              class="action-btn"
-              onclick="window.location.href='../admin-userdetail?uid=${u.key}'">
-              Detail
-            </button>
-
-
-            <div class="menu-wrap">
-
-              <button
-                class="menu-btn"
-                onclick="toggleMenu(this)">
-                ⋮
-              </button>
-
-
-              <div class="menu-dropdown">
-
-                <button
-                  onclick="toggleStatus('${u.key}', '${d.status}')">
-                  ${
-                    d.status === "active"
-                      ? "Disable"
-                      : "Activate"
-                  }
-                </button>
-
-
-                <button
-                  onclick="editSaldo('${u.key}')">
-                  Edit Saldo
-                </button>
-
-
-                <button
-                  onclick="changeEmail('${u.key}', '${d.email || ""}')">
-                  Ganti Email
-                </button>
-
-
-                <button
-                  onclick="deleteMember('${u.key}')">
-                  Hapus
-                </button>
-
-              </div>
-
-            </div>
-
-          </td>
+          </tr>
 
         `;
 
-
-        tbody.appendChild(tr);
-
-      });
-
-
-      firstKey =
-        keys[0];
-
-      lastKey =
-        keys[keys.length - 1];
-
-    })
-
-    .catch(err => {
-
-      console.error(err);
-
-
-      tbody.innerHTML = `
-
-        <tr>
-
-          <td
-            colspan="5"
-            style="text-align:center;color:red;">
-
-            Gagal memuat user
-
-          </td>
-
-        </tr>
-
-      `;
-
-    });
+      }
+    );
 
 }
 
 
-// =====================================================
-// DROPDOWN MENU TOGGLE
-// =====================================================
+/* =====================================================
+   MENU TOGGLE
+===================================================== */
 
-function toggleMenu(btn){
+function toggleMenu(btn) {
 
   document
     .querySelectorAll(
       ".menu-dropdown"
     )
-    .forEach(m => {
+    .forEach(
+      m => {
 
-      if(
-        m !==
-        btn.nextElementSibling
-      ){
+        if (
+          m !==
+          btn.nextElementSibling
+        ) {
 
-        m.style.display =
-          "none";
+          m.style.display =
+            "none";
+
+        }
 
       }
-
-    });
+    );
 
 
   const menu =
@@ -1175,11 +1536,11 @@ document.addEventListener(
   "click",
   e => {
 
-    if(
+    if (
       !e.target.closest(
         ".menu-wrap"
       )
-    ){
+    ) {
 
       document
         .querySelectorAll(
@@ -1197,103 +1558,127 @@ document.addEventListener(
 );
 
 
-// =====================================================
-// EDIT SALDO
-// =====================================================
+/* =====================================================
+   EDIT SALDO
+===================================================== */
 
-let saldoEditingUid = null;
+let saldoEditingUid =
+  null;
 
-let saldoCurrentValue = 0;
+let saldoCurrentValue =
+  0;
 
 
-function editSaldo(uid){
+function editSaldo(uid) {
 
   db.ref(
     `users/${uid}/saldo`
   )
   .once("value")
 
-  .then(snap => {
+  .then(
+    snap => {
 
-    saldoEditingUid =
-      uid;
-
-
-    saldoCurrentValue =
-      Number(
-        snap.val() || 0
-      );
+      saldoEditingUid =
+        uid;
 
 
-    document
-      .getElementById(
-        "modalCurrentSaldo"
-      )
-      .textContent =
-        "Rp " +
-        saldoCurrentValue
-          .toLocaleString(
-            "id-ID"
-          );
+      saldoCurrentValue =
+        Number(
+          snap.val() || 0
+        );
 
 
-    document
-      .getElementById(
-        "saldoAction"
-      )
-      .value =
-        "add";
+      document
+        .getElementById(
+          "modalCurrentSaldo"
+        )
+        .textContent =
+          "Rp " +
+          saldoCurrentValue
+            .toLocaleString(
+              "id-ID"
+            );
 
 
-    document
-      .getElementById(
-        "saldoAmount"
-      )
-      .value =
-        "";
+      document
+        .getElementById(
+          "saldoAction"
+        )
+        .value =
+          "add";
 
-
-    document
-      .getElementById(
-        "saldoModal"
-      )
-      .style.display =
-        "flex";
-
-
-    setTimeout(() => {
 
       document
         .getElementById(
           "saldoAmount"
         )
-        .focus();
+        .value =
+          "";
 
-    }, 100);
 
-  })
+      document
+        .getElementById(
+          "saldoModal"
+        )
+        .style.display =
+          "flex";
 
-  .catch(err => {
 
-    console.error(err);
+      setTimeout(
+        () => {
 
-    alert(
-      "❌ Gagal mengambil saldo."
-    );
+          const amountInput =
+            document.getElementById(
+              "saldoAmount"
+            );
 
-  });
+
+          if (amountInput) {
+
+            amountInput.focus();
+
+          }
+
+        },
+        100
+      );
+
+    }
+  )
+
+  .catch(
+    err => {
+
+      console.error(
+        "Edit saldo error:",
+        err
+      );
+
+
+      alert(
+        "Gagal mengambil saldo user.\n\n" +
+        err.message
+      );
+
+    }
+  );
 
 }
 
 
-function closeSaldoModal(){
+/* =====================================================
+   CLOSE SALDO MODAL
+===================================================== */
+
+function closeSaldoModal() {
 
   document
     .getElementById(
       "saldoModal"
     )
     .style.display =
-      "none";
+    "none";
 
 
   saldoEditingUid =
@@ -1303,21 +1688,24 @@ function closeSaldoModal(){
   saldoCurrentValue =
     0;
 
-
-  document
-    .getElementById(
-      "saldoAmount"
-    )
-    .value =
-      "";
-
 }
 
 
-function saveSaldo(){
+/* =====================================================
+   SAVE SALDO
+===================================================== */
 
-  if(!saldoEditingUid)
+function saveSaldo() {
+
+  if (!saldoEditingUid) {
+
+    alert(
+      "User tidak ditemukan."
+    );
+
     return;
+
+  }
 
 
   const action =
@@ -1338,14 +1726,13 @@ function saveSaldo(){
     );
 
 
-  if(
+  if (
     !amount ||
-    amount <= 0 ||
-    isNaN(amount)
-  ){
+    amount <= 0
+  ) {
 
     alert(
-      "⚠ Nominal harus lebih dari 0."
+      "Nominal harus lebih dari 0."
     );
 
     return;
@@ -1353,152 +1740,91 @@ function saveSaldo(){
   }
 
 
-  let newSaldo;
+  let newSaldo =
+    saldoCurrentValue;
 
 
-  if(action === "add"){
-
-    newSaldo =
-      saldoCurrentValue +
-      amount;
-
-  }else{
-
-    newSaldo =
-      saldoCurrentValue -
-      amount;
-
-  }
-
-
-  if(newSaldo < 0){
-
-    alert(
-
-      "⚠ Saldo tidak mencukupi.\n\n" +
-
-      "Saldo saat ini: Rp " +
-
-      saldoCurrentValue
-        .toLocaleString(
-          "id-ID"
-        ) +
-
-      "\n" +
-
-      "Yang dikurangi: Rp " +
-
-      amount
-        .toLocaleString(
-          "id-ID"
-        )
-
-    );
-
-    return;
-
-  }
-
-
-  const actionText =
+  if (
     action === "add"
-      ? "menambahkan"
-      : "mengurangi";
+  ) {
+
+    newSaldo +=
+      amount;
+
+  } else {
+
+    newSaldo -=
+      amount;
+
+  }
 
 
-  if(!confirm(
+  if (newSaldo < 0) {
 
-    "Konfirmasi perubahan saldo\n\n" +
+    alert(
+      "Saldo tidak boleh menjadi negatif."
+    );
 
-    "Saldo saat ini: Rp " +
+    return;
 
-    saldoCurrentValue
-      .toLocaleString(
-        "id-ID"
-      ) +
-
-    "\n" +
-
-    (
-      action === "add"
-        ? "＋ Tambah: Rp "
-        : "－ Kurangi: Rp "
-    ) +
-
-    amount
-      .toLocaleString(
-        "id-ID"
-      ) +
-
-    "\n" +
-
-    "Saldo setelah perubahan: Rp " +
-
-    newSaldo
-      .toLocaleString(
-        "id-ID"
-      ) +
-
-    "\n\n" +
-
-    "Lanjutkan?"
-
-  )) return;
+  }
 
 
   db.ref(
     `users/${saldoEditingUid}/saldo`
   )
-  .set(newSaldo)
+  .set(
+    newSaldo
+  )
 
-  .then(() => {
+  .then(
+    () => {
 
-    closeSaldoModal();
+      closeSaldoModal();
 
 
-    alert(
-
-      "✔ Berhasil " +
-
-      actionText +
-
-      " saldo.\n\n" +
-
-      "Saldo sekarang: Rp " +
-
-      newSaldo
-        .toLocaleString(
+      alert(
+        "Saldo berhasil diperbarui.\n\n" +
+        "Saldo baru: Rp " +
+        newSaldo.toLocaleString(
           "id-ID"
         )
+      );
 
-    );
+
+      loadMembers();
+
+    }
+  )
+
+  .catch(
+    err => {
+
+      console.error(
+        "Save saldo error:",
+        err
+      );
 
 
-    loadMembers();
+      alert(
+        "Gagal memperbarui saldo.\n\n" +
+        err.message
+      );
 
-  })
-
-  .catch(err => {
-
-    console.error(err);
-
-    alert(
-      "❌ Gagal memperbarui saldo."
-    );
-
-  });
+    }
+  );
 
 }
 
 
-// =====================================================
-// TOGGLE STATUS
-// =====================================================
+/* =====================================================
+   TOGGLE STATUS
+===================================================== */
 
 function toggleStatus(
   uid,
   currentStatus
-){
+) {
 
   const newStatus =
     currentStatus === "active"
@@ -1506,130 +1832,179 @@ function toggleStatus(
       : "active";
 
 
+  const text =
+    newStatus === "active"
+      ? "mengaktifkan"
+      : "menonaktifkan";
+
+
+  const confirmed =
+    confirm(
+      `Yakin ingin ${text} user ini?`
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
   db.ref(
     `users/${uid}/status`
   )
-  .set(newStatus)
+  .set(
+    newStatus
+  )
 
-  .then(() => {
+  .then(
+    () => {
 
-    alert(
-      `✔ User status changed to ${newStatus}`
-    );
-
-    loadMembers();
-
-  });
-
-}
-
-
-// =====================================================
-// DELETE MEMBER
-// =====================================================
-
-function deleteMember(uid){
-
-  if(
-    confirm(
-      "Apakah yakin ingin menghapus member ini?"
-    )
-  ){
-
-    db.ref(
-      `users/${uid}`
-    )
-    .remove()
-
-    .then(() =>
-      loadMembers()
-    );
-
-  }
-
-}
-
-
-// =====================================================
-// RESET PASSWORD
-// =====================================================
-
-function resetPassword(email){
-
-  if(!email){
-
-    alert(
-      "Email tidak ditemukan"
-    );
-
-    return;
-
-  }
-
-
-  if(
-    !confirm(
-      `Kirim reset password ke:\n${email} ?`
-    )
-  ) return;
-
-
-  firebase.auth()
-    .sendPasswordResetEmail(
-      email
-    )
-
-    .then(() =>
       alert(
-        "✔ Email reset password berhasil dikirim"
-      )
-    )
+        newStatus === "active"
+          ? "User berhasil diaktifkan."
+          : "User berhasil dinonaktifkan."
+      );
 
-    .catch(err =>
+
+      loadMembers();
+
+    }
+  )
+
+  .catch(
+    err => {
+
+      console.error(
+        "Toggle status error:",
+        err
+      );
+
+
       alert(
-        "❌ " +
+        "Gagal mengubah status user.\n\n" +
         err.message
-      )
-    );
+      );
+
+    }
+  );
 
 }
 
 
-// =====================================================
-// GANTI EMAIL USER
-// =====================================================
+/* =====================================================
+   DELETE MEMBER
+===================================================== */
+
+function deleteMember(
+  uid
+) {
+
+  const confirmed =
+    confirm(
+      "Apakah yakin ingin menghapus data user ini dari database?"
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  db.ref(
+    `users/${uid}`
+  )
+  .remove()
+
+  .then(
+    () => {
+
+      alert(
+        "Data user berhasil dihapus dari database."
+      );
+
+
+      loadMembers();
+
+    }
+  )
+
+  .catch(
+    err => {
+
+      console.error(
+        "Delete user error:",
+        err
+      );
+
+
+      alert(
+        "Gagal menghapus user.\n\n" +
+        err.message
+      );
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   GANTI EMAIL
+   =====================================================
+
+   BAGIAN INI YANG KITA PERBAIKI
+   UNTUK DEBUG WORKER.
+
+===================================================== */
 
 async function changeEmail(
   uid,
   currentEmail
-){
+) {
 
-  const newEmail =
+  /*
+   * Popup input email
+   */
+
+  const email =
     prompt(
 
-      "Email saat ini:\n" +
+      "Ganti email user\n\n" +
+
+      "Email sekarang:\n" +
 
       (currentEmail || "-") +
 
-      "\n\nMasukkan email baru:"
+      "\n\n" +
+
+      "Masukkan email baru:"
 
     );
 
 
-  if(newEmail === null)
+  if (
+    email === null
+  ) {
+
     return;
 
+  }
 
-  const email =
-    newEmail
+
+  const newEmail =
+    email
       .trim()
       .toLowerCase();
 
 
-  if(!email){
+  /*
+   * Validasi kosong
+   */
+
+  if (!newEmail) {
 
     alert(
-      "⚠ Email baru wajib diisi."
+      "Email baru wajib diisi."
     );
 
     return;
@@ -1637,16 +2012,17 @@ async function changeEmail(
   }
 
 
-  const emailRegex =
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  /*
+   * Validasi format email
+   */
 
-
-  if(
-    !emailRegex.test(email)
-  ){
+  if (
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      .test(newEmail)
+  ) {
 
     alert(
-      "⚠ Format email tidak valid."
+      "Format email tidak valid."
     );
 
     return;
@@ -1654,59 +2030,50 @@ async function changeEmail(
   }
 
 
-  if(
-    email ===
-    String(
-      currentEmail || ""
-    )
-      .trim()
-      .toLowerCase()
-  ){
+  /*
+   * Konfirmasi
+   */
 
-    alert(
-      "⚠ Email baru sama dengan email sekarang."
-    );
+  const confirmChange =
+    confirm(
 
-    return;
+      "Yakin ingin mengganti email?\n\n" +
 
-  }
-
-
-  if(
-    !confirm(
-
-      "Ganti email akun ini?\n\n" +
-
-      "Email lama:\n" +
+      "Dari:\n" +
 
       (currentEmail || "-") +
 
       "\n\n" +
 
-      "Email baru:\n" +
+      "Menjadi:\n" +
 
-      email +
+      newEmail
 
-      "\n\n" +
-
-      "UID akun tidak akan berubah."
-
-    )
-  ) return;
+    );
 
 
-  try{
+  if (!confirmChange) {
+
+    return;
+
+  }
+
+
+  try {
+
+    /*
+     * Ambil admin yang sedang login
+     */
 
     const adminUser =
-      firebase.auth()
-        .currentUser;
+      firebase.auth().currentUser;
 
 
-    if(!adminUser){
+    if (!adminUser) {
 
       alert(
-        "❌ Sesi admin tidak ditemukan.\n" +
-        "Silakan login ulang."
+        "Sesi admin tidak ditemukan.\n\n" +
+        "Silakan login kembali."
       );
 
       return;
@@ -1714,10 +2081,40 @@ async function changeEmail(
     }
 
 
-    const idToken =
-      await adminUser
-        .getIdToken(true);
+    /*
+     * Refresh Firebase ID Token
+     *
+     * Token ini yang dikirim
+     * ke Worker.
+     */
 
+    const idToken =
+      await adminUser.getIdToken(
+        true
+      );
+
+
+    /*
+     * DEBUG TOKEN
+     *
+     * Jangan pernah menampilkan
+     * token aslinya ke user.
+     */
+
+    console.log(
+      "Admin UID:",
+      adminUser.uid
+    );
+
+
+    console.log(
+      "Firebase ID Token berhasil didapat."
+    );
+
+
+    /*
+     * Panggil Worker
+     */
 
     const response =
       await fetch(
@@ -1726,7 +2123,8 @@ async function changeEmail(
 
         {
 
-          method: "POST",
+          method:
+            "POST",
 
           headers: {
 
@@ -1741,9 +2139,11 @@ async function changeEmail(
           body:
             JSON.stringify({
 
-              uid: uid,
+              uid:
+                uid,
 
-              newEmail: email
+              newEmail:
+                newEmail
 
             })
 
@@ -1752,54 +2152,299 @@ async function changeEmail(
       );
 
 
-    const result =
-      await response.json();
+    /*
+     * =================================================
+     * BACA RESPONSE SEBAGAI TEXT TERLEBIH DAHULU
+     * =================================================
+     *
+     * Ini sengaja.
+     *
+     * Kalau Worker mengirim JSON:
+     *   kita parse JSON.
+     *
+     * Kalau Worker malah mengirim
+     * HTML / text / error lain:
+     *   kita tetap bisa melihat response-nya.
+     */
+
+    const responseText =
+      await response.text();
 
 
-    if(
-      !response.ok ||
-      !result.success
-    ){
+    console.log(
+      "================================="
+    );
 
-      throw new Error(
+    console.log(
+      "DYNOTIC AUTH WORKER RESPONSE"
+    );
 
-        result.error ||
-        "Gagal mengubah email."
+    console.log(
+      "HTTP STATUS:",
+      response.status
+    );
 
+    console.log(
+      "RAW RESPONSE:",
+      responseText
+    );
+
+    console.log(
+      "================================="
+    );
+
+
+    let data;
+
+
+    /*
+     * Coba parse JSON
+     */
+
+    try {
+
+      data =
+        JSON.parse(
+          responseText
+        );
+
+    }
+
+    catch (parseError) {
+
+      /*
+       * Kalau bukan JSON,
+       * tetap simpan response
+       */
+
+      console.error(
+        "Worker response bukan JSON:",
+        parseError
       );
+
+
+      data = {
+
+        success:
+          false,
+
+        error:
+          "Worker mengirim response yang bukan JSON.",
+
+        detail:
+          responseText
+
+      };
 
     }
 
 
+    console.log(
+      "Parsed Worker Data:",
+      data
+    );
+
+
+    /*
+     * =================================================
+     * WORKER ERROR
+     * =================================================
+     */
+
+    if (
+      !response.ok ||
+      !data.success
+    ) {
+
+      let errorMessage =
+        data.error ||
+        "Unknown error";
+
+
+      /*
+       * HTTP status asli
+       */
+
+      errorMessage +=
+        "\n\nHTTP Status: " +
+        response.status;
+
+
+      /*
+       * Status yang dikirim Worker
+       */
+
+      if (
+        data.status
+      ) {
+
+        errorMessage +=
+          "\nWorker Status: " +
+          data.status;
+
+      }
+
+
+      /*
+       * Detail error Worker
+       */
+
+      if (
+        data.detail
+      ) {
+
+        let detail;
+
+
+        if (
+          typeof data.detail ===
+          "string"
+        ) {
+
+          detail =
+            data.detail;
+
+        }
+
+        else {
+
+          try {
+
+            detail =
+              JSON.stringify(
+                data.detail,
+                null,
+                2
+              );
+
+          }
+
+          catch {
+
+            detail =
+              String(
+                data.detail
+              );
+
+          }
+
+        }
+
+
+        errorMessage +=
+          "\n\nDetail:\n" +
+          detail;
+
+      }
+
+
+      /*
+       * Tampilkan error lengkap
+       */
+
+      alert(
+
+        "GAGAL MENGUBAH EMAIL\n\n" +
+
+        errorMessage
+
+      );
+
+
+      return;
+
+    }
+
+
+    /*
+     * =================================================
+     * AUTH BERHASIL
+     * TAPI RTDB WARNING
+     * =================================================
+     */
+
+    if (
+      data.warning
+    ) {
+
+      alert(
+
+        "EMAIL AUTH BERHASIL DIUBAH\n\n" +
+
+        "Email baru:\n" +
+
+        (
+          data.email ||
+          newEmail
+        ) +
+
+        "\n\n" +
+
+        "WARNING:\n" +
+
+        data.warning
+
+      );
+
+
+      loadMembers();
+
+
+      return;
+
+    }
+
+
+    /*
+     * =================================================
+     * BERHASIL
+     * =================================================
+     */
+
     alert(
 
-      "✔ Email berhasil diubah!\n\n" +
+      "EMAIL BERHASIL DIUBAH\n\n" +
 
       "Email baru:\n" +
 
-      email
+      (
+        data.email ||
+        newEmail
+      )
 
     );
 
 
+    /*
+     * Refresh tabel
+     */
+
     loadMembers();
 
+  }
 
-  }catch(err){
+
+  catch (
+    error
+  ) {
+
+    /*
+     * Error JS / Network / CORS
+     */
 
     console.error(
-      "Change email error:",
-      err
+      "changeEmail error:",
+      error
     );
 
 
     alert(
 
-      "❌ Gagal mengubah email.\n\n" +
+      "ERROR SCRIPT / NETWORK\n\n" +
 
       (
-        err.message ||
-        "Terjadi kesalahan."
+        error.message ||
+        String(error)
       )
 
     );
@@ -1809,9 +2454,9 @@ async function changeEmail(
 }
 
 
-// =====================================================
-// INITIAL LOAD
-// =====================================================
+/* =====================================================
+   INITIAL LOAD
+===================================================== */
 
 loadMembers();
 
