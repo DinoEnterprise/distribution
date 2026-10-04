@@ -24,19 +24,23 @@
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 >
 
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
 <style>
 
 *{
+  box-sizing:border-box;
   margin:0;
   padding:0;
-  box-sizing:border-box;
   font-family:"Outfit",sans-serif;
 }
 
 body{
   background:#f1f2f7;
-  min-height:100vh;
   color:#17181c;
+  min-height:100vh;
   padding-top:64px;
   padding-bottom:90px;
   -webkit-tap-highlight-color:transparent;
@@ -68,48 +72,141 @@ header img{
 }
 
 
-/* ================= MAIN ================= */
+/* ================= CONTAINER ================= */
 
 .container{
-  width:calc(100% - 28px);
   max-width:760px;
-  margin:0 auto;
+  margin:auto;
+  padding:22px 14px 20px;
 }
 
 
-/* ================= CARD ================= */
+/* ================= PAGE TITLE ================= */
 
-.card{
+.page-title{
+  margin-bottom:16px;
+}
+
+.page-title h1{
+  font-size:22px;
+  font-weight:700;
+}
+
+.page-title p{
+  color:#777b84;
+  font-size:12px;
+  margin-top:3px;
+}
+
+
+/* ================= PROFILE CARD ================= */
+
+.profile-card{
   background:#fff;
   border:1px solid #e8e8ed;
   border-radius:18px;
   padding:18px;
-  margin-top:20px;
   animation:pageIn .45s ease both;
 }
 
-.card-header{
+
+/* ================= PROFILE TOP ================= */
+
+.profile-top{
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  margin-bottom:13px;
+  gap:14px;
+  padding-bottom:18px;
+  border-bottom:1px solid #eeeeF1;
 }
 
-.card-title{
-  font-size:14px;
-  font-weight:600;
-}
-
-.edit-btn{
-  width:32px;
-  height:32px;
-  border-radius:10px;
+.avatar{
+  width:56px;
+  height:56px;
+  border-radius:16px;
   background:#f1f2f7;
   display:flex;
   align-items:center;
   justify-content:center;
+  font-size:21px;
+  flex-shrink:0;
+}
+
+.profile-name{
+  font-size:17px;
+  font-weight:600;
+  word-break:break-word;
+}
+
+.profile-role{
+  font-size:12px;
+  color:#858891;
+  margin-top:3px;
+}
+
+
+/* ================= INFO LIST ================= */
+
+.info-list{
+  margin-top:3px;
+}
+
+.info-item{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:14px 0;
+  border-bottom:1px solid #eeeeF1;
+}
+
+.info-item:last-child{
+  border-bottom:0;
+}
+
+.info-icon{
+  width:38px;
+  height:38px;
+  border-radius:11px;
+  background:#f1f2f7;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  flex-shrink:0;
+}
+
+.info-content{
+  flex:1;
+  min-width:0;
+}
+
+.info-label{
+  font-size:11px;
+  color:#858891;
+  margin-bottom:2px;
+}
+
+.info-value{
+  font-size:13px;
+  font-weight:500;
+  word-break:break-word;
+}
+
+
+/* ================= EDIT BUTTON ================= */
+
+.edit-btn{
+  width:32px;
+  height:32px;
+  border:0;
+  border-radius:10px;
+  background:#f1f2f7;
   color:#555861;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   cursor:pointer;
+  flex-shrink:0;
   transition:.15s;
 }
 
@@ -117,71 +214,142 @@ header img{
   transform:scale(.92);
 }
 
-.edit-btn i{
+
+/* ================= SECTION ================= */
+
+.section-title{
   font-size:13px;
+  font-weight:600;
+  color:#777b84;
+  margin:24px 3px 10px;
 }
 
 
-/* ================= ACCOUNT ROW ================= */
+/* ================= PAYMENT CARD ================= */
 
-.row{
-  min-height:42px;
+.payment-card{
+  background:#fff;
+  border:1px solid #e8e8ed;
+  border-radius:18px;
+  padding:18px;
+  animation:pageIn .45s ease .08s both;
+}
+
+.card-header{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:15px;
-  padding:10px 0;
-  border-bottom:1px solid #ededf1;
-  font-size:13px;
+  margin-bottom:3px;
 }
 
-.row:last-child{
-  border-bottom:none;
+.card-title{
+  font-size:14px;
+  font-weight:600;
 }
 
-.row-label{
-  color:#777b84;
+.payment-item{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:14px 0;
+  border-bottom:1px solid #eeeeF1;
+}
+
+.payment-item:last-child{
+  border-bottom:0;
+}
+
+.payment-icon{
+  width:38px;
+  height:38px;
+  border-radius:11px;
+  background:#f1f2f7;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
   flex-shrink:0;
 }
 
-.row-value{
-  color:#25262b;
+.payment-content{
+  flex:1;
+  min-width:0;
+}
+
+.payment-label{
+  font-size:11px;
+  color:#858891;
+  margin-bottom:2px;
+}
+
+.payment-value{
+  font-size:13px;
   font-weight:500;
-  text-align:right;
-  max-width:65%;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  word-break:break-word;
+}
+
+.payment-empty{
+  padding:16px 0 6px;
+  color:#858891;
+  font-size:12px;
+  line-height:1.5;
 }
 
 
 /* ================= PASSWORD ================= */
 
+.password-section{
+  margin-top:12px;
+}
+
 .password-btn{
   width:100%;
-  height:44px;
-  margin-top:14px;
-  border:none;
-  border-radius:12px;
-  background:#111;
-  color:#fff;
-  font-size:12px;
-  font-weight:600;
+  border:0;
+  background:#fff;
+  border:1px solid #e8e8ed;
+  border-radius:16px;
+  padding:15px;
+  display:flex;
+  align-items:center;
+  gap:13px;
+  text-align:left;
   cursor:pointer;
   transition:.15s;
 }
 
 .password-btn:active{
-  transform:scale(.97);
+  transform:scale(.98);
 }
 
+.password-icon{
+  width:40px;
+  height:40px;
+  border-radius:11px;
+  background:#f1f2f7;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+}
 
-/* ================= PAYMENT ================= */
+.password-info{
+  flex:1;
+}
 
-.payment-empty{
-  padding:12px 0 4px;
+.password-title{
+  font-size:13px;
+  font-weight:600;
+}
+
+.password-desc{
+  font-size:11px;
   color:#858891;
+  margin-top:2px;
+}
+
+.password-arrow{
+  color:#a0a2a8;
   font-size:12px;
-  line-height:1.5;
 }
 
 
@@ -189,34 +357,67 @@ header img{
 
 .logout-btn{
   width:100%;
-  height:44px;
-  margin-top:14px;
   border:1px solid #f0d8da;
-  border-radius:12px;
   background:#fff5f5;
   color:#e0444f;
-  font-size:12px;
-  font-weight:700;
+  border-radius:16px;
+  padding:15px;
+  margin-top:12px;
+  display:flex;
+  align-items:center;
+  gap:13px;
+  text-align:left;
   cursor:pointer;
   transition:.15s;
 }
 
 .logout-btn:active{
-  transform:scale(.97);
+  transform:scale(.98);
   background:#ffecec;
+}
+
+.logout-icon{
+  width:40px;
+  height:40px;
+  border-radius:11px;
+  background:#ffe8e8;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+}
+
+.logout-info{
+  flex:1;
+}
+
+.logout-title{
+  font-size:13px;
+  font-weight:600;
+}
+
+.logout-desc{
+  font-size:11px;
+  color:#a66a6a;
+  margin-top:2px;
+}
+
+.logout-arrow{
+  color:#d56b6b;
+  font-size:12px;
 }
 
 
 /* ================= BOTTOM NAV ================= */
 
 .bottom-nav{
-  height:72px;
-  background:#fff;
-  border-top:1px solid #e6e6eb;
   position:fixed;
   bottom:0;
   left:0;
-  width:100%;
+  right:0;
+  height:72px;
+  background:#fff;
+  border-top:1px solid #e6e6eb;
   display:flex;
   justify-content:space-around;
   align-items:center;
@@ -226,8 +427,8 @@ header img{
 .nav-item{
   width:33.33%;
   text-align:center;
-  font-size:11px;
   color:#999ca4;
+  font-size:11px;
   padding:7px 14px;
   border-radius:12px;
   cursor:pointer;
@@ -277,23 +478,13 @@ header img{
 }
 
 
-/* ================= MOBILE ================= */
-
-@media(max-width:600px){
-
-  .container{
-    width:calc(100% - 28px);
-  }
-
-}
-
-
 /* ================= DESKTOP ================= */
 
 @media(min-width:700px){
 
   .container{
-    width:100%;
+    padding-left:0;
+    padding-right:0;
   }
 
 }
@@ -317,93 +508,140 @@ header img{
 </header>
 
 
-<!-- ================= MAIN ================= -->
+<!-- ================= CONTENT ================= -->
 
 <main class="container">
 
 
-  <!-- ================= ACCOUNT INFO ================= -->
+  <div class="page-title">
 
-  <div class="card">
+    <h1>Account</h1>
 
-    <div class="card-header">
-
-      <div class="card-title">
-        Account Info
-      </div>
-
-      <div
-        class="edit-btn"
-        onclick="goEditInfo()"
-      >
-        <i class="fa-solid fa-pen"></i>
-      </div>
-
-    </div>
-
-
-    <div class="row">
-
-      <span class="row-label">
-        Name
-      </span>
-
-      <span
-        id="nama"
-        class="row-value"
-      >
-        -
-      </span>
-
-    </div>
-
-
-    <div class="row">
-
-      <span class="row-label">
-        Email
-      </span>
-
-      <span
-        id="email"
-        class="row-value"
-      >
-        -
-      </span>
-
-    </div>
-
-
-    <div class="row">
-
-      <span class="row-label">
-        ID
-      </span>
-
-      <span
-        id="uid"
-        class="row-value"
-      >
-        -
-      </span>
-
-    </div>
-
-
-    <button
-      class="password-btn"
-      onclick="goChangePassword()"
-    >
-      <i class="fa-solid fa-lock"></i>
-      &nbsp; Change Password
-    </button>
+    <p>
+      Manage your Dynotic artist account.
+    </p>
 
   </div>
 
 
-  <!-- ================= PAYMENT DETAIL ================= -->
+  <!-- ================= PROFILE ================= -->
 
-  <div class="card">
+  <div class="profile-card">
+
+
+    <div class="profile-top">
+
+      <div class="avatar">
+
+        <i class="fa-solid fa-user"></i>
+
+      </div>
+
+
+      <div>
+
+        <div
+          class="profile-name"
+          id="nama"
+        >
+          Loading...
+        </div>
+
+        <div class="profile-role">
+          Artist / User
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="info-list">
+
+
+      <!-- EMAIL -->
+
+      <div class="info-item">
+
+        <div class="info-icon">
+
+          <i class="fa-regular fa-envelope"></i>
+
+        </div>
+
+
+        <div class="info-content">
+
+          <div class="info-label">
+            Email
+          </div>
+
+          <div
+            class="info-value"
+            id="email"
+          >
+            Loading...
+          </div>
+
+        </div>
+
+
+        <button
+          class="edit-btn"
+          onclick="goEditInfo()"
+          aria-label="Edit account"
+        >
+
+          <i class="fa-solid fa-pen"></i>
+
+        </button>
+
+      </div>
+
+
+      <!-- ID -->
+
+      <div class="info-item">
+
+        <div class="info-icon">
+
+          <i class="fa-solid fa-fingerprint"></i>
+
+        </div>
+
+
+        <div class="info-content">
+
+          <div class="info-label">
+            Account ID
+          </div>
+
+          <div
+            class="info-value"
+            id="uid"
+          >
+            Loading...
+          </div>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+
+  <!-- ================= PAYMENT ================= -->
+
+  <div class="section-title">
+    Payment
+  </div>
+
+
+  <div class="payment-card">
+
 
     <div class="card-header">
 
@@ -411,48 +649,76 @@ header img{
         Payment Detail
       </div>
 
-      <div
+
+      <button
         class="edit-btn"
         onclick="goEditPayment()"
+        aria-label="Edit payment"
       >
+
         <i class="fa-solid fa-pen"></i>
-      </div>
+
+      </button>
 
     </div>
 
 
     <div id="paymentContent">
 
-      <div class="row">
 
-        <span class="row-label">
-          Method
-        </span>
+      <div class="payment-item">
 
-        <span
-          id="paymentName"
-          class="row-value"
-        >
-          -
-        </span>
+        <div class="payment-icon">
+
+          <i class="fa-solid fa-wallet"></i>
+
+        </div>
+
+
+        <div class="payment-content">
+
+          <div class="payment-label">
+            Method
+          </div>
+
+          <div
+            class="payment-value"
+            id="paymentName"
+          >
+            -
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="payment-item">
+
+        <div class="payment-icon">
+
+          <i class="fa-solid fa-credit-card"></i>
+
+        </div>
+
+
+        <div class="payment-content">
+
+          <div class="payment-label">
+            Account
+          </div>
+
+          <div
+            class="payment-value"
+            id="paymentAccount"
+          >
+            -
+          </div>
+
+        </div>
 
       </div>
 
-
-      <div class="row">
-
-        <span class="row-label">
-          Account
-        </span>
-
-        <span
-          id="paymentAccount"
-          class="row-value"
-        >
-          -
-        </span>
-
-      </div>
 
     </div>
 
@@ -466,19 +732,84 @@ header img{
     </div>
 
 
-    <!-- LOGOUT -->
-
-    <button
-      class="logout-btn"
-      onclick="logout()"
-    >
-
-      <i class="fa-solid fa-arrow-right-from-bracket"></i>
-      &nbsp; Log Out
-
-    </button>
-
   </div>
+
+
+  <!-- ================= PASSWORD ================= -->
+
+  <div class="section-title">
+    Security
+  </div>
+
+
+  <button
+    class="password-btn"
+    onclick="goChangePassword()"
+  >
+
+    <div class="password-icon">
+
+      <i class="fa-solid fa-lock"></i>
+
+    </div>
+
+
+    <div class="password-info">
+
+      <div class="password-title">
+        Change Password
+      </div>
+
+      <div class="password-desc">
+        Update your account password.
+      </div>
+
+    </div>
+
+
+    <div class="password-arrow">
+
+      <i class="fa-solid fa-chevron-right"></i>
+
+    </div>
+
+  </button>
+
+
+  <!-- ================= LOGOUT ================= -->
+
+  <button
+    class="logout-btn"
+    onclick="logout()"
+  >
+
+    <div class="logout-icon">
+
+      <i class="fa-solid fa-right-from-bracket"></i>
+
+    </div>
+
+
+    <div class="logout-info">
+
+      <div class="logout-title">
+        Log Out
+      </div>
+
+      <div class="logout-desc">
+        Sign out from your Dynotic account.
+      </div>
+
+    </div>
+
+
+    <div class="logout-arrow">
+
+      <i class="fa-solid fa-chevron-right"></i>
+
+    </div>
+
+  </button>
 
 
   <div style="height:20px"></div>
@@ -516,9 +847,7 @@ header img{
   </div>
 
 
-  <div
-    class="nav-item active"
-  >
+  <div class="nav-item active">
 
     <i class="fa-regular fa-user"></i>
 
@@ -530,17 +859,10 @@ header img{
 </nav>
 
 
-<!-- ================= FIREBASE ================= -->
-
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-
 <script>
 
 
-/* ================= FIREBASE CONFIG ================= */
+/* ================= FIREBASE ================= */
 
 firebase.initializeApp({
 
@@ -556,9 +878,12 @@ firebase.initializeApp({
 });
 
 
-const auth = firebase.auth();
+const auth =
+  firebase.auth();
 
-const db = firebase.database();
+
+const db =
+  firebase.database();
 
 
 /* ================= AUTH ================= */
@@ -572,6 +897,7 @@ auth.onAuthStateChanged(user => {
     return;
 
   }
+
 
   loadProfile(user.uid);
 
@@ -593,6 +919,7 @@ function loadProfile(uid){
     ).innerText =
       user.email || "-";
 
+
     document.getElementById(
       "uid"
     ).innerText =
@@ -606,7 +933,9 @@ function loadProfile(uid){
     .then(snap => {
 
       if(!snap.exists()){
+
         return;
+
       }
 
 
@@ -648,9 +977,7 @@ function loadProfile(uid){
       let hasPayment = false;
 
 
-      /*
-        PAYPAL
-      */
+      /* PAYPAL */
 
       if(
         d.payment &&
@@ -669,9 +996,7 @@ function loadProfile(uid){
       }
 
 
-      /*
-        BANK
-      */
+      /* BANK */
 
       else if(
         d.payment &&
@@ -690,9 +1015,7 @@ function loadProfile(uid){
       }
 
 
-      /*
-        NO PAYMENT
-      */
+      /* NO PAYMENT */
 
       if(!hasPayment){
 
@@ -725,28 +1048,6 @@ function loadProfile(uid){
 }
 
 
-/* ================= LOGOUT ================= */
-
-function logout(){
-
-  auth.signOut()
-    .then(() => {
-
-      location.href="../login";
-
-    })
-    .catch(error => {
-
-      console.error(
-        "Logout failed:",
-        error
-      );
-
-    });
-
-}
-
-
 /* ================= NAVIGATION ================= */
 
 function goEditInfo(){
@@ -767,8 +1068,30 @@ function goEditPayment(){
 
 function goChangePassword(){
 
-  location.href =
+  window.location.href =
     "../change-password";
+
+}
+
+
+/* ================= LOGOUT ================= */
+
+function logout(){
+
+  auth.signOut()
+    .then(() => {
+
+      location.href="../login";
+
+    })
+    .catch(error => {
+
+      console.error(
+        "Logout failed:",
+        error
+      );
+
+    });
 
 }
 
