@@ -268,6 +268,168 @@ tr:hover {
   background: #f5f5f5;
 }
 
+
+/* =====================================================
+   CUSTOM ALERT / CONFIRM / EMAIL MODAL
+===================================================== */
+
+.custom-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 20000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.custom-modal.show {
+  display: flex;
+}
+
+.custom-box {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-sizing: border-box;
+  box-shadow: 0 10px 35px rgba(0,0,0,.2);
+  animation: modalIn .18s ease;
+}
+
+@keyframes modalIn {
+
+  from {
+    opacity: 0;
+    transform: scale(.96) translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+}
+
+.custom-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #f1f1f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.custom-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 7px;
+}
+
+.custom-message {
+  font-size: 13px;
+  line-height: 1.55;
+  color: #666;
+  white-space: pre-line;
+}
+
+.custom-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.custom-buttons button {
+  margin-top: 0;
+}
+
+.custom-cancel {
+  background: #f1f1f1;
+  color: #111;
+  border: none;
+}
+
+.custom-confirm {
+  background: #111;
+  color: #fff;
+  border: none;
+}
+
+.custom-danger {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+}
+
+.custom-input {
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-sizing: border-box;
+  font-size: 14px;
+  outline: none;
+}
+
+.custom-input:focus {
+  border-color: #111;
+  box-shadow: 0 0 6px rgba(0,0,0,.1);
+}
+
+.custom-email-current {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: #f5f5f7;
+  font-size: 12px;
+  color: #666;
+  word-break: break-word;
+}
+
+.custom-email-current strong {
+  display: block;
+  color: #111;
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.custom-loading {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,.65);
+  z-index: 30000;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-loading.show {
+  display: flex;
+}
+
+.loading-box {
+  background: #fff;
+  padding: 18px 22px;
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.15);
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+}
+
 </style>
 
 </head>
@@ -490,6 +652,186 @@ tr:hover {
 </div>
 
 
+<!-- =====================================================
+     CUSTOM INFORMATION MODAL
+===================================================== -->
+
+<div
+  id="customAlert"
+  class="custom-modal"
+>
+
+  <div class="custom-box">
+
+    <div
+      id="alertIcon"
+      class="custom-icon"
+    >
+      !
+    </div>
+
+    <div
+      id="alertTitle"
+      class="custom-title"
+    >
+      Informasi
+    </div>
+
+    <div
+      id="alertMessage"
+      class="custom-message"
+    ></div>
+
+    <div class="custom-buttons">
+
+      <button
+        class="custom-confirm"
+        onclick="closeCustomAlert()"
+      >
+        OK
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     CUSTOM CONFIRM MODAL
+===================================================== -->
+
+<div
+  id="customConfirm"
+  class="custom-modal"
+>
+
+  <div class="custom-box">
+
+    <div
+      id="confirmIcon"
+      class="custom-icon"
+    >
+      ?
+    </div>
+
+    <div
+      id="confirmTitle"
+      class="custom-title"
+    >
+      Konfirmasi
+    </div>
+
+    <div
+      id="confirmMessage"
+      class="custom-message"
+    ></div>
+
+    <div class="custom-buttons">
+
+      <button
+        class="custom-cancel"
+        onclick="closeCustomConfirm(false)"
+      >
+        Batal
+      </button>
+
+      <button
+        id="confirmActionButton"
+        class="custom-confirm"
+        onclick="closeCustomConfirm(true)"
+      >
+        Lanjutkan
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     CUSTOM EMAIL MODAL
+===================================================== -->
+
+<div
+  id="emailModal"
+  class="custom-modal"
+>
+
+  <div class="custom-box">
+
+    <div class="custom-icon">
+      @
+    </div>
+
+    <div class="custom-title">
+      Ganti Email
+    </div>
+
+    <div class="custom-message">
+      Masukkan email baru untuk user ini.
+    </div>
+
+    <div class="custom-email-current">
+
+      Email sekarang
+
+      <strong id="currentEmailDisplay">
+        -
+      </strong>
+
+    </div>
+
+    <input
+      id="newEmailModal"
+      class="custom-input"
+      type="email"
+      placeholder="Masukkan email baru"
+      autocomplete="off"
+    >
+
+    <div class="custom-buttons">
+
+      <button
+        class="custom-cancel"
+        onclick="closeEmailModal()"
+      >
+        Batal
+      </button>
+
+      <button
+        class="custom-confirm"
+        onclick="submitEmailChange()"
+      >
+        Lanjutkan
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     LOADING
+===================================================== -->
+
+<div
+  id="customLoading"
+  class="custom-loading"
+>
+
+  <div class="loading-box">
+    Memproses...
+  </div>
+
+</div>
+
+
 <script>
 
 
@@ -539,6 +881,234 @@ let isRegistering =
 
 
 /* =====================================================
+   CUSTOM MODAL SYSTEM
+===================================================== */
+
+function showAlert(
+  message,
+  title = "Informasi",
+  icon = "!"
+) {
+
+  document.getElementById(
+    "alertTitle"
+  ).textContent =
+    title;
+
+
+  document.getElementById(
+    "alertMessage"
+  ).textContent =
+    message;
+
+
+  document.getElementById(
+    "alertIcon"
+  ).textContent =
+    icon;
+
+
+  document.getElementById(
+    "customAlert"
+  ).classList.add(
+    "show"
+  );
+
+}
+
+
+function closeCustomAlert() {
+
+  document.getElementById(
+    "customAlert"
+  ).classList.remove(
+    "show"
+  );
+
+}
+
+
+/* =====================================================
+   CUSTOM CONFIRM
+===================================================== */
+
+let confirmResolver =
+  null;
+
+
+function showConfirm(
+  message,
+  title = "Konfirmasi",
+  icon = "?",
+  buttonText = "Lanjutkan",
+  danger = false
+) {
+
+  return new Promise(
+    resolve => {
+
+      confirmResolver =
+        resolve;
+
+
+      document.getElementById(
+        "confirmTitle"
+      ).textContent =
+        title;
+
+
+      document.getElementById(
+        "confirmMessage"
+      ).textContent =
+        message;
+
+
+      document.getElementById(
+        "confirmIcon"
+      ).textContent =
+        icon;
+
+
+      const button =
+        document.getElementById(
+          "confirmActionButton"
+        );
+
+
+      button.textContent =
+        buttonText;
+
+
+      button.className =
+        danger
+          ? "custom-danger"
+          : "custom-confirm";
+
+
+      button.style.marginTop =
+        "0";
+
+
+      document.getElementById(
+        "customConfirm"
+      ).classList.add(
+        "show"
+      );
+
+    }
+  );
+
+}
+
+
+function closeCustomConfirm(
+  result
+) {
+
+  document.getElementById(
+    "customConfirm"
+  ).classList.remove(
+    "show"
+  );
+
+
+  if (
+    confirmResolver
+  ) {
+
+    const resolve =
+      confirmResolver;
+
+
+    confirmResolver =
+      null;
+
+
+    resolve(result);
+
+  }
+
+}
+
+
+/* =====================================================
+   CLOSE MODALS WHEN CLICK OUTSIDE
+===================================================== */
+
+document.addEventListener(
+  "click",
+  e => {
+
+    if (
+      e.target.id ===
+      "customAlert"
+    ) {
+
+      closeCustomAlert();
+
+    }
+
+
+    if (
+      e.target.id ===
+      "customConfirm"
+    ) {
+
+      closeCustomConfirm(
+        false
+      );
+
+    }
+
+
+    if (
+      e.target.id ===
+      "emailModal"
+    ) {
+
+      closeEmailModal();
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+function showLoading(
+  text = "Memproses..."
+) {
+
+  document.querySelector(
+    "#customLoading .loading-box"
+  ).textContent =
+    text;
+
+
+  document.getElementById(
+    "customLoading"
+  ).classList.add(
+    "show"
+  );
+
+}
+
+
+function hideLoading() {
+
+  document.getElementById(
+    "customLoading"
+  ).classList.remove(
+    "show"
+  );
+
+}
+
+
+/* =====================================================
    AUTH CHECK
 ===================================================== */
 
@@ -570,9 +1140,12 @@ auth.onAuthStateChanged(
 
         if (!snapshot.exists()) {
 
-          alert(
-            "⚠ Anda bukan admin!"
+          showAlert(
+            "Akun ini tidak memiliki akses sebagai admin.",
+            "Akses Ditolak",
+            "!"
           );
+
 
           auth.signOut()
             .then(
@@ -673,11 +1246,14 @@ function addUser() {
     msg.style.color =
       "red";
 
+
     msg.innerHTML =
       "⚠ Semua field harus diisi dengan benar!";
 
+
     isRegistering =
       false;
+
 
     return;
 
@@ -698,36 +1274,47 @@ function addUser() {
           res.user.uid;
 
 
-        /*
-         * Kirim email verification
-         */
+        return res.user
+          .sendEmailVerification()
+          .catch(
+            err => {
 
-        res.user
-          .sendEmailVerification();
+              console.error(
+                "Verification email error:",
+                err
+              );
 
-
-        return db
-          .ref(
-            "users/" + uid
+            }
           )
-          .set({
 
-            email:
-              email,
+          .then(
+            () => {
 
-            nama:
-              name,
+              return db
+                .ref(
+                  "users/" + uid
+                )
+                .set({
 
-            saldo:
-              balance,
+                  email:
+                    email,
 
-            status:
-              status,
+                  nama:
+                    name,
 
-            createdAt:
-              Date.now()
+                  saldo:
+                    balance,
 
-          });
+                  status:
+                    status,
+
+                  createdAt:
+                    Date.now()
+
+                });
+
+            }
+          );
 
       }
     )
@@ -1656,9 +2243,11 @@ function editSaldo(uid) {
       );
 
 
-      alert(
+      showAlert(
         "Gagal mengambil saldo user.\n\n" +
-        err.message
+        err.message,
+        "Gagal Mengambil Saldo",
+        "!"
       );
 
     }
@@ -1695,12 +2284,14 @@ function closeSaldoModal() {
    SAVE SALDO
 ===================================================== */
 
-function saveSaldo() {
+async function saveSaldo() {
 
   if (!saldoEditingUid) {
 
-    alert(
-      "User tidak ditemukan."
+    showAlert(
+      "User tidak ditemukan.",
+      "User Tidak Ditemukan",
+      "!"
     );
 
     return;
@@ -1731,8 +2322,10 @@ function saveSaldo() {
     amount <= 0
   ) {
 
-    alert(
-      "Nominal harus lebih dari 0."
+    showAlert(
+      "Nominal harus lebih dari 0.",
+      "Nominal Tidak Valid",
+      "!"
     );
 
     return;
@@ -1761,13 +2354,47 @@ function saveSaldo() {
 
   if (newSaldo < 0) {
 
-    alert(
-      "Saldo tidak boleh menjadi negatif."
+    showAlert(
+      "Saldo tidak boleh menjadi negatif.",
+      "Saldo Tidak Valid",
+      "!"
     );
 
     return;
 
   }
+
+
+  const confirmed =
+    await showConfirm(
+      "Saldo saat ini: Rp " +
+      saldoCurrentValue.toLocaleString("id-ID") +
+      "\n\n" +
+      (
+        action === "add"
+          ? "Tambah: Rp "
+          : "Kurangi: Rp "
+      ) +
+      amount.toLocaleString("id-ID") +
+      "\n\n" +
+      "Saldo setelah perubahan: Rp " +
+      newSaldo.toLocaleString("id-ID"),
+      "Konfirmasi Perubahan Saldo",
+      "Rp",
+      "Simpan"
+    );
+
+
+  if (!confirmed) {
+
+    return;
+
+  }
+
+
+  showLoading(
+    "Menyimpan saldo..."
+  );
 
 
   db.ref(
@@ -1782,13 +2409,16 @@ function saveSaldo() {
 
       closeSaldoModal();
 
+      hideLoading();
 
-      alert(
-        "Saldo berhasil diperbarui.\n\n" +
+
+      showAlert(
         "Saldo baru: Rp " +
         newSaldo.toLocaleString(
           "id-ID"
-        )
+        ),
+        "Saldo Berhasil Diperbarui",
+        "✓"
       );
 
 
@@ -1800,15 +2430,20 @@ function saveSaldo() {
   .catch(
     err => {
 
+      hideLoading();
+
+
       console.error(
         "Save saldo error:",
         err
       );
 
 
-      alert(
+      showAlert(
         "Gagal memperbarui saldo.\n\n" +
-        err.message
+        err.message,
+        "Gagal Memperbarui Saldo",
+        "!"
       );
 
     }
@@ -1821,7 +2456,7 @@ function saveSaldo() {
    TOGGLE STATUS
 ===================================================== */
 
-function toggleStatus(
+async function toggleStatus(
   uid,
   currentStatus
 ) {
@@ -1839,14 +2474,33 @@ function toggleStatus(
 
 
   const confirmed =
-    confirm(
-      `Yakin ingin ${text} user ini?`
+    await showConfirm(
+      `Yakin ingin ${text} user ini?`,
+      newStatus === "active"
+        ? "Aktifkan User"
+        : "Nonaktifkan User",
+      newStatus === "active"
+        ? "✓"
+        : "!",
+      newStatus === "active"
+        ? "Aktifkan"
+        : "Disable",
+      newStatus !== "active"
     );
 
 
   if (!confirmed) {
+
     return;
+
   }
+
+
+  showLoading(
+    newStatus === "active"
+      ? "Mengaktifkan user..."
+      : "Menonaktifkan user..."
+  );
 
 
   db.ref(
@@ -1859,10 +2513,19 @@ function toggleStatus(
   .then(
     () => {
 
-      alert(
+      hideLoading();
+
+
+      showAlert(
         newStatus === "active"
           ? "User berhasil diaktifkan."
-          : "User berhasil dinonaktifkan."
+          : "User berhasil dinonaktifkan.",
+        newStatus === "active"
+          ? "User Diaktifkan"
+          : "User Dinonaktifkan",
+        newStatus === "active"
+          ? "✓"
+          : "!"
       );
 
 
@@ -1874,15 +2537,20 @@ function toggleStatus(
   .catch(
     err => {
 
+      hideLoading();
+
+
       console.error(
         "Toggle status error:",
         err
       );
 
 
-      alert(
+      showAlert(
         "Gagal mengubah status user.\n\n" +
-        err.message
+        err.message,
+        "Gagal Mengubah Status",
+        "!"
       );
 
     }
@@ -1895,19 +2563,30 @@ function toggleStatus(
    DELETE MEMBER
 ===================================================== */
 
-function deleteMember(
+async function deleteMember(
   uid
 ) {
 
   const confirmed =
-    confirm(
-      "Apakah yakin ingin menghapus data user ini dari database?"
+    await showConfirm(
+      "Apakah yakin ingin menghapus data user ini dari database?\n\nTindakan ini tidak dapat dibatalkan.",
+      "Hapus User",
+      "!",
+      "Hapus",
+      true
     );
 
 
   if (!confirmed) {
+
     return;
+
   }
+
+
+  showLoading(
+    "Menghapus data user..."
+  );
 
 
   db.ref(
@@ -1918,8 +2597,13 @@ function deleteMember(
   .then(
     () => {
 
-      alert(
-        "Data user berhasil dihapus dari database."
+      hideLoading();
+
+
+      showAlert(
+        "Data user berhasil dihapus dari database.",
+        "User Dihapus",
+        "✓"
       );
 
 
@@ -1931,15 +2615,20 @@ function deleteMember(
   .catch(
     err => {
 
+      hideLoading();
+
+
       console.error(
         "Delete user error:",
         err
       );
 
 
-      alert(
+      showAlert(
         "Gagal menghapus user.\n\n" +
-        err.message
+        err.message,
+        "Gagal Menghapus User",
+        "!"
       );
 
     }
@@ -1950,79 +2639,160 @@ function deleteMember(
 
 /* =====================================================
    GANTI EMAIL
-   =====================================================
-
-   BAGIAN INI YANG KITA PERBAIKI
-   UNTUK DEBUG WORKER.
-
 ===================================================== */
 
-async function changeEmail(
+let emailEditingUid =
+  null;
+
+let emailCurrentEmail =
+  "";
+
+
+function changeEmail(
   uid,
   currentEmail
 ) {
 
-  /*
-   * Popup input email
-   */
+  emailEditingUid =
+    uid;
 
-  const email =
-    prompt(
 
-      "Ganti email user\n\n" +
+  emailCurrentEmail =
+    currentEmail || "";
 
-      "Email sekarang:\n" +
 
-      (currentEmail || "-") +
+  document.getElementById(
+    "currentEmailDisplay"
+  ).textContent =
+    currentEmail || "-";
 
-      "\n\n" +
 
-      "Masukkan email baru:"
+  document.getElementById(
+    "newEmailModal"
+  ).value =
+    "";
 
+
+  document.getElementById(
+    "emailModal"
+  ).classList.add(
+    "show"
+  );
+
+
+  setTimeout(
+    () => {
+
+      document.getElementById(
+        "newEmailModal"
+      ).focus();
+
+    },
+    100
+  );
+
+}
+
+
+/* =====================================================
+   CLOSE EMAIL MODAL
+===================================================== */
+
+function closeEmailModal() {
+
+  document.getElementById(
+    "emailModal"
+  ).classList.remove(
+    "show"
+  );
+
+
+  emailEditingUid =
+    null;
+
+
+  emailCurrentEmail =
+    "";
+
+}
+
+
+/* =====================================================
+   SUBMIT EMAIL CHANGE
+===================================================== */
+
+async function submitEmailChange() {
+
+  if (!emailEditingUid) {
+
+    showAlert(
+      "User tidak ditemukan.",
+      "User Tidak Ditemukan",
+      "!"
     );
-
-
-  if (
-    email === null
-  ) {
 
     return;
 
   }
 
 
+  const emailInput =
+    document.getElementById(
+      "newEmailModal"
+    );
+
+
   const newEmail =
-    email
+    emailInput
+      .value
       .trim()
       .toLowerCase();
 
 
-  /*
-   * Validasi kosong
-   */
-
   if (!newEmail) {
 
-    alert(
-      "Email baru wajib diisi."
+    showAlert(
+      "Email baru wajib diisi.",
+      "Email Kosong",
+      "!"
     );
+
+    emailInput.focus();
 
     return;
 
   }
 
-
-  /*
-   * Validasi format email
-   */
 
   if (
     !/^[^\s@]+@[^\s@]+\.[^\s@]+$/
       .test(newEmail)
   ) {
 
-    alert(
-      "Format email tidak valid."
+    showAlert(
+      "Format email tidak valid.",
+      "Email Tidak Valid",
+      "!"
+    );
+
+    emailInput.focus();
+
+    return;
+
+  }
+
+
+  if (
+    newEmail ===
+    emailCurrentEmail
+      .trim()
+      .toLowerCase()
+  ) {
+
+    showAlert(
+      "Email baru sama dengan email yang sekarang.",
+      "Email Tidak Berubah",
+      "!"
     );
 
     return;
@@ -2030,40 +2800,32 @@ async function changeEmail(
   }
 
 
-  /*
-   * Konfirmasi
-   */
-
-  const confirmChange =
-    confirm(
-
-      "Yakin ingin mengganti email?\n\n" +
-
+  const confirmed =
+    await showConfirm(
       "Dari:\n" +
-
-      (currentEmail || "-") +
-
+      (emailCurrentEmail || "-") +
       "\n\n" +
-
       "Menjadi:\n" +
-
-      newEmail
-
+      newEmail +
+      "\n\n" +
+      "Password user tidak akan berubah.",
+      "Konfirmasi Ganti Email",
+      "@",
+      "Ganti Email"
     );
 
 
-  if (!confirmChange) {
+  if (!confirmed) {
 
     return;
 
   }
+
+
+  closeEmailModal();
 
 
   try {
-
-    /*
-     * Ambil admin yang sedang login
-     */
 
     const adminUser =
       firebase.auth().currentUser;
@@ -2071,9 +2833,10 @@ async function changeEmail(
 
     if (!adminUser) {
 
-      alert(
-        "Sesi admin tidak ditemukan.\n\n" +
-        "Silakan login kembali."
+      showAlert(
+        "Sesi admin tidak ditemukan.\n\nSilakan login kembali.",
+        "Sesi Admin Tidak Ditemukan",
+        "!"
       );
 
       return;
@@ -2081,25 +2844,16 @@ async function changeEmail(
     }
 
 
-    /*
-     * Refresh Firebase ID Token
-     *
-     * Token ini yang dikirim
-     * ke Worker.
-     */
+    showLoading(
+      "Mengubah email..."
+    );
+
 
     const idToken =
       await adminUser.getIdToken(
         true
       );
 
-
-    /*
-     * DEBUG TOKEN
-     *
-     * Jangan pernah menampilkan
-     * token aslinya ke user.
-     */
 
     console.log(
       "Admin UID:",
@@ -2111,10 +2865,6 @@ async function changeEmail(
       "Firebase ID Token berhasil didapat."
     );
 
-
-    /*
-     * Panggil Worker
-     */
 
     const response =
       await fetch(
@@ -2140,7 +2890,7 @@ async function changeEmail(
             JSON.stringify({
 
               uid:
-                uid,
+                emailEditingUid,
 
               newEmail:
                 newEmail
@@ -2151,21 +2901,6 @@ async function changeEmail(
 
       );
 
-
-    /*
-     * =================================================
-     * BACA RESPONSE SEBAGAI TEXT TERLEBIH DAHULU
-     * =================================================
-     *
-     * Ini sengaja.
-     *
-     * Kalau Worker mengirim JSON:
-     *   kita parse JSON.
-     *
-     * Kalau Worker malah mengirim
-     * HTML / text / error lain:
-     *   kita tetap bisa melihat response-nya.
-     */
 
     const responseText =
       await response.text();
@@ -2197,10 +2932,6 @@ async function changeEmail(
     let data;
 
 
-    /*
-     * Coba parse JSON
-     */
-
     try {
 
       data =
@@ -2211,11 +2942,6 @@ async function changeEmail(
     }
 
     catch (parseError) {
-
-      /*
-       * Kalau bukan JSON,
-       * tetap simpan response
-       */
 
       console.error(
         "Worker response bukan JSON:",
@@ -2245,11 +2971,8 @@ async function changeEmail(
     );
 
 
-    /*
-     * =================================================
-     * WORKER ERROR
-     * =================================================
-     */
+    hideLoading();
+
 
     if (
       !response.ok ||
@@ -2261,18 +2984,10 @@ async function changeEmail(
         "Unknown error";
 
 
-      /*
-       * HTTP status asli
-       */
-
       errorMessage +=
         "\n\nHTTP Status: " +
         response.status;
 
-
-      /*
-       * Status yang dikirim Worker
-       */
 
       if (
         data.status
@@ -2284,10 +2999,6 @@ async function changeEmail(
 
       }
 
-
-      /*
-       * Detail error Worker
-       */
 
       if (
         data.detail
@@ -2338,16 +3049,10 @@ async function changeEmail(
       }
 
 
-      /*
-       * Tampilkan error lengkap
-       */
-
-      alert(
-
-        "GAGAL MENGUBAH EMAIL\n\n" +
-
-        errorMessage
-
+      showAlert(
+        errorMessage,
+        "Gagal Mengubah Email",
+        "!"
       );
 
 
@@ -2356,34 +3061,22 @@ async function changeEmail(
     }
 
 
-    /*
-     * =================================================
-     * AUTH BERHASIL
-     * TAPI RTDB WARNING
-     * =================================================
-     */
-
     if (
       data.warning
     ) {
 
-      alert(
-
-        "EMAIL AUTH BERHASIL DIUBAH\n\n" +
-
+      showAlert(
+        "Email Firebase Auth berhasil diubah.\n\n" +
         "Email baru:\n" +
-
         (
           data.email ||
           newEmail
         ) +
-
         "\n\n" +
-
-        "WARNING:\n" +
-
-        data.warning
-
+        "Peringatan:\n" +
+        data.warning,
+        "Email Auth Berhasil",
+        "!"
       );
 
 
@@ -2395,29 +3088,18 @@ async function changeEmail(
     }
 
 
-    /*
-     * =================================================
-     * BERHASIL
-     * =================================================
-     */
-
-    alert(
-
-      "EMAIL BERHASIL DIUBAH\n\n" +
-
+    showAlert(
       "Email baru:\n" +
-
       (
         data.email ||
         newEmail
-      )
-
+      ) +
+      "\n\n" +
+      "Password user tidak berubah. User dapat menggunakan Forgot Password pada email baru untuk membuat password baru.",
+      "Email Berhasil Diubah",
+      "✓"
     );
 
-
-    /*
-     * Refresh tabel
-     */
 
     loadMembers();
 
@@ -2428,9 +3110,8 @@ async function changeEmail(
     error
   ) {
 
-    /*
-     * Error JS / Network / CORS
-     */
+    hideLoading();
+
 
     console.error(
       "changeEmail error:",
@@ -2438,18 +3119,24 @@ async function changeEmail(
     );
 
 
-    alert(
-
-      "ERROR SCRIPT / NETWORK\n\n" +
-
+    showAlert(
       (
         error.message ||
         String(error)
-      )
-
+      ),
+      "Error Script / Network",
+      "!"
     );
 
   }
+
+
+  /*
+   * Bersihkan UID setelah proses selesai.
+   */
+
+  emailEditingUid =
+    null;
 
 }
 
