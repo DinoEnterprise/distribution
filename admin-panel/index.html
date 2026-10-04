@@ -14,7 +14,18 @@
 <meta name="theme-color" content="#667eea">
 <meta name="robots" content="noindex, nofollow">
 
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap"
+  rel="stylesheet"
+>
+
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -32,8 +43,8 @@
 body{
   background:#f1f2f7;
   min-height:100vh;
-  color:#111;
-  padding-top:74px;
+  color:#17181c;
+  padding-top:64px;
   padding-bottom:90px;
   -webkit-tap-highlight-color:transparent;
 }
@@ -41,12 +52,13 @@ body{
 /* ================= HEADER ================= */
 
 header{
-  height:74px;
-  padding:12px 18px;
+  height:64px;
+  padding:0 18px;
   display:flex;
   align-items:center;
+  justify-content:space-between;
   background:#fff;
-  border-bottom:1px solid #eee;
+  border-bottom:1px solid #e8e8ed;
   position:fixed;
   top:0;
   left:0;
@@ -55,22 +67,21 @@ header{
 }
 
 .header-logo{
-  height:46px;
+  height:32px;
+  width:auto;
   object-fit:contain;
 }
 
 .admin-profile{
-  margin-left:auto;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:8px 12px;
-  border:1px solid #e5e5e5;
-  background:#fff;
-  border-radius:999px;
+  border:0;
+  background:#f1f2f7;
+  border-radius:12px;
+  padding:9px 12px;
+  color:#25262b;
   font-size:13px;
   font-weight:600;
   cursor:pointer;
+  transition:.15s ease;
 }
 
 .admin-profile:active{
@@ -81,16 +92,18 @@ header{
 
 .profile-menu{
   position:fixed;
-  top:64px;
-  right:18px;
-  width:180px;
+  top:56px;
+  right:16px;
+  width:165px;
   background:#fff;
-  border:1px solid #eee;
+  border:1px solid #e7e7eb;
   border-radius:14px;
-  box-shadow:0 8px 25px rgba(0,0,0,.12);
+  padding:6px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
   display:none;
   overflow:hidden;
   z-index:1500;
+  animation:menuIn .18s ease both;
 }
 
 .profile-menu.show{
@@ -101,65 +114,67 @@ header{
   width:100%;
   border:0;
   background:#fff;
-  padding:13px 15px;
+  padding:11px;
   text-align:left;
-  font-size:14px;
+  border-radius:9px;
+  font-size:13px;
+  color:#25262b;
   cursor:pointer;
 }
 
 .profile-menu button:hover{
-  background:#f5f5f7;
+  background:#f1f2f7;
 }
 
 .profile-menu .logout{
   color:#ef4444;
-  font-weight:600;
-  border-top:1px solid #eee;
 }
 
 /* ================= MAIN ================= */
 
 .container{
-  width:90%;
-  max-width:900px;
+  width:calc(100% - 32px);
+  max-width:760px;
   margin:0 auto;
 }
 
 /* ================= WELCOME ================= */
 
 .welcome-card{
-  margin-top:25px;
+  margin-top:22px;
   background:#fff;
-  border-radius:20px;
-  padding:22px;
-  border:1px solid #ececec;
-  box-shadow:0 8px 18px rgba(0,0,0,.05);
+  border:1px solid #e8e8ed;
+  border-radius:18px;
+  padding:20px;
+  animation:pageIn .45s ease both;
 }
 
 .welcome-small{
-  color:#777;
-  font-size:13px;
+  color:#777b84;
+  font-size:12px;
   margin-bottom:5px;
 }
 
 .welcome-title{
-  font-size:22px;
+  font-size:23px;
   font-weight:700;
+  letter-spacing:-.2px;
 }
 
 .welcome-desc{
   margin-top:6px;
-  color:#777;
-  font-size:13px;
-  line-height:1.4;
+  color:#777b84;
+  font-size:12px;
+  line-height:1.5;
 }
 
 /* ================= SECTION ================= */
 
 .section-title{
-  font-size:15px;
-  font-weight:700;
-  margin:25px 0 12px;
+  font-size:13px;
+  font-weight:600;
+  color:#777b84;
+  margin:24px 3px 10px;
 }
 
 /* ================= OVERVIEW ================= */
@@ -167,50 +182,15 @@ header{
 .overview-grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:12px;
+  gap:10px;
 }
 
 .stat-card{
   background:#fff;
-  border:1px solid #ececec;
+  border:1px solid #e8e8ed;
   border-radius:16px;
-  padding:15px;
-  box-shadow:0 5px 14px rgba(0,0,0,.04);
-}
-
-.stat-icon{
-  width:34px;
-  height:34px;
-  object-fit:contain;
-  margin-bottom:10px;
-}
-
-.stat-title{
-  font-size:12px;
-  color:#777;
-}
-
-.stat-value{
-  font-size:22px;
-  font-weight:700;
-  margin-top:2px;
-}
-@keyframes pageIn{
-  from{
-    opacity:0;
-    transform:translateY(14px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-
-.welcome-card{
-  animation:pageIn .45s ease both;
-}
-
-.stat-card{
+  padding:14px;
+  min-width:0;
   animation:pageIn .45s ease both;
 }
 
@@ -226,7 +206,43 @@ header{
   animation-delay:.24s;
 }
 
+.stat-icon{
+  width:34px;
+  height:34px;
+  object-fit:contain;
+  margin-bottom:9px;
+}
+
+.stat-title{
+  font-size:11px;
+  color:#858891;
+}
+
+.stat-value{
+  font-size:21px;
+  font-weight:700;
+  margin-top:2px;
+  line-height:1.2;
+}
+
+/* ================= QUICK ACCESS ================= */
+
+.quick-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
 .quick-item{
+  background:#fff;
+  border:1px solid #e8e8ed;
+  border-radius:16px;
+  padding:14px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  cursor:pointer;
+  transition:.18s ease;
   animation:pageIn .45s ease both;
 }
 
@@ -249,29 +265,14 @@ header{
 .quick-item:nth-child(5){
   animation-delay:.54s;
 }
-/* ================= QUICK ACCESS ================= */
-
-.quick-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
-}
-
-.quick-item{
-  background:#fff;
-  border:1px solid #ececec;
-  border-radius:16px;
-  padding:15px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  cursor:pointer;
-  transition:.15s;
-  box-shadow:0 5px 14px rgba(0,0,0,.04);
-}
 
 .quick-item:active{
   transform:scale(.97);
+}
+
+.quick-item:hover{
+  border-color:#d9d9df;
+  box-shadow:0 5px 18px rgba(0,0,0,.04);
 }
 
 .quick-icon{
@@ -286,15 +287,15 @@ header{
 }
 
 .quick-title{
-  font-size:14px;
-  font-weight:700;
+  font-size:13px;
+  font-weight:600;
 }
 
 .quick-desc{
   font-size:11px;
-  color:#777;
+  color:#858891;
   margin-top:3px;
-  line-height:1.3;
+  line-height:1.35;
 }
 
 /* ================= BOTTOM NAV ================= */
@@ -302,7 +303,7 @@ header{
 .bottom-nav{
   height:72px;
   background:#fff;
-  border-top:1px solid #eee;
+  border-top:1px solid #e6e6eb;
   position:fixed;
   bottom:0;
   left:0;
@@ -314,36 +315,59 @@ header{
 }
 
 .nav-item{
-  min-width:80px;
+  width:33.33%;
   text-align:center;
-  font-size:12px;
-  color:#777;
+  font-size:11px;
+  color:#999ca4;
   padding:7px 14px;
   border-radius:12px;
   cursor:pointer;
+  transition:.15s ease;
 }
 
-.nav-item img{
-  width:27px;
-  height:27px;
-  object-fit:contain;
+.nav-item i{
   display:block;
-  margin:0 auto 4px;
+  font-size:18px;
+  margin-bottom:4px;
+}
+
+.nav-item:active{
+  transform:scale(.94);
 }
 
 .nav-item.active{
-  color:#111;
-  font-weight:700;
+  color:#17181c;
+  font-weight:600;
 }
 
-.nav-item.active::after{
-  content:"";
-  display:block;
-  width:28px;
-  height:3px;
-  border-radius:999px;
-  background:#111;
-  margin:5px auto 0;
+/* ================= ANIMATION ================= */
+
+@keyframes pageIn{
+
+  from{
+    opacity:0;
+    transform:translateY(12px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+}
+
+@keyframes menuIn{
+
+  from{
+    opacity:0;
+    transform:translateY(-5px) scale(.98);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+
 }
 
 /* ================= LOADING ================= */
@@ -376,23 +400,50 @@ header{
 @media(max-width:600px){
 
   .container{
-    width:92%;
+    width:calc(100% - 28px);
+  }
+
+  .welcome-card{
+    padding:18px;
+  }
+
+  .welcome-title{
+    font-size:21px;
   }
 
   .overview-grid{
-    gap:9px;
+    gap:8px;
   }
 
   .stat-card{
-    padding:13px 10px;
+    padding:12px 10px;
+  }
+
+  .stat-icon{
+    width:31px;
+    height:31px;
   }
 
   .stat-value{
-    font-size:20px;
+    font-size:19px;
   }
 
   .quick-grid{
     grid-template-columns:1fr;
+  }
+
+}
+
+/* ================= DESKTOP ================= */
+
+@media(min-width:700px){
+
+  .container{
+    width:100%;
+  }
+
+  .quick-grid{
+    grid-template-columns:repeat(2,1fr);
   }
 
 }
@@ -415,7 +466,7 @@ header{
     class="admin-profile"
     onclick="toggleProfile()"
   >
-    Admin ▾
+    Admin <i class="fa-solid fa-chevron-down"></i>
   </button>
 
 </header>
@@ -429,14 +480,16 @@ header{
 >
 
   <button onclick="goProfile()">
-    Profile
+    <i class="fa-regular fa-user"></i>
+    &nbsp; Profile
   </button>
 
   <button
     class="logout"
     onclick="logout()"
   >
-    Log Out
+    <i class="fa-solid fa-right-from-bracket"></i>
+    &nbsp; Logout
   </button>
 
 </div>
@@ -445,6 +498,7 @@ header{
 <!-- MAIN -->
 
 <main class="container">
+
 
   <!-- WELCOME -->
 
@@ -472,6 +526,7 @@ header{
   </div>
 
   <section class="overview-grid">
+
 
     <div class="stat-card">
 
@@ -535,6 +590,7 @@ header{
 
     </div>
 
+
   </section>
 
 
@@ -545,6 +601,7 @@ header{
   </div>
 
   <section class="quick-grid">
+
 
     <div
       class="quick-item"
@@ -670,6 +727,7 @@ header{
 
     </div>
 
+
   </section>
 
 </main>
@@ -679,12 +737,16 @@ header{
 
 <nav class="bottom-nav">
 
+
   <div
     class="nav-item active"
     onclick="homeClick()"
   >
-    <img src="../assets/home.png">
+
+    <i class="fa-solid fa-house"></i>
+
     Home
+
   </div>
 
 
@@ -692,8 +754,11 @@ header{
     class="nav-item"
     onclick="goManage()"
   >
-    <img src="../assets/admin-menu.png">
+
+    <i class="fa-solid fa-grip"></i>
+
     Manage
+
   </div>
 
 
@@ -701,9 +766,13 @@ header{
     class="nav-item"
     onclick="goProfile()"
   >
-    <img src="../assets/account.png">
+
+    <i class="fa-regular fa-user"></i>
+
     Profile
+
   </div>
+
 
 </nav>
 
@@ -791,6 +860,7 @@ auth.onAuthStateChanged(user => {
 
 function loadOverview(){
 
+
   /* USERS */
 
   db.ref("users")
@@ -859,7 +929,7 @@ function toggleProfile(){
 
 function goProfile(){
 
-  location.href="../admin-profile.html";
+  location.href="../admin-profile";
 
 }
 
@@ -904,14 +974,6 @@ function homeClick(){
 
 
 function goManage(){
-
-  /*
-   * Untuk sementara menuju halaman
-   * kumpulan menu admin.
-   *
-   * Nanti kita buat halaman Manage
-   * tersendiri.
-   */
 
   location.href="../admin-manage";
 
