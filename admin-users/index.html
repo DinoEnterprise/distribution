@@ -2822,14 +2822,20 @@ async function submitEmailChange() {
   }
 
 
-  closeEmailModal();
+  const targetUid =
+  emailEditingUid;
+
+const oldEmail =
+  emailCurrentEmail;
 
 
-  try {
+closeEmailModal();
 
-    const adminUser =
-      firebase.auth().currentUser;
 
+try {
+
+  const adminUser =
+    firebase.auth().currentUser;
 
     if (!adminUser) {
 
@@ -2887,15 +2893,15 @@ async function submitEmailChange() {
           },
 
           body:
-            JSON.stringify({
+  JSON.stringify({
 
-              uid:
-                emailEditingUid,
+    uid:
+      targetUid,
 
-              newEmail:
-                newEmail
+    newEmail:
+      newEmail
 
-            })
+  })
 
         }
 
