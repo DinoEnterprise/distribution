@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Releases | Dynotic Distribution</title>
+
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/favicon-android.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-iphone.png">
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap"
+  rel="stylesheet"
+>
+
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+>
+
+<style>
+
+/* ================= RESET ================= */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Outfit",sans-serif;
+}
+
+body{
+  background:#f1f2f7;
+  min-height:100vh;
+  color:#17181c;
+  padding-top:64px;
+  padding-bottom:90px;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+
+
+/* ================= HEADER ================= */
+
+header{
+  height:64px;
+  padding:0 18px;
+  display:flex;
+  align-items:center;
+  background:#fff;
+  border-bottom:1px solid #e8e8ed;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:1000;
+}
+
+header img{
+  height:32px;
+  width:auto;
+  object-fit:contain;
+}
+
+
+/* ================= MAIN ================= */
+
+.container{
+  width:calc(100% - 28px);
+  max-width:760px;
+  margin:0 auto;
+}
+
+
+/* ================= CARD ================= */
+
+.card{
+  background:#fff;
+  border:1px solid #e8e8ed;
+  border-radius:18px;
+  padding:18px;
+  margin-top:20px;
+  animation:pageIn .45s ease both;
+}
+
+
+/* ================= CREATE RELEASE ================= */
+
+.create-release{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.create-release:active{
+  transform:scale(.98);
+}
+
+.create-text{
+  min-width:0;
+}
+
+.create-title{
+  font-size:15px;
+  font-weight:700;
+  color:#17181c;
+}
+
+.create-desc{
+  font-size:11px;
+  color:#858891;
+  margin-top:4px;
+}
+
+.new-release-btn{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  background:#111;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+
+.new-release-btn i{
+  font-size:16px;
+}
+
+
+/* ================= MY RELEASES ================= */
+
+.releases-card{
+  margin-top:14px;
+}
+
+.section-title{
+  font-size:15px;
+  font-weight:700;
+  margin-bottom:12px;
+}
+
+
+/* ================= SEARCH ================= */
+
+.search-wrap{
+  position:relative;
+  margin-bottom:14px;
+}
+
+.search-wrap i{
+  position:absolute;
+  left:13px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:13px;
+  color:#999ca4;
+  pointer-events:none;
+}
+
+#searchInput{
+  width:100%;
+  height:42px;
+  padding:0 13px 0 38px;
+  border-radius:12px;
+  border:1px solid #e8e8ed;
+  background:#f8f8fa;
+  color:#17181c;
+  font-size:13px;
+  outline:none;
+  transition:.15s;
+}
+
+#searchInput:focus{
+  border-color:#d6d7dd;
+  background:#fff;
+}
+
+#searchInput::placeholder{
+  color:#999ca4;
+}
+
+
+/* ================= RELEASE ITEM ================= */
+
+.release-box{
+  padding:14px;
+  border:1px solid #e8e8ed;
+  border-radius:15px;
+  margin-bottom:10px;
+  background:#fff;
+  cursor:pointer;
+  transition:.15s;
+  opacity:0;
+  transform:translateY(10px);
+  animation:releaseIn .4s ease forwards;
+}
+
+.release-box:active{
+  transform:scale(.98);
+}
+
+
+.release-item{
+  display:flex;
+  gap:12px;
+  min-width:0;
+}
+
+
+/* ================= COVER ================= */
+
+.release-cover{
+  width:46px;
+  height:46px;
+  border-radius:9px;
+  background:#f1f2f7;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  overflow:hidden;
+}
+
+.release-cover img{
+  width:46px;
+  height:46px;
+  object-fit:cover;
+  border-radius:8px;
+
+  filter:blur(10px);
+  opacity:.6;
+
+  transition:
+    filter .35s ease,
+    opacity .35s ease;
+}
+
+.release-cover img.loaded{
+  filter:blur(0);
+  opacity:1;
+}
+
+
+/* ================= RELEASE CONTENT ================= */
+
+.release-content{
+  flex:1;
+  min-width:0;
+}
+
+.release-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:8px;
+  min-width:0;
+}
+
+.release-title{
+  flex:1;
+  min-width:0;
+  line-height:1.3;
+  font-size:13px;
+  font-weight:600;
+
+  overflow:hidden;
+  text-overflow:ellipsis;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+}
+
+
+/* ================= STATUS ================= */
+
+.release-status{
+  white-space:nowrap;
+  flex-shrink:0;
+  min-width:68px;
+  text-align:center;
+
+  font-size:9px;
+  font-weight:600;
+  padding:4px 8px;
+  border-radius:999px;
+
+  text-transform:uppercase;
+  transform-origin:center;
+}
+
+.release-status.process{
+  animation:pulse 1.2s infinite;
+}
+
+@keyframes pulse{
+
+  0%,100%{
+    transform:scale(1);
+    opacity:1;
+  }
+
+  50%{
+    transform:scale(1.05);
+    opacity:.8;
+  }
+
+}
+
+
+/* ================= META ================= */
+
+.release-meta{
+  font-size:10px;
+  color:#858891;
+  margin-top:5px;
+  line-height:1.5;
+}
+
+.release-meta b{
+  color:#555960;
+  font-weight:600;
+}
+
+
+/* ================= EMPTY / LOADING ================= */
+
+.empty-state{
+  text-align:center;
+  color:#999ca4;
+  font-size:12px;
+  padding:22px 5px;
+}
+
+
+/* ================= PAGINATION ================= */
+
+.pagination{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  margin:15px auto 2px;
+}
+
+.pagination button{
+  width:36px;
+  height:32px;
+  padding:0;
+
+  border:1px solid #e1e2e7;
+  background:#f8f8fa;
+  color:#333;
+
+  border-radius:10px;
+  font-size:13px;
+  font-weight:600;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+}
+
+.pagination button:disabled{
+  opacity:.4;
+  cursor:default;
+}
+
+.pagination button:not(:disabled):active{
+  transform:scale(.92);
+}
+
+.pagination span{
+  font-size:11px;
+  font-weight:600;
+  color:#777b84;
+}
+
+
+/* ================= BOTTOM NAV ================= */
+
+.bottom-nav{
+  height:72px;
+  background:#fff;
+  border-top:1px solid #e6e6eb;
+
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+
+  z-index:1000;
+}
+
+.nav-item{
+  width:33.33%;
+  text-align:center;
+
+  font-size:11px;
+  color:#999ca4;
+
+  padding:7px 14px;
+  border-radius:12px;
+
+  cursor:pointer;
+  transition:.15s;
+}
+
+.nav-item i{
+  display:block;
+  font-size:18px;
+  margin-bottom:4px;
+}
+
+.nav-item:active{
+  transform:scale(.94);
+}
+
+.nav-item.active{
+  color:#17181c;
+  font-weight:600;
+}
+
+.nav-item.active::after{
+  content:"";
+  display:block;
+
+  width:28px;
+  height:3px;
+
+  border-radius:999px;
+  background:#111;
+
+  margin:5px auto 0;
+}
+
+
+/* ================= ANIMATION ================= */
+
+@keyframes pageIn{
+
+  from{
+    opacity:0;
+    transform:translateY(12px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+}
+
+@keyframes releaseIn{
+
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+}
+
+
+/* ================= MOBILE ================= */
+
+@media(max-width:600px){
+
+  .container{
+    width:calc(100% - 28px);
+  }
+
+  .card{
+    padding:17px;
+  }
+
+  .release-box{
+    padding:13px;
+  }
+
+}
+
+
+/* ================= DESKTOP ================= */
+
+@media(min-width:700px){
+
+  .container{
+    width:100%;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<!-- ================= HEADER ================= -->
+
+<header>
+
+  <img
+    src="../assets/dynotic-distribution.png"
+    alt="Dynotic Distribution"
+  >
+
+</header>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="container">
+
+
+  <!-- CREATE NEW RELEASE -->
+
+  <div
+    class="card create-release"
+    onclick="goCreateRelease()"
+  >
+
+    <div class="create-text">
+
+      <div class="create-title">
+        Create New Release
+      </div>
+
+      <div class="create-desc">
+        Upload & kelola rilisanmu
+      </div>
+
+    </div>
+
+
+    <div class="new-release-btn">
+
+      <i class="fa-solid fa-plus"></i>
+
+    </div>
+
+  </div>
+
+
+  <!-- MY RELEASES -->
+
+  <div class="card releases-card">
+
+    <div class="section-title">
+      My Releases
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <div class="search-wrap">
+
+      <i class="fa-solid fa-magnifying-glass"></i>
+
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search release..."
+        autocomplete="off"
+      >
+
+    </div>
+
+
+    <!-- RELEASE LIST -->
+
+    <div id="releaseList">
+
+      <div class="empty-state">
+        Loading...
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div style="height:80px"></div>
+
+
+</main>
+
+
+<!-- ================= BOTTOM NAV ================= -->
+
+<nav class="bottom-nav">
+
+
+  <div
+    class="nav-item"
+    onclick="homeClick()"
+  >
+
+    <i class="fa-solid fa-house"></i>
+
+    Home
+
+  </div>
+
+
+  <div
+    class="nav-item active"
+    onclick="releasesClick()"
+  >
+
+    <i class="fa-solid fa-music"></i>
+
+    Releases
+
+  </div>
+
+
+  <div
+    class="nav-item"
+    onclick="accountClick()"
+  >
+
+    <i class="fa-regular fa-user"></i>
+
+    Account
+
+  </div>
+
+
+</nav>
+
+
+<!-- ================= FIREBASE ================= -->
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+
+<script>
+
+/* ================= FIREBASE CONFIG ================= */
+
+firebase.initializeApp({
+
+  apiKey:
+    "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+
+  authDomain:
+    "dynopay-2513c.firebaseapp.com",
+
+  databaseURL:
+    "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+
+});
+
+
+const db = firebase.database();
+
+
+/* ================= AUTH ================= */
+
+firebase.auth().onAuthStateChanged(user => {
+
+  if(!user){
+
+    location.href="../login";
+
+    return;
+
+  }
+
+  loadReleases(user.uid);
+
+});
+
+
+/* ================= NAVIGATION ================= */
+
+function releasesClick(){
+
+  console.log(
+    "Releases active — tidak reload"
+  );
+
+}
+
+
+function accountClick(){
+
+  location.href="../account";
+
+}
+
+
+function homeClick(){
+
+  location.href="../home";
+
+}
+
+
+function goCreateRelease(){
+
+  location.href="../create-release";
+
+}
+
+
+function goRekapan(){
+
+  location.href="../dashboard-rekapan";
+
+}
+
+
+function logout(){
+
+  firebase.auth()
+    .signOut()
+    .then(() => {
+
+      location.href="../login";
+
+    });
+
+}
+
+
+/* ================= RELEASE DATA ================= */
+
+let currentPage = 1;
+
+const releasesPerPage = 5;
+
+
+/* ================= LOAD RELEASES ================= */
+
+function loadReleases(uid){
+
+  const list =
+    document.getElementById("releaseList");
+
+  list.innerHTML = `
+    <div class="empty-state">
+      Loading...
+    </div>
+  `;
+
+
+  db.ref("releases/" + uid)
+    .once("value")
+    .then(snap => {
+
+      let all = [];
+      let filtered = [];
+
+
+      snap.forEach(i => {
+
+        const r = i.val();
+
+        r._key = i.key;
+
+        all.push(r);
+
+      });
+
+
+      all.sort(
+        (a,b) =>
+          (b.time || 0) -
+          (a.time || 0)
+      );
+
+
+      filtered = all;
+
+
+      /* ================= SEARCH ================= */
+
+      const searchInput =
+        document.getElementById(
+          "searchInput"
+        );
+
+
+      searchInput.oninput = function(e){
+
+        const q =
+          e.target.value
+            .toLowerCase()
+            .trim();
+
+
+        filtered = all.filter(r =>
+
+          (r.title || "")
+            .toLowerCase()
+            .includes(q)
+
+          ||
+
+          (r.artist || "")
+            .toLowerCase()
+            .includes(q)
+
+          ||
+
+          (r.label || "")
+            .toLowerCase()
+            .includes(q)
+
+        );
+
+
+        currentPage = 1;
+
+        render(currentPage);
+
+      };
+
+
+      /* ================= RENDER ================= */
+
+      function render(p){
+
+        list.innerHTML = "";
+
+
+        const totalPages =
+          Math.ceil(
+            filtered.length /
+            releasesPerPage
+          );
+
+
+        /* EMPTY */
+
+        if(filtered.length === 0){
+
+          list.innerHTML = `
+
+            <div class="empty-state">
+
+              ${
+                searchInput.value
+                  ? "Tidak ditemukan hasil"
+                  : "Belum ada rilisan"
+              }
+
+            </div>
+
+          `;
+
+          return;
+
+        }
+
+
+        const start =
+          (p - 1) *
+          releasesPerPage;
+
+
+        const pageItems =
+          filtered.slice(
+            start,
+            start + releasesPerPage
+          );
+
+
+        /* ================= ITEMS ================= */
+
+        pageItems.forEach((r,index) => {
+
+          let displayStatus =
+            "PROCESS";
+
+          let c =
+            "#3b82f6";
+
+          let statusClass =
+            "process";
+
+
+          const now =
+            new Date();
+
+
+          const releaseDateObj =
+            r.date
+              ? new Date(r.date)
+              : null;
+
+
+          /* PROPOSAL */
+
+          if(r.status === "proposal"){
+
+            displayStatus =
+              "PROPOSAL";
+
+            c =
+              "#f59e0b";
+
+            statusClass =
+              "";
+
+          }
+
+
+          /* PROCESS */
+
+          else if(
+            r.status === "process"
+          ){
+
+            displayStatus =
+              "PROCESS";
+
+            c =
+              "#3b82f6";
+
+            statusClass =
+              "process";
+
+          }
+
+
+          /* APPROVED / LIVE */
+
+          else if(
+            r.status === "approved"
+          ){
+
+            if(
+              releaseDateObj &&
+              now >= releaseDateObj
+            ){
+
+              displayStatus =
+                "LIVE";
+
+              c =
+                "#22c55e";
+
+            }
+
+            else{
+
+              displayStatus =
+                "APPROVED";
+
+              c =
+                "#10b981";
+
+            }
+
+            statusClass =
+              "";
+
+          }
+
+
+          /* REJECTED */
+
+          else if(
+            r.status === "rejected"
+          ){
+
+            displayStatus =
+              "REJECTED";
+
+            c =
+              "#ef4444";
+
+            statusClass =
+              "";
+
+          }
+
+
+          const featuring =
+            r.featuring
+              ? ` • feat. ${r.featuring}`
+              : "";
+
+
+          const label =
+            r.label
+              ? r.label
+              : "Dynotic";
+
+
+          const ean =
+            r.ean
+              ? r.ean
+              : "-";
+
+
+          const releaseDate =
+            (
+              r.status === "approved" &&
+              r.date
+            )
+
+              ? new Date(
+                  r.date
+                ).toLocaleDateString(
+                  "en-US",
+                  {
+                    year:"numeric",
+                    month:"long",
+                    day:"numeric"
+                  }
+                )
+
+              : "-";
+
+
+          /* ================= ITEM ================= */
+
+          list.innerHTML += `
+
+            <div
+              onclick="goReleaseDetail('${r._key}')"
+              class="release-box"
+              style="
+                animation-delay:${index * 0.06}s;
+              "
+            >
+
+              <div class="release-item">
+
+
+                <!-- COVER -->
+
+                <div class="release-cover">
+
+                  <img
+                    src="${
+                      r.cover
+                        ? r.cover
+                        : "../assets/cover-default.png"
+                    }"
+
+                    onload="
+                      this.classList.add('loaded')
+                    "
+
+                    onerror="
+                      this.onerror=null;
+                      this.src='../assets/cover-default.png';
+                      this.classList.add('loaded')
+                    "
+                  >
+
+                </div>
+
+
+                <!-- CONTENT -->
+
+                <div class="release-content">
+
+
+                  <div class="release-row">
+
+
+                    <div class="release-title">
+
+                      ${r.title || "-"}
+
+                    </div>
+
+
+                    <div
+                      class="release-status ${statusClass}"
+                      style="
+                        border:1px solid ${c};
+                        color:${c};
+                      "
+                    >
+
+                      ${displayStatus}
+
+                    </div>
+
+
+                  </div>
+
+
+                  <div class="release-meta">
+
+                    <b>
+                      ${r.artist || "-"}
+                    </b>
+
+                    ${featuring}
+
+                    <br>
+
+                    <span style="opacity:.7">
+                      UPC:
+                    </span>
+
+                    ${ean}
+
+                    <br>
+
+                    <span style="opacity:.7">
+                      Release Date:
+                    </span>
+
+                    ${releaseDate}
+
+                    <br>
+
+                    <span style="opacity:.7">
+                      Label:
+                    </span>
+
+                    ${label}
+
+                  </div>
+
+
+                </div>
+
+              </div>
+
+            </div>
+
+          `;
+
+        });
+
+
+        /* ================= PAGINATION ================= */
+
+        list.innerHTML += `
+
+          <div class="pagination">
+
+
+            <button
+              onclick="prevPage()"
+              ${p === 1 ? "disabled" : ""}
+            >
+
+              <i class="fa-solid fa-chevron-left"></i>
+
+            </button>
+
+
+            <span>
+              Page ${p}/${totalPages}
+            </span>
+
+
+            <button
+              onclick="nextPage()"
+              ${p === totalPages ? "disabled" : ""}
+            >
+
+              <i class="fa-solid fa-chevron-right"></i>
+
+            </button>
+
+
+          </div>
+
+        `;
+
+      }
+
+
+      /* ================= NEXT PAGE ================= */
+
+      window.nextPage = () => {
+
+        const totalPages =
+          Math.ceil(
+            filtered.length /
+            releasesPerPage
+          );
+
+
+        if(currentPage < totalPages){
+
+          currentPage++;
+
+          render(currentPage);
+
+        }
+
+      };
+
+
+      /* ================= PREVIOUS PAGE ================= */
+
+      window.prevPage = () => {
+
+        if(currentPage > 1){
+
+          currentPage--;
+
+          render(currentPage);
+
+        }
+
+      };
+
+
+      currentPage = 1;
+
+      render(currentPage);
+
+    })
+
+    .catch(error => {
+
+      console.error(
+        "Gagal memuat releases:",
+        error
+      );
+
+      list.innerHTML = `
+
+        <div class="empty-state">
+
+          Gagal memuat rilisan.
+
+        </div>
+
+      `;
+
+    });
+
+}
+
+
+/* ================= RELEASE DETAIL ================= */
+
+function goReleaseDetail(rid){
+
+  location.href =
+    "../release-detail?rid=" +
+    rid;
+
+}
+
+</script>
+
+</body>
+</html>
