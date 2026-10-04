@@ -195,7 +195,60 @@ header{
   font-weight:700;
   margin-top:2px;
 }
+@keyframes pageIn{
+  from{
+    opacity:0;
+    transform:translateY(14px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
 
+.welcome-card{
+  animation:pageIn .45s ease both;
+}
+
+.stat-card{
+  animation:pageIn .45s ease both;
+}
+
+.stat-card:nth-child(1){
+  animation-delay:.08s;
+}
+
+.stat-card:nth-child(2){
+  animation-delay:.16s;
+}
+
+.stat-card:nth-child(3){
+  animation-delay:.24s;
+}
+
+.quick-item{
+  animation:pageIn .45s ease both;
+}
+
+.quick-item:nth-child(1){
+  animation-delay:.30s;
+}
+
+.quick-item:nth-child(2){
+  animation-delay:.36s;
+}
+
+.quick-item:nth-child(3){
+  animation-delay:.42s;
+}
+
+.quick-item:nth-child(4){
+  animation-delay:.48s;
+}
+
+.quick-item:nth-child(5){
+  animation-delay:.54s;
+}
 /* ================= QUICK ACCESS ================= */
 
 .quick-grid{
