@@ -209,7 +209,12 @@ header{
 .stat-icon{
   width:34px;
   height:34px;
-  object-fit:contain;
+  border-radius:10px;
+  background:#f1f2f7;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
   margin-bottom:9px;
 }
 
@@ -276,9 +281,14 @@ header{
 }
 
 .quick-icon{
-  width:38px;
-  height:38px;
-  object-fit:contain;
+  width:40px;
+  height:40px;
+  border-radius:11px;
+  background:#f1f2f7;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
   flex-shrink:0;
 }
 
@@ -422,6 +432,7 @@ header{
   .stat-icon{
     width:31px;
     height:31px;
+    font-size:14px;
   }
 
   .stat-value{
@@ -453,7 +464,8 @@ header{
 
 <body>
 
-<!-- HEADER -->
+
+<!-- ================= HEADER ================= -->
 
 <header>
 
@@ -472,7 +484,7 @@ header{
 </header>
 
 
-<!-- PROFILE MENU -->
+<!-- ================= PROFILE MENU ================= -->
 
 <div
   id="profileMenu"
@@ -495,7 +507,7 @@ header{
 </div>
 
 
-<!-- MAIN -->
+<!-- ================= MAIN ================= -->
 
 <main class="container">
 
@@ -525,15 +537,17 @@ header{
     Overview
   </div>
 
+
   <section class="overview-grid">
 
 
+    <!-- ARTISTS -->
+
     <div class="stat-card">
 
-      <img
-        src="../assets/admin-users.png"
-        class="stat-icon"
-      >
+      <div class="stat-icon">
+        <i class="fa-solid fa-users"></i>
+      </div>
 
       <div class="stat-title">
         Artists
@@ -549,12 +563,13 @@ header{
     </div>
 
 
+    <!-- RELEASES -->
+
     <div class="stat-card">
 
-      <img
-        src="../assets/admin-releases.png"
-        class="stat-icon"
-      >
+      <div class="stat-icon">
+        <i class="fa-solid fa-music"></i>
+      </div>
 
       <div class="stat-title">
         Releases
@@ -570,12 +585,13 @@ header{
     </div>
 
 
+    <!-- PAYOUTS -->
+
     <div class="stat-card">
 
-      <img
-        src="../assets/admin-payout.png"
-        class="stat-icon"
-      >
+      <div class="stat-icon">
+        <i class="fa-solid fa-wallet"></i>
+      </div>
 
       <div class="stat-title">
         Payouts
@@ -600,18 +616,20 @@ header{
     Quick Access
   </div>
 
+
   <section class="quick-grid">
 
+
+    <!-- ARTISTS -->
 
     <div
       class="quick-item"
       onclick="go('../admin-users')"
     >
 
-      <img
-        src="../assets/admin-users.png"
-        class="quick-icon"
-      >
+      <div class="quick-icon">
+        <i class="fa-solid fa-users"></i>
+      </div>
 
       <div class="quick-text">
 
@@ -628,15 +646,16 @@ header{
     </div>
 
 
+    <!-- RELEASES -->
+
     <div
       class="quick-item"
       onclick="go('../admin-releases')"
     >
 
-      <img
-        src="../assets/admin-releases.png"
-        class="quick-icon"
-      >
+      <div class="quick-icon">
+        <i class="fa-solid fa-music"></i>
+      </div>
 
       <div class="quick-text">
 
@@ -653,15 +672,16 @@ header{
     </div>
 
 
+    <!-- SUPPORT -->
+
     <div
       class="quick-item"
       onclick="go('../admin-message')"
     >
 
-      <img
-        src="../assets/admin-inbox.png"
-        class="quick-icon"
-      >
+      <div class="quick-icon">
+        <i class="fa-regular fa-comments"></i>
+      </div>
 
       <div class="quick-text">
 
@@ -678,15 +698,16 @@ header{
     </div>
 
 
+    <!-- PAYOUT -->
+
     <div
       class="quick-item"
       onclick="go('../admin-withdraw')"
     >
 
-      <img
-        src="../assets/admin-payout.png"
-        class="quick-icon"
-      >
+      <div class="quick-icon">
+        <i class="fa-solid fa-wallet"></i>
+      </div>
 
       <div class="quick-text">
 
@@ -703,15 +724,16 @@ header{
     </div>
 
 
+    <!-- ROYALTY -->
+
     <div
       class="quick-item"
       onclick="go('../admin-income')"
     >
 
-      <img
-        src="../assets/admin-income.png"
-        class="quick-icon"
-      >
+      <div class="quick-icon">
+        <i class="fa-solid fa-chart-line"></i>
+      </div>
 
       <div class="quick-text">
 
@@ -730,10 +752,11 @@ header{
 
   </section>
 
+
 </main>
 
 
-<!-- BOTTOM NAV -->
+<!-- ================= BOTTOM NAV ================= -->
 
 <nav class="bottom-nav">
 
@@ -777,7 +800,7 @@ header{
 </nav>
 
 
-<!-- LOADING -->
+<!-- ================= LOADING ================= -->
 
 <div
   id="loading"
