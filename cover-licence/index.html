@@ -7,232 +7,160 @@
   <title>Cover to Master | Dynotic Distribution</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
   <style>
-    *{
+    * {
       margin:0;
       padding:0;
       box-sizing:border-box;
       font-family:"Outfit",sans-serif;
     }
 
-    body{
+    body {
       background:#f1f2f7;
-      color:#17181c;
       min-height:100vh;
-      padding-top:64px;
-      padding-bottom:90px;
-      user-select:none;
+      padding-top:74px;
     }
 
-    /* HEADER */
-    header{
+    .wrap {
+      width:92%;
+      margin:18px auto;
+      background:rgba(255,255,255,0.95);
+      border-radius:24px;
+      padding:22px;
+      box-shadow:0 20px 40px rgba(0,0,0,0.18);
+      animation:fade 0.4s ease;
+    }
+
+    @keyframes fade {
+      from {
+        opacity:0;
+        transform:translateY(15px);
+      }
+
+      to {
+        opacity:1;
+      }
+    }
+
+    header {
+      padding:12px 20px;
+      display:flex;
+      align-items:center;
+      background:#fff;
+      border-bottom:1px solid #eee;
       position:fixed;
       top:0;
       left:0;
-      right:0;
-      height:64px;
-      padding:0 18px;
-      background:#fff;
-      border-bottom:1px solid #e6e6eb;
-      display:flex;
-      align-items:center;
+      width:100%;
       z-index:1000;
     }
 
-    header img{
-      height:32px;
-      width:auto;
-      object-fit:contain;
-    }
-
-    /* MAIN */
-    .container{
-      width:calc(100% - 28px);
-      max-width:760px;
-      margin:14px auto 0;
-    }
-
-    .page-title{
-      margin:6px 2px 14px;
-    }
-
-    .page-title h1{
-      font-size:22px;
-      font-weight:700;
-      letter-spacing:-.3px;
-    }
-
-    .page-title p{
-      margin-top:3px;
-      color:#858891;
-      font-size:13px;
-    }
-
-    /* CARD */
-    .card{
-      background:#fff;
-      border:1px solid #e7e7ec;
-      border-radius:20px;
-      padding:18px;
-      margin-bottom:14px;
+    header img {
+      height:50px;
     }
 
     /* STEPS */
-    .steps{
+
+    .steps {
       display:flex;
       justify-content:space-between;
+      margin-bottom:25px;
       position:relative;
-      margin:2px 4px 24px;
     }
 
-    .steps::before{
+    .steps::before {
       content:"";
       position:absolute;
       top:50%;
-      left:8%;
-      right:8%;
-      height:2px;
-      background:#e4e5ea;
+      left:5%;
+      right:5%;
+      height:3px;
+      background:#e5e7eb;
       z-index:0;
-      transform:translateY(-50%);
     }
 
-    .step{
-      width:34px;
-      height:34px;
+    .step {
+      width:38px;
+      height:38px;
       border-radius:50%;
-      background:#e6e7eb;
+      background:#e5e7eb;
       display:flex;
       align-items:center;
       justify-content:center;
-      font-size:13px;
       font-weight:700;
-      color:#777a82;
+      color:#666;
       z-index:1;
       cursor:pointer;
-      transition:.15s;
     }
 
-    .step.active{
-      background:#17181c;
+    .step.active {
+      background:#111;
       color:#fff;
+      box-shadow:0 6px 18px rgba(0,0,0,0.25);
     }
 
-    /* SECTION */
-    .section{
-      animation:fade .2s ease;
+    .section {
+      animation:fade 0.4s;
     }
 
-    @keyframes fade{
-      from{
-        opacity:0;
-        transform:translateY(5px);
-      }
-      to{
-        opacity:1;
-        transform:translateY(0);
-      }
-    }
-
-    .label{
+    .label {
       font-size:13px;
       font-weight:600;
-      margin-bottom:7px;
+      margin-bottom:6px;
     }
 
-    .req{
-      color:#e53935;
+    .req {
+      color:red;
     }
 
     input,
-    select{
+    select {
       width:100%;
-      padding:13px 14px;
-      border-radius:13px;
-      border:1px solid #dedfe5;
-      background:#fff;
-      color:#17181c;
-      margin-bottom:15px;
+      padding:14px;
+      border-radius:14px;
+      border:1px solid #ddd;
+      margin-bottom:16px;
       font-size:14px;
-      outline:none;
+      background:#fff;
     }
 
     input:focus,
-    select:focus{
-      border-color:#17181c;
-      box-shadow:0 0 0 3px rgba(23,24,28,.06);
+    select:focus {
+      outline:none;
+      border-color:#111;
+      box-shadow:0 0 0 3px rgba(0,0,0,0.08);
     }
 
-    input::placeholder{
-      color:#a1a3aa;
+    input::placeholder {
+      color:#999;
     }
 
-    a{
-      color:#17181c;
+    a {
+      color:#111;
       font-weight:600;
       text-decoration:none;
     }
 
-    /* BUTTON */
-    .btn{
-      width:100%;
-      padding:14px 15px;
-      border:none;
-      border-radius:14px;
-      font-size:14px;
-      font-weight:700;
-      color:#fff;
-      background:#17181c;
-      cursor:pointer;
-      transition:.15s;
-    }
-
-    .btn:hover{
-      background:#000;
-    }
-
-    .btn:active{
-      transform:scale(.97);
-    }
-
-    .btn:disabled{
-      opacity:.55;
-      cursor:not-allowed;
-      transform:none;
-    }
-
-    .btn.gray{
-      background:#fff;
-      color:#17181c;
-      border:1px solid #dcdde3;
-    }
-
-    .btn.gray:hover{
-      background:#f5f5f7;
-    }
-
     /* COVER UPLOAD */
-    .upload-box{
+
+    .upload-box {
       display:block;
-      width:190px;
-      max-width:100%;
+      width:200px;
       aspect-ratio:1/1;
-      border:1.5px dashed #bfc1c8;
-      border-radius:18px;
+      border:2px dashed #111;
+      border-radius:20px;
       cursor:pointer;
-      background:#fafafd;
-      transition:.2s;
-      overflow:hidden;
+      transition:0.3s;
+      box-shadow:0 8px 20px rgba(0,0,0,0.08);
+      background:#fff;
     }
 
-    .upload-box:hover{
-      background:#f5f5f8;
-      border-color:#17181c;
+    .upload-box:hover {
+      background:#f5f5f5;
     }
 
-    .upload-inner{
+    .upload-inner {
       width:100%;
       height:100%;
       display:flex;
@@ -241,202 +169,179 @@
       position:relative;
     }
 
-    .upload-icon-img{
-      width:42px;
-      height:42px;
+    .upload-icon-img {
+      width:48px;
+      height:48px;
       object-fit:contain;
       display:block;
       margin:0 auto;
     }
 
-    .upload-text{
-      font-size:12px;
-      color:#666a73;
-      margin-top:7px;
+    .upload-text {
+      font-size:13px;
+      color:#111;
+      margin-top:6px;
       text-align:center;
     }
 
-    #coverPreview{
+    #coverPreview {
       position:absolute;
-      inset:0;
       width:100%;
       height:100%;
       object-fit:cover;
-      border-radius:17px;
+      border-radius:18px;
       display:none;
     }
 
     /* AUDIO */
-    .upload-audio{
+
+    .upload-audio {
       display:block;
       cursor:pointer;
     }
 
-    .audio-box{
+    .audio-box {
       display:flex;
       align-items:center;
-      gap:13px;
-      padding:14px;
-      border-radius:15px;
-      background:#f8f8fa;
-      border:1px solid #e2e3e8;
-      transition:.2s;
+      gap:14px;
+      padding:16px;
+      border-radius:18px;
+      background:#f9fafb;
+      border:1px solid #e5e7eb;
+      transition:0.3s;
     }
 
-    .audio-box:hover{
-      border-color:#17181c;
-      background:#f5f5f8;
+    .audio-box:active {
+      transform:scale(0.98);
     }
 
-    .audio-box:active{
-      transform:scale(.985);
+    .audio-box:hover {
+      border-color:#111;
+      background:#f3f4ff;
     }
 
-    .audio-icon-img{
-      width:27px;
-      height:27px;
+    .audio-icon-img {
+      width:26px;
+      height:26px;
       object-fit:contain;
     }
 
-    .audio-name{
+    .audio-name {
       font-weight:600;
       font-size:14px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width:calc(100vw - 130px);
     }
 
-    .audio-sub{
+    .audio-sub {
       font-size:12px;
-      color:#898b93;
-      margin-top:2px;
+      color:#888;
     }
 
-    .progress-wrapper{
-      margin-top:10px;
+    .progress-wrapper {
+      margin-top:14px;
       width:100%;
-      height:6px;
-      background:#e5e6eb;
-      border-radius:999px;
+      height:8px;
+      background:#e5e7eb;
+      border-radius:6px;
       overflow:hidden;
     }
 
-    .progress-bar{
+    .progress-bar {
       height:100%;
       width:0%;
-      background:#17181c;
-      transition:width .3s;
+      background:#111;
+      transition:width 0.3s;
+    }
+
+    /* BUTTON */
+
+    .btn {
+      width:100%;
+      padding:15px;
+      border:none;
+      border-radius:16px;
+      font-weight:700;
+      color:#fff;
+      background:#111;
+      cursor:pointer;
+    }
+
+    .btn.gray {
+      background:rgba(255,255,255,0.6);
+      color:#111;
+      border:1.5px solid #111;
+      backdrop-filter:blur(6px);
+    }
+
+    .btn:hover:not(.gray) {
+      background:#000;
+    }
+
+    .btn.gray:hover {
+      background:#111;
+      color:#fff;
+    }
+
+    .btn:active {
+      transform:scale(0.96);
+      background:#000;
+    }
+
+    .btn:disabled {
+      opacity:.6;
+      cursor:not-allowed;
+      transform:none;
     }
 
     /* PREVIEW */
-    .preview{
-      background:#f8f8fa;
-      border:1px solid #e6e6eb;
+
+    .preview {
+      background:#f9fafb;
       border-radius:16px;
-      padding:15px;
-      font-size:13px;
-      line-height:1.6;
+      padding:16px;
+      font-size:14px;
+      line-height:1.7;
     }
 
-    .preview div{
-      margin-bottom:7px;
+    .preview div {
+      margin-bottom:8px;
     }
 
-    .preview span{
-      color:#17181c;
+    .preview span {
+      color:#111;
       font-weight:600;
     }
 
-    .preview hr{
-      border:0;
-      border-top:1px solid #e5e5e9;
-    }
-
-    .preview img{
-      transition:.2s;
-    }
-
-    .preview img:hover{
-      transform:scale(1.03);
-    }
-
-    /* BOTTOM NAV */
-    .bottom-nav{
-      position:fixed;
-      bottom:0;
-      left:0;
-      right:0;
-      height:72px;
-      background:#fff;
-      border-top:1px solid #e6e6eb;
-      display:flex;
-      justify-content:space-around;
-      align-items:center;
-      z-index:1000;
-    }
-
-    .nav-item{
-      width:33.33%;
-      text-align:center;
-      color:#999ca4;
-      font-size:11px;
-      padding:7px 14px;
-      border-radius:12px;
-      cursor:pointer;
-      transition:.15s;
-    }
-
-    .nav-item i{
-      display:block;
-      font-size:18px;
-      margin-bottom:4px;
-    }
-
-    .nav-item:active{
-      transform:scale(.94);
-    }
-
-    .nav-item.active{
-      color:#17181c;
-      font-weight:600;
-    }
-
-    .nav-item.active::after{
-      content:"";
-      display:block;
-      width:28px;
-      height:3px;
-      border-radius:999px;
-      background:#111;
-      margin:5px auto 0;
+    .preview img:hover {
+      transform:scale(1.05);
+      transition:0.3s;
     }
 
     /* SHAKE */
-    .input-error{
-      animation:shake .2s ease;
-      border-color:#17181c !important;
+
+    .input-error {
+      animation:shake 0.2s ease;
+      border-color:#111 !important;
     }
 
-    @keyframes shake{
-      0%{transform:translateX(0)}
-      25%{transform:translateX(-3px)}
-      50%{transform:translateX(3px)}
-      75%{transform:translateX(-3px)}
-      100%{transform:translateX(0)}
-    }
-
-    @media(max-width:400px){
-      .container{
-        width:calc(100% - 22px);
+    @keyframes shake {
+      0% {
+        transform:translateX(0);
       }
 
-      .card{
-        padding:15px;
+      25% {
+        transform:translateX(-3px);
       }
 
-      .page-title h1{
-        font-size:20px;
+      50% {
+        transform:translateX(3px);
+      }
+
+      75% {
+        transform:translateX(-3px);
+      }
+
+      100% {
+        transform:translateX(0);
       }
     }
   </style>
@@ -448,247 +353,295 @@
   <img src="../assets/dynotic-distribution.png">
 </header>
 
-<div class="container">
+<div class="wrap">
 
-  <div class="page-title">
-    <h1>Cover to Master</h1>
-    <p>Submit your cover release to Dynotic.</p>
+  <!-- STEP PROGRESS -->
+
+  <div class="steps">
+
+    <div class="step active" id="s1">
+      1
+    </div>
+
+    <div class="step" id="s2">
+      2
+    </div>
+
+    <div class="step" id="s3">
+      3
+    </div>
+
+    <div class="step" id="s4">
+      4
+    </div>
+
   </div>
 
-  <div class="card">
 
-    <!-- STEP PROGRESS -->
-    <div class="steps">
-      <div class="step active" id="s1">1</div>
-      <div class="step" id="s2">2</div>
-      <div class="step" id="s3">3</div>
-      <div class="step" id="s4">4</div>
+  <!-- STEP 1 -->
+
+  <div id="step1" class="section">
+
+    <div class="label">
+      Cover To Master <span class="req">*</span>
     </div>
 
-    <!-- STEP 1 -->
-    <div id="step1" class="section">
+    <select id="type" hidden>
 
-      <div class="label">
-        Cover To Master <span class="req">*</span>
+      <option
+        value="original"
+        selected
+      >
+        Original Asset
+      </option>
+
+    </select>
+
+    <button
+      type="button"
+      class="btn"
+      onclick="next(1)"
+    >
+      Continue
+    </button>
+
+  </div>
+
+
+  <!-- STEP 2 -->
+
+  <div
+    id="step2"
+    class="section"
+    hidden
+  ></div>
+
+
+  <!-- STEP 3 -->
+
+  <div
+    id="step3"
+    class="section"
+    hidden
+  >
+
+    <!-- COVER -->
+
+    <div style="margin-bottom:28px;">
+
+      <div
+        class="label"
+        style="margin-bottom:12px;"
+      >
+        Cover Art *
       </div>
 
-      <select id="type" hidden>
-        <option value="original" selected>Original Asset</option>
-      </select>
+      <label class="upload-box">
 
-      <div style="font-size:13px;color:#858891;line-height:1.6;margin-bottom:18px;">
-        Gunakan fitur ini untuk mengajukan rilisan Cover to Master.
-      </div>
+        <input
+          id="cover"
+          type="file"
+          accept="image/*"
+          hidden
+        >
 
-      <button type="button" class="btn" onclick="next(1)">
-        Continue
-      </button>
+        <div class="upload-inner">
 
-    </div>
-
-    <!-- STEP 2 -->
-    <div id="step2" class="section" hidden></div>
-
-    <!-- STEP 3 -->
-    <div id="step3" class="section" hidden>
-
-      <!-- COVER -->
-      <div style="margin-bottom:25px;">
-
-        <div class="label" style="margin-bottom:11px;">
-          Cover Art <span class="req">*</span>
-        </div>
-
-        <label class="upload-box">
-
-          <input
-            id="cover"
-            type="file"
-            accept="image/*"
-            hidden
+          <img
+            id="coverPreview"
           >
 
-          <div class="upload-inner">
-
-            <img id="coverPreview">
-
-            <div id="coverPlaceholder">
-
-              <img
-                src="../assets/upload-icon.png"
-                class="upload-icon-img"
-              >
-
-              <div class="upload-text">
-                Upload Cover (JPG / PNG)
-              </div>
-
-            </div>
-
-          </div>
-
-        </label>
-
-      </div>
-
-      <!-- AUDIO -->
-      <div style="margin-bottom:25px;">
-
-        <div class="label" style="margin-bottom:11px;">
-          Audio File <span class="req">*</span>
-        </div>
-
-        <label class="upload-audio">
-
-          <input
-            id="audio"
-            type="file"
-            accept="audio/*"
-            hidden
-          >
-
-          <div class="audio-box">
+          <div id="coverPlaceholder">
 
             <img
-              src="../assets/audio-icon.png"
-              class="audio-icon-img"
+              src="../assets/upload-icon.png"
+              class="upload-icon-img"
             >
 
-            <div class="audio-info">
-
-              <div id="audioName" class="audio-name">
-                No file selected
-              </div>
-
-              <div class="audio-sub">
-                MP3 / WAV
-              </div>
-
+            <div class="upload-text">
+              Upload Cover (JPG / PNG)
             </div>
 
           </div>
 
-        </label>
-
-        <div class="progress-wrapper">
-          <div id="audioWave" class="progress-bar"></div>
         </div>
 
+      </label>
+
+    </div>
+
+
+    <!-- AUDIO -->
+
+    <div style="margin-bottom:28px;">
+
+      <div
+        class="label"
+        style="margin-bottom:12px;"
+      >
+        Audio File *
       </div>
 
-      <div style="display:flex;gap:10px;">
+      <label class="upload-audio">
 
-        <button
-          type="button"
-          class="btn gray"
-          onclick="back(3)"
-          style="flex:1;"
+        <input
+          id="audio"
+          type="file"
+          accept="audio/*"
+          hidden
         >
-          Back
-        </button>
 
-        <button
-          type="button"
-          class="btn"
-          id="previewBtn"
-          onclick="if(!stepsData[3]()) return alert('Upload dulu!'); loadPreview(); goto(4)"
-          disabled
-          style="flex:2;"
-        >
-          Preview
-        </button>
+        <div class="audio-box">
+
+          <img
+            src="../assets/audio-icon.png"
+            class="audio-icon-img"
+          >
+
+          <div class="audio-info">
+
+            <div
+              id="audioName"
+              class="audio-name"
+            >
+              No file selected
+            </div>
+
+            <div class="audio-sub">
+              MP3 / WAV
+            </div>
+
+          </div>
+
+        </div>
+
+      </label>
+
+      <div class="progress-wrapper">
+
+        <div
+          id="audioWave"
+          class="progress-bar"
+        ></div>
 
       </div>
 
     </div>
 
-    <!-- STEP 4 -->
-    <div id="step4" class="section" hidden>
 
-      <div class="label" style="margin-bottom:10px;">
-        Release Preview
-      </div>
-
-      <div class="preview" id="previewBox"></div>
-
-      <div style="height:12px;"></div>
+    <div
+      style="
+        display:flex;
+        gap:12px;
+      "
+    >
 
       <button
         type="button"
         class="btn gray"
-        onclick="back(4)"
+        onclick="back(3)"
+        style="flex:1;"
       >
-        Edit
+        Back
       </button>
-
-      <div style="height:10px;"></div>
 
       <button
         type="button"
         class="btn"
-        id="submitBtn"
-        onclick="submitRelease()"
+        id="previewBtn"
+        onclick="
+          if(!stepsData[3]())
+          return alert('Upload dulu!');
+          loadPreview();
+          goto(4);
+        "
+        disabled
+        style="flex:2;"
       >
-
-        <span id="btnText">
-          Submit Release
-        </span>
-
-        <span id="btnLoader" style="display:none;">
-          Loading...
-        </span>
-
+        Preview
       </button>
 
     </div>
+
+  </div>
+
+
+  <!-- STEP 4 -->
+
+  <div
+    id="step4"
+    class="section"
+    hidden
+  >
+
+    <div
+      class="preview"
+      id="previewBox"
+    ></div>
+
+    <br>
+
+    <button
+      type="button"
+      class="btn gray"
+      onclick="back(4)"
+    >
+      Edit
+    </button>
+
+    <br><br>
+
+    <button
+      type="button"
+      class="btn"
+      id="submitBtn"
+      onclick="submitRelease()"
+    >
+
+      <span id="btnText">
+        Submit Release
+      </span>
+
+      <span
+        id="btnLoader"
+        style="display:none;"
+      >
+        Loading...
+      </span>
+
+    </button>
 
   </div>
 
 </div>
 
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
-
-  <div
-    class="nav-item"
-    onclick="location.href='../home'"
-  >
-    <i class="fa-solid fa-house"></i>
-    Home
-  </div>
-
-  <div
-    class="nav-item active"
-    onclick="location.href='../releases'"
-  >
-    <i class="fa-solid fa-compact-disc"></i>
-    Releases
-  </div>
-
-  <div
-    class="nav-item"
-    onclick="location.href='../account'"
-  >
-    <i class="fa-regular fa-user"></i>
-    Account
-  </div>
-
-</nav>
 
 <!-- FIREBASE -->
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
+
 <script>
 
 firebase.initializeApp({
-  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain: "dynopay-2513c.firebaseapp.com",
-  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+
+  apiKey:
+    "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+
+  authDomain:
+    "dynopay-2513c.firebaseapp.com",
+
+  databaseURL:
+    "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+
 });
 
-const db = firebase.database();
+
+const db =
+  firebase.database();
+
 
 const WORKER_URL =
   "https://upload-assets.dynotic-bot.workers.dev/";
@@ -696,91 +649,136 @@ const WORKER_URL =
 
 /* UPLOAD */
 
-function uploadFile(file, progressCallback, doneCallback){
+function uploadFile(
+  file,
+  progressCallback,
+  doneCallback
+){
 
-  const formData = new FormData();
+  const formData =
+    new FormData();
 
-  formData.append("file", file);
+  formData.append(
+    "file",
+    file
+  );
 
-  const xhr = new XMLHttpRequest();
 
-  xhr.open("POST", WORKER_URL, true);
+  const xhr =
+    new XMLHttpRequest();
 
-  xhr.upload.onprogress = function(e){
 
-    if(e.lengthComputable){
+  xhr.open(
+    "POST",
+    WORKER_URL,
+    true
+  );
 
-      const percent =
-        Math.round((e.loaded / e.total) * 100);
 
-      progressCallback(percent);
+  xhr.upload.onprogress =
+    function(e){
 
-    }
+      if(e.lengthComputable){
 
-  };
+        const percent =
+          Math.round(
+            (e.loaded / e.total) * 100
+          );
 
-  xhr.onload = function(){
+        progressCallback(
+          percent
+        );
 
-    if(xhr.status === 200){
+      }
 
-      const data =
-        JSON.parse(xhr.responseText);
+    };
 
-      if(data.success){
 
-        doneCallback(data.url);
+  xhr.onload =
+    function(){
+
+      if(xhr.status === 200){
+
+        const data =
+          JSON.parse(
+            xhr.responseText
+          );
+
+
+        if(data.success){
+
+          doneCallback(
+            data.url
+          );
+
+        }else{
+
+          alert(
+            "Upload gagal: " +
+            data.error
+          );
+
+          doneCallback(null);
+
+        }
 
       }else{
 
-        alert("Upload gagal: " + data.error);
+        alert(
+          "Upload gagal!"
+        );
 
         doneCallback(null);
 
       }
 
-    }else{
+    };
 
-      alert("Upload gagal!");
+
+  xhr.onerror =
+    function(){
+
+      alert(
+        "Upload error!"
+      );
 
       doneCallback(null);
 
-    }
+    };
 
-  };
 
-  xhr.onerror = function(){
-
-    alert("Upload error!");
-
-    doneCallback(null);
-
-  };
-
-  xhr.send(formData);
+  xhr.send(
+    formData
+  );
 
 }
 
 
 /* AUTH */
 
-firebase.auth().onAuthStateChanged(user=>{
+firebase.auth()
+.onAuthStateChanged(
+  user => {
 
-  if(!user){
+    if(!user){
 
-    location.href="../login";
+      location.href =
+        "../login";
+
+    }
 
   }
+);
 
-});
 
-
-/* VALIDATION */
+/* STEP VALIDATION */
 
 const stepsData = {
 
-  1: ()=>true,
+  1: () => true,
 
-  2: ()=>{
+
+  2: () => {
 
     const title =
       document.getElementById("title");
@@ -797,6 +795,7 @@ const stepsData = {
     const version =
       document.getElementById("version");
 
+
     return title?.value &&
            artist?.value &&
            publisher?.value &&
@@ -805,7 +804,8 @@ const stepsData = {
 
   },
 
-  3: ()=>{
+
+  3: () => {
 
     return !!document
       .getElementById("audio")
@@ -822,15 +822,21 @@ const stepsData = {
 };
 
 
-/* STEP CONTROL */
+/* HIDE ALL */
 
 function hideAll(){
 
-  for(let i=1;i<=4;i++){
+  for(
+    let i = 1;
+    i <= 4;
+    i++
+  ){
 
     document
-      .getElementById("step"+i)
-      .hidden=true;
+      .getElementById(
+        "step" + i
+      )
+      .hidden = true;
 
   }
 
@@ -842,9 +848,13 @@ function hideAll(){
 function loadStep2Fields(){
 
   const s =
-    document.getElementById("step2");
+    document.getElementById(
+      "step2"
+    );
 
-  s.innerHTML="";
+
+  s.innerHTML = "";
+
 
   s.innerHTML += `
 
@@ -857,6 +867,7 @@ function loadStep2Fields(){
       placeholder="Judul lagu"
     >
 
+
     <div class="label">
       Song ID (Publisher) *
     </div>
@@ -866,20 +877,26 @@ function loadStep2Fields(){
       placeholder="Wajib"
     >
 
-    <div style="
-      font-size:12px;
-      color:#777;
-      margin-bottom:16px;
-      line-height:1.5;
-    ">
+
+    <div
+      style="
+        font-size:12px;
+        color:#555;
+        margin-bottom:16px;
+      "
+    >
+
       Cek Song ID
+
       <a
         href="https://dynotic.web.id/catalog"
         target="_blank"
       >
         Disini
       </a>
+
     </div>
+
 
     <div class="label">
       Artist Name *
@@ -890,6 +907,7 @@ function loadStep2Fields(){
       placeholder="Nama artist"
     >
 
+
     <div class="label">
       Label *
     </div>
@@ -899,6 +917,7 @@ function loadStep2Fields(){
       placeholder="e.g. Dynotic Distribution"
     >
 
+
     <div class="label">
       Version *
     </div>
@@ -906,7 +925,7 @@ function loadStep2Fields(){
     <select id="version">
 
       <option value="">
-        Pilih Version
+        Pili Version
       </option>
 
       <option value="Remix">
@@ -919,21 +938,16 @@ function loadStep2Fields(){
 
     </select>
 
+
     <div class="label">
-      Nama Vocal
-      <span style="
-        font-size:11px;
-        color:#888;
-        font-weight:400;
-      ">
-        (Khusus Katalog Pragita Prabawa Pustaka)
-      </span>
+      Nama Vocal (Khusus Katalog Pragita Prabawa Pustaka)
     </div>
 
     <input
       id="fullname"
       placeholder="e.g. Inez Ariesta"
     >
+
 
     <div class="label">
       Featuring
@@ -946,6 +960,7 @@ function loadStep2Fields(){
 
   `;
 
+
   s.innerHTML += `
 
     <button
@@ -956,7 +971,7 @@ function loadStep2Fields(){
       Back
     </button>
 
-    <div style="height:10px;"></div>
+    <br><br>
 
     <button
       type="button"
@@ -973,150 +988,218 @@ function loadStep2Fields(){
 
 /* UPLOAD LISTENERS */
 
-let uploadListenerAttached = false;
+let uploadListenerAttached =
+  false;
+
 
 function attachUploadListeners(){
 
-  if(uploadListenerAttached) return;
+  if(uploadListenerAttached)
+    return;
 
-  uploadListenerAttached = true;
+
+  uploadListenerAttached =
+    true;
+
 
   const audioInput =
-    document.getElementById("audio");
+    document.getElementById(
+      "audio"
+    );
+
 
   const coverInput =
-    document.getElementById("cover");
+    document.getElementById(
+      "cover"
+    );
+
 
   const previewBtn =
-    document.getElementById("previewBtn");
+    document.getElementById(
+      "previewBtn"
+    );
+
 
   const audioWave =
-    document.getElementById("audioWave");
+    document.getElementById(
+      "audioWave"
+    );
+
 
   const audioName =
-    document.getElementById("audioName");
+    document.getElementById(
+      "audioName"
+    );
+
 
   const coverPreview =
-    document.getElementById("coverPreview");
+    document.getElementById(
+      "coverPreview"
+    );
 
-  let audioUploaded = false;
-  let coverUploaded = false;
+
+  let audioUploaded =
+    false;
+
+
+  let coverUploaded =
+    false;
 
 
   function checkAllUploaded(){
 
     previewBtn.disabled =
-      !(audioUploaded && coverUploaded);
+      !(
+        audioUploaded &&
+        coverUploaded
+      );
 
   }
 
 
   /* AUDIO */
 
-  audioInput.addEventListener("change", e=>{
+  audioInput.addEventListener(
+    "change",
+    e => {
 
-    const file =
-      e.target.files[0];
+      const file =
+        e.target.files[0];
 
-    if(!file) return;
 
-    audioUploaded=false;
+      if(!file)
+        return;
 
-    audioName.textContent =
-      file.name;
 
-    audioWave.style.width="0%";
+      audioUploaded =
+        false;
 
-    uploadFile(
 
-      file,
+      audioName.textContent =
+        file.name;
 
-      percent=>{
 
-        audioWave.style.width =
-          percent + "%";
+      audioWave.style.width =
+        "0%";
 
-      },
 
-      url=>{
+      uploadFile(
 
-        if(url){
+        file,
 
-          audioInput.dataset.url =
-            url;
+        percent => {
 
-          audioUploaded=true;
+          audioWave.style.width =
+            percent + "%";
 
-          checkAllUploaded();
+        },
 
-          updateStepUI();
+        url => {
+
+          if(url){
+
+            audioInput.dataset.url =
+              url;
+
+
+            audioUploaded =
+              true;
+
+
+            checkAllUploaded();
+
+
+            updateStepUI();
+
+          }
 
         }
 
-      }
+      );
 
-    );
-
-  });
+    }
+  );
 
 
   /* COVER */
 
-  coverInput.addEventListener("change", e=>{
+  coverInput.addEventListener(
+    "change",
+    e => {
 
-    const file =
-      e.target.files[0];
-
-    if(!file) return;
-
-    coverUploaded=false;
-
-    const reader =
-      new FileReader();
-
-    reader.onload = ev=>{
-
-      coverPreview.src =
-        ev.target.result;
-
-      coverPreview.style.display =
-        "block";
-
-      document
-        .getElementById("coverPlaceholder")
-        .style.display="none";
-
-    };
-
-    reader.readAsDataURL(file);
+      const file =
+        e.target.files[0];
 
 
-    uploadFile(
+      if(!file)
+        return;
 
-      file,
 
-      ()=>{},
+      coverUploaded =
+        false;
 
-      url=>{
 
-        if(url){
+      const reader =
+        new FileReader();
 
-          coverInput.dataset.url =
-            url;
 
-          coverUploaded=true;
+      reader.onload =
+        ev => {
 
-          checkAllUploaded();
+          coverPreview.src =
+            ev.target.result;
 
-          updateStepUI();
+
+          coverPreview.style.display =
+            "block";
+
+
+          document
+            .getElementById(
+              "coverPlaceholder"
+            )
+            .style.display =
+            "none";
+
+        };
+
+
+      reader.readAsDataURL(
+        file
+      );
+
+
+      uploadFile(
+
+        file,
+
+        () => {},
+
+        url => {
+
+          if(url){
+
+            coverInput.dataset.url =
+              url;
+
+
+            coverUploaded =
+              true;
+
+
+            checkAllUploaded();
+
+
+            updateStepUI();
+
+          }
 
         }
 
-      }
+      );
 
-    );
-
-  });
+    }
+  );
 
 }
 
@@ -1125,24 +1208,28 @@ function attachUploadListeners(){
 
 function next(n){
 
-  if(n===1){
+  if(n === 1){
 
     document
       .getElementById("type")
-      .value="original";
+      .value = "original";
+
 
     loadStep2Fields();
 
+
     goto(2);
 
+
     updateStepUI();
+
 
     return;
 
   }
 
 
-  if(n===2){
+  if(n === 2){
 
     if(!stepsData[2]()){
 
@@ -1155,7 +1242,7 @@ function next(n){
   }
 
 
-  if(n===3){
+  if(n === 3){
 
     if(!stepsData[3]()){
 
@@ -1165,12 +1252,14 @@ function next(n){
 
     }
 
+
     loadPreview();
 
   }
 
 
-  goto(n+1);
+  goto(n + 1);
+
 
   updateStepUI();
 
@@ -1179,7 +1268,7 @@ function next(n){
 
 function back(n){
 
-  goto(n-1);
+  goto(n - 1);
 
 }
 
@@ -1188,45 +1277,65 @@ function goto(n){
 
   hideAll();
 
-  document
-    .getElementById("step"+n)
-    .hidden=false;
 
-  if(n===3){
+  document
+    .getElementById(
+      "step" + n
+    )
+    .hidden = false;
+
+
+  if(n === 3){
 
     attachUploadListeners();
 
   }
 
-  for(let i=1;i<=4;i++){
+
+  for(
+    let i = 1;
+    i <= 4;
+    i++
+  ){
 
     document
-      .getElementById("s"+i)
-      .classList.remove("active");
+      .getElementById(
+        "s" + i
+      )
+      .classList.remove(
+        "active"
+      );
 
   }
 
+
   document
-    .getElementById("s"+n)
-    .classList.add("active");
+    .getElementById(
+      "s" + n
+    )
+    .classList.add(
+      "active"
+    );
 
 }
 
 
-document.getElementById("s1").onclick =
-  ()=>goto(1);
+s1.onclick =
+  () => goto(1);
 
 
-document.getElementById("s2").onclick = ()=>{
+s2.onclick = () => {
 
-  if(!stepsData[1]()) return;
+  if(!stepsData[1]())
+    return;
+
 
   goto(2);
 
 };
 
 
-document.getElementById("s3").onclick = ()=>{
+s3.onclick = () => {
 
   if(!stepsData[2]()){
 
@@ -1235,13 +1344,14 @@ document.getElementById("s3").onclick = ()=>{
     );
 
   }
+
 
   goto(3);
 
 };
 
 
-document.getElementById("s4").onclick = ()=>{
+s4.onclick = () => {
 
   if(!stepsData[2]()){
 
@@ -1250,6 +1360,7 @@ document.getElementById("s4").onclick = ()=>{
     );
 
   }
+
 
   if(!stepsData[3]()){
 
@@ -1259,7 +1370,9 @@ document.getElementById("s4").onclick = ()=>{
 
   }
 
+
   loadPreview();
+
 
   goto(4);
 
@@ -1273,6 +1386,7 @@ function updateStepUI(){
   const validStep2 =
     stepsData[2]();
 
+
   const validStep3 =
     stepsData[3]();
 
@@ -1280,13 +1394,18 @@ function updateStepUI(){
   document
     .getElementById("s3")
     .style.opacity =
-      validStep2 ? "1" : "0.4";
+      validStep2
+        ? "1"
+        : "0.4";
 
 
   document
     .getElementById("s4")
     .style.opacity =
-      (validStep2 && validStep3)
+      (
+        validStep2 &&
+        validStep3
+      )
         ? "1"
         : "0.4";
 
@@ -1294,13 +1413,18 @@ function updateStepUI(){
   document
     .getElementById("s3")
     .style.pointerEvents =
-      validStep2 ? "auto" : "none";
+      validStep2
+        ? "auto"
+        : "none";
 
 
   document
     .getElementById("s4")
     .style.pointerEvents =
-      (validStep2 && validStep3)
+      (
+        validStep2 &&
+        validStep3
+      )
         ? "auto"
         : "none";
 
@@ -1312,59 +1436,77 @@ function updateStepUI(){
 function loadPreview(){
 
   const previewBox =
-    document.getElementById("previewBox");
+    document.getElementById(
+      "previewBox"
+    );
 
 
   const titleVal =
-    document.getElementById("title")?.value || "-";
+    document
+      .getElementById("title")
+      ?.value || "-";
+
 
   const artistVal =
-    document.getElementById("artist")?.value || "-";
+    document
+      .getElementById("artist")
+      ?.value || "-";
+
 
   const publisherVal =
-    document.getElementById("publisher")?.value || "-";
+    document
+      .getElementById("publisher")
+      ?.value || "-";
+
 
   const labelVal =
-    document.getElementById("label")?.value || "-";
+    document
+      .getElementById("label")
+      ?.value || "-";
 
 
   const coverUrl =
-    document.getElementById("cover")
+    document
+      .getElementById("cover")
       ?.dataset.url || "";
 
 
   let html = `
 
-    <div style="
-      display:flex;
-      gap:14px;
-      align-items:center;
-    ">
+    <div
+      style="
+        display:flex;
+        gap:16px;
+        align-items:center;
+      "
+    >
 
       <img
         src="${coverUrl}"
         style="
-          width:76px;
-          height:76px;
+          width:80px;
+          height:80px;
           border-radius:12px;
           object-fit:cover;
         "
       >
 
-      <div style="min-width:0;">
+      <div>
 
-        <div style="
-          font-weight:700;
-          font-size:15px;
-          margin-bottom:2px;
-        ">
+        <div
+          style="
+            font-weight:700;
+          "
+        >
           ${titleVal}
         </div>
 
-        <div style="
-          font-size:13px;
-          color:#777;
-        ">
+        <div
+          style="
+            font-size:13px;
+            color:#666;
+          "
+        >
           ${artistVal}
         </div>
 
@@ -1372,15 +1514,20 @@ function loadPreview(){
 
     </div>
 
-    <hr style="
-      margin:15px 0;
-      border-top:1px solid #e5e5e9;
-    ">
+
+    <hr
+      style="
+        margin:16px 0;
+        border-top:1px solid #eee;
+      "
+    >
+
 
     <div>
       <span>Song ID:</span>
       ${publisherVal}
     </div>
+
 
     <div>
       <span>Label:</span>
@@ -1401,59 +1548,89 @@ function loadPreview(){
 function submitRelease(){
 
   const btn =
-    document.getElementById("submitBtn");
+    document.getElementById(
+      "submitBtn"
+    );
+
 
   const text =
-    document.getElementById("btnText");
+    document.getElementById(
+      "btnText"
+    );
+
 
   const loader =
-    document.getElementById("btnLoader");
+    document.getElementById(
+      "btnLoader"
+    );
 
 
-  btn.disabled=true;
+  btn.disabled =
+    true;
 
-  text.style.display="none";
 
-  loader.style.display="inline";
+  text.style.display =
+    "none";
+
+
+  loader.style.display =
+    "inline";
 
 
   const user =
-    firebase.auth().currentUser;
+    firebase.auth()
+      .currentUser;
 
 
-  if(!user) return;
+  if(!user)
+    return;
 
 
   const data = {
 
     type:
-      document.getElementById("type").value,
+      document
+        .getElementById("type")
+        .value,
 
     title:
-      document.getElementById("title").value,
+      document
+        .getElementById("title")
+        .value,
 
     artist:
-      document.getElementById("artist").value,
+      document
+        .getElementById("artist")
+        .value,
 
     publisher:
-      document.getElementById("publisher").value,
+      document
+        .getElementById("publisher")
+        .value,
 
     version:
-      document.getElementById("version").value,
+      document
+        .getElementById("version")
+        .value,
 
     label:
-      document.getElementById("label").value,
+      document
+        .getElementById("label")
+        .value,
 
     audio:
-      document.getElementById("audio")
+      document
+        .getElementById("audio")
         .dataset.url,
 
     cover:
-      document.getElementById("cover")
+      document
+        .getElementById("cover")
         .dataset.url,
 
     fullname:
-      document.getElementById("fullname")
+      document
+        .getElementById("fullname")
         ?.value || "",
 
     status:
@@ -1466,7 +1643,8 @@ function submitRelease(){
 
 
   const feat =
-    document.getElementById("featuring")
+    document
+      .getElementById("featuring")
       ?.value;
 
 
@@ -1479,23 +1657,26 @@ function submitRelease(){
 
 
   db.ref(
-    "releases/"+user.uid
+    "releases/" + user.uid
   )
   .push(data)
 
-  .then(()=>{
+  .then(() => {
 
     location.href =
       "../releases";
 
   })
 
-  .catch(()=>{
+  .catch(() => {
 
-    btn.disabled=false;
+    btn.disabled =
+      false;
+
 
     text.style.display =
       "inline";
+
 
     loader.style.display =
       "none";
@@ -1509,6 +1690,7 @@ document.addEventListener(
   "input",
   updateStepUI
 );
+
 
 updateStepUI();
 
