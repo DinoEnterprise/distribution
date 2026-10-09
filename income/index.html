@@ -3,437 +3,665 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Income | Dynotic Distribution</title>
+
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/favicon-android.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-iphone.png">
+
+<meta name="theme-color" content="#667eea">
+<meta name="robots" content="noindex, nofollow">
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <style>
-:root {
-  --bg: #f1f2f7;
-  --white: #fff;
-  --text: #171717;
-  --muted: #777b87;
-  --border: #e9eaf0;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Outfit",sans-serif;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Outfit', sans-serif;
+body{
+  background:#f1f2f7;
+  min-height:100vh;
+  color:#17181c;
+  padding-top:64px;
+  padding-bottom:90px;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
 }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  padding-top: 80px;
-  padding-bottom: 90px;
-  min-height: 100vh;
+button,input{
+  font:inherit;
 }
 
-button, input { font: inherit; }
+/* HEADER */
 
-header {
-  height: 64px;
-  padding: 0 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #fff;
-  border-bottom: 1px solid var(--border);
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
+header{
+  height:64px;
+  padding:0 18px;
+  display:flex;
+  align-items:center;
+  background:#fff;
+  border-bottom:1px solid #e8e8ed;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:1000;
 }
 
-.header-logo img {
-  height: 38px;
-  max-width: 190px;
-  object-fit: contain;
-  display: block;
+header img{
+  height:32px;
+  width:auto;
+  object-fit:contain;
+  display:block;
 }
 
-.header-icon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #222;
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 13px;
-  text-decoration: none;
+.notif-btn{
+  margin-left:auto;
+  width:38px;
+  height:38px;
+  border-radius:11px;
+  background:#f1f2f7;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  cursor:pointer;
+  transition:.15s;
 }
 
-.page-container {
-  width: 100%;
-  max-width: 760px;
-  margin: auto;
-  padding: 0 16px;
+.notif-btn:active{
+  transform:scale(.94);
 }
 
-.page-heading {
-  margin: 8px 2px 18px;
+.notif-btn i{
+  font-size:16px;
 }
 
-.page-heading h1 {
-  font-size: 23px;
-  font-weight: 700;
+.notif-badge{
+  position:absolute;
+  top:-4px;
+  right:-4px;
+  min-width:17px;
+  height:17px;
+  padding:0 4px;
+  border-radius:999px;
+  background:#ef4444;
+  color:#fff;
+  font-size:9px;
+  font-weight:700;
+  display:none;
+  align-items:center;
+  justify-content:center;
 }
 
-.page-heading p {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.5;
-  margin-top: 5px;
+/* MAIN */
+
+.container{
+  width:calc(100% - 28px);
+  max-width:760px;
+  margin:0 auto;
 }
 
-.card {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 18px;
-  margin-bottom: 15px;
-  box-shadow: 0 3px 12px rgba(20,20,40,.025);
+/* PAGE TITLE */
+
+.page-heading{
+  margin:20px 3px 0;
+  animation:pageIn .45s ease both;
 }
 
-.balance-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+.page-heading h1{
+  font-size:22px;
+  font-weight:700;
 }
 
-.balance-label {
-  color: var(--muted);
-  font-size: 13px;
+.page-heading p{
+  color:#777b84;
+  font-size:12px;
+  line-height:1.5;
+  margin-top:3px;
 }
 
-.balance-value {
-  font-size: clamp(19px, 4.5vw, 25px);
-  font-weight: 700;
-  margin-top: 7px;
-  overflow-wrap: anywhere;
+/* CARD */
+
+.card{
+  background:#fff;
+  border:1px solid #e8e8ed;
+  border-radius:18px;
+  padding:18px;
+  margin-top:20px;
+  animation:pageIn .45s ease both;
 }
 
-.balance-caption {
-  color: var(--muted);
-  font-size: 11px;
-  margin-top: 5px;
+/* WALLET */
+
+.wallet-card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
 }
 
-.invoice-action {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 7px;
+.wallet-content{
+  min-width:0;
 }
 
-.primary-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  padding: 11px 13px;
-  border: none;
-  border-radius: 12px;
-  background: #111;
-  color: #fff;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
+.balance-title{
+  font-size:12px;
+  font-weight:600;
+  color:#777b84;
 }
 
-.primary-btn:disabled {
-  opacity: .4;
-  cursor: not-allowed;
+.balance-value{
+  font-size:clamp(21px,5.5vw,29px);
+  font-weight:700;
+  color:#111;
+  margin-top:5px;
+  overflow-wrap:anywhere;
 }
 
-.invoice-minimum-info {
-  display: none;
-  max-width: 145px;
-  color: #92400e;
-  font-size: 10px;
-  text-align: right;
-  line-height: 1.5;
+.balance-caption{
+  font-size:10px;
+  color:#888b93;
+  margin-top:6px;
+  line-height:1.5;
 }
 
-.section-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin: 24px 2px 12px;
+.invoice-action{
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:7px;
 }
 
-.section-heading h2 { font-size: 16px; }
-
-.section-heading span {
-  color: var(--muted);
-  font-size: 11px;
+.primary-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  padding:10px 12px;
+  border:none;
+  border-radius:11px;
+  background:#111;
+  color:#fff;
+  font-size:11px;
+  font-weight:600;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:.15s;
 }
 
-.table-card {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 17px;
-  overflow: hidden;
-  margin-bottom: 16px;
+.primary-btn:active{
+  transform:scale(.94);
 }
 
-.table-scroll {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+.primary-btn:disabled{
+  opacity:.4;
+  cursor:not-allowed;
+  transform:none;
 }
 
-table {
-  width: 100%;
-  min-width: 740px;
-  border-collapse: collapse;
+.invoice-minimum-info{
+  display:none;
+  max-width:140px;
+  color:#92400e;
+  font-size:10px;
+  text-align:right;
+  line-height:1.5;
 }
 
-th, td {
-  padding: 14px;
-  text-align: left;
-  white-space: nowrap;
-  border-bottom: 1px solid #f0f0f3;
-  font-size: 12px;
+/* SECTION */
+
+.section-title{
+  font-size:13px;
+  font-weight:600;
+  color:#777b84;
+  margin:24px 3px 10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
 }
 
-th {
-  background: #fafbfc;
-  color: #777b87;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .4px;
+.section-title span{
+  font-size:10px;
+  font-weight:400;
+  color:#858891;
 }
 
-tbody tr:last-child td { border-bottom: none; }
+/* REPORT TABLE */
 
-.status {
-  display: inline-block;
-  padding: 5px 9px;
-  border-radius: 999px;
-  font-size: 10px;
-  font-weight: 600;
+.table-card{
+  background:#fff;
+  border:1px solid #e8e8ed;
+  border-radius:18px;
+  overflow:hidden;
+  margin-top:0;
+  animation:pageIn .45s ease both;
 }
 
-.status.accepted { background: #dcfce7; color: #166534; }
-.status.paid { background: #dbeafe; color: #1e40af; }
-.status.pending { background: #fef3c7; color: #92400e; }
-
-.action-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  padding: 8px 11px;
-  border: 1px solid #e7e8ef;
-  border-radius: 10px;
-  background: #f7f8fb;
-  color: #222;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
+.table-scroll{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
 }
 
-.action-btn img {
-  width: 16px;
-  height: 16px;
-  object-fit: contain;
+table{
+  width:100%;
+  min-width:700px;
+  border-collapse:collapse;
 }
 
-.empty-state {
-  padding: 30px 15px;
-  text-align: center;
-  color: var(--muted);
-  font-size: 12px;
-  white-space: normal;
+th,td{
+  padding:13px 14px;
+  text-align:left;
+  white-space:nowrap;
+  border-bottom:1px solid #f0f0f3;
+  font-size:11px;
 }
 
-.invoice-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  padding: 18px;
-  background: rgba(0,0,0,.42);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  z-index: 2000;
-  align-items: center;
-  justify-content: center;
+th{
+  background:#fafafa;
+  color:#777b84;
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.3px;
 }
 
-.invoice-card {
-  width: 100%;
-  max-width: 420px;
-  max-height: 90vh;
-  overflow-y: auto;
-  background: #fff;
-  padding: 23px;
-  border-radius: 21px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.18);
+tbody tr:last-child td{
+  border-bottom:none;
 }
 
-.modal-heading {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 19px;
+.status{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:600;
 }
 
-.modal-heading h3 { font-size: 19px; }
-
-.modal-heading p {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 4px;
+.status.accepted{
+  background:#dcfce7;
+  color:#166534;
 }
 
-.modal-close {
-  width: 32px;
-  height: 32px;
-  flex-shrink: 0;
-  border: none;
-  border-radius: 10px;
-  background: #f1f2f7;
-  cursor: pointer;
+.status.paid{
+  background:#dbeafe;
+  color:#1e40af;
 }
 
-.invoice-info {
-  background: #f6f7fb;
-  border: 1px solid #eceef4;
-  padding: 14px;
-  border-radius: 13px;
-  margin-bottom: 19px;
+.status.pending{
+  background:#fef3c7;
+  color:#92400e;
 }
 
-.invoice-info small {
-  color: var(--muted);
-  font-size: 11px;
+.action-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  padding:8px 11px;
+  border:1px solid #e7e8ef;
+  border-radius:10px;
+  background:#f1f2f7;
+  color:#222;
+  font-size:11px;
+  font-weight:600;
+  cursor:pointer;
+  text-decoration:none;
+  transition:.15s;
 }
 
-#invoiceBalance {
-  font-size: 21px;
-  font-weight: 700;
-  margin-top: 5px;
-  overflow-wrap: anywhere;
+.action-btn:active{
+  transform:scale(.96);
 }
 
-.invoice-card label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  margin-bottom: 8px;
+.action-btn img{
+  width:16px;
+  height:16px;
+  object-fit:contain;
 }
 
-.invoice-card input {
-  width: 100%;
-  padding: 12px 13px;
-  border: 1px solid #e1e3eb;
-  border-radius: 11px;
-  outline: none;
-  font-size: 14px;
+.empty-state{
+  padding:30px 15px;
+  text-align:center;
+  color:#777b84;
+  font-size:12px;
+  white-space:normal;
+  line-height:1.6;
 }
 
-.invoice-card input:focus { border-color: #858ca7; }
+/* INVOICE MODAL */
 
-.input-hint {
-  margin-top: 7px;
-  color: var(--muted);
-  font-size: 10px;
-  line-height: 1.5;
+.invoice-modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  padding:18px;
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);
+  z-index:2000;
+  align-items:center;
+  justify-content:center;
 }
 
-.invoice-error {
-  display: none;
-  margin-top: 9px;
-  padding: 10px;
-  border-radius: 10px;
-  background: #fef2f2;
-  color: #dc2626;
-  font-size: 11px;
-  line-height: 1.5;
+.invoice-card{
+  width:100%;
+  max-width:380px;
+  max-height:90vh;
+  overflow-y:auto;
+  background:#fff;
+  padding:20px;
+  border:1px solid #e8e8ed;
+  border-radius:18px;
+  box-shadow:0 12px 35px rgba(0,0,0,.15);
+  animation:pageIn .25s ease both;
 }
 
-.invoice-buttons {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
+.modal-heading{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:18px;
 }
 
-.invoice-buttons button {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  border-radius: 11px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
+.modal-heading h3{
+  font-size:17px;
+  font-weight:700;
 }
 
-.invoice-cancel { background: #f1f2f7; color: #222; }
-.invoice-submit { background: #111; color: #fff; }
-.invoice-submit:disabled { opacity: .5; cursor: not-allowed; }
-
-.bottom-nav {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 72px;
-  padding: 8px 12px;
-  background: rgba(255,255,255,.97);
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  z-index: 1000;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+.modal-heading p{
+  font-size:11px;
+  color:#777b84;
+  margin-top:4px;
+  line-height:1.5;
 }
 
-.nav-item {
-  flex: 1;
-  height: 52px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  color: #9295a0;
-  text-decoration: none;
-  font-size: 10px;
+.modal-close{
+  width:32px;
+  height:32px;
+  flex-shrink:0;
+  border:none;
+  border-radius:10px;
+  background:#f1f2f7;
+  cursor:pointer;
 }
 
-.nav-item i { font-size: 18px; }
-.nav-item.active { color: #171717; font-weight: 700; }
-
-@media (max-width: 480px) {
-  header { padding: 0 15px; }
-  .page-container { padding: 0 12px; }
-  .card { padding: 16px; }
-  .balance-card { gap: 8px; }
-  .balance-value { font-size: 19px; }
-  .primary-btn { padding: 10px; font-size: 11px; }
+.invoice-info{
+  background:#f1f2f7;
+  border:1px solid #e8e8ed;
+  padding:14px;
+  border-radius:13px;
+  margin-bottom:18px;
 }
 
-@media (max-width: 350px) {
-  .balance-card {
-    align-items: flex-start;
-    flex-direction: column;
+.invoice-info small{
+  color:#777b84;
+  font-size:11px;
+}
+
+#invoiceBalance{
+  font-size:23px;
+  font-weight:700;
+  margin-top:5px;
+  overflow-wrap:anywhere;
+}
+
+.invoice-card label{
+  display:block;
+  font-size:12px;
+  font-weight:600;
+  margin-bottom:7px;
+}
+
+.invoice-card input{
+  width:100%;
+  padding:12px 13px;
+  border:1px solid #dedfe4;
+  border-radius:11px;
+  outline:none;
+  font-size:13px;
+  margin-bottom:0;
+  user-select:text;
+}
+
+.invoice-card input:focus{
+  border-color:#b9bbc2;
+  box-shadow:0 0 0 3px rgba(0,0,0,.04);
+}
+
+.input-hint{
+  margin-top:7px;
+  color:#777b84;
+  font-size:10px;
+  line-height:1.5;
+}
+
+.invoice-error{
+  display:none;
+  margin-top:10px;
+  padding:10px;
+  border-radius:10px;
+  background:#fef2f2;
+  color:#dc2626;
+  font-size:11px;
+  line-height:1.5;
+}
+
+.invoice-buttons{
+  display:flex;
+  gap:9px;
+  margin-top:18px;
+}
+
+.invoice-buttons button{
+  flex:1;
+  padding:12px;
+  border:1px solid #e8e8ed;
+  border-radius:11px;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.invoice-buttons button:active{
+  transform:scale(.97);
+}
+
+.invoice-cancel{
+  background:#f1f2f7;
+  color:#222;
+}
+
+.invoice-submit{
+  background:#111;
+  color:#fff;
+  border-color:#111!important;
+}
+
+.invoice-submit:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+/* MESSAGE POPUP */
+
+.message-popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.35);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:2100;
+}
+
+.message-card{
+  width:calc(100% - 40px);
+  max-width:340px;
+  background:#fff;
+  border-radius:17px;
+  padding:18px;
+  box-shadow:0 12px 35px rgba(0,0,0,.15);
+}
+
+.message-title{
+  font-weight:700;
+  font-size:15px;
+  margin-bottom:8px;
+}
+
+.message-text{
+  font-size:13px;
+  color:#555;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
+
+.message-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:15px;
+}
+
+.view-btn,.close-btn{
+  border:none;
+  padding:9px 14px;
+  border-radius:10px;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.view-btn{
+  background:#111;
+  color:#fff;
+}
+
+.close-btn{
+  background:#f1f2f7;
+  color:#333;
+}
+
+/* BOTTOM NAV */
+
+.bottom-nav{
+  height:72px;
+  background:#fff;
+  border-top:1px solid #e6e6eb;
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  z-index:1000;
+}
+
+.nav-item{
+  width:33.33%;
+  text-align:center;
+  font-size:11px;
+  color:#999ca4;
+  padding:7px 14px;
+  border-radius:12px;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.nav-item i{
+  display:block;
+  font-size:18px;
+  margin-bottom:4px;
+}
+
+.nav-item:active{
+  transform:scale(.94);
+}
+
+.nav-item.active{
+  color:#17181c;
+  font-weight:600;
+}
+
+.nav-item.active::after{
+  content:"";
+  display:block;
+  width:28px;
+  height:3px;
+  border-radius:999px;
+  background:#111;
+  margin:5px auto 0;
+}
+
+/* ANIMATION */
+
+@keyframes pageIn{
+  from{
+    opacity:0;
+    transform:translateY(12px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+  header{
+    padding:0 18px;
   }
 
-  .invoice-action { align-items: flex-start; }
-  .invoice-minimum-info { text-align: left; }
+  .container{
+    width:calc(100% - 28px);
+  }
+
+  .wallet-card{
+    padding:17px;
+    gap:8px;
+  }
+
+  .balance-value{
+    font-size:clamp(18px,5vw,23px);
+  }
+
+  .primary-btn{
+    padding:10px;
+    font-size:10px;
+  }
+}
+
+@media(max-width:350px){
+  .wallet-card{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .invoice-action{
+    align-items:flex-start;
+  }
+
+  .invoice-minimum-info{
+    text-align:left;
+  }
+}
+
+@media(min-width:700px){
+  .container{
+    width:100%;
+  }
 }
 </style>
 </head>
@@ -441,28 +669,33 @@ tbody tr:last-child td { border-bottom: none; }
 <body>
 
 <header>
-  <a href="../" class="header-logo">
-    <img src="../assets/dynotic-distribution.png" alt="Dynotic Distribution">
-  </a>
-  <a href="../" class="header-icon" aria-label="Home">
-    <i class="fa-solid fa-house"></i>
-  </a>
+  <img src="../assets/dynotic-distribution.png" alt="Dynotic Distribution">
+
+  <div id="notifBtn" class="notif-btn" onclick="openMessages()">
+    <i class="fa-regular fa-bell"></i>
+    <span id="notifBadge" class="notif-badge">0</span>
+  </div>
 </header>
 
-<main class="page-container">
+<main class="container">
 
   <div class="page-heading">
     <h1>Income</h1>
     <p>Lihat laporan pendapatan dan kelola pengajuan invoice kamu.</p>
   </div>
 
-  <section class="card balance-card">
-    <div>
-      <div class="balance-label">
-        <i class="fa-solid fa-wallet"></i> Saldo tersedia
+  <section class="card wallet-card">
+    <div class="wallet-content">
+      <div class="balance-title">
+        <i class="fa-solid fa-wallet"></i>
+        Saldo tersedia
       </div>
+
       <div class="balance-value" id="totalBalance">Rp 0</div>
-      <div class="balance-caption">Minimum invoice Rp100.000</div>
+
+      <div class="balance-caption">
+        Minimum invoice Rp100.000
+      </div>
     </div>
 
     <div class="invoice-action">
@@ -471,6 +704,7 @@ tbody tr:last-child td { border-bottom: none; }
         <i class="fa-solid fa-file-invoice"></i>
         Ajukan Invoice
       </button>
+
       <div id="invoiceMinimumInfo" class="invoice-minimum-info">
         Saldo belum memenuhi minimum pengajuan
         <strong>Rp100.000</strong>
@@ -478,8 +712,10 @@ tbody tr:last-child td { border-bottom: none; }
     </div>
   </section>
 
-  <div class="section-heading">
-    <h2>Laporan Pendapatan</h2>
+  <div class="section-title">
+    <span style="color:#777b84;font-size:13px;font-weight:600">
+      Laporan Pendapatan
+    </span>
     <span id="reportCount">Memuat laporan...</span>
   </div>
 
@@ -507,17 +743,35 @@ tbody tr:last-child td { border-bottom: none; }
     </div>
   </section>
 
+  <div style="height:20px"></div>
 </main>
+
+<!-- MESSAGE POPUP -->
+
+<div id="messagePopup" class="message-popup">
+  <div class="message-card">
+    <div class="message-title" id="msgTitle"></div>
+    <div class="message-text" id="msgText"></div>
+
+    <div class="message-actions">
+      <button class="view-btn" onclick="viewMessage()">View</button>
+      <button class="close-btn" onclick="closeMessage()">✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- INVOICE MODAL -->
 
 <div class="invoice-modal" id="invoiceModal"
   onclick="handleModalBackdrop(event)">
-  <div class="invoice-card">
 
+  <div class="invoice-card">
     <div class="modal-heading">
       <div>
         <h3>Ajukan Invoice</h3>
         <p>Masukkan jumlah invoice yang ingin diajukan.</p>
       </div>
+
       <button class="modal-close" onclick="closeInvoiceModal()"
         aria-label="Tutup">
         <i class="fa-solid fa-xmark"></i>
@@ -531,7 +785,8 @@ tbody tr:last-child td { border-bottom: none; }
 
     <label for="invoiceAmount">Jumlah Invoice</label>
     <input type="number" id="invoiceAmount"
-      placeholder="Minimal Rp100.000" min="100000" step="1">
+      placeholder="Minimal Rp100.000"
+      min="100000" step="1" inputmode="numeric">
 
     <div class="input-hint">
       Minimum Rp100.000 dan tidak boleh melebihi saldo tersedia.
@@ -540,26 +795,33 @@ tbody tr:last-child td { border-bottom: none; }
     <div class="invoice-error" id="invoiceError" role="alert"></div>
 
     <div class="invoice-buttons">
-      <button class="invoice-cancel"
-        onclick="closeInvoiceModal()">Batal</button>
+      <button class="invoice-cancel" onclick="closeInvoiceModal()">Batal</button>
       <button class="invoice-submit" id="invoiceSubmitBtn"
         onclick="submitInvoice()">Ajukan Invoice</button>
     </div>
-
   </div>
 </div>
 
+<!-- BOTTOM NAV -->
+
 <nav class="bottom-nav">
-  <a href="../" class="nav-item">
-    <i class="fa-solid fa-house"></i><span>Home</span>
-  </a>
-  <a href="../releases" class="nav-item">
-    <i class="fa-solid fa-compact-disc"></i><span>Releases</span>
-  </a>
-  <a href="../account" class="nav-item">
-    <i class="fa-solid fa-user"></i><span>Account</span>
-  </a>
+  <div class="nav-item" onclick="homeClick()">
+    <i class="fa-solid fa-house"></i>
+    Home
+  </div>
+
+  <div class="nav-item" onclick="goReleases()">
+    <i class="fa-solid fa-music"></i>
+    Releases
+  </div>
+
+  <div class="nav-item" onclick="accountClick()">
+    <i class="fa-regular fa-user"></i>
+    Account
+  </div>
 </nav>
+
+<!-- FIREBASE -->
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -567,9 +829,9 @@ tbody tr:last-child td { border-bottom: none; }
 
 <script>
 firebase.initializeApp({
-  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain: "dynopay-2513c.firebaseapp.com",
-  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+  apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain:"dynopay-2513c.firebaseapp.com",
+  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 
 const db = firebase.database();
@@ -578,52 +840,74 @@ const MIN_INVOICE = 100000;
 let currentSaldo = 0;
 let currentUser = null;
 let invoiceSubmitting = false;
+let messagesQueue = [];
+let currentMsgIndex = 0;
 
-function formatRupiah(value) {
+function formatRupiah(value){
   return "Rp " + Number(value || 0).toLocaleString("id-ID");
 }
 
-function escapeHTML(value) {
+function escapeHTML(value){
   return String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
   })[char]);
 }
 
-// AUTHENTICATION
+/* AUTH */
+
 firebase.auth().onAuthStateChanged(user => {
-  if (!user) {
-    window.location.href = "../login";
+  if(!user){
+    location.href="../login";
     return;
   }
 
   currentUser = user;
 
-  db.ref("users/" + user.uid + "/saldo")
-    .once("value")
-    .then(snap => {
-      currentSaldo = Number(snap.val() || 0);
+  loadMessages(user.uid);
 
-      document.getElementById("totalBalance").innerText =
+  db.ref("users/" + user.uid).once("value")
+    .then(snap => {
+      if(!snap.exists()) return;
+
+      const d = snap.val() || {};
+      currentSaldo = Number(d.saldo || 0);
+
+      document.getElementById("totalBalance").textContent =
         formatRupiah(currentSaldo);
 
       updateInvoiceButton();
     })
     .catch(err => {
       console.error("Gagal mengambil saldo:", err);
-      document.getElementById("totalBalance").innerText =
+      document.getElementById("totalBalance").textContent =
         "Saldo tidak tersedia";
       document.getElementById("invoiceBtn").disabled = true;
     });
 
-  loadIncome(user.uid, user.email);
+  loadIncome(user.uid,user.email);
 });
 
-// UPDATE BUTTON
-function updateInvoiceButton() {
+/* NAVIGATION */
+
+function homeClick(){
+  location.href="../home";
+}
+
+function goReleases(){
+  location.href="../releases";
+}
+
+function accountClick(){
+  location.href="../account";
+}
+
+/* SALDO */
+
+function updateInvoiceButton(){
   const btn = document.getElementById("invoiceBtn");
   const info = document.getElementById("invoiceMinimumInfo");
   const eligible = currentSaldo >= MIN_INVOICE;
@@ -633,14 +917,15 @@ function updateInvoiceButton() {
   info.style.display = eligible ? "none" : "block";
 }
 
-// LOAD INCOME REPORTS
-function loadIncome(uid, email) {
+/* INCOME REPORTS */
+
+function loadIncome(uid,email){
   const list = document.getElementById("incomeList");
   const count = document.getElementById("reportCount");
 
   db.ref("royalties").once("value")
     .then(snap => {
-      if (!snap.exists()) {
+      if(!snap.exists()){
         showEmptyReports();
         return;
       }
@@ -650,24 +935,21 @@ function loadIncome(uid, email) {
       snap.forEach(item => {
         const val = item.val() || {};
 
-        if (
+        if(
           (val.uid && val.uid === uid) ||
           (val.email && email && val.email === email)
-        ) {
-          dataArray.push({
-            key: item.key,
-            ...val
-          });
+        ){
+          dataArray.push({key:item.key,...val});
         }
       });
 
-      dataArray.sort((a, b) =>
+      dataArray.sort((a,b) =>
         String(b.key).localeCompare(String(a.key))
       );
 
-      count.innerText = dataArray.length + " laporan";
+      count.textContent = dataArray.length + " laporan";
 
-      if (dataArray.length === 0) {
+      if(dataArray.length === 0){
         showEmptyReports();
         return;
       }
@@ -679,11 +961,11 @@ function loadIncome(uid, email) {
         let statusClass = "pending";
         let action = "-";
 
-        if (d.type === "Sales Report") {
+        if(d.type === "Sales Report"){
           statusText = "Accepted";
           statusClass = "accepted";
 
-          if (d.downloadUrl) {
+          if(d.downloadUrl){
             action = `
               <a class="action-btn"
                 href="${escapeHTML(d.downloadUrl)}"
@@ -693,7 +975,7 @@ function loadIncome(uid, email) {
               </a>
             `;
           }
-        } else if (d.type === "Payment") {
+        }else if(d.type === "Payment"){
           statusText = "Paid";
           statusClass = "paid";
 
@@ -725,8 +1007,8 @@ function loadIncome(uid, email) {
       list.innerHTML = rows;
     })
     .catch(err => {
-      console.error("Gagal memuat laporan:", err);
-      count.innerText = "Gagal memuat";
+      console.error("Gagal memuat laporan:",err);
+      count.textContent = "Gagal memuat";
       list.innerHTML = `
         <tr><td colspan="6">
           <div class="empty-state">
@@ -737,103 +1019,94 @@ function loadIncome(uid, email) {
     });
 }
 
-function showEmptyReports() {
-  document.getElementById("reportCount").innerText = "0 laporan";
+function showEmptyReports(){
+  document.getElementById("reportCount").textContent = "0 laporan";
   document.getElementById("incomeList").innerHTML = `
     <tr><td colspan="6">
       <div class="empty-state">
         <i class="fa-regular fa-folder-open"></i>
+        <br>
         Belum ada laporan pendapatan.
       </div>
     </td></tr>
   `;
 }
 
-// OPEN INVOICE PAGE
-function openInvoice(key) {
-  window.open("../invoice?id=" + key, "_blank");
+function openInvoice(key){
+  location.href="../invoice?id=" + key;
 }
 
-// OPEN MODAL
-function openInvoiceModal() {
-  if (!currentUser) {
+/* INVOICE MODAL */
+
+function openInvoiceModal(){
+  if(!currentUser){
     alert("Akun belum siap. Silakan refresh halaman.");
     return;
   }
 
-  if (currentSaldo < MIN_INVOICE) {
-    alert(
-      "Saldo belum mencapai minimum invoice.\n\n" +
-      "Minimum: " + formatRupiah(MIN_INVOICE)
-    );
+  if(currentSaldo < MIN_INVOICE){
+    alert("Saldo belum mencapai minimum invoice.\n\nMinimum: " +
+      formatRupiah(MIN_INVOICE));
     return;
   }
 
-  document.getElementById("invoiceBalance").innerText =
+  document.getElementById("invoiceBalance").textContent =
     formatRupiah(currentSaldo);
 
   document.getElementById("invoiceAmount").value = "";
   document.getElementById("invoiceError").style.display = "none";
-
   document.getElementById("invoiceModal").style.display = "flex";
 }
 
-function closeInvoiceModal() {
-  if (invoiceSubmitting) return;
-
+function closeInvoiceModal(){
+  if(invoiceSubmitting) return;
   document.getElementById("invoiceModal").style.display = "none";
 }
 
-function handleModalBackdrop(event) {
-  if (event.target.id === "invoiceModal") {
+function handleModalBackdrop(event){
+  if(event.target.id === "invoiceModal"){
     closeInvoiceModal();
   }
 }
 
-function showInvoiceError(message) {
+function showInvoiceError(message){
   const error = document.getElementById("invoiceError");
-  error.innerText = message;
+  error.textContent = message;
   error.style.display = "block";
 }
 
-// SUBMIT INVOICE
-async function submitInvoice() {
-  if (invoiceSubmitting) return;
+/* SUBMIT INVOICE */
+
+async function submitInvoice(){
+  if(invoiceSubmitting) return;
 
   const amount = Number(
     document.getElementById("invoiceAmount").value
   );
 
   const submitBtn = document.getElementById("invoiceSubmitBtn");
-  const error = document.getElementById("invoiceError");
+  document.getElementById("invoiceError").style.display = "none";
 
-  error.style.display = "none";
-
-  if (!currentUser) {
+  if(!currentUser){
     showInvoiceError("Akun belum siap. Silakan refresh halaman.");
     return;
   }
 
-  if (!Number.isFinite(amount) || amount < MIN_INVOICE) {
+  if(!Number.isSafeInteger(amount) || amount < MIN_INVOICE){
     showInvoiceError("Jumlah invoice minimal Rp100.000.");
     return;
   }
 
-  if (!Number.isSafeInteger(amount)) {
-    showInvoiceError("Jumlah invoice harus berupa angka bulat.");
-    return;
-  }
-
-  if (amount > currentSaldo) {
+  if(amount > currentSaldo){
     showInvoiceError("Jumlah invoice melebihi saldo tersedia.");
     return;
   }
 
   invoiceSubmitting = true;
   submitBtn.disabled = true;
-  submitBtn.innerText = "Mengirim...";
+  submitBtn.textContent = "Mengirim...";
 
-  try {
+  try{
     const snap = await db.ref("invoice_requests")
       .orderByChild("uid")
       .equalTo(currentUser.uid)
@@ -843,75 +1116,154 @@ async function submitInvoice() {
 
     snap.forEach(item => {
       const data = item.val() || {};
-
-      if (data.status === "Pending") {
+      if(String(data.status || "").toLowerCase() === "pending"){
         hasPending = true;
       }
     });
 
-    if (hasPending) {
+    if(hasPending){
       showInvoiceError(
-        "Anda masih memiliki pengajuan invoice yang sedang diproses. Silakan tunggu hingga selesai."
+        "Kamu masih memiliki pengajuan invoice yang sedang diproses. Silakan tunggu hingga selesai."
       );
       return;
     }
 
-    // Periksa saldo terbaru sebelum membuat pengajuan.
     const saldoSnap = await db.ref(
       "users/" + currentUser.uid + "/saldo"
     ).once("value");
 
-    const latestSaldo = Number(saldoSnap.val() || 0);
-    currentSaldo = latestSaldo;
+    currentSaldo = Number(saldoSnap.val() || 0);
 
-    document.getElementById("totalBalance").innerText =
+    document.getElementById("totalBalance").textContent =
+      formatRupiah(currentSaldo);
+
+    document.getElementById("invoiceBalance").textContent =
       formatRupiah(currentSaldo);
 
     updateInvoiceButton();
 
-    if (amount > currentSaldo || currentSaldo < MIN_INVOICE) {
+    if(currentSaldo < MIN_INVOICE || amount > currentSaldo){
       showInvoiceError(
-        "Saldo tidak mencukupi untuk jumlah invoice tersebut. Periksa saldo terbaru."
+        "Saldo terbaru tidak mencukupi untuk jumlah invoice tersebut."
       );
       return;
     }
 
     const requestData = {
-      uid: currentUser.uid,
-      email: currentUser.email || "",
-      amount: amount,
-      status: "Pending",
-      createdAt: firebase.database.ServerValue.TIMESTAMP
+      uid:currentUser.uid,
+      email:currentUser.email || "",
+      amount:amount,
+      status:"Pending",
+      createdAt:firebase.database.ServerValue.TIMESTAMP
     };
 
     await db.ref("invoice_requests").push(requestData);
 
     alert(
-      "Pengajuan invoice berhasil dikirim.\n\n" +
-      "Jumlah: " + formatRupiah(amount)
+      "Pengajuan invoice berhasil dikirim.\n\nJumlah: " +
+      formatRupiah(amount)
     );
 
     document.getElementById("invoiceModal").style.display = "none";
 
-  } catch (err) {
-    console.error("Gagal mengajukan invoice:", err);
-
+  }catch(err){
+    console.error("Gagal mengajukan invoice:",err);
     showInvoiceError(
-      "Gagal mengajukan invoice. Silakan periksa koneksi lalu coba lagi."
+      "Gagal mengajukan invoice. Periksa koneksi lalu coba lagi."
     );
-  } finally {
+  }finally{
     invoiceSubmitting = false;
     submitBtn.disabled = false;
-    submitBtn.innerText = "Ajukan Invoice";
+    submitBtn.textContent = "Ajukan Invoice";
   }
 }
 
-// CLOSE MODAL WITH ESCAPE
-document.addEventListener("keydown", event => {
-  if (event.key === "Escape" && !invoiceSubmitting) {
+/* NOTIFICATIONS */
+
+function loadMessages(uid){
+  db.ref("messages_inbox/" + uid).on("value",snap => {
+    messagesQueue = [];
+
+    snap.forEach(item => {
+      const m = item.val() || {};
+
+      if(!m.read){
+        messagesQueue.push({...m,key:item.key});
+      }
+    });
+
+    const badge = document.getElementById("notifBadge");
+
+    if(messagesQueue.length > 0){
+      badge.style.display = "flex";
+      badge.textContent =
+        messagesQueue.length > 99 ? "99+" : messagesQueue.length;
+    }else{
+      badge.style.display = "none";
+    }
+  });
+}
+
+function openMessages(){
+  if(messagesQueue.length === 0) return;
+
+  currentMsgIndex = 0;
+  showCurrentMessage();
+}
+
+function showCurrentMessage(){
+  if(currentMsgIndex >= messagesQueue.length){
+    document.getElementById("messagePopup").style.display = "none";
+    return;
+  }
+
+  const m = messagesQueue[currentMsgIndex];
+
+  document.getElementById("msgTitle").textContent =
+    m.subject || "-";
+
+  document.getElementById("msgText").textContent =
+    m.body || "-";
+
+  document.getElementById("messagePopup").style.display = "flex";
+}
+
+function markCurrentMessageRead(){
+  const user = firebase.auth().currentUser;
+  const m = messagesQueue[currentMsgIndex];
+
+  if(user && m){
+    return db.ref(
+      "messages_inbox/" + user.uid + "/" + m.key + "/read"
+    ).set(true);
+  }
+
+  return Promise.resolve();
+}
+
+async function closeMessage(){
+  try{
+    await markCurrentMessageRead();
+  }catch(err){
+    console.error("Gagal memperbarui pesan:",err);
+  }
+
+  currentMsgIndex++;
+  showCurrentMessage();
+}
+
+async function viewMessage(){
+  await closeMessage();
+}
+
+/* ESCAPE */
+
+document.addEventListener("keydown",event => {
+  if(event.key === "Escape" && !invoiceSubmitting){
     closeInvoiceModal();
   }
 });
+
 </script>
 
 </body>
