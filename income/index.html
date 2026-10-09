@@ -29,6 +29,7 @@
   --border:#e8e8ed;
   --green:#16a34a;
   --red:#ef4444;
+  --orange:#d97706;
 }
 
 body{
@@ -80,7 +81,6 @@ header img{
   align-items:center;
   justify-content:center;
   position:relative;
-  cursor:pointer;
   transition:.15s;
   border:none;
   color:#17181c;
@@ -161,6 +161,7 @@ header img{
   background:rgba(255,255,255,.045);
   right:-65px;
   top:-75px;
+  pointer-events:none;
 }
 
 .balance-label{
@@ -187,6 +188,7 @@ header img{
   font-size:11px;
   color:#c5c6cc;
   margin-top:7px;
+  line-height:1.6;
 }
 
 .balance-actions{
@@ -235,11 +237,23 @@ header img{
   cursor:not-allowed;
 }
 
-.section-title{
+.section-heading{
+  margin:25px 3px 10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.section-heading h2{
   font-size:13px;
   font-weight:600;
   color:#777b84;
-  margin:24px 3px 10px;
+}
+
+.section-heading span{
+  font-size:10px;
+  color:#777b84;
 }
 
 .report-card{
@@ -256,7 +270,7 @@ header img{
   border-bottom:1px solid #e8e8ed;
 }
 
-.report-top h2{
+.report-top h3{
   font-size:14px;
   font-weight:700;
 }
@@ -265,6 +279,7 @@ header img{
   color:#777b84;
   font-size:11px;
   margin-top:4px;
+  line-height:1.5;
 }
 
 .report-count{
@@ -311,6 +326,11 @@ header img{
   object-fit:contain;
 }
 
+.report-icon i{
+  font-size:16px;
+  color:#555963;
+}
+
 .report-info{
   flex:1;
   min-width:0;
@@ -320,6 +340,7 @@ header img{
   font-size:12px;
   font-weight:600;
   overflow-wrap:anywhere;
+  line-height:1.5;
 }
 
 .report-info p{
@@ -327,6 +348,7 @@ header img{
   color:#777b84;
   margin-top:5px;
   overflow-wrap:anywhere;
+  line-height:1.5;
 }
 
 .report-status{
@@ -339,15 +361,18 @@ header img{
 }
 
 .status-accepted,
-.status-paid{
+.status-paid,
+.status-approved{
   color:#16a34a;
 }
 
-.status-pending{
+.status-pending,
+.status-processing{
   color:#d97706;
 }
 
-.status-rejected{
+.status-rejected,
+.status-failed{
   color:#dc2626;
 }
 
@@ -369,6 +394,11 @@ header img{
 
 .report-action button:active{
   background:#f1f2f7;
+}
+
+.report-action button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
 }
 
 .empty-state{
@@ -398,7 +428,7 @@ header img{
   color:#777b84;
   font-size:11px;
   margin-top:6px;
-  line-height:1.6;
+  line-height:1.7;
 }
 
 .loading{
@@ -765,7 +795,7 @@ header img{
   </button>
 </header>
 
-<div class="container">
+<main class="container">
 
   <section class="page-heading">
     <h1>Income</h1>
@@ -778,9 +808,7 @@ header img{
       Saldo Tersedia
     </div>
 
-    <div class="balance-amount" id="balanceAmount">
-      Rp0
-    </div>
+    <div class="balance-amount" id="balanceAmount">Rp0</div>
 
     <p class="balance-caption">
       Saldo yang tercatat pada akun Dynotic kamu.
@@ -794,13 +822,17 @@ header img{
     </div>
   </section>
 
-  <div class="section-title">Riwayat Pendapatan</div>
+  <!-- RIWAYAT LAPORAN ROYALTI -->
+
+  <div class="section-heading">
+    <h2>Riwayat Laporan Royalti</h2>
+  </div>
 
   <section class="card report-card">
     <div class="report-top">
       <div>
-        <h2>Laporan & Pembayaran</h2>
-        <p>Daftar laporan royalti dan invoice kamu.</p>
+        <h3>Laporan Royalti</h3>
+        <p>Laporan pendapatan yang diterbitkan untuk akun kamu.</p>
       </div>
 
       <span class="report-count" id="reportCount">0 laporan</span>
@@ -814,7 +846,32 @@ header img{
     </div>
   </section>
 
-  <div class="section-title">Informasi</div>
+  <!-- RIWAYAT PENGAJUAN INVOICE -->
+
+  <div class="section-heading">
+    <h2>Riwayat Pengajuan Invoice</h2>
+    <span id="invoiceCount">0 pengajuan</span>
+  </div>
+
+  <section class="card report-card">
+    <div class="report-top">
+      <div>
+        <h3>Pengajuan Pembayaran</h3>
+        <p>Pantau status permintaan pencairan saldo kamu.</p>
+      </div>
+    </div>
+
+    <div class="report-list" id="invoiceList">
+      <div class="loading">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        Memuat pengajuan...
+      </div>
+    </div>
+  </section>
+
+  <div class="section-heading">
+    <h2>Informasi</h2>
+  </div>
 
   <section class="card info-card">
     <div class="info-icon">
@@ -825,13 +882,13 @@ header img{
       <h3>Ketentuan Pengajuan Invoice</h3>
       <p>
         Minimum pengajuan invoice adalah Rp100.000.
-        Pengajuan akan diproses setelah ditinjau oleh tim Dynotic.
-        Saldo yang ditampilkan mengikuti data akun kamu.
+        Pengajuan akan diperiksa oleh tim Dynotic.
+        Status pengajuan dapat dipantau pada bagian Riwayat Pengajuan Invoice.
       </p>
     </div>
   </section>
 
-</div>
+</main>
 
 <!-- NOTIFICATION BACKDROP -->
 <div class="notif-overlay" id="notifOverlay"></div>
@@ -918,13 +975,15 @@ let currentUser = null;
 let currentSaldo = 0;
 let messagesRef = null;
 let messagesListener = null;
-let royaltiListener = null;
+let royaltyRef = null;
+let royaltyListener = null;
+let invoiceRef = null;
+let invoiceListener = null;
 let submittingInvoice = false;
 let toastTimeout = null;
 
-const rupiah = value => {
-  return "Rp" + Number(value || 0).toLocaleString("id-ID");
-};
+const rupiah = value =>
+  "Rp" + Number(value || 0).toLocaleString("id-ID");
 
 function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -938,12 +997,10 @@ function escapeHTML(value) {
 
 function showToast(message) {
   const toast = document.getElementById("toast");
-
   toast.textContent = message;
   toast.classList.add("show");
 
   clearTimeout(toastTimeout);
-
   toastTimeout = setTimeout(() => {
     toast.classList.remove("show");
   }, 2800);
@@ -951,17 +1008,17 @@ function showToast(message) {
 
 function showInvoiceError(message) {
   const error = document.getElementById("invoiceError");
-
   error.textContent = message;
   error.classList.add("show");
 }
 
 function clearInvoiceError() {
   const error = document.getElementById("invoiceError");
-
   error.textContent = "";
   error.classList.remove("show");
 }
+
+/* MODAL */
 
 function openInvoiceModal() {
   if (!currentUser) return;
@@ -980,14 +1037,17 @@ function closeInvoiceModal() {
   clearInvoiceError();
 }
 
-document.getElementById("requestInvoiceButton").addEventListener("click", openInvoiceModal);
-document.getElementById("closeInvoiceButton").addEventListener("click", closeInvoiceModal);
-document.getElementById("cancelInvoiceButton").addEventListener("click", closeInvoiceModal);
+document.getElementById("requestInvoiceButton")
+  .addEventListener("click", openInvoiceModal);
+
+document.getElementById("closeInvoiceButton")
+  .addEventListener("click", closeInvoiceModal);
+
+document.getElementById("cancelInvoiceButton")
+  .addEventListener("click", closeInvoiceModal);
 
 document.getElementById("invoiceModal").addEventListener("click", event => {
-  if (event.target.id === "invoiceModal") {
-    closeInvoiceModal();
-  }
+  if (event.target.id === "invoiceModal") closeInvoiceModal();
 });
 
 document.addEventListener("keydown", event => {
@@ -1019,8 +1079,11 @@ document.getElementById("notifButton").addEventListener("click", () => {
   }
 });
 
-document.getElementById("closeNotifButton").addEventListener("click", closeNotifications);
-document.getElementById("notifOverlay").addEventListener("click", closeNotifications);
+document.getElementById("closeNotifButton")
+  .addEventListener("click", closeNotifications);
+
+document.getElementById("notifOverlay")
+  .addEventListener("click", closeNotifications);
 
 function loadMessages(uid) {
   if (messagesRef && messagesListener) {
@@ -1031,15 +1094,13 @@ function loadMessages(uid) {
 
   messagesListener = snapshot => {
     const data = snapshot.val() || {};
-    const messages = Object.entries(data).map(([key, message]) => ({
-      key,
-      ...message
-    }));
 
-    messages.sort((a, b) => {
-      return Number(b.createdAt || b.timestamp || 0) -
-             Number(a.createdAt || a.timestamp || 0);
-    });
+    const messages = Object.entries(data)
+      .map(([key, message]) => ({ key, ...message }))
+      .sort((a, b) =>
+        Number(b.createdAt || b.timestamp || 0) -
+        Number(a.createdAt || a.timestamp || 0)
+      );
 
     const unreadCount = messages.filter(message => !message.read).length;
     const badge = document.getElementById("notifBadge");
@@ -1064,10 +1125,8 @@ function loadMessages(uid) {
     }
 
     list.innerHTML = messages.map(message => `
-      <div
-        class="notif-item ${message.read ? "" : "unread"}"
-        data-message-key="${escapeHTML(message.key)}"
-      >
+      <div class="notif-item ${message.read ? "" : "unread"}"
+           data-message-key="${escapeHTML(message.key)}">
         <h4>${escapeHTML(message.subject || "Notifikasi Dynotic")}</h4>
         <p>${escapeHTML(message.body || "")}</p>
       </div>
@@ -1081,9 +1140,8 @@ function loadMessages(uid) {
         if (!message || message.read) return;
 
         try {
-          await db.ref("messages_inbox/" + uid + "/" + key).update({
-            read: true
-          });
+          await db.ref("messages_inbox/" + uid + "/" + key)
+            .update({ read: true });
         } catch (error) {
           console.error("Gagal menandai notifikasi:", error);
         }
@@ -1093,10 +1151,8 @@ function loadMessages(uid) {
 
   messagesRef.on("value", messagesListener, error => {
     console.error("Gagal memuat notifikasi:", error);
-
-    document.getElementById("notifList").innerHTML = `
-      <div class="notif-empty">Notifikasi belum dapat dimuat.</div>
-    `;
+    document.getElementById("notifList").innerHTML =
+      `<div class="notif-empty">Notifikasi belum dapat dimuat.</div>`;
   });
 }
 
@@ -1116,11 +1172,76 @@ function loadUser(uid) {
   });
 }
 
-/* ROYALTY REPORTS */
+/* STATUS HELPERS */
 
-function getReportStatus(report) {
-  return String(report.status || "Pending").toLowerCase();
+function normalizeStatus(status) {
+  return String(status || "Pending").trim().toLowerCase();
 }
+
+function statusLabel(status) {
+  const normalized = normalizeStatus(status);
+
+  const labels = {
+    pending: "Pending",
+    process: "Diproses",
+    processing: "Diproses",
+    approved: "Disetujui",
+    accepted: "Accepted",
+    paid: "Paid",
+    rejected: "Ditolak",
+    failed: "Gagal",
+    completed: "Selesai",
+    success: "Berhasil",
+    on_hold: "Ditahan",
+    "on hold": "Ditahan"
+  };
+
+  return labels[normalized] || String(status || "Pending");
+}
+
+function statusClass(status) {
+  const normalized = normalizeStatus(status);
+
+  if (["approved", "accepted", "paid", "completed", "success"].includes(normalized)) {
+    return normalized === "paid" ? "status-paid" : "status-approved";
+  }
+
+  if (["rejected", "failed"].includes(normalized)) {
+    return normalized === "failed" ? "status-failed" : "status-rejected";
+  }
+
+  if (["process", "processing"].includes(normalized)) {
+    return "status-processing";
+  }
+
+  return "status-pending";
+}
+
+function formatDate(value) {
+  if (!value) return "";
+
+  let date;
+
+  if (typeof value === "number" || /^\d+$/.test(String(value))) {
+    date = new Date(Number(value));
+  } else {
+    date = new Date(value);
+  }
+
+  if (Number.isNaN(date.getTime())) return "";
+
+  return date.toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
+}
+
+function getCreatedAt(item) {
+  return item.createdAt || item.timestamp || item.date || item.created_at || 0;
+}
+
+/* ROYALTY REPORTS */
 
 function renderReports(snapshot) {
   const allReports = snapshot.val() || {};
@@ -1129,24 +1250,24 @@ function renderReports(snapshot) {
     .filter(([key, report]) => {
       if (!report || typeof report !== "object") return false;
 
-      const sameUid = report.uid && report.uid === currentUser.uid;
-      const sameEmail = report.email &&
+      const sameUid =
+        report.uid && String(report.uid) === currentUser.uid;
+
+      const sameEmail =
+        report.email &&
         currentUser.email &&
-        report.email.toLowerCase() === currentUser.email.toLowerCase();
+        String(report.email).toLowerCase() ===
+          currentUser.email.toLowerCase();
 
       return sameUid || sameEmail;
     })
-    .map(([key, report]) => ({
-      key,
-      ...report
-    }))
-    .sort((a, b) => {
-      return Number(b.createdAt || b.timestamp || 0) -
-             Number(a.createdAt || a.timestamp || 0);
-    });
+    .map(([key, report]) => ({ key, ...report }))
+    .sort((a, b) =>
+      Number(getCreatedAt(b)) - Number(getCreatedAt(a))
+    );
 
   document.getElementById("reportCount").textContent =
-    reports.length + (reports.length === 1 ? " laporan" : " laporan");
+    reports.length + " laporan";
 
   const list = document.getElementById("reportList");
 
@@ -1156,8 +1277,8 @@ function renderReports(snapshot) {
         <div class="empty-icon">
           <i class="fa-solid fa-file-circle-question"></i>
         </div>
-        <h3>Belum ada laporan</h3>
-        <p>Laporan pendapatan dan pembayaran kamu akan muncul di sini.</p>
+        <h3>Belum ada laporan royalti</h3>
+        <p>Laporan yang sudah diterbitkan untuk akun kamu akan muncul di sini.</p>
       </div>
     `;
     return;
@@ -1165,81 +1286,43 @@ function renderReports(snapshot) {
 
   list.innerHTML = reports.map(report => {
     const type = String(report.type || report.reportType || "").toLowerCase();
-    const status = getReportStatus(report);
+    const status = normalizeStatus(report.status);
 
-    const isSales = type.includes("sales report") || type.includes("sales");
-    const isPayment = type.includes("payment") || type.includes("invoice");
+    const isSales =
+      type.includes("sales report") || type.includes("sales");
 
-    let title;
-    let icon;
-    let statusText;
-    let statusClass;
-    let action;
+    const title = report.title ||
+      report.name ||
+      report.type ||
+      report.reportType ||
+      "Royalty Report";
 
-    if (isSales) {
-      title = report.title || "Sales Report";
-      icon = "../assets/report.png";
+    const icon = isSales
+      ? "../assets/report.png"
+      : "../assets/report.png";
 
-      statusText = status === "accepted" ? "Accepted" : (report.status || "Pending");
-      statusClass = status === "accepted" ? "status-accepted" :
-        status === "rejected" ? "status-rejected" : "status-pending";
+    const dateText =
+      formatDate(getCreatedAt(report)) ||
+      report.period ||
+      "Laporan pendapatan";
 
-      action = report.downloadUrl
-        ? `<button type="button" data-action="download" data-url="${escapeHTML(report.downloadUrl)}" aria-label="Unduh laporan">
-             <i class="fa-solid fa-download"></i>
-           </button>`
-        : `<button type="button" disabled aria-label="Laporan belum tersedia">
-             <i class="fa-solid fa-clock"></i>
-           </button>`;
-    } else if (isPayment) {
-      title = report.title || "Payment";
-      icon = "../assets/invoice.png";
+    let action = "";
 
-      statusText = status === "paid" ? "Paid" :
-        status === "rejected" ? "Rejected" :
-        report.status || "Pending";
-
-      statusClass = status === "paid" ? "status-paid" :
-        status === "rejected" ? "status-rejected" : "status-pending";
-
+    if (report.downloadUrl) {
       action = `
-        <button type="button" data-action="invoice" data-key="${escapeHTML(report.key)}" aria-label="Buka invoice">
-          <i class="fa-solid fa-chevron-right"></i>
+        <button type="button"
+          data-action="download"
+          data-url="${escapeHTML(report.downloadUrl)}"
+          aria-label="Unduh laporan">
+          <i class="fa-solid fa-download"></i>
         </button>
       `;
     } else {
-      title = report.title || report.type || "Royalty Report";
-      icon = "../assets/report.png";
-
-      statusText = report.status || "Pending";
-      statusClass = status === "accepted" || status === "paid"
-        ? "status-accepted"
-        : status === "rejected"
-          ? "status-rejected"
-          : "status-pending";
-
-      action = report.downloadUrl
-        ? `<button type="button" data-action="download" data-url="${escapeHTML(report.downloadUrl)}" aria-label="Buka laporan">
-             <i class="fa-solid fa-arrow-up-right-from-square"></i>
-           </button>`
-        : `<button type="button" disabled aria-label="Belum tersedia">
-             <i class="fa-solid fa-clock"></i>
-           </button>`;
-    }
-
-    const dateValue = report.createdAt || report.timestamp;
-    let dateText = "";
-
-    if (dateValue) {
-      const date = new Date(Number(dateValue));
-
-      if (!Number.isNaN(date.getTime())) {
-        dateText = date.toLocaleDateString("id-ID", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric"
-        });
-      }
+      action = `
+        <button type="button" disabled aria-label="Laporan belum tersedia">
+          <i class="fa-solid fa-clock"></i>
+        </button>
+      `;
     }
 
     const amount = report.amount !== undefined && report.amount !== null
@@ -1249,26 +1332,21 @@ function renderReports(snapshot) {
     return `
       <div class="report-item">
         <div class="report-icon">
-          <img
-            src="${escapeHTML(icon)}"
-            alt=""
-            onerror="this.style.display='none'"
-          >
+          <img src="${icon}" alt=""
+            onerror="this.style.display='none'">
         </div>
 
         <div class="report-info">
           <h3>${escapeHTML(title)}</h3>
-          <p>${escapeHTML(dateText || report.period || "Laporan pendapatan")}</p>
+          <p>${escapeHTML(dateText)}</p>
           ${amount}
-          <span class="report-status ${statusClass}">
+          <span class="report-status ${statusClass(status)}">
             <i class="fa-solid fa-circle" style="font-size:6px"></i>
-            ${escapeHTML(statusText)}
+            ${escapeHTML(statusLabel(report.status || "Pending"))}
           </span>
         </div>
 
-        <div class="report-action">
-          ${action}
-        </div>
+        <div class="report-action">${action}</div>
       </div>
     `;
   }).join("");
@@ -1276,8 +1354,6 @@ function renderReports(snapshot) {
   list.querySelectorAll("[data-action='download']").forEach(button => {
     button.addEventListener("click", () => {
       const url = button.dataset.url;
-
-      if (!url) return;
 
       try {
         const parsed = new URL(url, window.location.href);
@@ -1293,30 +1369,16 @@ function renderReports(snapshot) {
       }
     });
   });
-
-  list.querySelectorAll("[data-action='invoice']").forEach(button => {
-    button.addEventListener("click", () => {
-      const key = button.dataset.key;
-
-      if (!key) return;
-
-      window.location.href = "../invoice?id=" + encodeURIComponent(key);
-    });
-  });
 }
 
 function loadIncome() {
-  const royaltiesRef = db.ref("royalties");
-
-  if (royaltyListener) {
-    royaltiesRef.off("value", royaltyListener);
-  }
+  royaltyRef = db.ref("royalties");
 
   royaltyListener = snapshot => {
     renderReports(snapshot);
   };
 
-  royaltiesRef.on("value", royaltyListener, error => {
+  royaltyRef.on("value", royaltyListener, error => {
     console.error("Gagal memuat laporan royalti:", error);
 
     document.getElementById("reportList").innerHTML = `
@@ -1325,13 +1387,146 @@ function loadIncome() {
           <i class="fa-solid fa-triangle-exclamation"></i>
         </div>
         <h3>Laporan gagal dimuat</h3>
-        <p>Periksa koneksi internet kamu lalu coba lagi.</p>
+        <p>Periksa koneksi atau izin akses database kamu.</p>
       </div>
     `;
   });
 }
 
-/* INVOICE REQUEST */
+/* INVOICE HISTORY */
+
+function renderInvoiceHistory(snapshot) {
+  const allRequests = snapshot.val() || {};
+
+  const requests = Object.entries(allRequests)
+    .filter(([key, request]) => {
+      return request &&
+        String(request.uid || "") === currentUser.uid;
+    })
+    .map(([key, request]) => ({ key, ...request }))
+    .sort((a, b) =>
+      Number(getCreatedAt(b)) - Number(getCreatedAt(a))
+    );
+
+  document.getElementById("invoiceCount").textContent =
+    requests.length + " pengajuan";
+
+  const list = document.getElementById("invoiceList");
+
+  if (!requests.length) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">
+          <i class="fa-solid fa-file-invoice"></i>
+        </div>
+        <h3>Belum ada pengajuan invoice</h3>
+        <p>
+          Pengajuan yang kamu buat akan muncul di sini,
+          lengkap dengan nominal dan statusnya.
+        </p>
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML = requests.map(request => {
+    const status = normalizeStatus(request.status);
+    const createdDate = formatDate(getCreatedAt(request)) || "Tanggal tidak tersedia";
+    const amount = rupiah(request.amount);
+
+    const statusDescription = request.note ||
+      request.adminNote ||
+      request.rejectionReason ||
+      "";
+
+    return `
+      <div class="report-item">
+        <div class="report-icon">
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+        </div>
+
+        <div class="report-info">
+          <h3>Pengajuan Invoice</h3>
+          <p>${escapeHTML(createdDate)}</p>
+          <p style="font-size:12px;font-weight:700;color:#17181c;margin-top:6px">
+            ${escapeHTML(amount)}
+          </p>
+
+          <span class="report-status ${statusClass(status)}">
+            <i class="fa-solid fa-circle" style="font-size:6px"></i>
+            ${escapeHTML(statusLabel(request.status))}
+          </span>
+
+          ${statusDescription ? `
+            <p style="margin-top:6px">
+              Catatan: ${escapeHTML(statusDescription)}
+            </p>
+          ` : ""}
+        </div>
+
+        <div class="report-action">
+          <button type="button"
+            data-invoice-detail="${escapeHTML(request.key)}"
+            aria-label="Detail pengajuan">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  list.querySelectorAll("[data-invoice-detail]").forEach(button => {
+    button.addEventListener("click", () => {
+      const key = button.dataset.invoiceDetail;
+      const request = requests.find(item => item.key === key);
+
+      if (!request) return;
+
+      const details = [
+        "Pengajuan Invoice",
+        "Nominal: " + rupiah(request.amount),
+        "Status: " + statusLabel(request.status),
+        "Tanggal: " + (formatDate(getCreatedAt(request)) || "Tidak tersedia")
+      ];
+
+      const note = request.note ||
+        request.adminNote ||
+        request.rejectionReason;
+
+      if (note) details.push("Catatan: " + note);
+
+      showToast(details.join(" • "));
+    });
+  });
+}
+
+function loadInvoiceHistory(uid) {
+  if (invoiceRef && invoiceListener) {
+    invoiceRef.off("value", invoiceListener);
+  }
+
+  invoiceRef = db.ref("invoice_requests");
+
+  invoiceListener = snapshot => {
+    renderInvoiceHistory(snapshot);
+  };
+
+  invoiceRef.on("value", invoiceListener, error => {
+    console.error("Gagal memuat riwayat invoice:", error);
+
+    document.getElementById("invoiceList").innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h3>Riwayat invoice gagal dimuat</h3>
+        <p>Periksa koneksi atau izin akses database kamu.</p>
+      </div>
+    `;
+  });
+}
+
+/* SUBMIT INVOICE */
 
 async function submitInvoice() {
   if (!currentUser || submittingInvoice) return;
@@ -1355,7 +1550,8 @@ async function submitInvoice() {
 
   submittingInvoice = true;
   button.disabled = true;
-  button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+  button.innerHTML =
+    '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
 
   try {
     const requestRef = db.ref("invoice_requests");
@@ -1370,17 +1566,22 @@ async function submitInvoice() {
     pendingSnapshot.forEach(child => {
       const data = child.val() || {};
 
-      if (String(data.status || "").toLowerCase() === "pending") {
+      if (normalizeStatus(data.status) === "pending") {
         hasPending = true;
       }
     });
 
     if (hasPending) {
-      showInvoiceError("Kamu masih memiliki pengajuan invoice yang menunggu proses.");
+      showInvoiceError(
+        "Kamu masih memiliki pengajuan invoice berstatus Pending."
+      );
       return;
     }
 
-    const latestUserSnapshot = await db.ref("users/" + currentUser.uid).once("value");
+    const latestUserSnapshot = await db
+      .ref("users/" + currentUser.uid)
+      .once("value");
+
     const latestUser = latestUserSnapshot.val() || {};
     const latestSaldo = Number(latestUser.saldo || 0);
 
@@ -1409,17 +1610,21 @@ async function submitInvoice() {
 
     showToast("Pengajuan invoice berhasil dikirim.");
 
+    /* Listener invoice_requests akan memperbarui riwayat secara otomatis. */
+
   } catch (error) {
     console.error("Pengajuan invoice gagal:", error);
     showInvoiceError("Pengajuan gagal. Silakan coba lagi.");
   } finally {
     submittingInvoice = false;
     button.disabled = false;
-    button.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Ajukan';
+    button.innerHTML =
+      '<i class="fa-solid fa-paper-plane"></i> Ajukan';
   }
 }
 
-document.getElementById("submitInvoiceButton").addEventListener("click", submitInvoice);
+document.getElementById("submitInvoiceButton")
+  .addEventListener("click", submitInvoice);
 
 /* AUTH */
 
@@ -1434,6 +1639,7 @@ auth.onAuthStateChanged(user => {
   loadUser(user.uid);
   loadMessages(user.uid);
   loadIncome();
+  loadInvoiceHistory(user.uid);
 });
 </script>
 
