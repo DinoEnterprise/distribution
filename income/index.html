@@ -1,358 +1,490 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Income | Dynotic Distribution</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Outfit', sans-serif;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Income | Dynotic Distribution</title>
 
-    body {
-      background: #f1f2f7;
-      padding-top: 74px;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    header {
-      padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      background: #fff;
-      border-bottom: 1px solid #eee;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      z-index: 1000;
-    }
-
-    header img {
-      height: 50px;
-    }
-td.action-cell{
-  text-align: center;
-  vertical-align: middle;
+<style>
+:root {
+  --bg: #f1f2f7;
+  --white: #fff;
+  --text: #171717;
+  --muted: #777b87;
+  --border: #e9eaf0;
 }
 
-.action-btn{
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Outfit', sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  padding-top: 80px;
+  padding-bottom: 90px;
+  min-height: 100vh;
+}
+
+button, input { font: inherit; }
+
+header {
+  height: 64px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.header-logo img {
+  height: 38px;
+  max-width: 190px;
+  object-fit: contain;
+  display: block;
+}
+
+.header-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #222;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  text-decoration: none;
+}
+
+.page-container {
+  width: 100%;
+  max-width: 760px;
+  margin: auto;
+  padding: 0 16px;
+}
+
+.page-heading {
+  margin: 8px 2px 18px;
+}
+
+.page-heading h1 {
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.page-heading p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 5px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 12px rgba(20,20,40,.025);
+}
+
+.balance-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.balance-label {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.balance-value {
+  font-size: clamp(19px, 4.5vw, 25px);
+  font-weight: 700;
+  margin-top: 7px;
+  overflow-wrap: anywhere;
+}
+
+.balance-caption {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 5px;
+}
+
+.invoice-action {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 7px;
+}
+
+.primary-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 13px;
+  gap: 7px;
+  padding: 11px 13px;
+  border: none;
+  border-radius: 12px;
+  background: #111;
+  color: #fff;
+  font-size: 12px;
   font-weight: 600;
-
-  background: #f5f6fa;
-  border: 1px solid #e6e8ef;
-  transition: 0.2s;
-}
-
-.action-btn:hover{
-  background: #e9ecf5;
-  transform: scale(1.02);
-}
-
-.action-btn img{
-  width: 18px;
-  height: 18px;
-}
-    /* Card Total & Withdraw */
-    .card {
-      width: 90%;
-      margin: 16px auto;
-      background: #fff;
-      border-radius: 18px;
-      padding: 18px;
-      border: 1px solid #ececec;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, .05);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .card .balance {
-      font-weight: 700;
-      font-size: 16px;
-    }
-
-    .card button {
-      padding: 8px 14px;
-      background: #111;
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-    }
-    #invoiceBtn{
-  padding:10px 16px;
-  background:#111;
-  color:#fff;
-  border:none;
-  border-radius:12px;
-  cursor:pointer;
-  font-weight:600;
-  transition:.2s;
-}
-
-#invoiceBtn:hover{
-  transform:translateY(-1px);
-  box-shadow:0 6px 15px rgba(0,0,0,.15);
-}
-
-#invoiceBtn:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-  transform:none;
-  box-shadow:none;
-}
-.invoice-action{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-end;
-  gap:7px;
-}
-
-.invoice-minimum-info{
-  font-size:11px;
-  color:#92400e;
-  text-align:right;
-  line-height:1.4;
-  display:none;
-}
-
-.invoice-minimum-info strong{
-  font-weight:700;
-}
-/* INVOICE MODAL */
-.invoice-modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.4);
-  backdrop-filter:blur(6px);
-  z-index:2000;
-  align-items:center;
-  justify-content:center;
-}
-
-.invoice-card{
-  width:90%;
-  max-width:420px;
-  background:#fff;
-  padding:22px;
-  border-radius:20px;
-  box-shadow:0 20px 50px rgba(0,0,0,.2);
-}
-
-.invoice-card h3{
-  margin-bottom:18px;
-}
-
-.invoice-info{
-  background:#f5f6fa;
-  padding:12px;
-  border-radius:12px;
-  margin-bottom:15px;
-}
-
-.invoice-card label{
-  display:block;
-  font-size:13px;
-  font-weight:600;
-  margin-bottom:6px;
-}
-
-.invoice-card input{
-  width:100%;
-  padding:11px 12px;
-  border:1px solid #ddd;
-  border-radius:10px;
-  outline:none;
-  font-size:14px;
-  margin-bottom:5px;
-}
-
-.invoice-card input:focus{
-  border-color:#111;
-}
-
-.invoice-buttons{
-  display:flex;
-  gap:10px;
-  margin-top:18px;
-}
-
-.invoice-buttons button{
-  flex:1;
-  padding:11px;
-  border:none;
-  border-radius:11px;
-  font-weight:600;
-  cursor:pointer;
-}
-
-.invoice-submit{
-  background:#111;
-  color:#fff;
-}
-
-.invoice-cancel{
-  background:#f1f2f7;
-  color:#111;
-}
-
-.invoice-error{
-  color:#dc2626;
-  font-size:12px;
-  margin-top:5px;
-  display:none;
-}
-.download-icon {
-  height: 28px; /* atau 28px */
   cursor: pointer;
-}
-.table-wrapper{
-  width:95%;
-  max-width:1200px;
-  margin:16px auto;
-  background:#fff;
-  border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.06);
-  padding:10px;
+  white-space: nowrap;
 }
 
-.table-scroll{
-  overflow-x:auto;
+.primary-btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.invoice-minimum-info {
+  display: none;
+  max-width: 145px;
+  color: #92400e;
+  font-size: 10px;
+  text-align: right;
+  line-height: 1.5;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 24px 2px 12px;
+}
+
+.section-heading h2 { font-size: 16px; }
+
+.section-heading span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.table-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.table-scroll {
+  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-table{
-  width:100%;
-  min-width:800px;
-  border-collapse:collapse;
-}
-
-th, td{
-  white-space: nowrap;
-}
-    /* Table (hidden for normal users) */
-    .table-card {
-  display: block; /* tampilkan tabel untuk user */
-  width: 90%;
-  margin: 16px auto;
-      background: #fff;
-      border-radius: 18px;
-      padding: 0;
-      border: 1px solid #ececec;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, .05);
-    }
-
-   .table-card table {
+table {
   width: 100%;
-  border-collapse: separate; /* ubah dari collapse */
-  border-spacing: 0;
+  min-width: 740px;
+  border-collapse: collapse;
 }
 
-/* ROW */
-.table-card tr {
-  transition: 0.2s;
-}
-
-.table-card tr:hover {
-  background: #f9fafb;
-}
-
-/* CELL */
-.table-card th,
-.table-card td {
-  padding: 12px 14px;
+th, td {
+  padding: 14px;
   text-align: left;
-  border-bottom: 1px solid #eee;
-  font-size: 14px;
-  vertical-align: middle;
+  white-space: nowrap;
+  border-bottom: 1px solid #f0f0f3;
+  font-size: 12px;
 }
 
-.table-card th {
-  background: #f9f9f9;
+th {
+  background: #fafbfc;
+  color: #777b87;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .4px;
+}
+
+tbody tr:last-child td { border-bottom: none; }
+
+.status {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 10px;
   font-weight: 600;
 }
 
-/* BUTTON */
-.table-card td button {
-  padding: 6px 10px;
-  background: #667eea;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
+.status.accepted { background: #dcfce7; color: #166534; }
+.status.paid { background: #dbeafe; color: #1e40af; }
+.status.pending { background: #fef3c7; color: #92400e; }
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 11px;
+  border: 1px solid #e7e8ef;
+  border-radius: 10px;
+  background: #f7f8fb;
+  color: #222;
+  font-size: 11px;
+  font-weight: 600;
   cursor: pointer;
-  font-size: 13px;
+  text-decoration: none;
 }
 
-.table-card td button:hover {
-  filter: brightness(0.9);
+.action-btn img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
 }
 
-/* STATUS BADGE */
-.status {
-  padding: 4px 10px;
-  border-radius: 999px;
+.empty-state {
+  padding: 30px 15px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: normal;
+}
+
+.invoice-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  padding: 18px;
+  background: rgba(0,0,0,.42);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+
+.invoice-card {
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #fff;
+  padding: 23px;
+  border-radius: 21px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.18);
+}
+
+.modal-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 19px;
+}
+
+.modal-heading h3 { font-size: 19px; }
+
+.modal-heading p {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 10px;
+  background: #f1f2f7;
+  cursor: pointer;
+}
+
+.invoice-info {
+  background: #f6f7fb;
+  border: 1px solid #eceef4;
+  padding: 14px;
+  border-radius: 13px;
+  margin-bottom: 19px;
+}
+
+.invoice-info small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+#invoiceBalance {
+  font-size: 21px;
+  font-weight: 700;
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+}
+
+.invoice-card label {
+  display: block;
   font-size: 12px;
   font-weight: 600;
-  display: inline-block;
+  margin-bottom: 8px;
 }
 
-.status.accepted {
-  background: #dcfce7;
-  color: #166534;
+.invoice-card input {
+  width: 100%;
+  padding: 12px 13px;
+  border: 1px solid #e1e3eb;
+  border-radius: 11px;
+  outline: none;
+  font-size: 14px;
 }
 
-.status.paid {
-  background: #dbeafe;
-  color: #1e40af;
+.invoice-card input:focus { border-color: #858ca7; }
+
+.input-hint {
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
 }
 
-.status.pending {
-  background: #fef3c7;
-  color: #92400e;
+.invoice-error {
+  display: none;
+  margin-top: 9px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 11px;
+  line-height: 1.5;
 }
 
-  </style>
+.invoice-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.invoice-buttons button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 11px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.invoice-cancel { background: #f1f2f7; color: #222; }
+.invoice-submit { background: #111; color: #fff; }
+.invoice-submit:disabled { opacity: .5; cursor: not-allowed; }
+
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 72px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,.97);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 1000;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.nav-item {
+  flex: 1;
+  height: 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #9295a0;
+  text-decoration: none;
+  font-size: 10px;
+}
+
+.nav-item i { font-size: 18px; }
+.nav-item.active { color: #171717; font-weight: 700; }
+
+@media (max-width: 480px) {
+  header { padding: 0 15px; }
+  .page-container { padding: 0 12px; }
+  .card { padding: 16px; }
+  .balance-card { gap: 8px; }
+  .balance-value { font-size: 19px; }
+  .primary-btn { padding: 10px; font-size: 11px; }
+}
+
+@media (max-width: 350px) {
+  .balance-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .invoice-action { align-items: flex-start; }
+  .invoice-minimum-info { text-align: left; }
+}
+</style>
 </head>
+
 <body>
 
-  <header>
-    <img src="../assets/dynotic-distribution.png" alt="DynoPay">
-  </header>
+<header>
+  <a href="../" class="header-logo">
+    <img src="../assets/dynotic-distribution.png" alt="Dynotic Distribution">
+  </a>
+  <a href="../" class="header-icon" aria-label="Home">
+    <i class="fa-solid fa-house"></i>
+  </a>
+</header>
 
-  <!-- Card Total + Withdraw -->
-<div class="card">
-  <div class="balance" id="totalBalance">Total: Rp 0</div>
+<main class="page-container">
 
-  <div class="invoice-action">
-    <button id="invoiceBtn" onclick="openInvoiceModal()">
-      Ajukan Invoice
-    </button>
-
-    <div id="invoiceMinimumInfo" class="invoice-minimum-info">
-      Belum memenuhi jumlah minimum<br>
-      Minimum pengajuan invoice: <strong>Rp 100.000</strong>
-    </div>
+  <div class="page-heading">
+    <h1>Income</h1>
+    <p>Lihat laporan pendapatan dan kelola pengajuan invoice kamu.</p>
   </div>
-</div>
 
-<!-- Table Income -->
-<div class="table-card">
-  <div class="table-wrapper">
+  <section class="card balance-card">
+    <div>
+      <div class="balance-label">
+        <i class="fa-solid fa-wallet"></i> Saldo tersedia
+      </div>
+      <div class="balance-value" id="totalBalance">Rp 0</div>
+      <div class="balance-caption">Minimum invoice Rp100.000</div>
+    </div>
+
+    <div class="invoice-action">
+      <button class="primary-btn" id="invoiceBtn"
+        onclick="openInvoiceModal()" disabled>
+        <i class="fa-solid fa-file-invoice"></i>
+        Ajukan Invoice
+      </button>
+      <div id="invoiceMinimumInfo" class="invoice-minimum-info">
+        Saldo belum memenuhi minimum pengajuan
+        <strong>Rp100.000</strong>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-heading">
+    <h2>Laporan Pendapatan</h2>
+    <span id="reportCount">Memuat laporan...</span>
+  </div>
+
+  <section class="table-card">
     <div class="table-scroll">
-
       <table>
         <thead>
           <tr>
@@ -364,303 +496,281 @@ th, td{
             <th>ACTION</th>
           </tr>
         </thead>
-
         <tbody id="incomeList">
-          <!-- Data Firebase -->
+          <tr>
+            <td colspan="6">
+              <div class="empty-state">Memuat laporan pendapatan...</div>
+            </td>
+          </tr>
         </tbody>
-
       </table>
-
     </div>
-  </div>
-</div>
-<!-- AJUKAN INVOICE MODAL -->
-<div class="invoice-modal" id="invoiceModal">
+  </section>
 
+</main>
+
+<div class="invoice-modal" id="invoiceModal"
+  onclick="handleModalBackdrop(event)">
   <div class="invoice-card">
 
-    <h3>Ajukan Invoice</h3>
+    <div class="modal-heading">
+      <div>
+        <h3>Ajukan Invoice</h3>
+        <p>Masukkan jumlah invoice yang ingin diajukan.</p>
+      </div>
+      <button class="modal-close" onclick="closeInvoiceModal()"
+        aria-label="Tutup">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
 
     <div class="invoice-info">
       <small>Saldo tersedia</small>
-      <div id="invoiceBalance"
-           style="font-size:18px;font-weight:700;margin-top:4px;">
-        Rp 0
-      </div>
+      <div id="invoiceBalance">Rp 0</div>
     </div>
 
-    <label for="invoiceAmount">
-      Jumlah Invoice
-    </label>
+    <label for="invoiceAmount">Jumlah Invoice</label>
+    <input type="number" id="invoiceAmount"
+      placeholder="Minimal Rp100.000" min="100000" step="1">
 
-    <input
-      type="number"
-      id="invoiceAmount"
-      placeholder="Minimal Rp 100.000"
-      min="100000"
-    >
+    <div class="input-hint">
+      Minimum Rp100.000 dan tidak boleh melebihi saldo tersedia.
+    </div>
 
-    <div class="invoice-error" id="invoiceError"></div>
+    <div class="invoice-error" id="invoiceError" role="alert"></div>
 
     <div class="invoice-buttons">
-      <button
-        class="invoice-cancel"
-        onclick="closeInvoiceModal()">
-        Batal
-      </button>
-
-      <button
-        class="invoice-submit"
-        onclick="submitInvoice()">
-        Ajukan Invoice
-      </button>
+      <button class="invoice-cancel"
+        onclick="closeInvoiceModal()">Batal</button>
+      <button class="invoice-submit" id="invoiceSubmitBtn"
+        onclick="submitInvoice()">Ajukan Invoice</button>
     </div>
 
   </div>
-
 </div>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <script>
-    firebase.initializeApp({
-      apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-      authDomain: "dynopay-2513c.firebaseapp.com",
-      databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
-    });
 
-    const db = firebase.database();
+<nav class="bottom-nav">
+  <a href="../" class="nav-item">
+    <i class="fa-solid fa-house"></i><span>Home</span>
+  </a>
+  <a href="../releases" class="nav-item">
+    <i class="fa-solid fa-compact-disc"></i><span>Releases</span>
+  </a>
+  <a href="../account" class="nav-item">
+    <i class="fa-solid fa-user"></i><span>Account</span>
+  </a>
+</nav>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain: "dynopay-2513c.firebaseapp.com",
+  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db = firebase.database();
 const MIN_INVOICE = 100000;
 
 let currentSaldo = 0;
 let currentUser = null;
-    firebase.auth().onAuthStateChanged(user => {
-  if (!user) window.location.href = "../login";
-  else {
-    const uid = user.uid;
+let invoiceSubmitting = false;
 
-    // Ambil saldo
-    db.ref("users/" + uid + "/saldo").once("value").then(snap => {
-  currentSaldo = Number(snap.val() || 0);
+function formatRupiah(value) {
+  return "Rp " + Number(value || 0).toLocaleString("id-ID");
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+// AUTHENTICATION
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = "../login";
+    return;
+  }
+
   currentUser = user;
 
-  document.getElementById("totalBalance").innerText =
-    "Total: Rp " + currentSaldo.toLocaleString("id-ID");
-
-  // Tombol invoice hanya aktif jika saldo >= Rp100.000
-  const invoiceBtn = document.getElementById("invoiceBtn");
-
-  const minimumInfo = document.getElementById("invoiceMinimumInfo");
-
-if (currentSaldo < MIN_INVOICE) {
-
-  invoiceBtn.disabled = true;
-  invoiceBtn.title = "Saldo minimum Rp100.000";
-
-  minimumInfo.style.display = "block";
-
-} else {
-
-  invoiceBtn.disabled = false;
-  invoiceBtn.title = "";
-
-  minimumInfo.style.display = "none";
-}
-});
-    // Panggil loadIncome
-    loadIncome(uid, user.email);
-  }
-});
-
-// Fungsi loadIncome di sini, di luar auth
-function loadIncome(uid, email) {
-  const incomeList = document.getElementById("incomeList");
-  incomeList.innerHTML = "";
-
-  db.ref("royalties").once("value").then(snap => {
-    if (!snap.exists()) {
-      incomeList.innerHTML = `<tr><td colspan="6">Belum ada laporan</td></tr>`;
-      return;
-    }
-
-    let rows = "";
-
-    let dataArray = [];
-
-snap.forEach(item => {
-  const val = item.val();
-
-  // 🔥 FILTER DI SINI (lebih efisien & rapi)
-  if ((val.uid && val.uid === uid) || (val.email && val.email === email)) {
-    dataArray.push({
-      key: item.key,
-      ...val
-    });
-  }
-});
-
-// 🔥 terbaru di atas
-dataArray.sort((a, b) => b.key.localeCompare(a.key));
-
-dataArray.forEach(d => {
-  const key = d.key;
-
-  let statusText = "";
-  let icon = "";
-
-  if (d.type === "Sales Report") {
-    statusText = "Accepted";
-    icon = "../assets/report.png";
-  } else if (d.type === "Payment") {
-    statusText = "Paid";
-    icon = "../assets/invoice.png";
-  } else {
-    statusText = "Pending";
-  }
-
-  rows += `
-<tr>
-  <td>${d.type || "-"}</td>
-  <td>${d.period || "-"}</td>
-  <td>${d.date || "-"}</td>
-  <td>Rp ${Number(d.value || 0).toLocaleString("id-ID")}</td>
-  <td>
-    <span class="status ${
-      statusText === "Accepted" ? "accepted" :
-      statusText === "Paid" ? "paid" : "pending"
-    }">
-      ${statusText}
-    </span>
-  </td>
-  
-<td class="action-cell">
-  ${
-    d.type === "Payment"
-      ? `<div class="action-btn" onclick="window.open('../invoice?id=${key}','_blank')">
-           <img src="../assets/invoice.png">
-           My Invoice
-         </div>`
-      : d.type === "Sales Report" && d.downloadUrl
-        ? `<div class="action-btn" onclick="downloadFile('${d.downloadUrl}')">
-             <img src="../assets/report.png">
-             Report
-           </div>`
-        : '-'
-  }
-</td>
-</tr>
-`;
-});
-
-    incomeList.innerHTML = rows;
-  });
-}
-  function submitInvoice(){
-
-  const amount = Number(
-    document.getElementById("invoiceAmount").value
-  );
-
-  const error = document.getElementById("invoiceError");
-
-  error.style.display = "none";
-
-  // Cek user
-  if(!currentUser){
-    error.innerText = "Akun belum siap. Silakan refresh halaman.";
-    error.style.display = "block";
-    return;
-  }
-
-  // Validasi minimum
-  if(!amount || amount < MIN_INVOICE){
-    error.innerText = "Jumlah invoice minimal Rp100.000.";
-    error.style.display = "block";
-    return;
-  }
-
-  // Tidak boleh lebih besar dari saldo
-  if(amount > currentSaldo){
-    error.innerText = "Jumlah invoice melebihi saldo tersedia.";
-    error.style.display = "block";
-    return;
-  }
-
-  // Cek invoice Pending milik user
-  db.ref("invoice_requests")
-    .orderByChild("uid")
-    .equalTo(currentUser.uid)
+  db.ref("users/" + user.uid + "/saldo")
     .once("value")
     .then(snap => {
+      currentSaldo = Number(snap.val() || 0);
 
-      let hasPending = false;
+      document.getElementById("totalBalance").innerText =
+        formatRupiah(currentSaldo);
 
-      snap.forEach(item => {
-        const data = item.val();
+      updateInvoiceButton();
+    })
+    .catch(err => {
+      console.error("Gagal mengambil saldo:", err);
+      document.getElementById("totalBalance").innerText =
+        "Saldo tidak tersedia";
+      document.getElementById("invoiceBtn").disabled = true;
+    });
 
-        if(data.status === "Pending"){
-          hasPending = true;
-        }
-      });
+  loadIncome(user.uid, user.email);
+});
 
-      // Masih ada invoice pending
-      if(hasPending){
-        error.innerText =
-          "Anda masih memiliki pengajuan invoice yang sedang diproses. Silakan tunggu hingga selesai.";
+// UPDATE BUTTON
+function updateInvoiceButton() {
+  const btn = document.getElementById("invoiceBtn");
+  const info = document.getElementById("invoiceMinimumInfo");
+  const eligible = currentSaldo >= MIN_INVOICE;
 
-        error.style.display = "block";
+  btn.disabled = !eligible;
+  btn.title = eligible ? "" : "Saldo minimum Rp100.000";
+  info.style.display = eligible ? "none" : "block";
+}
+
+// LOAD INCOME REPORTS
+function loadIncome(uid, email) {
+  const list = document.getElementById("incomeList");
+  const count = document.getElementById("reportCount");
+
+  db.ref("royalties").once("value")
+    .then(snap => {
+      if (!snap.exists()) {
+        showEmptyReports();
         return;
       }
 
-      // Buat invoice request
-      const requestData = {
-        uid: currentUser.uid,
-        email: currentUser.email,
-        amount: amount,
-        status: "Pending",
-        createdAt: firebase.database.ServerValue.TIMESTAMP
-      };
+      const dataArray = [];
 
-      return db.ref("invoice_requests").push(requestData);
+      snap.forEach(item => {
+        const val = item.val() || {};
 
-    })
-    .then(result => {
+        if (
+          (val.uid && val.uid === uid) ||
+          (val.email && email && val.email === email)
+        ) {
+          dataArray.push({
+            key: item.key,
+            ...val
+          });
+        }
+      });
 
-      // Kalau sebelumnya ditolak karena pending,
-      // result tidak akan ada
-      if(!result) return;
-
-      alert(
-        "Pengajuan invoice berhasil dikirim.\n\n" +
-        "Jumlah: Rp " +
-        amount.toLocaleString("id-ID")
+      dataArray.sort((a, b) =>
+        String(b.key).localeCompare(String(a.key))
       );
 
-      closeInvoiceModal();
+      count.innerText = dataArray.length + " laporan";
 
+      if (dataArray.length === 0) {
+        showEmptyReports();
+        return;
+      }
+
+      let rows = "";
+
+      dataArray.forEach(d => {
+        let statusText = "Pending";
+        let statusClass = "pending";
+        let action = "-";
+
+        if (d.type === "Sales Report") {
+          statusText = "Accepted";
+          statusClass = "accepted";
+
+          if (d.downloadUrl) {
+            action = `
+              <a class="action-btn"
+                href="${escapeHTML(d.downloadUrl)}"
+                target="_blank" rel="noopener noreferrer">
+                <img src="../assets/report.png" alt="">
+                Report
+              </a>
+            `;
+          }
+        } else if (d.type === "Payment") {
+          statusText = "Paid";
+          statusClass = "paid";
+
+          action = `
+            <button class="action-btn"
+              onclick="openInvoice('${encodeURIComponent(d.key)}')">
+              <img src="../assets/invoice.png" alt="">
+              My Invoice
+            </button>
+          `;
+        }
+
+        rows += `
+          <tr>
+            <td>${escapeHTML(d.type || "-")}</td>
+            <td>${escapeHTML(d.period || "-")}</td>
+            <td>${escapeHTML(d.date || "-")}</td>
+            <td><strong>${formatRupiah(Number(d.value || 0))}</strong></td>
+            <td>
+              <span class="status ${statusClass}">
+                ${statusText}
+              </span>
+            </td>
+            <td>${action}</td>
+          </tr>
+        `;
+      });
+
+      list.innerHTML = rows;
     })
     .catch(err => {
-
-      console.error(err);
-
-      error.innerText =
-        "Gagal mengajukan invoice. Silakan coba lagi.";
-
-      error.style.display = "block";
+      console.error("Gagal memuat laporan:", err);
+      count.innerText = "Gagal memuat";
+      list.innerHTML = `
+        <tr><td colspan="6">
+          <div class="empty-state">
+            Gagal memuat laporan. Periksa koneksi lalu refresh halaman.
+          </div>
+        </td></tr>
+      `;
     });
-} 
-function openInvoiceModal(){
+}
 
-  if(currentSaldo < MIN_INVOICE){
+function showEmptyReports() {
+  document.getElementById("reportCount").innerText = "0 laporan";
+  document.getElementById("incomeList").innerHTML = `
+    <tr><td colspan="6">
+      <div class="empty-state">
+        <i class="fa-regular fa-folder-open"></i>
+        Belum ada laporan pendapatan.
+      </div>
+    </td></tr>
+  `;
+}
+
+// OPEN INVOICE PAGE
+function openInvoice(key) {
+  window.open("../invoice?id=" + key, "_blank");
+}
+
+// OPEN MODAL
+function openInvoiceModal() {
+  if (!currentUser) {
+    alert("Akun belum siap. Silakan refresh halaman.");
+    return;
+  }
+
+  if (currentSaldo < MIN_INVOICE) {
     alert(
       "Saldo belum mencapai minimum invoice.\n\n" +
-      "Minimum: Rp " + MIN_INVOICE.toLocaleString("id-ID")
+      "Minimum: " + formatRupiah(MIN_INVOICE)
     );
     return;
   }
 
   document.getElementById("invoiceBalance").innerText =
-    "Rp " + currentSaldo.toLocaleString("id-ID");
+    formatRupiah(currentSaldo);
 
   document.getElementById("invoiceAmount").value = "";
   document.getElementById("invoiceError").style.display = "none";
@@ -668,18 +778,141 @@ function openInvoiceModal(){
   document.getElementById("invoiceModal").style.display = "flex";
 }
 
-function closeInvoiceModal(){
+function closeInvoiceModal() {
+  if (invoiceSubmitting) return;
+
   document.getElementById("invoiceModal").style.display = "none";
 }
-function downloadFile(url){
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "";
-  a.target = "_blank";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+
+function handleModalBackdrop(event) {
+  if (event.target.id === "invoiceModal") {
+    closeInvoiceModal();
+  }
 }
-  </script>
+
+function showInvoiceError(message) {
+  const error = document.getElementById("invoiceError");
+  error.innerText = message;
+  error.style.display = "block";
+}
+
+// SUBMIT INVOICE
+async function submitInvoice() {
+  if (invoiceSubmitting) return;
+
+  const amount = Number(
+    document.getElementById("invoiceAmount").value
+  );
+
+  const submitBtn = document.getElementById("invoiceSubmitBtn");
+  const error = document.getElementById("invoiceError");
+
+  error.style.display = "none";
+
+  if (!currentUser) {
+    showInvoiceError("Akun belum siap. Silakan refresh halaman.");
+    return;
+  }
+
+  if (!Number.isFinite(amount) || amount < MIN_INVOICE) {
+    showInvoiceError("Jumlah invoice minimal Rp100.000.");
+    return;
+  }
+
+  if (!Number.isSafeInteger(amount)) {
+    showInvoiceError("Jumlah invoice harus berupa angka bulat.");
+    return;
+  }
+
+  if (amount > currentSaldo) {
+    showInvoiceError("Jumlah invoice melebihi saldo tersedia.");
+    return;
+  }
+
+  invoiceSubmitting = true;
+  submitBtn.disabled = true;
+  submitBtn.innerText = "Mengirim...";
+
+  try {
+    const snap = await db.ref("invoice_requests")
+      .orderByChild("uid")
+      .equalTo(currentUser.uid)
+      .once("value");
+
+    let hasPending = false;
+
+    snap.forEach(item => {
+      const data = item.val() || {};
+
+      if (data.status === "Pending") {
+        hasPending = true;
+      }
+    });
+
+    if (hasPending) {
+      showInvoiceError(
+        "Anda masih memiliki pengajuan invoice yang sedang diproses. Silakan tunggu hingga selesai."
+      );
+      return;
+    }
+
+    // Periksa saldo terbaru sebelum membuat pengajuan.
+    const saldoSnap = await db.ref(
+      "users/" + currentUser.uid + "/saldo"
+    ).once("value");
+
+    const latestSaldo = Number(saldoSnap.val() || 0);
+    currentSaldo = latestSaldo;
+
+    document.getElementById("totalBalance").innerText =
+      formatRupiah(currentSaldo);
+
+    updateInvoiceButton();
+
+    if (amount > currentSaldo || currentSaldo < MIN_INVOICE) {
+      showInvoiceError(
+        "Saldo tidak mencukupi untuk jumlah invoice tersebut. Periksa saldo terbaru."
+      );
+      return;
+    }
+
+    const requestData = {
+      uid: currentUser.uid,
+      email: currentUser.email || "",
+      amount: amount,
+      status: "Pending",
+      createdAt: firebase.database.ServerValue.TIMESTAMP
+    };
+
+    await db.ref("invoice_requests").push(requestData);
+
+    alert(
+      "Pengajuan invoice berhasil dikirim.\n\n" +
+      "Jumlah: " + formatRupiah(amount)
+    );
+
+    document.getElementById("invoiceModal").style.display = "none";
+
+  } catch (err) {
+    console.error("Gagal mengajukan invoice:", err);
+
+    showInvoiceError(
+      "Gagal mengajukan invoice. Silakan periksa koneksi lalu coba lagi."
+    );
+  } finally {
+    invoiceSubmitting = false;
+    submitBtn.disabled = false;
+    submitBtn.innerText = "Ajukan Invoice";
+  }
+}
+
+// CLOSE MODAL WITH ESCAPE
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && !invoiceSubmitting) {
+    closeInvoiceModal();
+  }
+});
+</script>
+
 </body>
 </html>
