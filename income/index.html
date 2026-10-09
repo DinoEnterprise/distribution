@@ -6,39 +6,49 @@
 
 <title>Income | Dynotic Distribution</title>
 
-<link rel="icon" type="image/png" href="../assets/favicon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="../assets/favicon-android.png">
-<link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-iphone.png">
-
-<meta name="theme-color" content="#667eea">
-<meta name="robots" content="noindex, nofollow">
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <style>
 *{
+  box-sizing:border-box;
   margin:0;
   padding:0;
-  box-sizing:border-box;
-  font-family:"Outfit",sans-serif;
+}
+
+:root{
+  --bg:#f1f2f7;
+  --white:#fff;
+  --text:#17181c;
+  --muted:#777b84;
+  --border:#e8e8ed;
+  --green:#16a34a;
+  --red:#ef4444;
 }
 
 body{
-  background:#f1f2f7;
+  font-family:'Outfit',sans-serif;
+  background:var(--bg);
+  color:var(--text);
   min-height:100vh;
-  color:#17181c;
   padding-top:64px;
-  padding-bottom:90px;
+  padding-bottom:30px;
   -webkit-tap-highlight-color:transparent;
   user-select:none;
 }
 
 button,input{
-  font:inherit;
+  font-family:inherit;
 }
 
-/* HEADER */
+button{
+  cursor:pointer;
+}
 
 header{
   height:64px;
@@ -58,7 +68,6 @@ header img{
   height:32px;
   width:auto;
   object-fit:contain;
-  display:block;
 }
 
 .notif-btn{
@@ -73,6 +82,8 @@ header img{
   position:relative;
   cursor:pointer;
   transition:.15s;
+  border:none;
+  color:#17181c;
 }
 
 .notif-btn:active{
@@ -100,34 +111,29 @@ header img{
   justify-content:center;
 }
 
-/* MAIN */
-
 .container{
   width:calc(100% - 28px);
   max-width:760px;
   margin:0 auto;
 }
 
-/* PAGE TITLE */
-
 .page-heading{
-  margin:20px 3px 0;
+  margin-top:24px;
   animation:pageIn .45s ease both;
 }
 
 .page-heading h1{
-  font-size:22px;
+  font-size:23px;
   font-weight:700;
+  letter-spacing:-.5px;
 }
 
 .page-heading p{
-  color:#777b84;
   font-size:12px;
-  line-height:1.5;
-  margin-top:3px;
+  color:var(--muted);
+  margin-top:5px;
+  line-height:1.6;
 }
-
-/* CARD */
 
 .card{
   background:#fff;
@@ -138,473 +144,560 @@ header img{
   animation:pageIn .45s ease both;
 }
 
-/* WALLET */
+.balance-card{
+  background:#17181c;
+  color:#fff;
+  border:0;
+  position:relative;
+  overflow:hidden;
+}
 
-.wallet-card{
+.balance-card::after{
+  content:"";
+  position:absolute;
+  width:170px;
+  height:170px;
+  border-radius:50%;
+  background:rgba(255,255,255,.045);
+  right:-65px;
+  top:-75px;
+}
+
+.balance-label{
+  font-size:12px;
+  color:#c5c6cc;
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap:12px;
+  gap:8px;
 }
 
-.wallet-content{
-  min-width:0;
+.balance-label i{
+  font-size:13px;
 }
 
-.balance-title{
-  font-size:12px;
-  font-weight:600;
-  color:#777b84;
-}
-
-.balance-value{
-  font-size:clamp(21px,5.5vw,29px);
+.balance-amount{
+  font-size:27px;
   font-weight:700;
-  color:#111;
-  margin-top:5px;
+  margin-top:12px;
+  letter-spacing:-.5px;
   overflow-wrap:anywhere;
 }
 
 .balance-caption{
-  font-size:10px;
-  color:#888b93;
-  margin-top:6px;
-  line-height:1.5;
-}
-
-.invoice-action{
-  flex-shrink:0;
-  display:flex;
-  flex-direction:column;
-  align-items:flex-end;
-  gap:7px;
-}
-
-.primary-btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:7px;
-  padding:10px 12px;
-  border:none;
-  border-radius:11px;
-  background:#111;
-  color:#fff;
   font-size:11px;
+  color:#c5c6cc;
+  margin-top:7px;
+}
+
+.balance-actions{
+  display:flex;
+  gap:9px;
+  margin-top:20px;
+  position:relative;
+  z-index:1;
+}
+
+.btn{
+  border:0;
+  border-radius:11px;
+  padding:11px 15px;
+  font-size:12px;
   font-weight:600;
-  cursor:pointer;
-  white-space:nowrap;
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
   transition:.15s;
 }
 
-.primary-btn:active{
-  transform:scale(.94);
+.btn:active{
+  transform:scale(.97);
 }
 
-.primary-btn:disabled{
-  opacity:.4;
+.btn-light{
+  background:#fff;
+  color:#17181c;
+}
+
+.btn-dark{
+  background:#17181c;
+  color:#fff;
+}
+
+.btn-outline{
+  background:#fff;
+  color:#17181c;
+  border:1px solid #e8e8ed;
+}
+
+.btn:disabled{
+  opacity:.5;
   cursor:not-allowed;
-  transform:none;
 }
-
-.invoice-minimum-info{
-  display:none;
-  max-width:140px;
-  color:#92400e;
-  font-size:10px;
-  text-align:right;
-  line-height:1.5;
-}
-
-/* SECTION */
 
 .section-title{
   font-size:13px;
   font-weight:600;
   color:#777b84;
   margin:24px 3px 10px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
 }
 
-.section-title span{
-  font-size:10px;
-  font-weight:400;
-  color:#858891;
-}
-
-/* REPORT TABLE */
-
-.table-card{
-  background:#fff;
-  border:1px solid #e8e8ed;
-  border-radius:18px;
+.report-card{
+  padding:0;
   overflow:hidden;
-  margin-top:0;
-  animation:pageIn .45s ease both;
 }
 
-.table-scroll{
-  overflow-x:auto;
-  -webkit-overflow-scrolling:touch;
-}
-
-table{
-  width:100%;
-  min-width:700px;
-  border-collapse:collapse;
-}
-
-th,td{
-  padding:13px 14px;
-  text-align:left;
-  white-space:nowrap;
-  border-bottom:1px solid #f0f0f3;
-  font-size:11px;
-}
-
-th{
-  background:#fafafa;
-  color:#777b84;
-  font-size:10px;
-  font-weight:600;
-  letter-spacing:.3px;
-}
-
-tbody tr:last-child td{
-  border-bottom:none;
-}
-
-.status{
-  display:inline-block;
-  padding:5px 9px;
-  border-radius:999px;
-  font-size:10px;
-  font-weight:600;
-}
-
-.status.accepted{
-  background:#dcfce7;
-  color:#166534;
-}
-
-.status.paid{
-  background:#dbeafe;
-  color:#1e40af;
-}
-
-.status.pending{
-  background:#fef3c7;
-  color:#92400e;
-}
-
-.action-btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:7px;
-  padding:8px 11px;
-  border:1px solid #e7e8ef;
-  border-radius:10px;
-  background:#f1f2f7;
-  color:#222;
-  font-size:11px;
-  font-weight:600;
-  cursor:pointer;
-  text-decoration:none;
-  transition:.15s;
-}
-
-.action-btn:active{
-  transform:scale(.96);
-}
-
-.action-btn img{
-  width:16px;
-  height:16px;
-  object-fit:contain;
-}
-
-.empty-state{
-  padding:30px 15px;
-  text-align:center;
-  color:#777b84;
-  font-size:12px;
-  white-space:normal;
-  line-height:1.6;
-}
-
-/* INVOICE MODAL */
-
-.invoice-modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  padding:18px;
-  background:rgba(0,0,0,.35);
-  backdrop-filter:blur(5px);
-  -webkit-backdrop-filter:blur(5px);
-  z-index:2000;
-  align-items:center;
-  justify-content:center;
-}
-
-.invoice-card{
-  width:100%;
-  max-width:380px;
-  max-height:90vh;
-  overflow-y:auto;
-  background:#fff;
-  padding:20px;
-  border:1px solid #e8e8ed;
-  border-radius:18px;
-  box-shadow:0 12px 35px rgba(0,0,0,.15);
-  animation:pageIn .25s ease both;
-}
-
-.modal-heading{
+.report-top{
+  padding:17px 18px;
   display:flex;
-  align-items:flex-start;
+  align-items:center;
   justify-content:space-between;
   gap:12px;
-  margin-bottom:18px;
+  border-bottom:1px solid #e8e8ed;
 }
 
-.modal-heading h3{
-  font-size:17px;
+.report-top h2{
+  font-size:14px;
   font-weight:700;
 }
 
-.modal-heading p{
-  font-size:11px;
+.report-top p{
   color:#777b84;
+  font-size:11px;
   margin-top:4px;
-  line-height:1.5;
+}
+
+.report-count{
+  font-size:10px;
+  color:#777b84;
+  background:#f1f2f7;
+  padding:6px 9px;
+  border-radius:8px;
+  white-space:nowrap;
+}
+
+.report-list{
+  display:flex;
+  flex-direction:column;
+}
+
+.report-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:15px 18px;
+  border-bottom:1px solid #f0f0f4;
+}
+
+.report-item:last-child{
+  border-bottom:none;
+}
+
+.report-icon{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  background:#f1f2f7;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  overflow:hidden;
+}
+
+.report-icon img{
+  width:25px;
+  height:25px;
+  object-fit:contain;
+}
+
+.report-info{
+  flex:1;
+  min-width:0;
+}
+
+.report-info h3{
+  font-size:12px;
+  font-weight:600;
+  overflow-wrap:anywhere;
+}
+
+.report-info p{
+  font-size:10px;
+  color:#777b84;
+  margin-top:5px;
+  overflow-wrap:anywhere;
+}
+
+.report-status{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  font-size:10px;
+  font-weight:600;
+  margin-top:7px;
+}
+
+.status-accepted,
+.status-paid{
+  color:#16a34a;
+}
+
+.status-pending{
+  color:#d97706;
+}
+
+.status-rejected{
+  color:#dc2626;
+}
+
+.report-action{
+  flex-shrink:0;
+}
+
+.report-action button{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  border:1px solid #e8e8ed;
+  background:#fff;
+  color:#17181c;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.report-action button:active{
+  background:#f1f2f7;
+}
+
+.empty-state{
+  padding:35px 20px;
+  text-align:center;
+}
+
+.empty-icon{
+  width:48px;
+  height:48px;
+  border-radius:15px;
+  margin:0 auto 13px;
+  background:#f1f2f7;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#777b84;
+  font-size:18px;
+}
+
+.empty-state h3{
+  font-size:13px;
+  font-weight:600;
+}
+
+.empty-state p{
+  color:#777b84;
+  font-size:11px;
+  margin-top:6px;
+  line-height:1.6;
+}
+
+.loading{
+  padding:30px;
+  text-align:center;
+  color:#777b84;
+  font-size:12px;
+}
+
+.loading i{
+  margin-right:7px;
+}
+
+.info-card{
+  display:flex;
+  align-items:flex-start;
+  gap:11px;
+}
+
+.info-icon{
+  width:35px;
+  height:35px;
+  background:#f1f2f7;
+  border-radius:11px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  font-size:14px;
+}
+
+.info-text h3{
+  font-size:12px;
+  font-weight:600;
+}
+
+.info-text p{
+  color:#777b84;
+  font-size:11px;
+  line-height:1.7;
+  margin-top:5px;
+}
+
+/* MODAL */
+
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  z-index:2000;
+  background:rgba(18,19,24,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+
+.modal-overlay.show{
+  display:flex;
+}
+
+.modal{
+  width:100%;
+  max-width:390px;
+  background:#fff;
+  border-radius:20px;
+  padding:22px;
+  animation:modalIn .2s ease;
+  max-height:90vh;
+  overflow-y:auto;
+}
+
+.modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.modal-header h2{
+  font-size:17px;
+  font-weight:700;
 }
 
 .modal-close{
   width:32px;
   height:32px;
-  flex-shrink:0;
-  border:none;
+  border:0;
   border-radius:10px;
   background:#f1f2f7;
-  cursor:pointer;
-}
-
-.invoice-info{
-  background:#f1f2f7;
-  border:1px solid #e8e8ed;
-  padding:14px;
-  border-radius:13px;
-  margin-bottom:18px;
-}
-
-.invoice-info small{
-  color:#777b84;
-  font-size:11px;
-}
-
-#invoiceBalance{
-  font-size:23px;
-  font-weight:700;
-  margin-top:5px;
-  overflow-wrap:anywhere;
-}
-
-.invoice-card label{
-  display:block;
-  font-size:12px;
-  font-weight:600;
-  margin-bottom:7px;
-}
-
-.invoice-card input{
-  width:100%;
-  padding:12px 13px;
-  border:1px solid #dedfe4;
-  border-radius:11px;
-  outline:none;
-  font-size:13px;
-  margin-bottom:0;
-  user-select:text;
-}
-
-.invoice-card input:focus{
-  border-color:#b9bbc2;
-  box-shadow:0 0 0 3px rgba(0,0,0,.04);
-}
-
-.input-hint{
-  margin-top:7px;
-  color:#777b84;
-  font-size:10px;
-  line-height:1.5;
-}
-
-.invoice-error{
-  display:none;
-  margin-top:10px;
-  padding:10px;
-  border-radius:10px;
-  background:#fef2f2;
-  color:#dc2626;
-  font-size:11px;
-  line-height:1.5;
-}
-
-.invoice-buttons{
+  color:#17181c;
   display:flex;
-  gap:9px;
-  margin-top:18px;
-}
-
-.invoice-buttons button{
-  flex:1;
-  padding:12px;
-  border:1px solid #e8e8ed;
-  border-radius:11px;
-  font-size:12px;
-  font-weight:600;
-  cursor:pointer;
-  transition:.15s;
-}
-
-.invoice-buttons button:active{
-  transform:scale(.97);
-}
-
-.invoice-cancel{
-  background:#f1f2f7;
-  color:#222;
-}
-
-.invoice-submit{
-  background:#111;
-  color:#fff;
-  border-color:#111!important;
-}
-
-.invoice-submit:disabled{
-  opacity:.5;
-  cursor:not-allowed;
-}
-
-/* MESSAGE POPUP */
-
-.message-popup{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.35);
-  display:none;
   align-items:center;
   justify-content:center;
-  z-index:2100;
 }
 
-.message-card{
-  width:calc(100% - 40px);
-  max-width:340px;
-  background:#fff;
-  border-radius:17px;
-  padding:18px;
-  box-shadow:0 12px 35px rgba(0,0,0,.15);
-}
-
-.message-title{
-  font-weight:700;
-  font-size:15px;
+.form-label{
+  font-size:12px;
+  font-weight:600;
+  display:block;
   margin-bottom:8px;
 }
 
-.message-text{
+.form-input-wrap{
+  position:relative;
+}
+
+.form-prefix{
+  position:absolute;
+  left:13px;
+  top:50%;
+  transform:translateY(-50%);
   font-size:13px;
-  color:#555;
+  color:#777b84;
+  font-weight:600;
+}
+
+.form-input{
+  width:100%;
+  height:46px;
+  border:1px solid #e8e8ed;
+  background:#fff;
+  border-radius:11px;
+  padding:0 13px 0 43px;
+  outline:none;
+  font-size:14px;
+  color:#17181c;
+}
+
+.form-input:focus{
+  border-color:#a1a1aa;
+}
+
+.form-help{
+  color:#777b84;
+  font-size:10px;
+  line-height:1.6;
+  margin-top:8px;
+}
+
+.modal-balance{
+  background:#f1f2f7;
+  border-radius:12px;
+  padding:13px;
+  margin-bottom:18px;
+}
+
+.modal-balance span{
+  color:#777b84;
+  font-size:11px;
+}
+
+.modal-balance strong{
+  display:block;
+  font-size:16px;
+  margin-top:5px;
+}
+
+.modal-error{
+  display:none;
+  background:#fef2f2;
+  color:#dc2626;
+  padding:11px 12px;
+  border-radius:10px;
+  font-size:11px;
+  line-height:1.6;
+  margin-top:12px;
+}
+
+.modal-error.show{
+  display:block;
+}
+
+.modal-actions{
+  display:flex;
+  gap:9px;
+  margin-top:20px;
+}
+
+.modal-actions button{
+  flex:1;
+}
+
+/* NOTIFICATIONS */
+
+.notif-overlay{
+  position:fixed;
+  inset:0;
+  z-index:1500;
+  background:rgba(0,0,0,.18);
+  display:none;
+}
+
+.notif-overlay.show{
+  display:block;
+}
+
+.notif-panel{
+  position:fixed;
+  z-index:1501;
+  top:72px;
+  right:14px;
+  width:calc(100% - 28px);
+  max-width:360px;
+  max-height:min(70vh,520px);
+  overflow-y:auto;
+  background:#fff;
+  border:1px solid #e8e8ed;
+  border-radius:17px;
+  box-shadow:0 12px 35px rgba(0,0,0,.12);
+  display:none;
+  animation:pageIn .2s ease both;
+}
+
+.notif-panel.show{
+  display:block;
+}
+
+.notif-panel-header{
+  padding:16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid #e8e8ed;
+}
+
+.notif-panel-header h3{
+  font-size:14px;
+  font-weight:700;
+}
+
+.notif-panel-header button{
+  border:0;
+  background:none;
+  font-size:12px;
+  color:#777b84;
+}
+
+.notif-list{
+  padding:5px 0;
+}
+
+.notif-item{
+  padding:13px 16px;
+  border-bottom:1px solid #f0f0f4;
+  cursor:pointer;
+}
+
+.notif-item:last-child{
+  border-bottom:none;
+}
+
+.notif-item.unread{
+  background:#fafaff;
+}
+
+.notif-item h4{
+  font-size:12px;
+  font-weight:600;
   line-height:1.5;
+}
+
+.notif-item p{
+  color:#777b84;
+  font-size:11px;
+  line-height:1.6;
+  margin-top:4px;
   overflow-wrap:anywhere;
 }
 
-.message-actions{
-  display:flex;
-  justify-content:flex-end;
-  gap:8px;
-  margin-top:15px;
-}
-
-.view-btn,.close-btn{
-  border:none;
-  padding:9px 14px;
-  border-radius:10px;
-  font-size:12px;
-  font-weight:600;
-  cursor:pointer;
-}
-
-.view-btn{
-  background:#111;
-  color:#fff;
-}
-
-.close-btn{
-  background:#f1f2f7;
-  color:#333;
-}
-
-/* BOTTOM NAV */
-
-.bottom-nav{
-  height:72px;
-  background:#fff;
-  border-top:1px solid #e6e6eb;
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  display:flex;
-  justify-content:space-around;
-  align-items:center;
-  z-index:1000;
-}
-
-.nav-item{
-  width:33.33%;
+.notif-empty{
+  padding:28px 15px;
   text-align:center;
-  font-size:11px;
-  color:#999ca4;
-  padding:7px 14px;
+  color:#777b84;
+  font-size:12px;
+}
+
+.toast{
+  position:fixed;
+  z-index:3000;
+  left:50%;
+  bottom:22px;
+  transform:translate(-50%,15px);
+  opacity:0;
+  pointer-events:none;
+  background:#17181c;
+  color:#fff;
   border-radius:12px;
-  cursor:pointer;
-  transition:.15s;
+  padding:12px 16px;
+  font-size:12px;
+  max-width:calc(100% - 36px);
+  text-align:center;
+  transition:.25s;
 }
 
-.nav-item i{
-  display:block;
-  font-size:18px;
-  margin-bottom:4px;
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
 }
-
-.nav-item:active{
-  transform:scale(.94);
-}
-
-.nav-item.active{
-  color:#17181c;
-  font-weight:600;
-}
-
-.nav-item.active::after{
-  content:"";
-  display:block;
-  width:28px;
-  height:3px;
-  border-radius:999px;
-  background:#111;
-  margin:5px auto 0;
-}
-
-/* ANIMATION */
 
 @keyframes pageIn{
   from{
@@ -617,50 +710,45 @@ tbody tr:last-child td{
   }
 }
 
-/* MOBILE */
-
-@media(max-width:600px){
-  header{
-    padding:0 18px;
+@keyframes modalIn{
+  from{
+    opacity:0;
+    transform:translateY(10px) scale(.98);
   }
-
-  .container{
-    width:calc(100% - 28px);
-  }
-
-  .wallet-card{
-    padding:17px;
-    gap:8px;
-  }
-
-  .balance-value{
-    font-size:clamp(18px,5vw,23px);
-  }
-
-  .primary-btn{
-    padding:10px;
-    font-size:10px;
-  }
-}
-
-@media(max-width:350px){
-  .wallet-card{
-    align-items:flex-start;
-    flex-direction:column;
-  }
-
-  .invoice-action{
-    align-items:flex-start;
-  }
-
-  .invoice-minimum-info{
-    text-align:left;
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
   }
 }
 
 @media(min-width:700px){
   .container{
     width:100%;
+  }
+}
+
+@media(max-width:380px){
+  .balance-amount{
+    font-size:23px;
+  }
+
+  .card{
+    padding:15px;
+  }
+
+  .report-item{
+    padding:13px;
+    gap:9px;
+  }
+
+  .report-icon{
+    width:38px;
+    height:38px;
+  }
+
+  .report-action button{
+    width:31px;
+    height:31px;
   }
 }
 </style>
@@ -671,599 +759,682 @@ tbody tr:last-child td{
 <header>
   <img src="../assets/dynotic-distribution.png" alt="Dynotic Distribution">
 
-  <div id="notifBtn" class="notif-btn" onclick="openMessages()">
+  <button class="notif-btn" id="notifButton" type="button" aria-label="Notifikasi">
     <i class="fa-regular fa-bell"></i>
-    <span id="notifBadge" class="notif-badge">0</span>
-  </div>
+    <span class="notif-badge" id="notifBadge">0</span>
+  </button>
 </header>
 
-<main class="container">
+<div class="container">
 
-  <div class="page-heading">
+  <section class="page-heading">
     <h1>Income</h1>
-    <p>Lihat laporan pendapatan dan kelola pengajuan invoice kamu.</p>
-  </div>
+    <p>Kelola pendapatan royalti dan pengajuan pembayaran kamu.</p>
+  </section>
 
-  <section class="card wallet-card">
-    <div class="wallet-content">
-      <div class="balance-title">
-        <i class="fa-solid fa-wallet"></i>
-        Saldo tersedia
-      </div>
-
-      <div class="balance-value" id="totalBalance">Rp 0</div>
-
-      <div class="balance-caption">
-        Minimum invoice Rp100.000
-      </div>
+  <section class="card balance-card">
+    <div class="balance-label">
+      <i class="fa-solid fa-wallet"></i>
+      Saldo Tersedia
     </div>
 
-    <div class="invoice-action">
-      <button class="primary-btn" id="invoiceBtn"
-        onclick="openInvoiceModal()" disabled>
-        <i class="fa-solid fa-file-invoice"></i>
+    <div class="balance-amount" id="balanceAmount">
+      Rp0
+    </div>
+
+    <p class="balance-caption">
+      Saldo yang tercatat pada akun Dynotic kamu.
+    </p>
+
+    <div class="balance-actions">
+      <button class="btn btn-light" id="requestInvoiceButton" type="button">
+        <i class="fa-solid fa-file-invoice-dollar"></i>
         Ajukan Invoice
       </button>
+    </div>
+  </section>
 
-      <div id="invoiceMinimumInfo" class="invoice-minimum-info">
-        Saldo belum memenuhi minimum pengajuan
-        <strong>Rp100.000</strong>
+  <div class="section-title">Riwayat Pendapatan</div>
+
+  <section class="card report-card">
+    <div class="report-top">
+      <div>
+        <h2>Laporan & Pembayaran</h2>
+        <p>Daftar laporan royalti dan invoice kamu.</p>
+      </div>
+
+      <span class="report-count" id="reportCount">0 laporan</span>
+    </div>
+
+    <div class="report-list" id="reportList">
+      <div class="loading">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        Memuat laporan...
       </div>
     </div>
   </section>
 
-  <div class="section-title">
-    <span style="color:#777b84;font-size:13px;font-weight:600">
-      Laporan Pendapatan
-    </span>
-    <span id="reportCount">Memuat laporan...</span>
-  </div>
+  <div class="section-title">Informasi</div>
 
-  <section class="table-card">
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th>REPORT</th>
-            <th>PERIOD</th>
-            <th>GENERATED</th>
-            <th>VALUE</th>
-            <th>STATUS</th>
-            <th>ACTION</th>
-          </tr>
-        </thead>
-        <tbody id="incomeList">
-          <tr>
-            <td colspan="6">
-              <div class="empty-state">Memuat laporan pendapatan...</div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+  <section class="card info-card">
+    <div class="info-icon">
+      <i class="fa-solid fa-circle-info"></i>
+    </div>
+
+    <div class="info-text">
+      <h3>Ketentuan Pengajuan Invoice</h3>
+      <p>
+        Minimum pengajuan invoice adalah Rp100.000.
+        Pengajuan akan diproses setelah ditinjau oleh tim Dynotic.
+        Saldo yang ditampilkan mengikuti data akun kamu.
+      </p>
     </div>
   </section>
 
-  <div style="height:20px"></div>
-</main>
+</div>
 
-<!-- MESSAGE POPUP -->
+<!-- NOTIFICATION BACKDROP -->
+<div class="notif-overlay" id="notifOverlay"></div>
 
-<div id="messagePopup" class="message-popup">
-  <div class="message-card">
-    <div class="message-title" id="msgTitle"></div>
-    <div class="message-text" id="msgText"></div>
+<!-- NOTIFICATION PANEL -->
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-panel-header">
+    <h3>Notifikasi</h3>
+    <button type="button" id="closeNotifButton">Tutup</button>
+  </div>
 
-    <div class="message-actions">
-      <button class="view-btn" onclick="viewMessage()">View</button>
-      <button class="close-btn" onclick="closeMessage()">✕</button>
-    </div>
+  <div class="notif-list" id="notifList">
+    <div class="notif-empty">Memuat notifikasi...</div>
   </div>
 </div>
 
 <!-- INVOICE MODAL -->
-
-<div class="invoice-modal" id="invoiceModal"
-  onclick="handleModalBackdrop(event)">
-
-  <div class="invoice-card">
-    <div class="modal-heading">
-      <div>
-        <h3>Ajukan Invoice</h3>
-        <p>Masukkan jumlah invoice yang ingin diajukan.</p>
-      </div>
-
-      <button class="modal-close" onclick="closeInvoiceModal()"
-        aria-label="Tutup">
+<div class="modal-overlay" id="invoiceModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Ajukan Invoice</h2>
+      <button class="modal-close" id="closeInvoiceButton" type="button" aria-label="Tutup">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
 
-    <div class="invoice-info">
-      <small>Saldo tersedia</small>
-      <div id="invoiceBalance">Rp 0</div>
+    <div class="modal-balance">
+      <span>Saldo tersedia</span>
+      <strong id="modalBalance">Rp0</strong>
     </div>
 
-    <label for="invoiceAmount">Jumlah Invoice</label>
-    <input type="number" id="invoiceAmount"
-      placeholder="Minimal Rp100.000"
-      min="100000" step="1" inputmode="numeric">
+    <label class="form-label" for="invoiceAmount">Nominal pengajuan</label>
 
-    <div class="input-hint">
+    <div class="form-input-wrap">
+      <span class="form-prefix">Rp</span>
+      <input
+        class="form-input"
+        type="number"
+        id="invoiceAmount"
+        min="100000"
+        step="1000"
+        inputmode="numeric"
+        placeholder="100000"
+      >
+    </div>
+
+    <p class="form-help">
       Minimum Rp100.000 dan tidak boleh melebihi saldo tersedia.
-    </div>
+      Pengajuan akan masuk ke antrean pemeriksaan admin.
+    </p>
 
-    <div class="invoice-error" id="invoiceError" role="alert"></div>
+    <div class="modal-error" id="invoiceError"></div>
 
-    <div class="invoice-buttons">
-      <button class="invoice-cancel" onclick="closeInvoiceModal()">Batal</button>
-      <button class="invoice-submit" id="invoiceSubmitBtn"
-        onclick="submitInvoice()">Ajukan Invoice</button>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="cancelInvoiceButton" type="button">
+        Batal
+      </button>
+
+      <button class="btn btn-dark" id="submitInvoiceButton" type="button">
+        <i class="fa-solid fa-paper-plane"></i>
+        Ajukan
+      </button>
     </div>
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
-
-<nav class="bottom-nav">
-  <div class="nav-item" onclick="homeClick()">
-    <i class="fa-solid fa-house"></i>
-    Home
-  </div>
-
-  <div class="nav-item" onclick="goReleases()">
-    <i class="fa-solid fa-music"></i>
-    Releases
-  </div>
-
-  <div class="nav-item" onclick="accountClick()">
-    <i class="fa-regular fa-user"></i>
-    Account
-  </div>
-</nav>
-
-<!-- FIREBASE -->
-
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<div class="toast" id="toast"></div>
 
 <script>
-firebase.initializeApp({
-  apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain:"dynopay-2513c.firebaseapp.com",
-  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
+const firebaseConfig = {
+  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain: "dynopay-2513c.firebaseapp.com",
+  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+};
 
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
+const auth = firebase.auth();
 const db = firebase.database();
-const MIN_INVOICE = 100000;
 
-let currentSaldo = 0;
 let currentUser = null;
-let invoiceSubmitting = false;
-let messagesQueue = [];
-let currentMsgIndex = 0;
+let currentSaldo = 0;
+let messagesRef = null;
+let messagesListener = null;
+let royaltiListener = null;
+let submittingInvoice = false;
+let toastTimeout = null;
 
-function formatRupiah(value){
-  return "Rp " + Number(value || 0).toLocaleString("id-ID");
-}
+const rupiah = value => {
+  return "Rp" + Number(value || 0).toLocaleString("id-ID");
+};
 
-function escapeHTML(value){
+function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-  })[char]);
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[char]));
 }
 
-/* AUTH */
+function showToast(message) {
+  const toast = document.getElementById("toast");
 
-firebase.auth().onAuthStateChanged(user => {
-  if(!user){
-    location.href="../login";
-    return;
-  }
+  toast.textContent = message;
+  toast.classList.add("show");
 
-  currentUser = user;
+  clearTimeout(toastTimeout);
 
-  loadMessages(user.uid);
-
-  db.ref("users/" + user.uid).once("value")
-    .then(snap => {
-      if(!snap.exists()) return;
-
-      const d = snap.val() || {};
-      currentSaldo = Number(d.saldo || 0);
-
-      document.getElementById("totalBalance").textContent =
-        formatRupiah(currentSaldo);
-
-      updateInvoiceButton();
-    })
-    .catch(err => {
-      console.error("Gagal mengambil saldo:", err);
-      document.getElementById("totalBalance").textContent =
-        "Saldo tidak tersedia";
-      document.getElementById("invoiceBtn").disabled = true;
-    });
-
-  loadIncome(user.uid,user.email);
-});
-
-/* NAVIGATION */
-
-function homeClick(){
-  location.href="../home";
+  toastTimeout = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2800);
 }
 
-function goReleases(){
-  location.href="../releases";
+function showInvoiceError(message) {
+  const error = document.getElementById("invoiceError");
+
+  error.textContent = message;
+  error.classList.add("show");
 }
 
-function accountClick(){
-  location.href="../account";
+function clearInvoiceError() {
+  const error = document.getElementById("invoiceError");
+
+  error.textContent = "";
+  error.classList.remove("show");
 }
 
-/* SALDO */
+function openInvoiceModal() {
+  if (!currentUser) return;
 
-function updateInvoiceButton(){
-  const btn = document.getElementById("invoiceBtn");
-  const info = document.getElementById("invoiceMinimumInfo");
-  const eligible = currentSaldo >= MIN_INVOICE;
-
-  btn.disabled = !eligible;
-  btn.title = eligible ? "" : "Saldo minimum Rp100.000";
-  info.style.display = eligible ? "none" : "block";
-}
-
-/* INCOME REPORTS */
-
-function loadIncome(uid,email){
-  const list = document.getElementById("incomeList");
-  const count = document.getElementById("reportCount");
-
-  db.ref("royalties").once("value")
-    .then(snap => {
-      if(!snap.exists()){
-        showEmptyReports();
-        return;
-      }
-
-      const dataArray = [];
-
-      snap.forEach(item => {
-        const val = item.val() || {};
-
-        if(
-          (val.uid && val.uid === uid) ||
-          (val.email && email && val.email === email)
-        ){
-          dataArray.push({key:item.key,...val});
-        }
-      });
-
-      dataArray.sort((a,b) =>
-        String(b.key).localeCompare(String(a.key))
-      );
-
-      count.textContent = dataArray.length + " laporan";
-
-      if(dataArray.length === 0){
-        showEmptyReports();
-        return;
-      }
-
-      let rows = "";
-
-      dataArray.forEach(d => {
-        let statusText = "Pending";
-        let statusClass = "pending";
-        let action = "-";
-
-        if(d.type === "Sales Report"){
-          statusText = "Accepted";
-          statusClass = "accepted";
-
-          if(d.downloadUrl){
-            action = `
-              <a class="action-btn"
-                href="${escapeHTML(d.downloadUrl)}"
-                target="_blank" rel="noopener noreferrer">
-                <img src="../assets/report.png" alt="">
-                Report
-              </a>
-            `;
-          }
-        }else if(d.type === "Payment"){
-          statusText = "Paid";
-          statusClass = "paid";
-
-          action = `
-            <button class="action-btn"
-              onclick="openInvoice('${encodeURIComponent(d.key)}')">
-              <img src="../assets/invoice.png" alt="">
-              My Invoice
-            </button>
-          `;
-        }
-
-        rows += `
-          <tr>
-            <td>${escapeHTML(d.type || "-")}</td>
-            <td>${escapeHTML(d.period || "-")}</td>
-            <td>${escapeHTML(d.date || "-")}</td>
-            <td><strong>${formatRupiah(Number(d.value || 0))}</strong></td>
-            <td>
-              <span class="status ${statusClass}">
-                ${statusText}
-              </span>
-            </td>
-            <td>${action}</td>
-          </tr>
-        `;
-      });
-
-      list.innerHTML = rows;
-    })
-    .catch(err => {
-      console.error("Gagal memuat laporan:",err);
-      count.textContent = "Gagal memuat";
-      list.innerHTML = `
-        <tr><td colspan="6">
-          <div class="empty-state">
-            Gagal memuat laporan. Periksa koneksi lalu refresh halaman.
-          </div>
-        </td></tr>
-      `;
-    });
-}
-
-function showEmptyReports(){
-  document.getElementById("reportCount").textContent = "0 laporan";
-  document.getElementById("incomeList").innerHTML = `
-    <tr><td colspan="6">
-      <div class="empty-state">
-        <i class="fa-regular fa-folder-open"></i>
-        <br>
-        Belum ada laporan pendapatan.
-      </div>
-    </td></tr>
-  `;
-}
-
-function openInvoice(key){
-  location.href="../invoice?id=" + key;
-}
-
-/* INVOICE MODAL */
-
-function openInvoiceModal(){
-  if(!currentUser){
-    alert("Akun belum siap. Silakan refresh halaman.");
-    return;
-  }
-
-  if(currentSaldo < MIN_INVOICE){
-    alert("Saldo belum mencapai minimum invoice.\n\nMinimum: " +
-      formatRupiah(MIN_INVOICE));
-    return;
-  }
-
-  document.getElementById("invoiceBalance").textContent =
-    formatRupiah(currentSaldo);
+  clearInvoiceError();
 
   document.getElementById("invoiceAmount").value = "";
-  document.getElementById("invoiceError").style.display = "none";
-  document.getElementById("invoiceModal").style.display = "flex";
+  document.getElementById("modalBalance").textContent = rupiah(currentSaldo);
+  document.getElementById("invoiceModal").classList.add("show");
 }
 
-function closeInvoiceModal(){
-  if(invoiceSubmitting) return;
-  document.getElementById("invoiceModal").style.display = "none";
+function closeInvoiceModal() {
+  if (submittingInvoice) return;
+
+  document.getElementById("invoiceModal").classList.remove("show");
+  clearInvoiceError();
 }
 
-function handleModalBackdrop(event){
-  if(event.target.id === "invoiceModal"){
+document.getElementById("requestInvoiceButton").addEventListener("click", openInvoiceModal);
+document.getElementById("closeInvoiceButton").addEventListener("click", closeInvoiceModal);
+document.getElementById("cancelInvoiceButton").addEventListener("click", closeInvoiceModal);
+
+document.getElementById("invoiceModal").addEventListener("click", event => {
+  if (event.target.id === "invoiceModal") {
     closeInvoiceModal();
   }
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
+    closeInvoiceModal();
+    closeNotifications();
+  }
+});
+
+/* NOTIFICATIONS */
+
+function openNotifications() {
+  document.getElementById("notifPanel").classList.add("show");
+  document.getElementById("notifOverlay").classList.add("show");
 }
 
-function showInvoiceError(message){
-  const error = document.getElementById("invoiceError");
-  error.textContent = message;
-  error.style.display = "block";
+function closeNotifications() {
+  document.getElementById("notifPanel").classList.remove("show");
+  document.getElementById("notifOverlay").classList.remove("show");
 }
 
-/* SUBMIT INVOICE */
+document.getElementById("notifButton").addEventListener("click", () => {
+  const panel = document.getElementById("notifPanel");
 
-async function submitInvoice(){
-  if(invoiceSubmitting) return;
+  if (panel.classList.contains("show")) {
+    closeNotifications();
+  } else {
+    openNotifications();
+  }
+});
 
-  const amount = Number(
-    document.getElementById("invoiceAmount").value
-  );
+document.getElementById("closeNotifButton").addEventListener("click", closeNotifications);
+document.getElementById("notifOverlay").addEventListener("click", closeNotifications);
 
-  const submitBtn = document.getElementById("invoiceSubmitBtn");
-  document.getElementById("invoiceError").style.display = "none";
+function loadMessages(uid) {
+  if (messagesRef && messagesListener) {
+    messagesRef.off("value", messagesListener);
+  }
 
-  if(!currentUser){
-    showInvoiceError("Akun belum siap. Silakan refresh halaman.");
+  messagesRef = db.ref("messages_inbox/" + uid);
+
+  messagesListener = snapshot => {
+    const data = snapshot.val() || {};
+    const messages = Object.entries(data).map(([key, message]) => ({
+      key,
+      ...message
+    }));
+
+    messages.sort((a, b) => {
+      return Number(b.createdAt || b.timestamp || 0) -
+             Number(a.createdAt || a.timestamp || 0);
+    });
+
+    const unreadCount = messages.filter(message => !message.read).length;
+    const badge = document.getElementById("notifBadge");
+
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount > 99 ? "99+" : unreadCount;
+      badge.style.display = "flex";
+    } else {
+      badge.style.display = "none";
+    }
+
+    const list = document.getElementById("notifList");
+
+    if (!messages.length) {
+      list.innerHTML = `
+        <div class="notif-empty">
+          <i class="fa-regular fa-bell-slash"></i>
+          <p style="margin-top:9px">Belum ada notifikasi.</p>
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = messages.map(message => `
+      <div
+        class="notif-item ${message.read ? "" : "unread"}"
+        data-message-key="${escapeHTML(message.key)}"
+      >
+        <h4>${escapeHTML(message.subject || "Notifikasi Dynotic")}</h4>
+        <p>${escapeHTML(message.body || "")}</p>
+      </div>
+    `).join("");
+
+    list.querySelectorAll(".notif-item").forEach(item => {
+      item.addEventListener("click", async () => {
+        const key = item.dataset.messageKey;
+        const message = data[key];
+
+        if (!message || message.read) return;
+
+        try {
+          await db.ref("messages_inbox/" + uid + "/" + key).update({
+            read: true
+          });
+        } catch (error) {
+          console.error("Gagal menandai notifikasi:", error);
+        }
+      });
+    });
+  };
+
+  messagesRef.on("value", messagesListener, error => {
+    console.error("Gagal memuat notifikasi:", error);
+
+    document.getElementById("notifList").innerHTML = `
+      <div class="notif-empty">Notifikasi belum dapat dimuat.</div>
+    `;
+  });
+}
+
+/* USER BALANCE */
+
+function loadUser(uid) {
+  db.ref("users/" + uid).on("value", snapshot => {
+    const data = snapshot.val() || {};
+
+    currentSaldo = Number(data.saldo || 0);
+
+    document.getElementById("balanceAmount").textContent = rupiah(currentSaldo);
+    document.getElementById("modalBalance").textContent = rupiah(currentSaldo);
+  }, error => {
+    console.error("Gagal memuat saldo:", error);
+    showToast("Saldo belum dapat dimuat.");
+  });
+}
+
+/* ROYALTY REPORTS */
+
+function getReportStatus(report) {
+  return String(report.status || "Pending").toLowerCase();
+}
+
+function renderReports(snapshot) {
+  const allReports = snapshot.val() || {};
+
+  const reports = Object.entries(allReports)
+    .filter(([key, report]) => {
+      if (!report || typeof report !== "object") return false;
+
+      const sameUid = report.uid && report.uid === currentUser.uid;
+      const sameEmail = report.email &&
+        currentUser.email &&
+        report.email.toLowerCase() === currentUser.email.toLowerCase();
+
+      return sameUid || sameEmail;
+    })
+    .map(([key, report]) => ({
+      key,
+      ...report
+    }))
+    .sort((a, b) => {
+      return Number(b.createdAt || b.timestamp || 0) -
+             Number(a.createdAt || a.timestamp || 0);
+    });
+
+  document.getElementById("reportCount").textContent =
+    reports.length + (reports.length === 1 ? " laporan" : " laporan");
+
+  const list = document.getElementById("reportList");
+
+  if (!reports.length) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">
+          <i class="fa-solid fa-file-circle-question"></i>
+        </div>
+        <h3>Belum ada laporan</h3>
+        <p>Laporan pendapatan dan pembayaran kamu akan muncul di sini.</p>
+      </div>
+    `;
     return;
   }
 
-  if(!Number.isSafeInteger(amount) || amount < MIN_INVOICE){
-    showInvoiceError("Jumlah invoice minimal Rp100.000.");
+  list.innerHTML = reports.map(report => {
+    const type = String(report.type || report.reportType || "").toLowerCase();
+    const status = getReportStatus(report);
+
+    const isSales = type.includes("sales report") || type.includes("sales");
+    const isPayment = type.includes("payment") || type.includes("invoice");
+
+    let title;
+    let icon;
+    let statusText;
+    let statusClass;
+    let action;
+
+    if (isSales) {
+      title = report.title || "Sales Report";
+      icon = "../assets/report.png";
+
+      statusText = status === "accepted" ? "Accepted" : (report.status || "Pending");
+      statusClass = status === "accepted" ? "status-accepted" :
+        status === "rejected" ? "status-rejected" : "status-pending";
+
+      action = report.downloadUrl
+        ? `<button type="button" data-action="download" data-url="${escapeHTML(report.downloadUrl)}" aria-label="Unduh laporan">
+             <i class="fa-solid fa-download"></i>
+           </button>`
+        : `<button type="button" disabled aria-label="Laporan belum tersedia">
+             <i class="fa-solid fa-clock"></i>
+           </button>`;
+    } else if (isPayment) {
+      title = report.title || "Payment";
+      icon = "../assets/invoice.png";
+
+      statusText = status === "paid" ? "Paid" :
+        status === "rejected" ? "Rejected" :
+        report.status || "Pending";
+
+      statusClass = status === "paid" ? "status-paid" :
+        status === "rejected" ? "status-rejected" : "status-pending";
+
+      action = `
+        <button type="button" data-action="invoice" data-key="${escapeHTML(report.key)}" aria-label="Buka invoice">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      `;
+    } else {
+      title = report.title || report.type || "Royalty Report";
+      icon = "../assets/report.png";
+
+      statusText = report.status || "Pending";
+      statusClass = status === "accepted" || status === "paid"
+        ? "status-accepted"
+        : status === "rejected"
+          ? "status-rejected"
+          : "status-pending";
+
+      action = report.downloadUrl
+        ? `<button type="button" data-action="download" data-url="${escapeHTML(report.downloadUrl)}" aria-label="Buka laporan">
+             <i class="fa-solid fa-arrow-up-right-from-square"></i>
+           </button>`
+        : `<button type="button" disabled aria-label="Belum tersedia">
+             <i class="fa-solid fa-clock"></i>
+           </button>`;
+    }
+
+    const dateValue = report.createdAt || report.timestamp;
+    let dateText = "";
+
+    if (dateValue) {
+      const date = new Date(Number(dateValue));
+
+      if (!Number.isNaN(date.getTime())) {
+        dateText = date.toLocaleDateString("id-ID", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        });
+      }
+    }
+
+    const amount = report.amount !== undefined && report.amount !== null
+      ? `<p>${escapeHTML(rupiah(report.amount))}</p>`
+      : "";
+
+    return `
+      <div class="report-item">
+        <div class="report-icon">
+          <img
+            src="${escapeHTML(icon)}"
+            alt=""
+            onerror="this.style.display='none'"
+          >
+        </div>
+
+        <div class="report-info">
+          <h3>${escapeHTML(title)}</h3>
+          <p>${escapeHTML(dateText || report.period || "Laporan pendapatan")}</p>
+          ${amount}
+          <span class="report-status ${statusClass}">
+            <i class="fa-solid fa-circle" style="font-size:6px"></i>
+            ${escapeHTML(statusText)}
+          </span>
+        </div>
+
+        <div class="report-action">
+          ${action}
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  list.querySelectorAll("[data-action='download']").forEach(button => {
+    button.addEventListener("click", () => {
+      const url = button.dataset.url;
+
+      if (!url) return;
+
+      try {
+        const parsed = new URL(url, window.location.href);
+
+        if (!["http:", "https:"].includes(parsed.protocol)) {
+          showToast("Tautan laporan tidak valid.");
+          return;
+        }
+
+        window.open(parsed.href, "_blank", "noopener,noreferrer");
+      } catch (error) {
+        showToast("Tautan laporan tidak valid.");
+      }
+    });
+  });
+
+  list.querySelectorAll("[data-action='invoice']").forEach(button => {
+    button.addEventListener("click", () => {
+      const key = button.dataset.key;
+
+      if (!key) return;
+
+      window.location.href = "../invoice?id=" + encodeURIComponent(key);
+    });
+  });
+}
+
+function loadIncome() {
+  const royaltiesRef = db.ref("royalties");
+
+  if (royaltyListener) {
+    royaltiesRef.off("value", royaltyListener);
+  }
+
+  royaltyListener = snapshot => {
+    renderReports(snapshot);
+  };
+
+  royaltiesRef.on("value", royaltyListener, error => {
+    console.error("Gagal memuat laporan royalti:", error);
+
+    document.getElementById("reportList").innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h3>Laporan gagal dimuat</h3>
+        <p>Periksa koneksi internet kamu lalu coba lagi.</p>
+      </div>
+    `;
+  });
+}
+
+/* INVOICE REQUEST */
+
+async function submitInvoice() {
+  if (!currentUser || submittingInvoice) return;
+
+  clearInvoiceError();
+
+  const amountInput = document.getElementById("invoiceAmount");
+  const amount = Number(amountInput.value);
+
+  if (!Number.isFinite(amount) || amount < 100000) {
+    showInvoiceError("Minimum pengajuan invoice adalah Rp100.000.");
     return;
   }
 
-  if(amount > currentSaldo){
-    showInvoiceError("Jumlah invoice melebihi saldo tersedia.");
+  if (amount > currentSaldo) {
+    showInvoiceError("Nominal pengajuan melebihi saldo tersedia.");
     return;
   }
 
-  invoiceSubmitting = true;
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Mengirim...";
+  const button = document.getElementById("submitInvoiceButton");
 
-  try{
-    const snap = await db.ref("invoice_requests")
+  submittingInvoice = true;
+  button.disabled = true;
+  button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+
+  try {
+    const requestRef = db.ref("invoice_requests");
+
+    const pendingSnapshot = await requestRef
       .orderByChild("uid")
       .equalTo(currentUser.uid)
       .once("value");
 
     let hasPending = false;
 
-    snap.forEach(item => {
-      const data = item.val() || {};
-      if(String(data.status || "").toLowerCase() === "pending"){
+    pendingSnapshot.forEach(child => {
+      const data = child.val() || {};
+
+      if (String(data.status || "").toLowerCase() === "pending") {
         hasPending = true;
       }
     });
 
-    if(hasPending){
-      showInvoiceError(
-        "Kamu masih memiliki pengajuan invoice yang sedang diproses. Silakan tunggu hingga selesai."
-      );
+    if (hasPending) {
+      showInvoiceError("Kamu masih memiliki pengajuan invoice yang menunggu proses.");
       return;
     }
 
-    const saldoSnap = await db.ref(
-      "users/" + currentUser.uid + "/saldo"
-    ).once("value");
+    const latestUserSnapshot = await db.ref("users/" + currentUser.uid).once("value");
+    const latestUser = latestUserSnapshot.val() || {};
+    const latestSaldo = Number(latestUser.saldo || 0);
 
-    currentSaldo = Number(saldoSnap.val() || 0);
+    currentSaldo = latestSaldo;
 
-    document.getElementById("totalBalance").textContent =
-      formatRupiah(currentSaldo);
+    document.getElementById("balanceAmount").textContent = rupiah(currentSaldo);
+    document.getElementById("modalBalance").textContent = rupiah(currentSaldo);
 
-    document.getElementById("invoiceBalance").textContent =
-      formatRupiah(currentSaldo);
-
-    updateInvoiceButton();
-
-    if(currentSaldo < MIN_INVOICE || amount > currentSaldo){
-      showInvoiceError(
-        "Saldo terbaru tidak mencukupi untuk jumlah invoice tersebut."
-      );
+    if (amount > latestSaldo) {
+      showInvoiceError("Saldo terbaru tidak mencukupi untuk nominal tersebut.");
       return;
     }
 
-    const requestData = {
-      uid:currentUser.uid,
-      email:currentUser.email || "",
-      amount:amount,
-      status:"Pending",
-      createdAt:firebase.database.ServerValue.TIMESTAMP
+    const newRequest = {
+      uid: currentUser.uid,
+      email: currentUser.email || "",
+      amount: amount,
+      status: "Pending",
+      createdAt: firebase.database.ServerValue.TIMESTAMP
     };
 
-    await db.ref("invoice_requests").push(requestData);
+    await requestRef.push(newRequest);
 
-    alert(
-      "Pengajuan invoice berhasil dikirim.\n\nJumlah: " +
-      formatRupiah(amount)
-    );
+    document.getElementById("invoiceModal").classList.remove("show");
+    amountInput.value = "";
 
-    document.getElementById("invoiceModal").style.display = "none";
+    showToast("Pengajuan invoice berhasil dikirim.");
 
-  }catch(err){
-    console.error("Gagal mengajukan invoice:",err);
-    showInvoiceError(
-      "Gagal mengajukan invoice. Periksa koneksi lalu coba lagi."
-    );
-  }finally{
-    invoiceSubmitting = false;
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Ajukan Invoice";
+  } catch (error) {
+    console.error("Pengajuan invoice gagal:", error);
+    showInvoiceError("Pengajuan gagal. Silakan coba lagi.");
+  } finally {
+    submittingInvoice = false;
+    button.disabled = false;
+    button.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Ajukan';
   }
 }
 
-/* NOTIFICATIONS */
+document.getElementById("submitInvoiceButton").addEventListener("click", submitInvoice);
 
-function loadMessages(uid){
-  db.ref("messages_inbox/" + uid).on("value",snap => {
-    messagesQueue = [];
+/* AUTH */
 
-    snap.forEach(item => {
-      const m = item.val() || {};
-
-      if(!m.read){
-        messagesQueue.push({...m,key:item.key});
-      }
-    });
-
-    const badge = document.getElementById("notifBadge");
-
-    if(messagesQueue.length > 0){
-      badge.style.display = "flex";
-      badge.textContent =
-        messagesQueue.length > 99 ? "99+" : messagesQueue.length;
-    }else{
-      badge.style.display = "none";
-    }
-  });
-}
-
-function openMessages(){
-  if(messagesQueue.length === 0) return;
-
-  currentMsgIndex = 0;
-  showCurrentMessage();
-}
-
-function showCurrentMessage(){
-  if(currentMsgIndex >= messagesQueue.length){
-    document.getElementById("messagePopup").style.display = "none";
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = "../login";
     return;
   }
 
-  const m = messagesQueue[currentMsgIndex];
+  currentUser = user;
 
-  document.getElementById("msgTitle").textContent =
-    m.subject || "-";
-
-  document.getElementById("msgText").textContent =
-    m.body || "-";
-
-  document.getElementById("messagePopup").style.display = "flex";
-}
-
-function markCurrentMessageRead(){
-  const user = firebase.auth().currentUser;
-  const m = messagesQueue[currentMsgIndex];
-
-  if(user && m){
-    return db.ref(
-      "messages_inbox/" + user.uid + "/" + m.key + "/read"
-    ).set(true);
-  }
-
-  return Promise.resolve();
-}
-
-async function closeMessage(){
-  try{
-    await markCurrentMessageRead();
-  }catch(err){
-    console.error("Gagal memperbarui pesan:",err);
-  }
-
-  currentMsgIndex++;
-  showCurrentMessage();
-}
-
-async function viewMessage(){
-  await closeMessage();
-}
-
-/* ESCAPE */
-
-document.addEventListener("keydown",event => {
-  if(event.key === "Escape" && !invoiceSubmitting){
-    closeInvoiceModal();
-  }
+  loadUser(user.uid);
+  loadMessages(user.uid);
+  loadIncome();
 });
-
 </script>
 
 </body>
