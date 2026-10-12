@@ -9,6 +9,17 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
+ 
+.artist-search-wrap{position:relative;width:100%}
+#manualEmail{width:100%;padding:11px 12px;border:1px solid #dfe1e8;border-radius:10px;background:#fff;outline:none;font-size:13px;color:#17181c}
+#manualEmail:focus{border-color:#8d91a0}
+.artist-search-results{position:absolute;top:calc(100% + 5px);left:0;right:0;max-height:220px;overflow-y:auto;background:#fff;border:1px solid #e1e2e8;border-radius:10px;box-shadow:0 5px 16px rgba(0,0,0,.08);z-index:100}
+.artist-search-item{display:flex;flex-direction:column;gap:3px;width:100%;padding:11px 12px;border:0;border-bottom:1px solid #f0f0f3;background:#fff;text-align:left}
+.artist-search-item:hover{background:#f5f6fa}
+.artist-search-email{font-size:13px;font-weight:600;color:#17181c;overflow-wrap:anywhere}
+.artist-search-name{font-size:11px;color:#858891}
+.artist-search-empty{padding:13px;font-size:12px;color:#858891}
+ 
 *{box-sizing:border-box}
 body{font-family:'Outfit',sans-serif;background:#f1f2f7;margin:0;padding:15px;color:#17181c}
 h3{margin:0 0 12px;font-size:18px;color:#111}
@@ -68,19 +79,24 @@ tr:hover{background:#f8f8fa}
   <h3>Tambah Rilisan Manual</h3>
   <form id="manualReleaseForm">
     <div class="form-grid">
-      <div class="field full">
-        <label for="manualEmail">Email akun artist *</label>
-        <select id="manualEmail" required>
-          <option value="">Memuat daftar akun...</option>
-        </select>
-        <span class="help">Pilih akun Dynotic tujuan. Rilisan akan disimpan di UID akun ini.</span>
-      </div>
 
-      <div class="field full">
-        <label for="manualYoutube">Link video YouTube *</label>
-        <input id="manualYoutube" type="url" placeholder="https://www.youtube.com/watch?v=..." required>
-        <span class="help">Thumbnail digunakan sebagai cover preview. Jika metadata publik tersedia, judul dan channel akan dicoba diambil otomatis.</span>
-      </div>
+<div class="field full">
+  <label for="manualEmail">Cari akun artist *</label>
+  <div class="artist-search-wrap">
+    <input
+      id="manualEmail"
+      type="text"
+      placeholder="Cari email atau nama artist..."
+      autocomplete="off"
+      required
+    >
+    <div id="artistSearchResults" class="artist-search-results" hidden></div>
+  </div>
+  <input type="hidden" id="manualArtistUid">
+  <span class="help" id="selectedArtistInfo">
+    Ketik email atau nama artist, lalu pilih akun yang sesuai.
+  </span>
+</div>
 
       <div class="field full">
         <div class="yt-preview">
@@ -92,6 +108,17 @@ tr:hover{background:#f8f8fa}
           </div>
         </div>
         <button type="button" class="secondary-btn" id="fetchYoutubeMetadata">Ambil metadata YouTube</button>
+      </div>
+
+      <div class="field full">
+        <label for="manualYoutube">Link YouTube *</label>
+        <input
+          id="manualYoutube"
+          type="url"
+          placeholder="https://www.youtube.com/watch?v=..."
+          required
+        >
+        <span class="help">Link ini digunakan untuk mengambil thumbnail dan metadata video.</span>
       </div>
 
       <div class="field">
@@ -218,33 +245,123 @@ $("cancelManualForm").addEventListener("click",()=>{
   $("manualFormMessage").textContent = "";
 });
 
+
+let artistOptions = [];
+let selectedArtist = null;
+
 function loadArtistOptions(){
-  const select = $("manualEmail");
-  select.innerHTML = '<option value="">Memuat daftar akun...</option>';
+  const input = $("manualEmail");
+  const results = $("artistSearchResults");
+
+  input.value = "";
+  selectedArtist = null;
+  $("manualArtistUid").value = "";
+  $("selectedArtistInfo").textContent =
+    "Ketik email atau nama artist, lalu pilih akun yang sesuai.";
+
+  results.hidden = true;
+  results.innerHTML = "";
+  input.placeholder = "Memuat daftar akun...";
+
   db.ref("users").once("value").then(snapshot=>{
-    select.innerHTML = '<option value="">Pilih email akun artist</option>';
-    const users = [];
+    artistOptions = [];
+
     snapshot.forEach(child=>{
       const data = child.val() || {};
+
       if(data.email){
-        users.push({uid:child.key,email:data.email,name:data.name || data.displayName || data.artist || ""});
+        artistOptions.push({
+          uid: child.key,
+          email: data.email,
+          name: data.name || data.displayName || data.artist || ""
+        });
       }
     });
-    users.sort((a,b)=>a.email.localeCompare(b.email));
-    users.forEach(user=>{
-      const option = document.createElement("option");
-      option.value = user.uid;
-      option.textContent = user.name ? `${user.email} — ${user.name}` : user.email;
-      option.dataset.email = user.email;
-      option.dataset.name = user.name;
-      select.appendChild(option);
-    });
-    if(!users.length) select.innerHTML = '<option value="">Tidak ada akun dengan email di /users</option>';
+
+    artistOptions.sort((a,b)=>a.email.localeCompare(b.email));
+
+    input.placeholder = artistOptions.length
+      ? "Cari email atau nama artist..."
+      : "Tidak ada akun artist ditemukan";
+
   }).catch(err=>{
     console.error(err);
-    select.innerHTML = '<option value="">Gagal memuat akun</option>';
+    input.placeholder = "Gagal memuat akun. Coba lagi.";
   });
 }
+
+function searchArtistOptions(){
+  const query = $("manualEmail").value.trim().toLowerCase();
+  const results = $("artistSearchResults");
+
+  selectedArtist = null;
+  $("manualArtistUid").value = "";
+  $("selectedArtistInfo").textContent =
+    "Pilih akun dari hasil pencarian.";
+
+  results.innerHTML = "";
+
+  if(!query){
+    results.hidden = true;
+    return;
+  }
+
+  const matches = artistOptions.filter(user =>
+    user.email.toLowerCase().includes(query) ||
+    user.name.toLowerCase().includes(query)
+  ).slice(0,20);
+
+  if(!matches.length){
+    results.innerHTML =
+      '<div class="artist-search-empty">Akun tidak ditemukan.</div>';
+    results.hidden = false;
+    return;
+  }
+
+  matches.forEach(user=>{
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "artist-search-item";
+
+    const email = document.createElement("span");
+    email.className = "artist-search-email";
+    email.textContent = user.email;
+
+    const name = document.createElement("span");
+    name.className = "artist-search-name";
+    name.textContent = user.name || "Nama artist tidak tersedia";
+
+    button.append(email,name);
+
+    button.addEventListener("click",()=>{
+      selectedArtist = user;
+      $("manualArtistUid").value = user.uid;
+      $("manualEmail").value = user.email;
+
+      $("selectedArtistInfo").textContent =
+        "Akun terpilih: " + user.email +
+        (user.name ? " · " + user.name : "");
+
+      results.hidden = true;
+      results.innerHTML = "";
+    });
+
+    results.appendChild(button);
+  });
+
+  results.hidden = false;
+}
+
+$("manualEmail").addEventListener("input",searchArtistOptions);
+
+document.addEventListener("click",event=>{
+  const wrap = document.querySelector(".artist-search-wrap");
+
+  if(wrap && !wrap.contains(event.target)){
+    $("artistSearchResults").hidden = true;
+  }
+});
+
 
 function parseYouTubeId(input){
   try{
@@ -319,8 +436,8 @@ $("youtubeThumbnail").addEventListener("error",()=>{
 
 $("manualReleaseForm").addEventListener("submit",async event=>{
   event.preventDefault();
-  const selected = $("manualEmail").selectedOptions[0];
-  const uid = $("manualEmail").value;
+  const selected = selectedArtist;
+const uid = selected ? selected.uid : "";
   const youtube = $("manualYoutube").value.trim();
   const videoId = parseYouTubeId(youtube);
   const title = $("manualTitle").value.trim();
@@ -331,7 +448,7 @@ $("manualReleaseForm").addEventListener("submit",async event=>{
   if(!title || !artist || !date){ alert("Judul, artis, dan tanggal rilis wajib diisi."); return; }
 
   const platforms = Array.from(document.querySelectorAll('#platformGrid input:checked')).map(el=>el.value);
-  const email = selected.dataset.email || "";
+  const email = selected ? selected.email : "";
   const label = $("manualLabel").value.trim() || "Dynotic";
   const status = $("manualStatus").value;
   const upc = $("manualUpc").value.trim();
@@ -365,6 +482,12 @@ $("manualReleaseForm").addEventListener("submit",async event=>{
     await newRef.set(release);
     message.textContent = "Rilisan berhasil disimpan ke akun " + email + ".";
     $("manualReleaseForm").reset();
+    selectedArtist = null;
+$("manualArtistUid").value = "";
+$("artistSearchResults").hidden = true;
+$("artistSearchResults").innerHTML = "";
+$("selectedArtistInfo").textContent =
+  "Ketik email atau nama artist, lalu pilih akun yang sesuai.";
     $("manualLabel").value = "Dynotic";
     $("manualStatus").value = "approved";
     document.querySelectorAll('#platformGrid input').forEach(el=>el.checked=["Spotify","YouTube Music"].includes(el.value));
