@@ -512,6 +512,94 @@ $("selectedArtistInfo").textContent =
     button.textContent = "Simpan Rilisan";
   }
 });
+  
+async function changeReleaseAccount(uid, rid) {
+  const targetEmail = prompt(
+    "Masukkan email akun artist tujuan.\n\nRilisan akan dipindahkan ke akun tersebut:"
+  );
+
+  if (targetEmail === null) return;
+
+  const emailSearch = targetEmail.trim().toLowerCase();
+
+  if (!emailSearch) {
+    alert("Email akun tujuan wajib diisi.");
+    return;
+  }
+
+  try {
+    const usersSnap = await db.ref("users").once("value");
+    const matches = [];
+
+    usersSnap.forEach(child => {
+      const data = child.val() || {};
+
+      if (
+        String(data.email || "").trim().toLowerCase() === emailSearch
+      ) {
+        matches.push({
+          uid: child.key,
+          email: data.email
+        });
+      }
+    });
+
+    if (matches.length === 0) {
+      alert("Akun dengan email tersebut tidak ditemukan.");
+      return;
+    }
+
+    if (matches.length > 1) {
+      alert("Ditemukan beberapa akun dengan email tersebut. Pemindahan dibatalkan.");
+      return;
+    }
+
+    const target = matches[0];
+
+    if (target.uid === uid) {
+      alert("Rilisan ini sudah berada di akun tersebut.");
+      return;
+    }
+
+    const oldRef = db.ref(`releases/${uid}/${rid}`);
+    const oldSnap = await oldRef.once("value");
+
+    if (!oldSnap.exists()) {
+      alert("Rilisan lama tidak ditemukan. Muat ulang halaman.");
+      return;
+    }
+
+    const release = oldSnap.val() || {};
+
+    if (!confirm(
+      "Pindahkan rilisan berikut?\n\n" +
+      "Judul: " + (release.title || "-") + "\n" +
+      "Artis: " + (release.artist || "-") + "\n" +
+      "Ke akun: " + target.email + "\n\n" +
+      "Data rilisan akan dipindahkan dari akun lama ke akun tujuan."
+    )) {
+      return;
+    }
+
+    const newRef = db.ref(`releases/${target.uid}`).push();
+
+    release.email = target.email;
+
+    const updates = {};
+    updates[`releases/${target.uid}/${newRef.key}`] = release;
+    updates[`releases/${uid}/${rid}`] = null;
+
+    await db.ref().update(updates);
+
+    alert("Rilisan berhasil dipindahkan ke akun " + target.email + ".");
+    await loadReleases();
+
+  } catch (err) {
+    console.error("Gagal memindahkan rilisan:", err);
+    alert("Gagal memindahkan rilisan. Periksa koneksi dan izin Firebase.");
+  }
+}
+
 
 function openApproveOptions(uid,rid){
   const type = prompt("Pilih tipe approval:\n\n1 = Original\n2 = Publisher\n\nMasukkan angka:");
@@ -634,8 +722,11 @@ function renderTablePage(page){
             <div class="menu-dropdown">
               <button type="button" data-action="process">Proses</button>
               <button type="button" data-action="approve">Approve</button>
-              <button type="button" data-action="reject">Reject</button>
-              <button type="button" data-action="delete">Delete</button>
+              
+<button type="button" data-action="reject">Reject</button>
+<button type="button" data-action="change-account">Ganti Akun Artist</button>
+<button type="button" data-action="delete">Delete</button>
+
             </div>
           </div>
         </td>`;
@@ -643,8 +734,11 @@ function renderTablePage(page){
       tr.querySelector(".menu-btn").addEventListener("click",function(){toggleMenu(this);});
       tr.querySelector('[data-action="process"]').addEventListener("click",()=>confirmRelease(d.uid,d.rid,"proses"));
       tr.querySelector('[data-action="approve"]').addEventListener("click",()=>openApproveOptions(d.uid,d.rid));
-      tr.querySelector('[data-action="reject"]').addEventListener("click",()=>confirmRelease(d.uid,d.rid,"rejected"));
-      tr.querySelector('[data-action="delete"]').addEventListener("click",()=>deleteRelease(d.uid,d.rid));
+      
+tr.querySelector('[data-action="reject"]').addEventListener("click",()=>confirmRelease(d.uid,d.rid,"rejected"));
+tr.querySelector('[data-action="change-account"]').addEventListener("click",()=>changeReleaseAccount(d.uid,d.rid));
+tr.querySelector('[data-action="delete"]').addEventListener("click",()=>deleteRelease(d.uid,d.rid));
+
       tbody.appendChild(tr);
     });
   }
