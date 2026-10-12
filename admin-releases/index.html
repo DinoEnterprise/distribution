@@ -3,65 +3,77 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Admin Panel - DynoPay (Releases)</title>
+<title>Admin Panel - DynoPay Releases</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{font-family:'Outfit',sans-serif;background:#f1f2f7;margin:0;padding:15px;color:#17181c}
 h3{margin:0 0 12px;font-size:18px;color:#111}
-.card{background:#fff;padding:16px;border-radius:14px;margin-bottom:15px;box-shadow:0 3px 10px rgba(0,0,0,.045)}
 button,input,select{font:inherit}
 button{cursor:pointer}
+.card{background:#fff;padding:16px;border-radius:14px;margin-bottom:15px;box-shadow:0 3px 10px rgba(0,0,0,.045)}
 .top-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .primary-btn{border:0;background:#111;color:#fff;border-radius:10px;padding:10px 13px;font-size:13px;font-weight:600}
-.secondary-btn{background:#fff;color:#111;border:1px solid #d9dbe2;border-radius:9px;padding:8px 11px;font-size:12px}
+.primary-btn:disabled{opacity:.55;cursor:wait}
+.secondary-btn{background:#fff;color:#111;border:1px solid #d9dbe2;border-radius:9px;padding:9px 11px;font-size:12px}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .field{display:flex;flex-direction:column;gap:6px;min-width:0}
 .field.full{grid-column:1/-1}
 .field label{font-size:12px;font-weight:600;color:#454852}
 .field input,.field select{width:100%;min-width:0;padding:11px 12px;border:1px solid #dfe1e8;border-radius:10px;background:#fff;outline:none;font-size:13px;color:#17181c}
 .field input:focus,.field select:focus{border-color:#8d91a0}
-.help{font-size:11px;color:#858891;line-height:1.45}
-.yt-preview{display:flex;gap:12px;align-items:center;background:#f8f8fa;border:1px solid #e8e8ed;border-radius:12px;padding:10px}
-.yt-preview img{width:112px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;background:#e5e7eb}
-.yt-preview .preview-text{font-size:12px;min-width:0;overflow-wrap:anywhere}
+.help{font-size:11px;color:#858891;line-height:1.5}
+.notice{font-size:12px;padding:10px 12px;border-radius:10px;background:#f8f8fa;color:#555960;line-height:1.5;margin-top:12px}
+.yt-preview{display:flex;flex-direction:column;align-items:flex-start;gap:10px;background:#f8f8fa;border:1px solid #e8e8ed;border-radius:12px;padding:12px}
+.yt-preview img{display:block;width:100%;max-width:260px;aspect-ratio:1/1;object-fit:cover;object-position:center;border-radius:10px;background:#e5e7eb}
+.preview-text{font-size:12px;min-width:0;width:100%;overflow-wrap:anywhere}
+.account-search{display:flex;align-items:center;gap:9px;border:1px solid #dfe1e8;border-radius:10px;padding:0 12px;background:#fff;color:#777}
+.account-search:focus-within{border-color:#8d91a0}
+.account-search input{flex:1;width:100%;min-width:0;border:0;outline:0;padding:12px 0;background:transparent;font-size:13px}
+.account-results{max-height:230px;overflow-y:auto;border:1px solid #e5e6ec;border-radius:10px;background:#fff}
+.account-result{display:block;width:100%;padding:11px 12px;border:0;border-bottom:1px solid #f0f0f3;background:#fff;text-align:left;color:#17181c}
+.account-result:last-child{border-bottom:0}
+.account-result:hover{background:#f6f6f9}
+.account-result strong{display:block;font-size:12px;font-weight:600}
+.account-result small{display:block;font-size:11px;color:#858891;margin-top:3px}
+.account-empty{padding:12px;font-size:12px;color:#858891}
+.selected-account{padding:9px 11px;border-radius:9px;background:#f5f6f8;font-size:12px;overflow-wrap:anywhere}
 .platform-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.platform-option{display:flex;align-items:center;gap:8px;border:1px solid #e8e8ed;border-radius:9px;padding:9px;font-size:12px}
-.platform-option input{accent-color:#111}
+.platform-option{display:flex;align-items:center;gap:8px;border:1px solid #e8e8ed;border-radius:9px;padding:10px;font-size:12px}
+.platform-option input{width:auto;accent-color:#111}
 .form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.notice{font-size:12px;padding:10px 12px;border-radius:10px;background:#f8f8fa;color:#555960;line-height:1.5;margin-top:10px}
-button.action-btn{background:#fff;color:#000;border:1px solid #000;border-radius:7px;font-size:12px;margin-right:4px;padding:6px 10px}
-button.action-btn:hover{background:#f0f0f0}
-.table-container{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:400px}
+.table-container{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:450px}
 table{width:100%;border-collapse:collapse;font-size:13px;min-width:600px}
 th,td{text-align:left;padding:9px 10px;border-bottom:1px solid #eee;vertical-align:middle}
-th{background:#f9f9f9;font-weight:600;position:sticky;top:0}
+th{background:#f9f9f9;font-weight:600;position:sticky;top:0;z-index:1}
 tr:hover{background:#f8f8fa}
 .status-badge{display:inline-block;padding:3px 8px;border-radius:999px;font-weight:600;font-size:11px;white-space:nowrap}
+.action-btn{background:#fff;color:#000;border:1px solid #d9dbe2;border-radius:7px;font-size:12px;padding:7px 10px}
+.action-btn:hover{background:#f0f0f0}
 .menu-wrap{position:relative;display:inline-block}
-.menu-btn{background:none;border:0;font-size:20px;cursor:pointer}
-.menu-dropdown{display:none;position:absolute;right:0;top:100%;background:#fff;border:1px solid #ddd;border-radius:8px;min-width:125px;z-index:99;box-shadow:0 4px 10px rgba(0,0,0,.1);overflow:hidden}
-.menu-dropdown button{width:100%;border:0;background:none;padding:11px 12px;font-size:13px;text-align:left}
-.menu-dropdown button:nth-child(3),.menu-dropdown button:last-child{color:#ef4444}
+.menu-btn{background:none;border:0;font-size:20px;padding:3px 8px}
+.menu-dropdown{display:none;position:absolute;right:0;top:100%;background:#fff;border:1px solid #ddd;border-radius:8px;min-width:130px;z-index:99;box-shadow:0 4px 10px rgba(0,0,0,.1);overflow:hidden}
+.menu-dropdown button{display:block;width:100%;border:0;background:none;padding:11px 12px;font-size:13px;text-align:left}
 .menu-dropdown button:hover{background:#f5f5f5}
+.menu-dropdown button.danger{color:#ef4444}
 .pagination{margin-top:12px;display:flex;justify-content:center;align-items:center;gap:10px;font-size:12px}
 .pagination button{padding:7px 12px;border:1px solid #ddd;border-radius:8px;background:#fff}
 .pagination button:disabled{opacity:.4;cursor:default}
 .empty{padding:22px 8px;text-align:center;color:#888;font-size:12px}
-@media(max-width:560px){body{padding:10px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.platform-grid{grid-template-columns:1fr 1fr}.card{padding:13px}.yt-preview img{width:96px}}
+@media(max-width:560px){body{padding:10px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.platform-grid{grid-template-columns:1fr 1fr}.card{padding:13px}.yt-preview img{max-width:100%;width:100%;max-width:260px}}
 </style>
 </head>
 <body>
-
 <section class="card">
   <div class="top-row">
     <h3>Releases</h3>
     <button class="primary-btn" id="toggleManualForm" type="button">＋ Tambah Rilisan Manual</button>
   </div>
-  <div class="help">Tambahkan rilisan yang diproses manual, misalnya dari pengajuan WhatsApp. Rilisan akan masuk ke akun artist yang dipilih.</div>
+  <div class="help">Tambahkan rilisan yang diproses manual. Rilisan masuk ke akun artist yang dipilih.</div>
 </section>
 
 <section class="card" id="manualFormCard" hidden>
@@ -69,22 +81,24 @@ tr:hover{background:#f8f8fa}
   <form id="manualReleaseForm">
     <div class="form-grid">
       <div class="field full">
-        <label for="manualEmail">Email akun artist *</label>
-        <select id="manualEmail" required>
-          <option value="">Memuat daftar akun...</option>
-        </select>
-        <span class="help">Pilih akun Dynotic tujuan. Rilisan akan disimpan di UID akun ini.</span>
+        <label for="manualEmailSearch">Email akun artist *</label>
+        <div class="account-search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16 16 4 4"></path></svg>
+          <input id="manualEmailSearch" type="text" placeholder="Cari email atau nama artist..." autocomplete="off">
+        </div>
+        <input id="manualEmail" type="hidden" required>
+        <div id="manualEmailResults" class="account-results" hidden></div>
+        <div id="selectedAccount" class="selected-account">Belum ada akun yang dipilih.</div>
+        <span class="help">Ketik email atau nama artist, lalu pilih akun dari hasil pencarian.</span>
       </div>
-
       <div class="field full">
         <label for="manualYoutube">Link video YouTube *</label>
         <input id="manualYoutube" type="url" placeholder="https://www.youtube.com/watch?v=..." required>
-        <span class="help">Thumbnail digunakan sebagai cover preview. Jika metadata publik tersedia, judul dan channel akan dicoba diambil otomatis.</span>
+        <span class="help">Thumbnail video digunakan sebagai preview cover art.</span>
       </div>
-
       <div class="field full">
         <div class="yt-preview">
-          <img id="youtubeThumbnail" alt="Preview thumbnail YouTube" src="https://placehold.co/320x180?text=YouTube+Preview">
+          <img id="youtubeThumbnail" alt="Preview cover YouTube" src="https://placehold.co/320x320?text=YouTube+Preview">
           <div class="preview-text">
             <strong id="youtubePreviewTitle">Preview YouTube</strong>
             <div class="help" id="youtubePreviewChannel">Tempel link YouTube untuk memuat preview.</div>
@@ -93,34 +107,21 @@ tr:hover{background:#f8f8fa}
         </div>
         <button type="button" class="secondary-btn" id="fetchYoutubeMetadata">Ambil metadata YouTube</button>
       </div>
-
+      <div class="field"><label for="manualTitle">Judul lagu *</label><input id="manualTitle" type="text" placeholder="Judul rilisan" maxlength="180" required></div>
+      <div class="field"><label for="manualArtist">Nama artis *</label><input id="manualArtist" type="text" placeholder="Nama artis rilisan" maxlength="180" required></div>
       <div class="field">
-        <label for="manualTitle">Judul lagu *</label>
-        <input id="manualTitle" type="text" placeholder="Judul rilisan" required maxlength="180">
+        <label for="manualGenre">Genre *</label>
+        <select id="manualGenre" required>
+          <option value="">Pilih genre</option><option>Electronic</option><option>Phonk</option><option>Lo-fi</option><option>Hip-hop / Rap</option><option>Pop</option><option>Rock</option><option>R&amp;B / Soul</option><option>Dance</option><option>Ambient</option><option>Instrumental</option><option>Other</option>
+        </select>
       </div>
-      <div class="field">
-        <label for="manualArtist">Nama artis *</label>
-        <input id="manualArtist" type="text" placeholder="Nama artis rilisan" required maxlength="180">
-      </div>
-      <div class="field">
-        <label for="manualUpc">UPC</label>
-        <input id="manualUpc" type="text" placeholder="Kosongkan jika belum ada" inputmode="numeric" maxlength="20">
-      </div>
-      <div class="field">
-        <label for="manualDate">Tanggal rilis *</label>
-        <input id="manualDate" type="date" required>
-      </div>
-      <div class="field">
-        <label for="manualLabel">Label</label>
-        <input id="manualLabel" type="text" value="Dynotic" maxlength="120">
-      </div>
+      <div class="field"><label for="manualUpc">UPC</label><input id="manualUpc" type="text" placeholder="Kosongkan jika belum ada" maxlength="20"></div>
+      <div class="field"><label for="manualDate">Tanggal rilis *</label><input id="manualDate" type="date" required><span class="help">Isi tanggal rilis musik yang sebenarnya.</span></div>
+      <div class="field"><label for="manualLabel">Label</label><input id="manualLabel" type="text" value="Dynotic" maxlength="120"></div>
       <div class="field">
         <label for="manualStatus">Status rilisan *</label>
         <select id="manualStatus" required>
-          <option value="approved">Approved</option>
-          <option value="process">Process</option>
-          <option value="proposal">Proposal</option>
-          <option value="rejected">Rejected</option>
+          <option value="approved">Approved</option><option value="proses">Proses</option><option value="proposal">Proposal</option><option value="rejected">Rejected</option>
         </select>
       </div>
       <div class="field full">
@@ -135,10 +136,10 @@ tr:hover{background:#f8f8fa}
           <label class="platform-option"><input type="checkbox" value="Instagram / Facebook"> Instagram / Facebook</label>
           <label class="platform-option"><input type="checkbox" value="Other"> Other</label>
         </div>
-        <span class="help">Ini dicatat sebagai metadata di dashboard; memilih platform tidak mengirim musik ke platform secara otomatis.</span>
+        <span class="help">Pilihan platform dicatat sebagai informasi saja, bukan pengiriman otomatis.</span>
       </div>
     </div>
-    <div class="notice">Audio tidak diunggah. Thumbnail YouTube hanya dipakai sebagai preview visual. Pastikan kamu berhak menggunakan video/cover tersebut dan periksa data sebelum menyimpan.</div>
+    <div class="notice">Audio tidak diunggah. Thumbnail YouTube hanya sebagai preview. Tanggal upload video tidak selalu sama dengan tanggal rilis musik.</div>
     <div class="form-actions">
       <button class="primary-btn" id="saveManualRelease" type="submit">Simpan Rilisan</button>
       <button class="secondary-btn" id="cancelManualForm" type="button">Batal</button>
@@ -149,8 +150,7 @@ tr:hover{background:#f8f8fa}
 
 <section class="card" style="padding-bottom:30px">
   <h3>Semua Rilisan</h3>
-  <input type="text" id="releaseSearch" placeholder="Cari judul, artis, atau email"
-    style="width:100%;padding:10px 12px;margin-bottom:10px;border-radius:9px;border:1px solid #ccc;outline:none">
+  <input type="text" id="releaseSearch" placeholder="Cari judul, artis, atau email" style="width:100%;padding:10px 12px;margin-bottom:10px;border-radius:9px;border:1px solid #ccc;outline:none">
   <div class="table-container">
     <table id="releaseTable">
       <thead><tr><th>Email</th><th>Artist</th><th>Title</th><th>Status</th><th>Aksi</th></tr></thead>
@@ -165,265 +165,283 @@ tr:hover{background:#f8f8fa}
 </section>
 
 <script>
-let isRegistering = false;
-let tempArtists = [];
-let releasesData = [];
-let filteredData = [];
-let currentPage = 1;
-const perPage = 10;
-let userEmailMap = {};
-let userDataMap = {};
+let isRegistering=false;
+let releasesData=[];
+let filteredData=[];
+let currentPage=1;
+const perPage=10;
+let accounts=[];
+let youtubeRequestId=0;
 
 firebase.initializeApp({
   apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
   authDomain:"dynopay-2513c.firebaseapp.com",
   databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
-const auth = firebase.auth();
-const db = firebase.database();
-const secondaryApp = firebase.initializeApp(firebase.app().options, "Secondary");
-const secondaryAuth = secondaryApp.auth();
+const auth=firebase.auth();
+const db=firebase.database();
+const secondaryApp=firebase.initializeApp(firebase.app().options,"Secondary");
+const secondaryAuth=secondaryApp.auth();
 
-auth.onAuthStateChanged(user => {
-  if(isRegistering) return;
-  if(!user){ location.href="../admin"; return; }
-  db.ref("admins/"+user.uid).once("value")
-    .then(snapshot=>{
-      if(!snapshot.exists()){
-        alert("⚠ Anda bukan admin!");
-        auth.signOut().then(()=>location.href="../admin");
-      }
-    })
-    .catch(err=>{
-      console.error(err);
-      alert("Gagal memeriksa akses admin.");
+/* FIX: supports both element IDs and CSS selectors such as #releaseTable tbody */
+const $ = selector => {
+  if (typeof selector !== "string") return selector;
+  if (selector.startsWith("#") || selector.includes(" ") || selector.includes(".") || selector.includes("[") || selector.includes(">")) {
+    return document.querySelector(selector);
+  }
+  return document.getElementById(selector);
+};
+
+auth.onAuthStateChanged(user=>{
+  if(isRegistering)return;
+  if(!user){location.href="../admin";return;}
+  db.ref("admins/"+user.uid).once("value").then(snapshot=>{
+    if(!snapshot.exists()){
+      alert("Anda bukan admin!");
       auth.signOut().then(()=>location.href="../admin");
-    });
+    }
+  }).catch(err=>{
+    console.error(err);
+    alert("Gagal memeriksa akses admin.");
+    auth.signOut().then(()=>location.href="../admin");
+  });
 });
 
-const $ = id => document.getElementById(id);
-const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, ch => ({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-}[ch]));
-
+/* Toggle form */
 $("toggleManualForm").addEventListener("click",()=>{
-  $("manualFormCard").hidden = !$("manualFormCard").hidden;
+  $("manualFormCard").hidden=!$("manualFormCard").hidden;
   if(!$("manualFormCard").hidden){
-    $("manualFormCard").scrollIntoView({behavior:"smooth",block:"start"});
     loadArtistOptions();
+    $("manualFormCard").scrollIntoView({behavior:"smooth",block:"start"});
   }
 });
 $("cancelManualForm").addEventListener("click",()=>{
-  $("manualFormCard").hidden = true;
-  $("manualFormMessage").textContent = "";
+  $("manualFormCard").hidden=true;
+  $("manualFormMessage").textContent="";
 });
 
+/* Artist account search */
 function loadArtistOptions(){
-  const select = $("manualEmail");
-  select.innerHTML = '<option value="">Memuat daftar akun...</option>';
+  $("manualEmailResults").hidden=false;
+  $("manualEmailResults").innerHTML='<div class="account-empty">Memuat daftar akun...</div>';
   db.ref("users").once("value").then(snapshot=>{
-    select.innerHTML = '<option value="">Pilih email akun artist</option>';
-    const users = [];
+    accounts=[];
     snapshot.forEach(child=>{
-      const data = child.val() || {};
+      const data=child.val()||{};
       if(data.email){
-        users.push({uid:child.key,email:data.email,name:data.name || data.displayName || data.artist || ""});
+        accounts.push({uid:child.key,email:String(data.email),name:String(data.name||data.displayName||data.artist||"")});
       }
     });
-    users.sort((a,b)=>a.email.localeCompare(b.email));
-    users.forEach(user=>{
-      const option = document.createElement("option");
-      option.value = user.uid;
-      option.textContent = user.name ? `${user.email} — ${user.name}` : user.email;
-      option.dataset.email = user.email;
-      option.dataset.name = user.name;
-      select.appendChild(option);
-    });
-    if(!users.length) select.innerHTML = '<option value="">Tidak ada akun dengan email di /users</option>';
+    accounts.sort((a,b)=>a.email.localeCompare(b.email));
+    renderAccountResults($("manualEmailSearch").value);
   }).catch(err=>{
     console.error(err);
-    select.innerHTML = '<option value="">Gagal memuat akun</option>';
+    $("manualEmailResults").innerHTML='<div class="account-empty">Gagal memuat akun. Periksa izin Firebase.</div>';
   });
 }
+function renderAccountResults(query=""){
+  const results=$("manualEmailResults");
+  const q=query.trim().toLowerCase();
+  const matches=accounts.filter(a=>a.email.toLowerCase().includes(q)||a.name.toLowerCase().includes(q)).slice(0,50);
+  results.innerHTML="";
+  results.hidden=false;
+  if(!matches.length){
+    results.innerHTML='<div class="account-empty">Akun tidak ditemukan.</div>';
+    return;
+  }
+  matches.forEach(account=>{
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="account-result";
+    const strong=document.createElement("strong");
+    strong.textContent=account.email;
+    const small=document.createElement("small");
+    small.textContent=account.name?account.name+" · UID: "+account.uid:"UID: "+account.uid;
+    button.append(strong,small);
+    button.addEventListener("click",()=>{
+      $("manualEmail").value=account.uid;
+      $("manualEmailSearch").value=account.email;
+      $("selectedAccount").textContent="Akun terpilih: "+account.email+(account.name?" · "+account.name:"");
+      results.hidden=true;
+    });
+    results.appendChild(button);
+  });
+}
+$("manualEmailSearch").addEventListener("input",()=>{
+  $("manualEmail").value="";
+  $("selectedAccount").textContent="Pilih akun dari hasil pencarian.";
+  renderAccountResults($("manualEmailSearch").value);
+});
+$("manualEmailSearch").addEventListener("focus",()=>renderAccountResults($("manualEmailSearch").value));
+document.addEventListener("click",event=>{
+  if(!event.target.closest(".account-search")&&!event.target.closest("#manualEmailResults")){
+    $("manualEmailResults").hidden=true;
+  }
+});
 
+/* YouTube preview and metadata */
 function parseYouTubeId(input){
   try{
-    const url = new URL(input.trim());
-    let id = "";
-    if(url.hostname === "youtu.be" || url.hostname.endsWith(".youtu.be")){
-      id = url.pathname.split("/").filter(Boolean)[0] || "";
-    }else if(url.hostname.includes("youtube.com")){
-      if(url.pathname === "/watch") id = url.searchParams.get("v") || "";
-      else if(/^\/(embed|shorts|live)\/[^/]+/.test(url.pathname)) id = url.pathname.split("/")[2] || "";
+    const url=new URL(input.trim());
+    const host=url.hostname.toLowerCase().replace(/^www\./,"");
+    let id="";
+    if(host==="youtu.be")id=url.pathname.split("/").filter(Boolean)[0]||"";
+    else if(host==="youtube.com"||host.endsWith(".youtube.com")){
+      if(url.pathname==="/watch")id=url.searchParams.get("v")||"";
+      else if(/^\/(embed|shorts|live)\/[^/]+/.test(url.pathname))id=url.pathname.split("/")[2]||"";
     }
-    return /^[A-Za-z0-9_-]{11}$/.test(id) ? id : "";
-  }catch(e){ return ""; }
+    return /^[A-Za-z0-9_-]{11}$/.test(id)?id:"";
+  }catch(e){return "";}
 }
-
-function setYoutubePreview(){
-  const link = $("manualYoutube").value.trim();
-  const id = parseYouTubeId(link);
-  if(!id){
-    $("youtubeThumbnail").src = "https://placehold.co/320x180?text=YouTube+Preview";
-    $("youtubePreviewTitle").textContent = "Preview YouTube";
-    $("youtubePreviewChannel").textContent = "Link YouTube belum valid.";
-    $("youtubeMetadataMessage").textContent = "";
-    return;
-  }
-  $("youtubeThumbnail").src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-  $("youtubePreviewTitle").textContent = "Video YouTube terdeteksi";
-  $("youtubePreviewChannel").textContent = `Video ID: ${id}`;
-  $("youtubeMetadataMessage").textContent = "Mencoba mengambil judul dan channel...";
-  fetchYoutubeMetadata();
+function resetYoutubePreview(){
+  $("youtubeThumbnail").src="https://placehold.co/320x320?text=YouTube+Preview";
+  $("youtubePreviewTitle").textContent="Preview YouTube";
+  $("youtubePreviewChannel").textContent="Tempel link YouTube untuk memuat preview.";
+  $("youtubeMetadataMessage").textContent="";
 }
-
+function updateYoutubeThumbnail(id){
+  $("youtubeThumbnail").src=`https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+  $("youtubePreviewTitle").textContent="Video YouTube terdeteksi";
+  $("youtubePreviewChannel").textContent="Video ID: "+id;
+}
 async function fetchYoutubeMetadata(){
-  const link = $("manualYoutube").value.trim();
-  const id = parseYouTubeId(link);
-  if(!id){
-    $("youtubeMetadataMessage").textContent = "Masukkan link YouTube yang valid terlebih dahulu.";
-    return;
-  }
-  $("youtubeThumbnail").src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-  $("youtubeMetadataMessage").textContent = "Mencoba mengambil metadata publik...";
-  // oEmbed kadang tersedia, tetapi browser/CORS atau konfigurasi YouTube dapat memblokirnya.
+  const requestId=++youtubeRequestId;
+  const id=parseYouTubeId($("manualYoutube").value.trim());
+  if(!id){$("youtubeMetadataMessage").textContent="Masukkan link YouTube yang valid.";return;}
+  updateYoutubeThumbnail(id);
+  $("youtubeMetadataMessage").textContent="Mencoba mengambil metadata publik...";
   try{
-    const endpoint = "https://www.youtube.com/oembed?url=" + encodeURIComponent("https://www.youtube.com/watch?v="+id) + "&format=json";
-    const response = await fetch(endpoint);
-    if(!response.ok) throw new Error("Metadata tidak tersedia");
-    const meta = await response.json();
-    if(!$("manualTitle").value.trim()) $("manualTitle").value = meta.title || "";
-    if(!$("manualArtist").value.trim()) $("manualArtist").value = meta.author_name || "";
-    $("youtubePreviewTitle").textContent = meta.title || "Video YouTube terdeteksi";
-    $("youtubePreviewChannel").textContent = meta.author_name || `Video ID: ${id}`;
-    $("youtubeMetadataMessage").textContent = "Metadata berhasil diambil. Judul dan artis masih bisa diedit.";
+    const endpoint="https://www.youtube.com/oembed?url="+encodeURIComponent("https://www.youtube.com/watch?v="+id)+"&format=json";
+    const response=await fetch(endpoint);
+    if(!response.ok)throw new Error("Metadata tidak tersedia");
+    const meta=await response.json();
+    if(requestId!==youtubeRequestId)return;
+    if(!$("manualTitle").value.trim())$("manualTitle").value=meta.title||"";
+    if(!$("manualArtist").value.trim())$("manualArtist").value=meta.author_name||"";
+    $("youtubePreviewTitle").textContent=meta.title||"Video YouTube";
+    $("youtubePreviewChannel").textContent=meta.author_name||("Video ID: "+id);
+    $("youtubeMetadataMessage").textContent="Metadata berhasil diambil. Periksa judul dan artis sebelum menyimpan.";
   }catch(err){
-    $("youtubePreviewTitle").textContent = "Thumbnail siap";
-    $("youtubePreviewChannel").textContent = "Judul/channel tidak dapat diambil otomatis.";
-    $("youtubeMetadataMessage").textContent = "Silakan isi judul dan artis secara manual. Thumbnail tetap bisa digunakan.";
+    if(requestId!==youtubeRequestId)return;
+    $("youtubePreviewTitle").textContent="Thumbnail siap";
+    $("youtubePreviewChannel").textContent="Judul/channel tidak tersedia otomatis.";
+    $("youtubeMetadataMessage").textContent="Isi judul dan artis secara manual. Thumbnail tetap bisa digunakan.";
   }
 }
 $("manualYoutube").addEventListener("input",()=>{
-  const id = parseYouTubeId($("manualYoutube").value);
-  if(id){
-    $("youtubeThumbnail").src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-    $("youtubePreviewTitle").textContent = "Video YouTube terdeteksi";
-    $("youtubePreviewChannel").textContent = `Video ID: ${id}`;
-  }
+  const id=parseYouTubeId($("manualYoutube").value);
+  if(id){updateYoutubeThumbnail(id);$("youtubeMetadataMessage").textContent="Link terdeteksi.";}
+  else resetYoutubePreview();
 });
 $("manualYoutube").addEventListener("change",fetchYoutubeMetadata);
 $("fetchYoutubeMetadata").addEventListener("click",fetchYoutubeMetadata);
 $("youtubeThumbnail").addEventListener("error",()=>{
-  $("youtubeThumbnail").src = "https://placehold.co/320x180?text=Thumbnail+Unavailable";
+  $("youtubeThumbnail").src="https://placehold.co/320x320?text=Thumbnail+Unavailable";
 });
 
+/* Save manual release */
 $("manualReleaseForm").addEventListener("submit",async event=>{
   event.preventDefault();
-  const selected = $("manualEmail").selectedOptions[0];
-  const uid = $("manualEmail").value;
-  const youtube = $("manualYoutube").value.trim();
-  const videoId = parseYouTubeId(youtube);
-  const title = $("manualTitle").value.trim();
-  const artist = $("manualArtist").value.trim();
-  const date = $("manualDate").value;
-  if(!uid){ alert("Pilih email akun artist terlebih dahulu."); return; }
-  if(!videoId){ alert("Link YouTube tidak valid. Gunakan link video YouTube yang benar."); return; }
-  if(!title || !artist || !date){ alert("Judul, artis, dan tanggal rilis wajib diisi."); return; }
+  const uid=$("manualEmail").value;
+  const account=accounts.find(a=>a.uid===uid);
+  const youtube=$("manualYoutube").value.trim();
+  const videoId=parseYouTubeId(youtube);
+  const title=$("manualTitle").value.trim();
+  const artist=$("manualArtist").value.trim();
+  const genre=$("manualGenre").value;
+  const date=$("manualDate").value;
+  const upc=$("manualUpc").value.trim();
+  const label=$("manualLabel").value.trim()||"Dynotic";
+  const status=$("manualStatus").value;
 
-  const platforms = Array.from(document.querySelectorAll('#platformGrid input:checked')).map(el=>el.value);
-  const email = selected.dataset.email || "";
-  const label = $("manualLabel").value.trim() || "Dynotic";
-  const status = $("manualStatus").value;
-  const upc = $("manualUpc").value.trim();
-  const cover = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
-  const button = $("saveManualRelease");
-  const message = $("manualFormMessage");
-  button.disabled = true;
-  button.textContent = "Menyimpan...";
-  message.textContent = "";
+  if(!uid||!account){alert("Cari dan pilih email akun artist terlebih dahulu.");return;}
+  if(!videoId){alert("Link YouTube tidak valid.");return;}
+  if(!title||!artist||!genre||!date){alert("Judul, artis, genre, dan tanggal rilis wajib diisi.");return;}
 
-  // Struktur kompatibel dengan halaman Artist Releases yang membaca title, artist, cover, date, ean, status, time.
-  const release = {
-    title,
-    artist,
-    cover,
-    date,
-    ean: upc || "",
-    status,
-    label,
-    time: Date.now(),
-    youtube,
-    youtubeVideoId: videoId,
-    platforms,
-    manualEntry: true,
-    entrySource: "admin_manual",
-    email
+  const platforms=Array.from(document.querySelectorAll("#platformGrid input:checked")).map(el=>el.value);
+  const cover=`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+  const button=$("saveManualRelease");
+  const message=$("manualFormMessage");
+  button.disabled=true;
+  button.textContent="Menyimpan...";
+  message.textContent="";
+
+  const release={
+    title,artist,genre,cover,date,
+    ean:upc,upc,status,label,time:Date.now(),
+    youtube,youtubeVideoId:videoId,platforms,
+    manualEntry:true,entrySource:"admin_manual",email:account.email
   };
 
   try{
-    const newRef = db.ref("releases/"+uid).push();
+    const newRef=db.ref("releases/"+uid).push();
     await newRef.set(release);
-    message.textContent = "Rilisan berhasil disimpan ke akun " + email + ".";
+    message.textContent="Rilisan berhasil disimpan ke akun "+account.email+".";
     $("manualReleaseForm").reset();
-    $("manualLabel").value = "Dynotic";
-    $("manualStatus").value = "approved";
-    document.querySelectorAll('#platformGrid input').forEach(el=>el.checked=["Spotify","YouTube Music"].includes(el.value));
-    $("youtubeThumbnail").src = "https://placehold.co/320x180?text=YouTube+Preview";
-    $("youtubePreviewTitle").textContent = "Preview YouTube";
-    $("youtubePreviewChannel").textContent = "Tempel link YouTube untuk memuat preview.";
-    $("youtubeMetadataMessage").textContent = "";
+    $("manualEmail").value="";
+    $("manualEmailSearch").value="";
+    $("selectedAccount").textContent="Belum ada akun yang dipilih.";
+    $("manualLabel").value="Dynotic";
+    $("manualStatus").value="approved";
+    document.querySelectorAll("#platformGrid input").forEach(el=>{el.checked=["Spotify","YouTube Music"].includes(el.value);});
+    resetYoutubePreview();
+    $("manualEmailResults").hidden=true;
+    currentPage=1;
     await loadReleases();
   }catch(err){
     console.error(err);
-    message.textContent = "Gagal menyimpan rilisan. Periksa koneksi dan izin Firebase.";
-    alert("Gagal menyimpan rilisan: "+(err.message || err));
+    message.textContent="Gagal menyimpan rilisan. Periksa koneksi dan izin Firebase.";
+    alert("Gagal menyimpan rilisan: "+(err.message||err));
   }finally{
-    button.disabled = false;
-    button.textContent = "Simpan Rilisan";
+    button.disabled=false;
+    button.textContent="Simpan Rilisan";
   }
 });
 
+/* Existing admin actions */
 function openApproveOptions(uid,rid){
-  const type = prompt("Pilih tipe approval:\n\n1 = Original\n2 = Publisher\n\nMasukkan angka:");
-  if(type === "1") confirmRelease(uid,rid,"approved");
-  else if(type === "2"){
-    const publishers = ["MAHAR PUSTAKA NUSANTARA","Pragita Prabawa Pustaka","Nadaku Musik","Royal Publikasi Indo","Alfa Pustaka Nada","Pustaka Jeka","Pustaka Cipta Kreasi","Star Cipta Musikindo","Sora Music Publisher","Proaktif Digital Kreasi","18 Musik","Sony Music Publishing Indonesia","NAGASWARA"];
-    const choice = prompt("Pilih Publisher:\n\n"+publishers.map((p,i)=>`${i+1} = ${p}`).join("\n")+"\n\nMasukkan angka:");
-    const publisher = publishers[parseInt(choice,10)-1];
+  const type=prompt("Pilih tipe approval:\n\n1 = Original\n2 = Publisher\n\nMasukkan angka:");
+  if(type==="1")confirmRelease(uid,rid,"approved");
+  else if(type==="2"){
+    const publishers=["MAHAR PUSTAKA NUSANTARA","Pragita Prabawa Pustaka","Nadaku Musik","Royal Publikasi Indo","Alfa Pustaka Nada","Pustaka Jeka","Pustaka Cipta Kreasi","Star Cipta Musikindo","Sora Music Publisher","Proaktif Digital Kreasi","18 Musik","Sony Music Publishing Indonesia","NAGASWARA"];
+    const choice=prompt("Pilih Publisher:\n\n"+publishers.map((p,i)=>`${i+1} = ${p}`).join("\n")+"\n\nMasukkan angka:");
+    const publisher=publishers[parseInt(choice,10)-1];
     if(!publisher){alert("Publisher tidak valid!");return;}
     confirmPublisherRelease(uid,rid,publisher);
   }
 }
 function openPublisherEmail(email,title,publisher){
-  const subject = `Cover to Master Approval – ${title}`;
-  const body = `Salam Dynotic Collective,\n\nKami informasikan bahwa pengajuan penggunaan lagu dengan judul "${title}" telah disetujui oleh publisher ${publisher}.\n\nUntuk informasi mengenai jadwal rilis, akan kami informasikan melalui email setelah proses penjadwalan selesai dilakukan.\n\nJika ada pertanyaan, silakan hubungi kami melalui email:\nadmin@dynotic.web.id\n\nBest regards,\nRisna Wati\nCover to Master Team`;
-  location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g,"\r\n"))}`;
+  const subject=`Cover to Master Approval – ${title}`;
+  const body=`Salam Dynotic Collective,\n\nKami informasikan bahwa pengajuan penggunaan lagu dengan judul "${title}" telah disetujui oleh publisher ${publisher}.\n\nUntuk informasi mengenai jadwal rilis, akan kami informasikan melalui email setelah proses penjadwalan selesai dilakukan.\n\nJika ada pertanyaan, silakan hubungi kami melalui email:\nadmin@dynotic.web.id\n\nBest regards,\nRisna Wati\nCover to Master Team`;
+  location.href=`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g,"\r\n"))}`;
 }
 function confirmPublisherRelease(uid,rid,publisher){
-  if(!confirm("Approve sebagai Publisher?")) return;
+  if(!confirm("Approve sebagai Publisher?"))return;
   db.ref(`releases/${uid}/${rid}/status`).set("approved").then(()=>{
-    const item = releasesData.find(r=>r.uid===uid&&r.rid===rid);
+    const item=releasesData.find(r=>r.uid===uid&&r.rid===rid);
     if(item){item.status="approved";openPublisherEmail(item.email||"",item.title||"-",publisher);}
-    const f = filteredData.find(r=>r.uid===uid&&r.rid===rid);if(f)f.status="approved";
+    const f=filteredData.find(r=>r.uid===uid&&r.rid===rid);
+    if(f)f.status="approved";
     renderTablePage(currentPage);
   }).catch(e=>alert("Gagal memperbarui status: "+e.message));
 }
 function confirmRelease(uid,rid,status){
-  let text = status==="approved" ? "Yakin APPROVE rilis ini?" : status==="rejected" ? "⚠ Yakin REJECT rilis ini?\nAksi ini tidak bisa dibatalkan!" : "Tandai rilisan ini sebagai PROSES?";
-  if(confirm(text)) setReleaseStatus(uid,rid,status);
+  let text=status==="approved"?"Yakin APPROVE rilis ini?":status==="rejected"?"Yakin REJECT rilis ini?\nAksi ini tidak bisa dibatalkan!":"Tandai rilisan ini sebagai PROSES?";
+  if(confirm(text))setReleaseStatus(uid,rid,status);
 }
 function openPlatform(uid,rid){
   localStorage.setItem("lastPage",currentPage);
-  location.href = `../admin-platform?uid=${encodeURIComponent(uid)}&rid=${encodeURIComponent(rid)}`;
+  location.href=`../admin-platform?uid=${encodeURIComponent(uid)}&rid=${encodeURIComponent(rid)}`;
 }
 function setReleaseStatus(uid,rid,status){
   db.ref(`releases/${uid}/${rid}/status`).set(status).then(()=>{
-    const item = releasesData.find(r=>r.uid===uid&&r.rid===rid);
+    const item=releasesData.find(r=>r.uid===uid&&r.rid===rid);
     if(item){
       item.status=status;
-      if(status==="approved"||status==="rejected") openEmailDraft(item.email||"",item.artist||"-",item.title||"-",status);
+      if(status==="approved"||status==="rejected")openEmailDraft(item.email||"",item.artist||"-",item.title||"-",status);
     }
-    const f=filteredData.find(r=>r.uid===uid&&r.rid===rid);if(f)f.status=status;
+    const f=filteredData.find(r=>r.uid===uid&&r.rid===rid);
+    if(f)f.status=status;
     renderTablePage(currentPage);
   }).catch(e=>alert("Gagal memperbarui status: "+e.message));
 }
@@ -436,7 +454,7 @@ function openEmailDraft(email,artist,title,status){
     subject=`Reject - Your release has been Rejected: ${title}`;
     body=`Hello,\n\nWe regret to inform you that your release has been rejected.\n\nRelease Details\nTitle  : ${title}\nArtist : ${artist}\n\nReason:\nYour release has been rejected because it may contain content that infringes on another artist’s rights or lacks proper licensing.\n\nIf you believe this is a mistake, please contact our support team and provide valid proof of ownership or license.\n\nBest regards,\nNazwa\nQC Team Dynotic`;
   }
-  if(!email){alert("Status diperbarui. Akun ini tidak memiliki email tersimpan, jadi draft email tidak bisa dibuka.");return;}
+  if(!email){alert("Status diperbarui, tetapi email akun tidak tersedia.");return;}
   location.href=`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g,"\r\n"))}`;
 }
 function deleteRelease(uid,rid){
@@ -445,9 +463,9 @@ function deleteRelease(uid,rid){
   }
 }
 function getStatusColor(status){
-  if(status==="approved") return "#10b981";
-  if(status==="rejected") return "#ef4444";
-  if(status==="proses"||status==="process") return "#3b82f6";
+  if(status==="approved")return "#10b981";
+  if(status==="rejected")return "#ef4444";
+  if(status==="proses"||status==="process")return "#3b82f6";
   return "#f59e0b";
 }
 function toggleMenu(btn){
@@ -455,33 +473,42 @@ function toggleMenu(btn){
   const menu=btn.nextElementSibling;
   menu.style.display=menu.style.display==="block"?"none":"block";
 }
+
+/* Read all releases, preserving the existing releases/{uid}/{rid} structure */
 function loadReleases(){
   return Promise.all([db.ref("users").once("value"),db.ref("releases").once("value")]).then(([userSnap,releaseSnap])=>{
-    userEmailMap={};userDataMap={};
-    userSnap.forEach(u=>{const data=u.val()||{};userEmailMap[u.key]=data.email||"-";userDataMap[u.key]=data;});
+    const emailMap={};
+    userSnap.forEach(u=>{const data=u.val()||{};emailMap[u.key]=data.email||"-";});
     const all=[];
     releaseSnap.forEach(u=>{
       u.forEach(r=>{
-        all.push({uid:u.key,rid:r.key,email:userEmailMap[u.key]||r.val()?.email||"-",...(r.val()||{})});
+        const data=r.val()||{};
+        all.push({uid:u.key,rid:r.key,...data,email:emailMap[u.key]||data.email||"-"});
       });
     });
-    all.sort((a,b)=>(b.time||0)-(a.time||0));
+    all.sort((a,b)=>(Number(b.time)||0)-(Number(a.time)||0));
     releasesData=all;
-    const query=$("releaseSearch").value.toLowerCase().trim();
-    filteredData=all.filter(d=>(d.email||"").toLowerCase().includes(query)||(d.artist||"").toLowerCase().includes(query)||(d.title||"").toLowerCase().includes(query));
+    applyReleaseSearch();
     const savedPage=localStorage.getItem("lastPage");
-    currentPage=savedPage?parseInt(savedPage,10):1;
-    localStorage.removeItem("lastPage");
+    if(savedPage){currentPage=parseInt(savedPage,10)||1;localStorage.removeItem("lastPage");}
     const totalPages=Math.max(1,Math.ceil(filteredData.length/perPage));
-    currentPage=Math.min(Math.max(1,currentPage||1),totalPages);
+    currentPage=Math.min(Math.max(1,currentPage),totalPages);
     renderTablePage(currentPage);
   }).catch(err=>{
     console.error("Gagal memuat releases:",err);
-    document.querySelector("#releaseTable tbody").innerHTML='<tr><td colspan="5" class="empty">Gagal memuat rilisan. Periksa koneksi atau izin Firebase.</td></tr>';
+    $("#releaseTable tbody").innerHTML='<tr><td colspan="5" class="empty">Gagal memuat rilisan. Periksa koneksi atau izin Firebase.</td></tr>';
   });
 }
+function applyReleaseSearch(){
+  const q=$("releaseSearch").value.toLowerCase().trim();
+  filteredData=releasesData.filter(d=>
+    String(d.email||"").toLowerCase().includes(q)||
+    String(d.artist||"").toLowerCase().includes(q)||
+    String(d.title||"").toLowerCase().includes(q)
+  );
+}
 function renderTablePage(page){
-  const tbody=document.querySelector("#releaseTable tbody");
+  const tbody=$("#releaseTable tbody");
   tbody.innerHTML="";
   const totalPages=Math.max(1,Math.ceil(filteredData.length/perPage));
   currentPage=Math.min(Math.max(1,page),totalPages);
@@ -498,14 +525,14 @@ function renderTablePage(page){
         <td>${escapeHtml(d.title||"-")}</td>
         <td><span class="status-badge" style="border:1px solid ${color};color:${color}">${escapeHtml((d.status||"pending").toUpperCase())}</span></td>
         <td>
-          <button class="action-btn" data-action="detail">Detail</button>
+          <button class="action-btn" data-action="detail" type="button">Detail</button>
           <div class="menu-wrap">
             <button class="menu-btn" type="button" aria-label="Menu aksi">⋮</button>
             <div class="menu-dropdown">
               <button type="button" data-action="process">Proses</button>
               <button type="button" data-action="approve">Approve</button>
               <button type="button" data-action="reject">Reject</button>
-              <button type="button" data-action="delete">Delete</button>
+              <button type="button" data-action="delete" class="danger">Delete</button>
             </div>
           </div>
         </td>`;
@@ -524,11 +551,13 @@ function renderTablePage(page){
 }
 $("prevPage").addEventListener("click",()=>{if(currentPage>1)renderTablePage(currentPage-1);});
 $("nextPage").addEventListener("click",()=>{if(currentPage<Math.ceil(filteredData.length/perPage))renderTablePage(currentPage+1);});
-$("releaseSearch").addEventListener("input",function(){
-  const q=this.value.toLowerCase().trim();
-  filteredData=releasesData.filter(d=>(d.email||"").toLowerCase().includes(q)||(d.artist||"").toLowerCase().includes(q)||(d.title||"").toLowerCase().includes(q));
-  currentPage=1;renderTablePage(currentPage);
+$("releaseSearch").addEventListener("input",()=>{applyReleaseSearch();currentPage=1;renderTablePage(1);});
+document.addEventListener("click",event=>{
+  if(!event.target.closest(".menu-wrap")){
+    document.querySelectorAll(".menu-dropdown").forEach(m=>m.style.display="none");
+  }
 });
+
 loadReleases();
 </script>
 </body>
