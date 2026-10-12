@@ -37,7 +37,14 @@ button{cursor:pointer}
 .field input:focus,.field select:focus{border-color:#8d91a0}
 .help{font-size:11px;color:#858891;line-height:1.45}
 .yt-preview{display:flex;gap:12px;align-items:center;background:#f8f8fa;border:1px solid #e8e8ed;border-radius:12px;padding:10px}
-.yt-preview img{width:112px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;background:#e5e7eb}
+.yt-preview img{
+  width:96px;
+  aspect-ratio:1/1;
+  object-fit:cover;
+  flex-shrink:0;
+  border-radius:8px;
+  background:#e5e7eb;
+}
 .yt-preview .preview-text{font-size:12px;min-width:0;overflow-wrap:anywhere}
 .platform-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .platform-option{display:flex;align-items:center;gap:8px;border:1px solid #e8e8ed;border-radius:9px;padding:9px;font-size:12px}
