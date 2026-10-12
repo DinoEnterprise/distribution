@@ -1,143 +1,168 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Admin Panel - DynoPay (Releases)</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <style>
-body {
-  font-family: 'Outfit', sans-serif;
-  background: #f1f2f7;
-  margin: 0;
-  padding: 15px;
-}
-h3 {
-  margin-bottom: 8px;
-  font-size: 18px;
-  color: #111;
-}
-.card {
-  background: #fff;
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  box-shadow: 0 3px 10px rgba(0,0,0,.05);
-}
-
-button.action-btn {
-  background: #fff;
-  color: #000;
-  border: 1px solid #000;
-  font-size: 12px;
-  margin-right: 4px;
-  padding: 6px 10px;
-  cursor: pointer;
-}
-button.action-btn:hover { background: #f0f0f0; }
-
-.table-container {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch; /* smooth scroll di mobile */
-  max-height: 400px;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-  min-width: 100%; /* sebelumnya 600px, diganti agar responsive */
-}
-th, td {
-  text-align: left;
-  padding: 8px 10px;
-  border-bottom: 1px solid #eee;
-}
-th {
-  background: #f9f9f9;
-  font-weight: 600;
-}
-tr:hover {
-  background: #f5f5f5;
-}
-
-.status-badge {
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 12px;
-}
-
-.menu-wrap {
-  position: relative;
-  display: inline-block;
-}
-.menu-btn {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-}
-.menu-dropdown {
-  display: none;
-  position: absolute;
-  right: 0;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  min-width: 120px;
-  z-index: 99;
-  box-shadow: 0 4px 10px rgba(0,0,0,.1);
-}
-.menu-dropdown button {
-  width: 100%;
-  border: none;
-  background: none;
-  padding: 12px;
-  font-size: 13px;
-  text-align: left;
-}
-.menu-dropdown button:nth-child(3){
-  color:#ef4444;
-  font-weight:700;
-}
-.menu-dropdown button:hover {
-  background: #f5f5f5;
-}
+*{box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:#f1f2f7;margin:0;padding:15px;color:#17181c}
+h3{margin:0 0 12px;font-size:18px;color:#111}
+.card{background:#fff;padding:16px;border-radius:14px;margin-bottom:15px;box-shadow:0 3px 10px rgba(0,0,0,.045)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.top-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.primary-btn{border:0;background:#111;color:#fff;border-radius:10px;padding:10px 13px;font-size:13px;font-weight:600}
+.secondary-btn{background:#fff;color:#111;border:1px solid #d9dbe2;border-radius:9px;padding:8px 11px;font-size:12px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field.full{grid-column:1/-1}
+.field label{font-size:12px;font-weight:600;color:#454852}
+.field input,.field select{width:100%;min-width:0;padding:11px 12px;border:1px solid #dfe1e8;border-radius:10px;background:#fff;outline:none;font-size:13px;color:#17181c}
+.field input:focus,.field select:focus{border-color:#8d91a0}
+.help{font-size:11px;color:#858891;line-height:1.45}
+.yt-preview{display:flex;gap:12px;align-items:center;background:#f8f8fa;border:1px solid #e8e8ed;border-radius:12px;padding:10px}
+.yt-preview img{width:112px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;background:#e5e7eb}
+.yt-preview .preview-text{font-size:12px;min-width:0;overflow-wrap:anywhere}
+.platform-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.platform-option{display:flex;align-items:center;gap:8px;border:1px solid #e8e8ed;border-radius:9px;padding:9px;font-size:12px}
+.platform-option input{accent-color:#111}
+.form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.notice{font-size:12px;padding:10px 12px;border-radius:10px;background:#f8f8fa;color:#555960;line-height:1.5;margin-top:10px}
+button.action-btn{background:#fff;color:#000;border:1px solid #000;border-radius:7px;font-size:12px;margin-right:4px;padding:6px 10px}
+button.action-btn:hover{background:#f0f0f0}
+.table-container{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:400px}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:600px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid #eee;vertical-align:middle}
+th{background:#f9f9f9;font-weight:600;position:sticky;top:0}
+tr:hover{background:#f8f8fa}
+.status-badge{display:inline-block;padding:3px 8px;border-radius:999px;font-weight:600;font-size:11px;white-space:nowrap}
+.menu-wrap{position:relative;display:inline-block}
+.menu-btn{background:none;border:0;font-size:20px;cursor:pointer}
+.menu-dropdown{display:none;position:absolute;right:0;top:100%;background:#fff;border:1px solid #ddd;border-radius:8px;min-width:125px;z-index:99;box-shadow:0 4px 10px rgba(0,0,0,.1);overflow:hidden}
+.menu-dropdown button{width:100%;border:0;background:none;padding:11px 12px;font-size:13px;text-align:left}
+.menu-dropdown button:nth-child(3),.menu-dropdown button:last-child{color:#ef4444}
+.menu-dropdown button:hover{background:#f5f5f5}
+.pagination{margin-top:12px;display:flex;justify-content:center;align-items:center;gap:10px;font-size:12px}
+.pagination button{padding:7px 12px;border:1px solid #ddd;border-radius:8px;background:#fff}
+.pagination button:disabled{opacity:.4;cursor:default}
+.empty{padding:22px 8px;text-align:center;color:#888;font-size:12px}
+@media(max-width:560px){body{padding:10px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.platform-grid{grid-template-columns:1fr 1fr}.card{padding:13px}.yt-preview img{width:96px}}
 </style>
 </head>
-
 <body>
 
-<!-- RELEASES -->
-<div class="card" style="padding-bottom: 50px;"> <!-- kasih padding bawah supaya tombol Prev/Next tidak nempel -->
-<h3>Releases</h3>
-<input type="text" id="releaseSearch" placeholder="Search song, artist and email" 
-       style="width:100%; padding:8px; margin-bottom:8px; border-radius:6px; border:1px solid #ccc;">
-<div class="table-container">
-<table id="releaseTable">
-  <thead>
-    <tr>
-      <th>Email</th>
-      <th>Artist</th>
-      <th>Title</th>
-      <th>Status</th>
-      <th>Aksi</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-</div>
+<section class="card">
+  <div class="top-row">
+    <h3>Releases</h3>
+    <button class="primary-btn" id="toggleManualForm" type="button">＋ Tambah Rilisan Manual</button>
+  </div>
+  <div class="help">Tambahkan rilisan yang diproses manual, misalnya dari pengajuan WhatsApp. Rilisan akan masuk ke akun artist yang dipilih.</div>
+</section>
 
-<!-- Pagination -->
-<div style="margin-top: 10px; display:flex; justify-content:center; gap:10px;">
-  <button id="prevPage" style="padding:6px 12px;">Prev</button>
-  <span id="pageInfo" style="align-self:center;"></span>
-  <button id="nextPage" style="padding:6px 12px;">Next</button>
-</div>
-</div>
+<section class="card" id="manualFormCard" hidden>
+  <h3>Tambah Rilisan Manual</h3>
+  <form id="manualReleaseForm">
+    <div class="form-grid">
+      <div class="field full">
+        <label for="manualEmail">Email akun artist *</label>
+        <select id="manualEmail" required>
+          <option value="">Memuat daftar akun...</option>
+        </select>
+        <span class="help">Pilih akun Dynotic tujuan. Rilisan akan disimpan di UID akun ini.</span>
+      </div>
+
+      <div class="field full">
+        <label for="manualYoutube">Link video YouTube *</label>
+        <input id="manualYoutube" type="url" placeholder="https://www.youtube.com/watch?v=..." required>
+        <span class="help">Thumbnail digunakan sebagai cover preview. Jika metadata publik tersedia, judul dan channel akan dicoba diambil otomatis.</span>
+      </div>
+
+      <div class="field full">
+        <div class="yt-preview">
+          <img id="youtubeThumbnail" alt="Preview thumbnail YouTube" src="https://placehold.co/320x180?text=YouTube+Preview">
+          <div class="preview-text">
+            <strong id="youtubePreviewTitle">Preview YouTube</strong>
+            <div class="help" id="youtubePreviewChannel">Tempel link YouTube untuk memuat preview.</div>
+            <div class="help" id="youtubeMetadataMessage"></div>
+          </div>
+        </div>
+        <button type="button" class="secondary-btn" id="fetchYoutubeMetadata">Ambil metadata YouTube</button>
+      </div>
+
+      <div class="field">
+        <label for="manualTitle">Judul lagu *</label>
+        <input id="manualTitle" type="text" placeholder="Judul rilisan" required maxlength="180">
+      </div>
+      <div class="field">
+        <label for="manualArtist">Nama artis *</label>
+        <input id="manualArtist" type="text" placeholder="Nama artis rilisan" required maxlength="180">
+      </div>
+      <div class="field">
+        <label for="manualUpc">UPC</label>
+        <input id="manualUpc" type="text" placeholder="Kosongkan jika belum ada" inputmode="numeric" maxlength="20">
+      </div>
+      <div class="field">
+        <label for="manualDate">Tanggal rilis *</label>
+        <input id="manualDate" type="date" required>
+      </div>
+      <div class="field">
+        <label for="manualLabel">Label</label>
+        <input id="manualLabel" type="text" value="Dynotic" maxlength="120">
+      </div>
+      <div class="field">
+        <label for="manualStatus">Status rilisan *</label>
+        <select id="manualStatus" required>
+          <option value="approved">Approved</option>
+          <option value="process">Process</option>
+          <option value="proposal">Proposal</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+      <div class="field full">
+        <label>Platform distribusi</label>
+        <div class="platform-grid" id="platformGrid">
+          <label class="platform-option"><input type="checkbox" value="Spotify" checked> Spotify</label>
+          <label class="platform-option"><input type="checkbox" value="Apple Music"> Apple Music</label>
+          <label class="platform-option"><input type="checkbox" value="YouTube Music" checked> YouTube Music</label>
+          <label class="platform-option"><input type="checkbox" value="Amazon Music"> Amazon Music</label>
+          <label class="platform-option"><input type="checkbox" value="Deezer"> Deezer</label>
+          <label class="platform-option"><input type="checkbox" value="TikTok"> TikTok</label>
+          <label class="platform-option"><input type="checkbox" value="Instagram / Facebook"> Instagram / Facebook</label>
+          <label class="platform-option"><input type="checkbox" value="Other"> Other</label>
+        </div>
+        <span class="help">Ini dicatat sebagai metadata di dashboard; memilih platform tidak mengirim musik ke platform secara otomatis.</span>
+      </div>
+    </div>
+    <div class="notice">Audio tidak diunggah. Thumbnail YouTube hanya dipakai sebagai preview visual. Pastikan kamu berhak menggunakan video/cover tersebut dan periksa data sebelum menyimpan.</div>
+    <div class="form-actions">
+      <button class="primary-btn" id="saveManualRelease" type="submit">Simpan Rilisan</button>
+      <button class="secondary-btn" id="cancelManualForm" type="button">Batal</button>
+    </div>
+    <div id="manualFormMessage" class="help" role="status" style="margin-top:10px"></div>
+  </form>
+</section>
+
+<section class="card" style="padding-bottom:30px">
+  <h3>Semua Rilisan</h3>
+  <input type="text" id="releaseSearch" placeholder="Cari judul, artis, atau email"
+    style="width:100%;padding:10px 12px;margin-bottom:10px;border-radius:9px;border:1px solid #ccc;outline:none">
+  <div class="table-container">
+    <table id="releaseTable">
+      <thead><tr><th>Email</th><th>Artist</th><th>Title</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody><tr><td colspan="5" class="empty">Memuat rilisan...</td></tr></tbody>
+    </table>
+  </div>
+  <div class="pagination">
+    <button id="prevPage" type="button">Prev</button>
+    <span id="pageInfo">Page 1 of 1</span>
+    <button id="nextPage" type="button">Next</button>
+  </div>
+</section>
 
 <script>
 let isRegistering = false;
@@ -145,368 +170,366 @@ let tempArtists = [];
 let releasesData = [];
 let filteredData = [];
 let currentPage = 1;
-const perPage = 10; // jumlah baris per halaman
-firebase.initializeApp({
- apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
- authDomain:"dynopay-2513c.firebaseapp.com",
- databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
+const perPage = 10;
+let userEmailMap = {};
+let userDataMap = {};
 
-const auth=firebase.auth();
-const db=firebase.database();
-const secondaryApp = firebase.initializeApp(
-  firebase.app().options,
-  "Secondary"
-);
+firebase.initializeApp({
+  apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain:"dynopay-2513c.firebaseapp.com",
+  databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+const auth = firebase.auth();
+const db = firebase.database();
+const secondaryApp = firebase.initializeApp(firebase.app().options, "Secondary");
 const secondaryAuth = secondaryApp.auth();
 
 auth.onAuthStateChanged(user => {
   if(isRegistering) return;
+  if(!user){ location.href="../admin"; return; }
+  db.ref("admins/"+user.uid).once("value")
+    .then(snapshot=>{
+      if(!snapshot.exists()){
+        alert("⚠ Anda bukan admin!");
+        auth.signOut().then(()=>location.href="../admin");
+      }
+    })
+    .catch(err=>{
+      console.error(err);
+      alert("Gagal memeriksa akses admin.");
+      auth.signOut().then(()=>location.href="../admin");
+    });
+});
 
-  if (!user) {
-    location.href = "../admin";
+const $ = id => document.getElementById(id);
+const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, ch => ({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[ch]));
+
+$("toggleManualForm").addEventListener("click",()=>{
+  $("manualFormCard").hidden = !$("manualFormCard").hidden;
+  if(!$("manualFormCard").hidden){
+    $("manualFormCard").scrollIntoView({behavior:"smooth",block:"start"});
+    loadArtistOptions();
+  }
+});
+$("cancelManualForm").addEventListener("click",()=>{
+  $("manualFormCard").hidden = true;
+  $("manualFormMessage").textContent = "";
+});
+
+function loadArtistOptions(){
+  const select = $("manualEmail");
+  select.innerHTML = '<option value="">Memuat daftar akun...</option>';
+  db.ref("users").once("value").then(snapshot=>{
+    select.innerHTML = '<option value="">Pilih email akun artist</option>';
+    const users = [];
+    snapshot.forEach(child=>{
+      const data = child.val() || {};
+      if(data.email){
+        users.push({uid:child.key,email:data.email,name:data.name || data.displayName || data.artist || ""});
+      }
+    });
+    users.sort((a,b)=>a.email.localeCompare(b.email));
+    users.forEach(user=>{
+      const option = document.createElement("option");
+      option.value = user.uid;
+      option.textContent = user.name ? `${user.email} — ${user.name}` : user.email;
+      option.dataset.email = user.email;
+      option.dataset.name = user.name;
+      select.appendChild(option);
+    });
+    if(!users.length) select.innerHTML = '<option value="">Tidak ada akun dengan email di /users</option>';
+  }).catch(err=>{
+    console.error(err);
+    select.innerHTML = '<option value="">Gagal memuat akun</option>';
+  });
+}
+
+function parseYouTubeId(input){
+  try{
+    const url = new URL(input.trim());
+    let id = "";
+    if(url.hostname === "youtu.be" || url.hostname.endsWith(".youtu.be")){
+      id = url.pathname.split("/").filter(Boolean)[0] || "";
+    }else if(url.hostname.includes("youtube.com")){
+      if(url.pathname === "/watch") id = url.searchParams.get("v") || "";
+      else if(/^\/(embed|shorts|live)\/[^/]+/.test(url.pathname)) id = url.pathname.split("/")[2] || "";
+    }
+    return /^[A-Za-z0-9_-]{11}$/.test(id) ? id : "";
+  }catch(e){ return ""; }
+}
+
+function setYoutubePreview(){
+  const link = $("manualYoutube").value.trim();
+  const id = parseYouTubeId(link);
+  if(!id){
+    $("youtubeThumbnail").src = "https://placehold.co/320x180?text=YouTube+Preview";
+    $("youtubePreviewTitle").textContent = "Preview YouTube";
+    $("youtubePreviewChannel").textContent = "Link YouTube belum valid.";
+    $("youtubeMetadataMessage").textContent = "";
     return;
   }
+  $("youtubeThumbnail").src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+  $("youtubePreviewTitle").textContent = "Video YouTube terdeteksi";
+  $("youtubePreviewChannel").textContent = `Video ID: ${id}`;
+  $("youtubeMetadataMessage").textContent = "Mencoba mengambil judul dan channel...";
+  fetchYoutubeMetadata();
+}
 
-  const uid = user.uid;
-
-  db.ref("admins/"+uid).once("value")
-  .then(snapshot=>{
-    if (!snapshot.exists()) {
-      alert("⚠ Anda bukan admin!");
-      auth.signOut().then(()=>location.href="../admin");
-    }
-  })
-  .catch(err=>{
-    console.error(err);
-    auth.signOut().then(()=>location.href="../admin");
-  });
+async function fetchYoutubeMetadata(){
+  const link = $("manualYoutube").value.trim();
+  const id = parseYouTubeId(link);
+  if(!id){
+    $("youtubeMetadataMessage").textContent = "Masukkan link YouTube yang valid terlebih dahulu.";
+    return;
+  }
+  $("youtubeThumbnail").src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+  $("youtubeMetadataMessage").textContent = "Mencoba mengambil metadata publik...";
+  // oEmbed kadang tersedia, tetapi browser/CORS atau konfigurasi YouTube dapat memblokirnya.
+  try{
+    const endpoint = "https://www.youtube.com/oembed?url=" + encodeURIComponent("https://www.youtube.com/watch?v="+id) + "&format=json";
+    const response = await fetch(endpoint);
+    if(!response.ok) throw new Error("Metadata tidak tersedia");
+    const meta = await response.json();
+    if(!$("manualTitle").value.trim()) $("manualTitle").value = meta.title || "";
+    if(!$("manualArtist").value.trim()) $("manualArtist").value = meta.author_name || "";
+    $("youtubePreviewTitle").textContent = meta.title || "Video YouTube terdeteksi";
+    $("youtubePreviewChannel").textContent = meta.author_name || `Video ID: ${id}`;
+    $("youtubeMetadataMessage").textContent = "Metadata berhasil diambil. Judul dan artis masih bisa diedit.";
+  }catch(err){
+    $("youtubePreviewTitle").textContent = "Thumbnail siap";
+    $("youtubePreviewChannel").textContent = "Judul/channel tidak dapat diambil otomatis.";
+    $("youtubeMetadataMessage").textContent = "Silakan isi judul dan artis secara manual. Thumbnail tetap bisa digunakan.";
+  }
+}
+$("manualYoutube").addEventListener("input",()=>{
+  const id = parseYouTubeId($("manualYoutube").value);
+  if(id){
+    $("youtubeThumbnail").src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+    $("youtubePreviewTitle").textContent = "Video YouTube terdeteksi";
+    $("youtubePreviewChannel").textContent = `Video ID: ${id}`;
+  }
 });
-function openApproveOptions(uid, rid){
-  const type = prompt(
-`Pilih tipe approval:
+$("manualYoutube").addEventListener("change",fetchYoutubeMetadata);
+$("fetchYoutubeMetadata").addEventListener("click",fetchYoutubeMetadata);
+$("youtubeThumbnail").addEventListener("error",()=>{
+  $("youtubeThumbnail").src = "https://placehold.co/320x180?text=Thumbnail+Unavailable";
+});
 
-1 = Original
-2 = Publisher
+$("manualReleaseForm").addEventListener("submit",async event=>{
+  event.preventDefault();
+  const selected = $("manualEmail").selectedOptions[0];
+  const uid = $("manualEmail").value;
+  const youtube = $("manualYoutube").value.trim();
+  const videoId = parseYouTubeId(youtube);
+  const title = $("manualTitle").value.trim();
+  const artist = $("manualArtist").value.trim();
+  const date = $("manualDate").value;
+  if(!uid){ alert("Pilih email akun artist terlebih dahulu."); return; }
+  if(!videoId){ alert("Link YouTube tidak valid. Gunakan link video YouTube yang benar."); return; }
+  if(!title || !artist || !date){ alert("Judul, artis, dan tanggal rilis wajib diisi."); return; }
 
-Masukkan angka:`
-  );
+  const platforms = Array.from(document.querySelectorAll('#platformGrid input:checked')).map(el=>el.value);
+  const email = selected.dataset.email || "";
+  const label = $("manualLabel").value.trim() || "Dynotic";
+  const status = $("manualStatus").value;
+  const upc = $("manualUpc").value.trim();
+  const cover = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+  const button = $("saveManualRelease");
+  const message = $("manualFormMessage");
+  button.disabled = true;
+  button.textContent = "Menyimpan...";
+  message.textContent = "";
 
-  if(type === "1"){
-    confirmRelease(uid, rid, "approved");
+  // Struktur kompatibel dengan halaman Artist Releases yang membaca title, artist, cover, date, ean, status, time.
+  const release = {
+    title,
+    artist,
+    cover,
+    date,
+    ean: upc || "",
+    status,
+    label,
+    time: Date.now(),
+    youtube,
+    youtubeVideoId: videoId,
+    platforms,
+    manualEntry: true,
+    entrySource: "admin_manual",
+    email
+  };
+
+  try{
+    const newRef = db.ref("releases/"+uid).push();
+    await newRef.set(release);
+    message.textContent = "Rilisan berhasil disimpan ke akun " + email + ".";
+    $("manualReleaseForm").reset();
+    $("manualLabel").value = "Dynotic";
+    $("manualStatus").value = "approved";
+    document.querySelectorAll('#platformGrid input').forEach(el=>el.checked=["Spotify","YouTube Music"].includes(el.value));
+    $("youtubeThumbnail").src = "https://placehold.co/320x180?text=YouTube+Preview";
+    $("youtubePreviewTitle").textContent = "Preview YouTube";
+    $("youtubePreviewChannel").textContent = "Tempel link YouTube untuk memuat preview.";
+    $("youtubeMetadataMessage").textContent = "";
+    await loadReleases();
+  }catch(err){
+    console.error(err);
+    message.textContent = "Gagal menyimpan rilisan. Periksa koneksi dan izin Firebase.";
+    alert("Gagal menyimpan rilisan: "+(err.message || err));
+  }finally{
+    button.disabled = false;
+    button.textContent = "Simpan Rilisan";
   }
+});
 
+function openApproveOptions(uid,rid){
+  const type = prompt("Pilih tipe approval:\n\n1 = Original\n2 = Publisher\n\nMasukkan angka:");
+  if(type === "1") confirmRelease(uid,rid,"approved");
   else if(type === "2"){
-
-    const publishers = [
-      "MAHAR PUSTAKA NUSANTARA",
-      "Pragita Prabawa Pustaka",
-      "Nadaku Musik",
-      "Royal Publikasi Indo",
-      "Alfa Pustaka Nada",
-      "Pustaka Jeka",
-      "Pustaka Cipta Kreasi",
-      "Star Cipta Musikindo",
-      "Sora Music Publisher",
-      "Proaktif Digital Kreasi",
-      "18 Musik",
-      "Sony Music Publishing Indonesia",
-      "NAGASWARA"
-    ];
-
-    let listText = "Pilih Publisher:\n\n";
-    publishers.forEach((p, i)=>{
-      listText += `${i+1} = ${p}\n`;
-    });
-
-    const choice = prompt(listText + "\nMasukkan angka:");
-
-    const index = parseInt(choice) - 1;
-    const publisherName = publishers[index];
-
-    if(!publisherName){
-      alert("Publisher tidak valid!");
-      return;
-    }
-
-    confirmPublisherRelease(uid, rid, publisherName);
+    const publishers = ["MAHAR PUSTAKA NUSANTARA","Pragita Prabawa Pustaka","Nadaku Musik","Royal Publikasi Indo","Alfa Pustaka Nada","Pustaka Jeka","Pustaka Cipta Kreasi","Star Cipta Musikindo","Sora Music Publisher","Proaktif Digital Kreasi","18 Musik","Sony Music Publishing Indonesia","NAGASWARA"];
+    const choice = prompt("Pilih Publisher:\n\n"+publishers.map((p,i)=>`${i+1} = ${p}`).join("\n")+"\n\nMasukkan angka:");
+    const publisher = publishers[parseInt(choice,10)-1];
+    if(!publisher){alert("Publisher tidak valid!");return;}
+    confirmPublisherRelease(uid,rid,publisher);
   }
 }
-function openPublisherEmail(email, title, publisher){
+function openPublisherEmail(email,title,publisher){
   const subject = `Cover to Master Approval – ${title}`;
-
-  const body =
-`Salam Dynotic Collective,
-
-Kami informasikan bahwa pengajuan penggunaan lagu dengan judul "${title}" telah disetujui oleh publisher ${publisher}.
-
-Untuk informasi mengenai jadwal rilis, akan kami informasikan melalui email setelah proses penjadwalan selesai dilakukan.
-
-Jika ada pertanyaan, silakan hubungi kami melalui email:
-admin@dynotic.web.id
-
-Best regards,
-Risna Wati
-Cover to Master Team`;
-
-  const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g, "\r\n"))}`;
-
-  window.location.href = mailto;
+  const body = `Salam Dynotic Collective,\n\nKami informasikan bahwa pengajuan penggunaan lagu dengan judul "${title}" telah disetujui oleh publisher ${publisher}.\n\nUntuk informasi mengenai jadwal rilis, akan kami informasikan melalui email setelah proses penjadwalan selesai dilakukan.\n\nJika ada pertanyaan, silakan hubungi kami melalui email:\nadmin@dynotic.web.id\n\nBest regards,\nRisna Wati\nCover to Master Team`;
+  location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g,"\r\n"))}`;
 }
-function confirmPublisherRelease(uid, rid, publisher){
+function confirmPublisherRelease(uid,rid,publisher){
   if(!confirm("Approve sebagai Publisher?")) return;
-
   db.ref(`releases/${uid}/${rid}/status`).set("approved").then(()=>{
-
-    const item = releasesData.find(r => r.uid===uid && r.rid===rid);
-
-    if(item){
-      item.status = "approved"; // 🔥 FIX UTAMA
-      openPublisherEmail(
-        item.email,
-        item.title,
-        publisher
-      );
-    }
-
-    const filteredItem = filteredData.find(r => r.uid===uid && r.rid===rid);
-    if(filteredItem){
-      filteredItem.status = "approved"; // 🔥 FIX JUGA DI SINI
-    }
-
+    const item = releasesData.find(r=>r.uid===uid&&r.rid===rid);
+    if(item){item.status="approved";openPublisherEmail(item.email||"",item.title||"-",publisher);}
+    const f = filteredData.find(r=>r.uid===uid&&r.rid===rid);if(f)f.status="approved";
     renderTablePage(currentPage);
-  });
+  }).catch(e=>alert("Gagal memperbarui status: "+e.message));
 }
-
-function confirmRelease(uid, rid, status){
-  let text = "";
-
-  if(status === "approved"){
-    text = "Yakin APPROVE rilis ini?";
-  }
-  else if(status === "rejected"){
-    text = "⚠ Yakin REJECT rilis ini?\nAksi ini tidak bisa dibatalkan!";
-  }
-  else if(status === "proses"){
-    text = "Tandai rilisan ini sebagai PROSES?";
-  }
-
-  if(!confirm(text)) return;
-  setReleaseStatus(uid, rid, status);
+function confirmRelease(uid,rid,status){
+  let text = status==="approved" ? "Yakin APPROVE rilis ini?" : status==="rejected" ? "⚠ Yakin REJECT rilis ini?\nAksi ini tidak bisa dibatalkan!" : "Tandai rilisan ini sebagai PROSES?";
+  if(confirm(text)) setReleaseStatus(uid,rid,status);
 }
-
 function openPlatform(uid,rid){
-  localStorage.setItem("lastPage", currentPage); // simpan page
-  location.href = `../admin-platform?uid=${uid}&rid=${rid}`;
+  localStorage.setItem("lastPage",currentPage);
+  location.href = `../admin-platform?uid=${encodeURIComponent(uid)}&rid=${encodeURIComponent(rid)}`;
 }
-
 function setReleaseStatus(uid,rid,status){
   db.ref(`releases/${uid}/${rid}/status`).set(status).then(()=>{
-
-    const item = releasesData.find(r => r.uid===uid && r.rid===rid);
-
+    const item = releasesData.find(r=>r.uid===uid&&r.rid===rid);
     if(item){
-      item.status = status;
-
-      // 🔥 BUKA EMAIL DRAFT (hanya approve/reject)
-      if(status === "approved" || status === "rejected"){
-        openEmailDraft(
-          item.email,
-          item.artist || "-",
-          item.title || "-",
-          status
-        );
-      }
+      item.status=status;
+      if(status==="approved"||status==="rejected") openEmailDraft(item.email||"",item.artist||"-",item.title||"-",status);
     }
-
-    const filteredItem = filteredData.find(r => r.uid===uid && r.rid===rid);
-    if(filteredItem){
-      filteredItem.status = status;
-    }
-
+    const f=filteredData.find(r=>r.uid===uid&&r.rid===rid);if(f)f.status=status;
     renderTablePage(currentPage);
-  });
+  }).catch(e=>alert("Gagal memperbarui status: "+e.message));
 }
-function openEmailDraft(email, artist, title, status){
-  let subject = "";
-  let body = "";
-
-  if(status === "approved"){
-    subject = `Approved - Congrats! Your release has been sent to the store: ${title}`;
-
-    body = 
-`Hello,
-
-Great news!
-
-Your release has been approved and is now being processed for distribution to all platforms.
-
-Release Details
-Title  : ${title}
-Artist : ${artist}
-
-Your music will be delivered to digital stores shortly.
-
-If you have any questions, feel free to contact our support team.
-
-Best regards,
-Nazwa
-QC Team Dynotic`;
+function openEmailDraft(email,artist,title,status){
+  let subject="",body="";
+  if(status==="approved"){
+    subject=`Approved - Congrats! Your release has been sent to the store: ${title}`;
+    body=`Hello,\n\nGreat news!\n\nYour release has been approved and is now being processed for distribution to all platforms.\n\nRelease Details\nTitle  : ${title}\nArtist : ${artist}\n\nYour music will be delivered to digital stores shortly.\n\nIf you have any questions, feel free to contact our support team.\n\nBest regards,\nNazwa\nQC Team Dynotic`;
+  }else if(status==="rejected"){
+    subject=`Reject - Your release has been Rejected: ${title}`;
+    body=`Hello,\n\nWe regret to inform you that your release has been rejected.\n\nRelease Details\nTitle  : ${title}\nArtist : ${artist}\n\nReason:\nYour release has been rejected because it may contain content that infringes on another artist’s rights or lacks proper licensing.\n\nIf you believe this is a mistake, please contact our support team and provide valid proof of ownership or license.\n\nBest regards,\nNazwa\nQC Team Dynotic`;
   }
-
-  if(status === "rejected"){
-    subject = `Reject - Your release has been Rejected: ${title}`;
-
-    body = 
-`Hello,
-
-We regret to inform you that your release has been rejected.
-
-Release Details
-Title  : ${title}
-Artist : ${artist}
-
-Reason:
-Your release has been rejected because it may contain content that infringes on another artist’s rights or lacks proper licensing.
-
-If you believe this is a mistake, please contact our support team and provide valid proof of ownership or license.
-
-Best regards,
-Nazwa
-QC Team Dynotic`;
-  }
-
-  // 🔥 PENTING: taruh di luar IF biar keduanya jalan
-  const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g, "\r\n"))}`;
-
-  window.location.href = mailto;
+  if(!email){alert("Status diperbarui. Akun ini tidak memiliki email tersimpan, jadi draft email tidak bisa dibuka.");return;}
+  location.href=`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g,"\r\n"))}`;
 }
 function deleteRelease(uid,rid){
   if(confirm("Apakah yakin ingin menghapus rilisan ini?")){
-    db.ref(`releases/${uid}/${rid}`).remove().then(()=>loadReleases());
+    db.ref(`releases/${uid}/${rid}`).remove().then(()=>loadReleases()).catch(e=>alert("Gagal menghapus: "+e.message));
   }
 }
-
 function getStatusColor(status){
-  if(status=="approved") return "#10b981";   // hijau
-  if(status=="rejected") return "#ef4444";   // merah
-  if(status=="proses") return "#3b82f6";     // biru
-  return "#f59e0b"; // pending (kuning)
+  if(status==="approved") return "#10b981";
+  if(status==="rejected") return "#ef4444";
+  if(status==="proses"||status==="process") return "#3b82f6";
+  return "#f59e0b";
 }
-
 function toggleMenu(btn){
-  document.querySelectorAll(".menu-dropdown").forEach(m=>{
-    if(m!==btn.nextElementSibling){
-      m.style.display="none";
-    }
-  });
-  const menu = btn.nextElementSibling;
-  menu.style.display = menu.style.display==="block" ? "none" : "block";
+  document.querySelectorAll(".menu-dropdown").forEach(m=>{if(m!==btn.nextElementSibling)m.style.display="none";});
+  const menu=btn.nextElementSibling;
+  menu.style.display=menu.style.display==="block"?"none":"block";
 }
-
 function loadReleases(){
-  Promise.all([
-    db.ref("users").once("value"),
-    db.ref("releases").once("value")
-  ]).then(([userSnap, releaseSnap])=>{
-    let userEmailMap = {};
-    userSnap.forEach(u=>{
-      userEmailMap[u.key] = u.val().email;
-    });
-
-    let all = [];
+  return Promise.all([db.ref("users").once("value"),db.ref("releases").once("value")]).then(([userSnap,releaseSnap])=>{
+    userEmailMap={};userDataMap={};
+    userSnap.forEach(u=>{const data=u.val()||{};userEmailMap[u.key]=data.email||"-";userDataMap[u.key]=data;});
+    const all=[];
     releaseSnap.forEach(u=>{
       u.forEach(r=>{
-        all.push({
-          uid: u.key,
-          rid: r.key,
-          email: userEmailMap[u.key] || "-",
-          ...r.val()
-        });
+        all.push({uid:u.key,rid:r.key,email:userEmailMap[u.key]||r.val()?.email||"-",...(r.val()||{})});
       });
     });
-
     all.sort((a,b)=>(b.time||0)-(a.time||0));
-
-    releasesData = all;        // simpan semua data
-    filteredData = all.slice(); // set awal filteredData = semua data
-    const savedPage = localStorage.getItem("lastPage");
-currentPage = savedPage ? parseInt(savedPage) : 1;
-
-renderTablePage(currentPage);
-localStorage.removeItem("lastPage");
+    releasesData=all;
+    const query=$("releaseSearch").value.toLowerCase().trim();
+    filteredData=all.filter(d=>(d.email||"").toLowerCase().includes(query)||(d.artist||"").toLowerCase().includes(query)||(d.title||"").toLowerCase().includes(query));
+    const savedPage=localStorage.getItem("lastPage");
+    currentPage=savedPage?parseInt(savedPage,10):1;
+    localStorage.removeItem("lastPage");
+    const totalPages=Math.max(1,Math.ceil(filteredData.length/perPage));
+    currentPage=Math.min(Math.max(1,currentPage||1),totalPages);
+    renderTablePage(currentPage);
+  }).catch(err=>{
+    console.error("Gagal memuat releases:",err);
+    document.querySelector("#releaseTable tbody").innerHTML='<tr><td colspan="5" class="empty">Gagal memuat rilisan. Periksa koneksi atau izin Firebase.</td></tr>';
   });
 }
-
 function renderTablePage(page){
-  const tbody = document.querySelector("#releaseTable tbody");
-  tbody.innerHTML = "";
-
-  const start = (page - 1) * perPage;
-  const end = start + perPage;
-  const pageData = filteredData.slice(start, end);
-
-  pageData.forEach(d=>{
-    tbody.innerHTML += `
-<tr>
-  <td>${d.email}</td>
-  <td>${d.artist || "-"}</td>
-  <td>${d.title || "-"}</td>
-  <td>
-    <span class="status-badge"
-      style="border:1px solid ${getStatusColor(d.status)};
-      color:${getStatusColor(d.status)}">
-      ${(d.status || "pending").toUpperCase()}
-    </span>
-  </td>
-  <td style="display:flex;gap:6px;align-items:center">
-    <button class="action-btn" onclick="openPlatform('${d.uid}','${d.rid}')">Detail</button>
-    <div class="menu-wrap">
-      <button class="menu-btn" onclick="toggleMenu(this)">⋮</button>
-<div class="menu-dropdown">
-  <button onclick="confirmRelease('${d.uid}','${d.rid}','proses')">Proses</button>
-  <button onclick="openApproveOptions('${d.uid}','${d.rid}')">Approve</button>
-  <button onclick="confirmRelease('${d.uid}','${d.rid}','rejected')">Reject</button>
-  <button onclick="deleteRelease('${d.uid}','${d.rid}')">Delete</button>
-</div>
-    </div>
-  </td>
-</tr>
-    `;
-  });
-
-  document.getElementById("pageInfo").innerText = `Page ${currentPage} of ${Math.ceil(filteredData.length/perPage)}`;
-  document.getElementById("prevPage").disabled = currentPage === 1;
-  document.getElementById("nextPage").disabled = currentPage >= Math.ceil(filteredData.length/perPage);
+  const tbody=document.querySelector("#releaseTable tbody");
+  tbody.innerHTML="";
+  const totalPages=Math.max(1,Math.ceil(filteredData.length/perPage));
+  currentPage=Math.min(Math.max(1,page),totalPages);
+  const pageData=filteredData.slice((currentPage-1)*perPage,currentPage*perPage);
+  if(!pageData.length){
+    tbody.innerHTML='<tr><td colspan="5" class="empty">Tidak ada rilisan ditemukan.</td></tr>';
+  }else{
+    pageData.forEach(d=>{
+      const color=getStatusColor(d.status);
+      const tr=document.createElement("tr");
+      tr.innerHTML=`
+        <td>${escapeHtml(d.email||"-")}</td>
+        <td>${escapeHtml(d.artist||"-")}</td>
+        <td>${escapeHtml(d.title||"-")}</td>
+        <td><span class="status-badge" style="border:1px solid ${color};color:${color}">${escapeHtml((d.status||"pending").toUpperCase())}</span></td>
+        <td>
+          <button class="action-btn" data-action="detail">Detail</button>
+          <div class="menu-wrap">
+            <button class="menu-btn" type="button" aria-label="Menu aksi">⋮</button>
+            <div class="menu-dropdown">
+              <button type="button" data-action="process">Proses</button>
+              <button type="button" data-action="approve">Approve</button>
+              <button type="button" data-action="reject">Reject</button>
+              <button type="button" data-action="delete">Delete</button>
+            </div>
+          </div>
+        </td>`;
+      tr.querySelector('[data-action="detail"]').addEventListener("click",()=>openPlatform(d.uid,d.rid));
+      tr.querySelector(".menu-btn").addEventListener("click",function(){toggleMenu(this);});
+      tr.querySelector('[data-action="process"]').addEventListener("click",()=>confirmRelease(d.uid,d.rid,"proses"));
+      tr.querySelector('[data-action="approve"]').addEventListener("click",()=>openApproveOptions(d.uid,d.rid));
+      tr.querySelector('[data-action="reject"]').addEventListener("click",()=>confirmRelease(d.uid,d.rid,"rejected"));
+      tr.querySelector('[data-action="delete"]').addEventListener("click",()=>deleteRelease(d.uid,d.rid));
+      tbody.appendChild(tr);
+    });
+  }
+  $("pageInfo").textContent=`Page ${currentPage} of ${totalPages}`;
+  $("prevPage").disabled=currentPage===1;
+  $("nextPage").disabled=currentPage>=totalPages;
 }
-
-document.getElementById("prevPage").addEventListener("click", ()=>{
-  if(currentPage > 1){
-    currentPage--;
-    renderTablePage(currentPage);
-  }
-});
-
-document.getElementById("nextPage").addEventListener("click", ()=>{
-  if(currentPage < Math.ceil(filteredData.length/perPage)){
-    currentPage++;
-    renderTablePage(currentPage);
-  }
-});
-
-document.getElementById("releaseSearch").addEventListener("input", function() {
-  const query = this.value.toLowerCase();
-
-  filteredData = releasesData.filter(d =>
-    d.email.toLowerCase().includes(query) ||
-    (d.artist||"").toLowerCase().includes(query) ||
-    (d.title||"").toLowerCase().includes(query)
-  );
-  currentPage = 1;
-renderTablePage(currentPage);
+$("prevPage").addEventListener("click",()=>{if(currentPage>1)renderTablePage(currentPage-1);});
+$("nextPage").addEventListener("click",()=>{if(currentPage<Math.ceil(filteredData.length/perPage))renderTablePage(currentPage+1);});
+$("releaseSearch").addEventListener("input",function(){
+  const q=this.value.toLowerCase().trim();
+  filteredData=releasesData.filter(d=>(d.email||"").toLowerCase().includes(q)||(d.artist||"").toLowerCase().includes(q)||(d.title||"").toLowerCase().includes(q));
+  currentPage=1;renderTablePage(currentPage);
 });
 loadReleases();
 </script>
-
 </body>
 </html>
