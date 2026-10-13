@@ -929,37 +929,41 @@ firebase.auth()
 });
 
 
+
 /* STEP VALIDATION */
 
 const stepsData = {
 
   1: () => true,
 
-
   2: () => {
+    const title = document.getElementById("title")?.value.trim();
+    const artist = document.getElementById("artist")?.value.trim();
+    const label = document.getElementById("labelName")?.value.trim();
+    const fullname = document.getElementById("fullname")?.value.trim();
+    const genre = document.getElementById("genre")?.value;
+    const releaseDate = document.getElementById("releaseDate")?.value;
 
-    return document.getElementById("title")?.value &&
+    if (!title || !artist || !label || !fullname || !genre || !releaseDate) {
+      return false;
+    }
 
-           document.getElementById("artist")?.value &&
+    const minDate = new Date();
+    minDate.setHours(0, 0, 0, 0);
+    minDate.setDate(minDate.getDate() + 14);
 
-           document.getElementById("labelName")?.value &&
+    const selectedDate = new Date(releaseDate + "T00:00:00");
 
-           document.getElementById("fullname")?.value &&
-
-           document.getElementById("genre")?.value;
-
+    return selectedDate >= minDate;
   },
 
-
   3: () => {
-
     return document.getElementById("audio")?.dataset.url &&
-
            document.getElementById("cover")?.dataset.url;
-
   }
 
 };
+
 
 
 /* HIDE */
@@ -1137,6 +1141,28 @@ function loadStep2Fields(){
     </div>
 
 
+<div class="label">
+  Release Date
+  <span class="req">*</span>
+</div>
+
+<input
+  type="date"
+  id="releaseDate"
+  required
+>
+
+<div
+  style="
+    font-size:11px;
+    color:#858891;
+    margin-top:-8px;
+    margin-bottom:15px;
+  "
+>
+  Release date must be at least 14 days from today.
+</div>
+
     <div class="label">
       Version
     </div>
@@ -1215,40 +1241,30 @@ function loadStep2Fields(){
   `;
 
 
+  
   document
     .getElementById("releaseType")
     .addEventListener(
       "change",
       e => {
 
-        const val =
-          e.target.value;
+        const val = e.target.value;
 
-        const warning =
-          document.getElementById(
-            "releaseWarning"
-          );
+        const warning = document.getElementById("releaseWarning");
 
-
-        if(
-          val === "ep" ||
-          val === "album"
-        ){
-
-          warning.style.display =
-            "block";
-
-        }else{
-
-          warning.style.display =
-            "none";
-
+        if (val === "ep" || val === "album") {
+          warning.style.display = "block";
+        } else {
+          warning.style.display = "none";
         }
 
       }
     );
 
+  setMinReleaseDate();
+
 }
+
 
 
 /* UPLOAD LISTENERS */
@@ -1566,6 +1582,20 @@ function goto(n){
 }
 
 
+function setMinReleaseDate() {
+  const input = document.getElementById("releaseDate");
+  if (!input) return;
+
+  const minDate = new Date();
+  minDate.setDate(minDate.getDate() + 14);
+
+  const year = minDate.getFullYear();
+  const month = String(minDate.getMonth() + 1).padStart(2, "0");
+  const day = String(minDate.getDate()).padStart(2, "0");
+
+  input.min = `${year}-${month}-${day}`;
+}
+
 /* STEP UI */
 
 function updateStepUI(){
@@ -1798,7 +1828,9 @@ function submitRelease(){
         .getElementById("releaseType")
         .value,
 
-
+releaseDate:
+  document.getElementById("releaseDate").value,
+    
     title:
       document
         .getElementById("title")
