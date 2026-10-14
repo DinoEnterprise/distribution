@@ -776,15 +776,15 @@ function updateStats() {
   const items = Object.values(requestsData);
 
   $("pendingCount").textContent = items.filter(
-    item => normalizeStatus(item.status) === "Pending"
+    item => item && normalizeStatus(item.status) === "Pending"
   ).length;
 
   $("approvedCount").textContent = items.filter(
-    item => normalizeStatus(item.status) === "Approved"
+    item => item && normalizeStatus(item.status) === "Approved"
   ).length;
 
   $("rejectedCount").textContent = items.filter(
-    item => normalizeStatus(item.status) === "Rejected"
+    item => item && normalizeStatus(item.status) === "Rejected"
   ).length;
 }
 
@@ -826,10 +826,13 @@ function renderRequests() {
   const query = $("searchInput").value.trim().toLowerCase();
   const filter = $("statusFilter").value;
 
-  // ID diambil dari key asli Firebase dan tidak boleh tertimpa data.
+  // Selalu gunakan key asli dari Firebase.
   const items = Object.entries(requestsData)
     .filter(([, data]) => data && typeof data === "object")
-    .map(([id, data]) => ({ ...data, id }))
+    .map(([id, data]) => ({
+      ...data,
+      id
+    }))
     .filter(item => {
       const status = normalizeStatus(item.status);
 
@@ -948,7 +951,6 @@ async function reviewRequest(id, action) {
 
   if (!id || busyRequests.has(id)) return;
 
-  // Ambil data terkini dari Firebase, bukan hanya data halaman.
   const requestRef = db.ref("invoice_requests").child(id);
 
   busyRequests.add(id);
@@ -957,10 +959,13 @@ async function reviewRequest(id, action) {
   let rejectionNote = "";
 
   try {
+    // Baca data terbaru langsung dari Firebase.
     const freshSnapshot = await requestRef.once("value");
 
     if (!freshSnapshot.exists()) {
-      showToast("Data pengajuan tidak ditemukan di Firebase.");
+      showToast(
+        "Pengajuan tidak ditemukan. Key yang dicari: " + id
+      );
       await loadRequests();
       return;
     }
@@ -969,9 +974,9 @@ async function reviewRequest(id, action) {
 
     if (normalizeStatus(freshItem.status) !== "Pending") {
       showToast(
-        "Status terbaru di Firebase: " +
+        "Invoice sudah berubah status menjadi " +
         String(freshItem.status ?? "(kosong)") +
-        ". Muat ulang daftar."
+        ". Daftar akan diperbarui."
       );
       await loadRequests();
       return;
@@ -1003,53 +1008,67 @@ async function reviewRequest(id, action) {
       return;
     }
 
-    let abortReason = "";
+    /*
+      Perubahan dilakukan dengan update(), bukan transaction().
+      Ini menghindari callback transaction yang menerima nilai null.
+    */
 
-    const result = await requestRef.transaction(current => {
-      if (!current) {
-        abortReason = "Data pengajuan tidak ditemukan pada key " + id;
-        return;
-      }
+    // Baca ulang sebelum mengubah status.
+    const latestSnapshot = await requestRef.once("value");
 
-      if (normalizeStatus(current.status) !== "Pending") {
-        abortReason = "Status terbaru sudah berubah menjadi " +
-          String(current.status ?? "(kosong)");
-        return;
-      }
-
-      // Pertahankan semua field lama dan ubah field yang diperlukan.
-      current.status = action === "approve" ? "Approved" : "Rejected";
-      current.reviewedAt = Date.now();
-      current.reviewedBy = currentAdmin.uid;
-
-      if (action === "reject") {
-        current.rejectionNote = rejectionNote;
-      } else {
-        delete current.rejectionNote;
-      }
-
-      return current;
-    }, undefined, false);
-
-    if (!result.committed) {
-      console.warn("Invoice transaction was not committed:", {
-        id,
-        abortReason,
-        latestData: result.snapshot ? result.snapshot.val() : null
-      });
-
-      showToast(
-        abortReason ||
-        "Perubahan dibatalkan. Periksa status terbaru dan Firebase Rules."
-      );
-
+    if (!latestSnapshot.exists()) {
+      showToast("Pengajuan sudah tidak ditemukan di Firebase.");
       await loadRequests();
       return;
     }
 
+    const latestItem = latestSnapshot.val();
+
+    if (normalizeStatus(latestItem.status) !== "Pending") {
+      showToast(
+        "Status invoice sudah berubah menjadi " +
+        String(latestItem.status ?? "(kosong)") +
+        ". Silakan refresh."
+      );
+      await loadRequests();
+      return;
+    }
+
+    const targetStatus = action === "approve"
+      ? "Approved"
+      : "Rejected";
+
+    const updates = {
+      status: targetStatus,
+      reviewedAt: Date.now(),
+      reviewedBy: currentAdmin.uid
+    };
+
+    if (action === "reject") {
+      updates.rejectionNote = rejectionNote;
+    } else {
+      // Nilai null menghapus field rejectionNote di Firebase.
+      updates.rejectionNote = null;
+    }
+
+    await requestRef.update(updates);
+
+    // Verifikasi bahwa perubahan benar-benar tersimpan.
+    const verifySnapshot = await requestRef.once("value");
+    const verifiedItem = verifySnapshot.val();
+
+    if (
+      !verifiedItem ||
+      normalizeStatus(verifiedItem.status) !== targetStatus
+    ) {
+      throw new Error(
+        "Status invoice belum berhasil diverifikasi. Refresh halaman."
+      );
+    }
+
     console.log("Invoice successfully updated:", {
       id,
-      status: result.snapshot.val()?.status
+      status: verifiedItem.status
     });
 
     showToast(
@@ -1058,7 +1077,6 @@ async function reviewRequest(id, action) {
         : "Invoice berhasil ditolak."
     );
 
-    // Baca ulang data dari server setelah transaksi berhasil.
     await loadRequests();
 
   } catch (error) {
@@ -1070,11 +1088,12 @@ async function reviewRequest(id, action) {
       error
     });
 
-    if (error.code === "PERMISSION_DENIED" ||
-        String(error.message).toLowerCase().includes("permission_denied")) {
+    if (
+      error.code === "PERMISSION_DENIED" ||
+      String(error.message).toLowerCase().includes("permission_denied")
+    ) {
       showToast(
-        "Firebase menolak perubahan (PERMISSION_DENIED). " +
-        "Periksa Rules invoice_requests dan akses admin."
+        "Firebase menolak perubahan. Periksa Firebase Rules dan akses admin."
       );
     } else {
       showToast(
@@ -1112,7 +1131,13 @@ $("requestList").addEventListener("click", event => {
 
   if (action === "approve" || action === "reject") {
     const id = button.dataset.id;
-    if (id) reviewRequest(id, action);
+
+    if (!id) {
+      showToast("Key pengajuan tidak ditemukan pada tombol.");
+      return;
+    }
+
+    reviewRequest(id, action);
   }
 });
 
