@@ -1745,8 +1745,11 @@ async function submitInvoice() {
     /* Listener invoice_requests akan memperbarui riwayat secara otomatis. */
 
   } catch (error) {
-    console.error("Pengajuan invoice gagal:", error);
-    showInvoiceError("Pengajuan gagal. Silakan coba lagi.");
+  console.error("Pengajuan invoice gagal:", error);
+
+  showInvoiceError(
+    "Pengajuan gagal: " + (error.message || error.code || "Kesalahan tidak diketahui")
+  );
   } finally {
     submittingInvoice = false;
     button.disabled = false;
