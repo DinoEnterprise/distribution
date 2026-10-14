@@ -56,8 +56,6 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* HEADER */
-
 header {
   height: 64px;
   padding: 0 18px;
@@ -88,8 +86,6 @@ header {
   font-size: 12px;
   font-weight: 600;
 }
-
-/* PROFILE MENU */
 
 .profile-menu {
   position: fixed;
@@ -130,15 +126,11 @@ header {
   color: #ef4444;
 }
 
-/* MAIN */
-
 .container {
   width: calc(100% - 28px);
   max-width: 760px;
   margin: 0 auto;
 }
-
-/* PAGE TITLE */
 
 .page-heading {
   margin-top: 22px;
@@ -164,16 +156,12 @@ header {
   line-height: 1.5;
 }
 
-/* SECTION */
-
 .section-title {
   font-size: 13px;
   font-weight: 600;
   color: #777b84;
   margin: 24px 3px 10px;
 }
-
-/* OVERVIEW */
 
 .overview-grid {
   display: grid;
@@ -189,10 +177,6 @@ header {
   min-width: 0;
   animation: pageIn .45s ease both;
 }
-
-.stat-card:nth-child(1) { animation-delay: .08s; }
-.stat-card:nth-child(2) { animation-delay: .16s; }
-.stat-card:nth-child(3) { animation-delay: .24s; }
 
 .stat-icon {
   width: 31px;
@@ -217,8 +201,6 @@ header {
   margin-top: 3px;
   line-height: 1.2;
 }
-
-/* FILTER */
 
 .toolbar {
   display: flex;
@@ -262,19 +244,7 @@ header {
   font-weight: 600;
 }
 
-.primary {
-  background: #111;
-  color: #fff;
-  border-color: #111;
-}
-
-.stroked {
-  background: transparent;
-  color: #111;
-  border: 1px solid #111;
-}
-
-.approve {
+.primary, .approve {
   background: #111;
   color: #fff;
   border-color: #111;
@@ -291,8 +261,6 @@ header {
   color: #25262b;
   border-color: #e8e8ed;
 }
-
-/* INVOICE PANEL */
 
 .panel {
   background: #fff;
@@ -448,8 +416,6 @@ header {
   font-size: 12px;
 }
 
-/* BOTTOM NAV */
-
 .bottom-nav {
   height: 72px;
   background: #fff;
@@ -490,8 +456,6 @@ header {
   font-weight: 600;
 }
 
-/* LOADING & TOAST */
-
 .loading {
   position: fixed;
   inset: 0;
@@ -529,105 +493,52 @@ header {
   font-size: 12px;
   z-index: 3000;
   box-shadow: 0 5px 20px rgba(0,0,0,.1);
+  overflow-wrap: anywhere;
 }
 
 .hidden {
   display: none !important;
 }
 
-/* ANIMATION */
-
 @keyframes pageIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes menuIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px) scale(.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(-5px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* MOBILE */
-
 @media(max-width:600px) {
-  .container {
-    width: calc(100% - 28px);
-  }
-
-  .overview-grid {
-    gap: 8px;
-  }
-
-  .stat-card {
-    padding: 12px 10px;
-  }
-
-  .stat-value {
-    font-size: 19px;
-  }
+  .container { width: calc(100% - 28px); }
+  .stat-card { padding: 12px 10px; }
+  .stat-value { font-size: 19px; }
 }
 
 @media(max-width:400px) {
-  .filter-wrap {
-    width: 100%;
-  }
-
-  .search-wrap {
-    flex-basis: 100%;
-  }
-
-  .stat-card {
-    padding: 10px 8px;
-  }
-
-  .stat-value {
-    font-size: 18px;
-  }
+  .filter-wrap { width: 100%; }
+  .search-wrap { flex-basis: 100%; }
+  .stat-card { padding: 10px 8px; }
+  .stat-value { font-size: 18px; }
 }
 
-/* DESKTOP */
-
 @media(min-width:700px) {
-  .container {
-    width: 100%;
-  }
-
+  .container { width: 100%; }
   .request {
     display: grid;
     grid-template-columns: minmax(0,1fr) auto;
     gap: 18px;
   }
-
-  .request-main {
-    min-width: 0;
-  }
-
-  .request-side {
-    min-width: 190px;
-  }
-
-  .request-side .actions {
-    justify-content: flex-end;
-  }
+  .request-main { min-width: 0; }
+  .request-side { min-width: 190px; }
+  .request-side .actions { justify-content: flex-end; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <header>
   <img src="../assets/dynotic-distribution.png"
        class="header-logo"
@@ -638,66 +549,50 @@ header {
   </button>
 </header>
 
-<!-- PROFILE MENU -->
 <div id="profileMenu" class="profile-menu">
   <button onclick="goProfile()">
-    <i class="fa-regular fa-user"></i>
-    &nbsp; Profile
+    <i class="fa-regular fa-user"></i>&nbsp; Profile
   </button>
-
   <button class="logout" onclick="logout()">
-    <i class="fa-solid fa-right-from-bracket"></i>
-    &nbsp; Logout
+    <i class="fa-solid fa-right-from-bracket"></i>&nbsp; Logout
   </button>
 </div>
 
 <main class="container">
 
-  <!-- PAGE HEADING -->
   <section class="page-heading">
     <div class="page-small">Dynotic Admin Panel</div>
     <h1 class="page-title">Invoice Requests</h1>
-    <p class="page-desc">
-      Review dan kelola pengajuan invoice member Dynotic.
-    </p>
+    <p class="page-desc">Review dan kelola pengajuan invoice member Dynotic.</p>
   </section>
 
-  <!-- OVERVIEW -->
   <div class="section-title">Invoice Overview</div>
 
   <section class="overview-grid">
     <div class="stat-card">
-      <div class="stat-icon">
-        <i class="fa-regular fa-clock"></i>
-      </div>
+      <div class="stat-icon"><i class="fa-regular fa-clock"></i></div>
       <div class="stat-label">Pending</div>
       <div class="stat-value" id="pendingCount">—</div>
     </div>
 
     <div class="stat-card">
-      <div class="stat-icon">
-        <i class="fa-solid fa-check"></i>
-      </div>
+      <div class="stat-icon"><i class="fa-solid fa-check"></i></div>
       <div class="stat-label">Approved</div>
       <div class="stat-value" id="approvedCount">—</div>
     </div>
 
     <div class="stat-card">
-      <div class="stat-icon">
-        <i class="fa-solid fa-xmark"></i>
-      </div>
+      <div class="stat-icon"><i class="fa-solid fa-xmark"></i></div>
       <div class="stat-label">Rejected</div>
       <div class="stat-value" id="rejectedCount">—</div>
     </div>
   </section>
 
-  <!-- FILTER -->
   <div class="section-title">Manage Invoices</div>
 
   <section class="toolbar">
     <div class="search-wrap">
-      <input id="searchInput"
-             type="search"
+      <input id="searchInput" type="search"
              placeholder="Cari email atau UID artis..."
              autocomplete="off">
     </div>
@@ -716,7 +611,6 @@ header {
     </button>
   </section>
 
-  <!-- INVOICE LIST -->
   <section class="panel">
     <div class="panel-heading">
       <span><i class="fa-solid fa-file-invoice"></i> Daftar Pengajuan</span>
@@ -724,10 +618,7 @@ header {
     </div>
 
     <div id="requestList">
-      <div class="empty">
-        <i class="fa-solid fa-circle-notch fa-spin"></i>
-        <p style="margin-top:8px">Memverifikasi akses admin...</p>
-      </div>
+      <div class="empty">Memverifikasi akses admin...</div>
     </div>
   </section>
 
@@ -737,28 +628,20 @@ header {
     Transfer uang dan pemotongan saldo tidak dilakukan otomatis.
     Pastikan pembayaran telah diverifikasi sebelum menyetujui pengajuan.
   </div>
-
 </main>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <div class="nav-item" onclick="goHome()">
-    <i class="fa-solid fa-house"></i>
-    Home
+    <i class="fa-solid fa-house"></i>Home
   </div>
-
   <div class="nav-item active" onclick="goManage()">
-    <i class="fa-solid fa-grip"></i>
-    Manage
+    <i class="fa-solid fa-grip"></i>Manage
   </div>
-
   <div class="nav-item" onclick="goProfile()">
-    <i class="fa-regular fa-user"></i>
-    Profile
+    <i class="fa-regular fa-user"></i>Profile
   </div>
 </nav>
 
-<!-- LOADING -->
 <div id="loading" class="loading">
   <div class="loader-box">Loading...</div>
 </div>
@@ -766,7 +649,7 @@ header {
 <div id="toast" class="toast hidden"></div>
 
 <script>
-/* ================= FIREBASE ================= */
+/* FIREBASE */
 
 if (!firebase.apps.length) {
   firebase.initializeApp({
@@ -782,8 +665,7 @@ const db = firebase.database();
 let currentAdmin = null;
 let requestsData = {};
 let toastTimer = null;
-
-/* ================= HELPERS ================= */
+let busyRequests = new Set();
 
 const $ = id => document.getElementById(id);
 
@@ -809,7 +691,6 @@ function formatDate(value) {
   if (!value) return "-";
 
   const date = new Date(Number(value));
-
   if (Number.isNaN(date.getTime())) return "-";
 
   return date.toLocaleString("id-ID", {
@@ -827,18 +708,23 @@ function showToast(message) {
   toast.classList.remove("hidden");
 
   clearTimeout(toastTimer);
-
-  toastTimer = setTimeout(() => {
-    toast.classList.add("hidden");
-  }, 3200);
+  toastTimer = setTimeout(() => toast.classList.add("hidden"), 4500);
 }
 
 function normalizeStatus(status) {
-  const value = String(status || "Pending").toLowerCase();
+  const value = String(status || "Pending").trim().toLowerCase();
 
-  if (value === "pending" || value === "process") return "Pending";
-  if (value === "approved" || value === "approve") return "Approved";
-  if (value === "rejected" || value === "reject") return "Rejected";
+  if (["pending", "process", "processing"].includes(value)) {
+    return "Pending";
+  }
+
+  if (["approved", "approve"].includes(value)) {
+    return "Approved";
+  }
+
+  if (["rejected", "reject"].includes(value)) {
+    return "Rejected";
+  }
 
   return String(status || "Pending");
 }
@@ -850,7 +736,7 @@ function statusClass(status) {
   return "status-other";
 }
 
-/* ================= ADMIN PROTECTION ================= */
+/* ADMIN AUTHORIZATION */
 
 auth.onAuthStateChanged(async user => {
   if (!user) {
@@ -859,8 +745,6 @@ auth.onAuthStateChanged(async user => {
   }
 
   try {
-    // Mengikuti struktur akses halaman Detail User:
-    // admins/{UID admin yang sedang login}
     const adminSnap = await db.ref("admins")
       .child(user.uid)
       .once("value");
@@ -880,13 +764,13 @@ auth.onAuthStateChanged(async user => {
 
     $("requestList").innerHTML = `
       <div class="empty">
-        Gagal memverifikasi akses admin.
-        Periksa Firebase Rules pada path admins.
+        Gagal memverifikasi akses admin.<br>
+        ${escapeHTML(error.message)}
       </div>`;
   }
 });
 
-/* ================= OVERVIEW ================= */
+/* STATISTICS */
 
 function updateStats() {
   const items = Object.values(requestsData);
@@ -904,7 +788,7 @@ function updateStats() {
   ).length;
 }
 
-/* ================= LOAD INVOICES ================= */
+/* LOAD REQUESTS */
 
 async function loadRequests() {
   if (!currentAdmin) return;
@@ -914,7 +798,6 @@ async function loadRequests() {
 
   try {
     const snapshot = await db.ref("invoice_requests").once("value");
-
     requestsData = snapshot.val() || {};
 
     updateStats();
@@ -927,17 +810,15 @@ async function loadRequests() {
       <div class="empty">
         <i class="fa-solid fa-triangle-exclamation"></i>
         <p style="margin-top:8px">Gagal memuat pengajuan invoice.</p>
-        <p style="margin-top:5px">Periksa Firebase Rules dan izin admin.</p>
+        <p style="margin-top:5px">${escapeHTML(error.message)}</p>
       </div>`;
-
-    showToast("Gagal memuat invoice: " + error.message);
 
   } finally {
     refreshBtn.disabled = false;
   }
 }
 
-/* ================= RENDER ================= */
+/* RENDER REQUESTS */
 
 function renderRequests() {
   updateStats();
@@ -945,8 +826,10 @@ function renderRequests() {
   const query = $("searchInput").value.trim().toLowerCase();
   const filter = $("statusFilter").value;
 
+  // ID diambil dari key asli Firebase dan tidak boleh tertimpa data.
   const items = Object.entries(requestsData)
-    .map(([id, data]) => ({ id, ...data }))
+    .filter(([, data]) => data && typeof data === "object")
+    .map(([id, data]) => ({ ...data, id }))
     .filter(item => {
       const status = normalizeStatus(item.status);
 
@@ -982,6 +865,7 @@ function renderRequests() {
     const email = item.email || "-";
     const amount = rupiah(item.amount);
     const date = formatDate(item.createdAt);
+    const isBusy = busyRequests.has(item.id);
 
     const rejection = item.rejectionNote
       ? `<div class="rejection-note">
@@ -1005,11 +889,11 @@ function renderRequests() {
 
     const actionButtons = status === "Pending"
       ? `<button class="btn approve" data-action="approve"
-           data-id="${escapeHTML(item.id)}">
-           <i class="fa-solid fa-check"></i> Approve
+           data-id="${escapeHTML(item.id)}" ${isBusy ? "disabled" : ""}>
+           <i class="fa-solid fa-check"></i> ${isBusy ? "Memproses..." : "Approve"}
          </button>
          <button class="btn reject" data-action="reject"
-           data-id="${escapeHTML(item.id)}">
+           data-id="${escapeHTML(item.id)}" ${isBusy ? "disabled" : ""}>
            <i class="fa-solid fa-xmark"></i> Reject
          </button>`
       : "";
@@ -1022,7 +906,6 @@ function renderRequests() {
               <div class="request-name">${escapeHTML(artist)}</div>
               <div class="request-email">${escapeHTML(email)}</div>
             </div>
-
             <span class="status ${statusClass(status)}">
               ${escapeHTML(status)}
             </span>
@@ -1035,7 +918,6 @@ function renderRequests() {
               <div class="info-label">UID Artis</div>
               <div class="info-value">${escapeHTML(uid || "-")}</div>
             </div>
-
             <div>
               <div class="info-label">Tanggal Pengajuan</div>
               <div class="info-value">${escapeHTML(date)}</div>
@@ -1056,85 +938,119 @@ function renderRequests() {
   }).join("");
 }
 
-/* ================= APPROVE / REJECT ================= */
+/* APPROVE / REJECT */
 
 async function reviewRequest(id, action) {
   if (!currentAdmin) {
-    showToast("Sesi admin tidak ditemukan.");
+    showToast("Sesi admin tidak ditemukan. Silakan login ulang.");
     return;
   }
 
-  const item = requestsData[id];
+  if (!id || busyRequests.has(id)) return;
 
-  if (!item) {
-    showToast("Pengajuan tidak ditemukan.");
-    return;
-  }
+  // Ambil data terkini dari Firebase, bukan hanya data halaman.
+  const requestRef = db.ref("invoice_requests").child(id);
 
-  if (normalizeStatus(item.status) !== "Pending") {
-    showToast("Pengajuan ini sudah diproses.");
-    await loadRequests();
-    return;
-  }
+  busyRequests.add(id);
+  renderRequests();
 
   let rejectionNote = "";
 
-  if (action === "approve") {
-    const confirmed = confirm(
-      "Setujui invoice sebesar " + rupiah(item.amount) +
-      "?\n\nPastikan pembayaran sudah diverifikasi."
-    );
+  try {
+    const freshSnapshot = await requestRef.once("value");
 
-    if (!confirmed) return;
-
-  } else if (action === "reject") {
-    const answer = prompt("Masukkan alasan penolakan invoice:");
-
-    if (answer === null) return;
-
-    rejectionNote = answer.trim();
-
-    if (!rejectionNote) {
-      showToast("Alasan penolakan wajib diisi.");
+    if (!freshSnapshot.exists()) {
+      showToast("Data pengajuan tidak ditemukan di Firebase.");
+      await loadRequests();
       return;
     }
 
-    if (!confirm("Yakin ingin menolak pengajuan ini?")) return;
+    const freshItem = freshSnapshot.val();
 
-  } else {
-    return;
-  }
+    if (normalizeStatus(freshItem.status) !== "Pending") {
+      showToast(
+        "Status terbaru di Firebase: " +
+        String(freshItem.status ?? "(kosong)") +
+        ". Muat ulang daftar."
+      );
+      await loadRequests();
+      return;
+    }
 
-  try {
-    const requestRef = db.ref("invoice_requests").child(id);
+    if (action === "approve") {
+      const confirmed = confirm(
+        "Setujui invoice sebesar " + rupiah(freshItem.amount) +
+        "?\n\nPastikan pembayaran sudah diverifikasi."
+      );
 
-    // Transaksi mencegah dua admin menyelesaikan
-    // pengajuan Pending yang sama secara bersamaan.
-    const result = await requestRef.transaction(current => {
-      if (!current ||
-          normalizeStatus(current.status) !== "Pending") {
+      if (!confirmed) return;
+
+    } else if (action === "reject") {
+      const answer = prompt("Masukkan alasan penolakan invoice:");
+
+      if (answer === null) return;
+
+      rejectionNote = answer.trim();
+
+      if (!rejectionNote) {
+        showToast("Alasan penolakan wajib diisi.");
         return;
       }
 
-      current.status = action === "approve"
-        ? "Approved"
-        : "Rejected";
+      if (!confirm("Yakin ingin menolak pengajuan ini?")) return;
 
-      current.reviewedAt = firebase.database.ServerValue.TIMESTAMP;
+    } else {
+      return;
+    }
+
+    let abortReason = "";
+
+    const result = await requestRef.transaction(current => {
+      if (!current) {
+        abortReason = "Data pengajuan tidak ditemukan pada key " + id;
+        return;
+      }
+
+      if (normalizeStatus(current.status) !== "Pending") {
+        abortReason = "Status terbaru sudah berubah menjadi " +
+          String(current.status ?? "(kosong)");
+        return;
+      }
+
+      // Pertahankan semua field lama dan ubah field yang diperlukan.
+      current.status = action === "approve" ? "Approved" : "Rejected";
+      current.reviewedAt = Date.now();
       current.reviewedBy = currentAdmin.uid;
 
       if (action === "reject") {
         current.rejectionNote = rejectionNote;
+      } else {
+        delete current.rejectionNote;
       }
 
       return current;
-    });
+    }, undefined, false);
 
     if (!result.committed) {
-      showToast("Pengajuan sudah diproses atau tidak tersedia.");
+      console.warn("Invoice transaction was not committed:", {
+        id,
+        abortReason,
+        latestData: result.snapshot ? result.snapshot.val() : null
+      });
+
+      showToast(
+        abortReason ||
+        "Perubahan dibatalkan. Periksa status terbaru dan Firebase Rules."
+      );
+
       await loadRequests();
       return;
     }
+
+    console.log("Invoice successfully updated:", {
+      id,
+      status: result.snapshot.val()?.status
+    });
 
     showToast(
       action === "approve"
@@ -1142,19 +1058,42 @@ async function reviewRequest(id, action) {
         : "Invoice berhasil ditolak."
     );
 
+    // Baca ulang data dari server setelah transaksi berhasil.
     await loadRequests();
 
   } catch (error) {
-    console.error("Review invoice error:", error);
-    showToast("Gagal memperbarui status: " + error.message);
+    console.error("Review invoice error:", {
+      id,
+      action,
+      code: error.code,
+      message: error.message,
+      error
+    });
+
+    if (error.code === "PERMISSION_DENIED" ||
+        String(error.message).toLowerCase().includes("permission_denied")) {
+      showToast(
+        "Firebase menolak perubahan (PERMISSION_DENIED). " +
+        "Periksa Rules invoice_requests dan akses admin."
+      );
+    } else {
+      showToast(
+        "Gagal memperbarui invoice: " +
+        (error.message || "Kesalahan tidak diketahui")
+      );
+    }
+
+  } finally {
+    busyRequests.delete(id);
+    await loadRequests();
   }
 }
 
-/* ================= CLICK ACTIONS ================= */
+/* BUTTON EVENTS */
 
 $("requestList").addEventListener("click", event => {
   const button = event.target.closest("button[data-action]");
-  if (!button) return;
+  if (!button || button.disabled) return;
 
   const action = button.dataset.action;
 
@@ -1166,11 +1105,8 @@ $("requestList").addEventListener("click", event => {
       return;
     }
 
-    // UID di URL adalah UID ARTIS.
-    // UID ADMIN untuk hak akses tetap currentAdmin.uid.
     location.href =
       "../admin/detail-user.html?uid=" + encodeURIComponent(uid);
-
     return;
   }
 
@@ -1180,13 +1116,13 @@ $("requestList").addEventListener("click", event => {
   }
 });
 
-/* ================= FILTER ================= */
+/* FILTERS */
 
 $("searchInput").addEventListener("input", renderRequests);
 $("statusFilter").addEventListener("change", renderRequests);
 $("refreshBtn").addEventListener("click", loadRequests);
 
-/* ================= PROFILE MENU ================= */
+/* PROFILE MENU */
 
 function toggleProfile() {
   $("profileMenu").classList.toggle("show");
@@ -1199,14 +1135,12 @@ function goProfile() {
 function logout() {
   if (!confirm("Logout dari admin panel?")) return;
 
-  auth.signOut().then(() => {
-    location.href = "../admin";
-  }).catch(error => {
-    showToast("Logout gagal: " + error.message);
-  });
+  auth.signOut()
+    .then(() => location.href = "../admin")
+    .catch(error => showToast("Logout gagal: " + error.message));
 }
 
-/* ================= NAVIGATION ================= */
+/* NAVIGATION */
 
 function goHome() {
   location.href = "../admin-home";
