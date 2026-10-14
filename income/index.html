@@ -15,6 +15,46 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <style>
+ 
+/* PAGINATION */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 13px 18px;
+  border-top: 1px solid #f0f0f4;
+}
+
+.pagination-info {
+  font-size: 10px;
+  color: #777b84;
+}
+
+.pagination-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.pagination-actions button {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 9px;
+  border: 1px solid #e8e8ed;
+  border-radius: 9px;
+  background: #fff;
+  color: #17181c;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.pagination-actions button:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+ 
 *{
   box-sizing:border-box;
   margin:0;
@@ -844,6 +884,7 @@ header img{
         Memuat laporan...
       </div>
     </div>
+    <div class="pagination" id="reportPagination"></div>
   </section>
 
   <!-- RIWAYAT PENGAJUAN INVOICE -->
@@ -867,6 +908,7 @@ header img{
         Memuat pengajuan...
       </div>
     </div>
+    <div class="pagination" id="invoicePagination"></div>
   </section>
 
   <div class="section-heading">
@@ -1217,33 +1259,11 @@ function statusClass(status) {
   return "status-pending";
 }
 
-function formatDate(value) {
-  if (!value) return "";
-
-  let date;
-
-  if (typeof value === "number" || /^\d+$/.test(String(value))) {
-    date = new Date(Number(value));
-  } else {
-    date = new Date(value);
-  }
-
-  if (Number.isNaN(date.getTime())) return "";
-
-  return date.toLocaleDateString("id-ID", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric"
-  });
-}
-
-function getCreatedAt(item) {
-  return item.createdAt || item.timestamp || item.date || item.created_at || 0;
-}
 
 /* ROYALTY REPORTS */
 
 function renderReports(snapshot) {
+  lastRoyaltySnapshot = snapshot;
   const allReports = snapshot.val() || {};
 
   const reports = Object.entries(allReports)
@@ -1284,7 +1304,17 @@ function renderReports(snapshot) {
     return;
   }
 
-  list.innerHTML = reports.map(report => {
+  currentPages.reports = Math.min(
+  currentPages.reports,
+  Math.max(1, Math.ceil(reports.length / PAGE_SIZE))
+);
+
+const startIndex = (currentPages.reports - 1) * PAGE_SIZE;
+const visibleReports = reports.slice(startIndex, startIndex + PAGE_SIZE);
+
+renderPagination("reportPagination", "reports", reports.length);
+
+list.innerHTML = visibleReports.map(report => {
     const type = String(report.type || report.reportType || "").toLowerCase();
     const status = normalizeStatus(report.status);
 
@@ -1396,6 +1426,8 @@ function loadIncome() {
 /* INVOICE HISTORY */
 
 function renderInvoiceHistory(snapshot) {
+  lastInvoiceSnapshot = snapshot;
+
   const allRequests = snapshot.val() || {};
 
   const requests = Object.entries(allRequests)
@@ -1404,13 +1436,21 @@ function renderInvoiceHistory(snapshot) {
         String(request.uid || "") === currentUser.uid;
     })
     .map(([key, request]) => ({ key, ...request }))
-    .sort((a, b) =>
-      Number(getCreatedAt(b)) - Number(getCreatedAt(a))
-    );
+      .sort((a, b) => getCreatedAt(b) - getCreatedAt(a));
 
   document.getElementById("invoiceCount").textContent =
     requests.length + " pengajuan";
 
+currentPages.invoices = Math.min(
+  currentPages.invoices,
+  Math.max(1, Math.ceil(requests.length / PAGE_SIZE))
+);
+
+const startIndex = (currentPages.invoices - 1) * PAGE_SIZE;
+const visibleRequests = requests.slice(startIndex, startIndex + PAGE_SIZE);
+
+renderPagination("invoicePagination", "invoices", requests.length);
+  
   const list = document.getElementById("invoiceList");
 
   if (!requests.length) {
@@ -1429,7 +1469,7 @@ function renderInvoiceHistory(snapshot) {
     return;
   }
 
-  list.innerHTML = requests.map(request => {
+  list.innerHTML = visibleRequests.map(request => {
     const status = normalizeStatus(request.status);
     const createdDate = formatDate(getCreatedAt(request)) || "Tanggal tidak tersedia";
     const amount = rupiah(request.amount);
@@ -1496,6 +1536,98 @@ function renderInvoiceHistory(snapshot) {
       if (note) details.push("Catatan: " + note);
 
       showToast(details.join(" • "));
+    });
+  });
+}
+
+function getCreatedAt(item) {
+  const value =
+    item.createdAt ??
+    item.timestamp ??
+    item.date ??
+    item.created_at ??
+    0;
+
+  if (typeof value === "number" || /^\d+$/.test(String(value))) {
+    const number = Number(value);
+    return number > 0 && number < 1e12 ? number * 1000 : number;
+  }
+
+  const parsed = Date.parse(value);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+function formatDate(value) {
+  if (!value) return "";
+
+  const timestamp = getCreatedAt({ createdAt: value });
+  if (!timestamp) return "";
+
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return "";
+
+  return date.toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
+}
+
+const PAGE_SIZE = 5;
+
+const currentPages = {
+  reports: 1,
+  invoices: 1
+};
+
+let lastRoyaltySnapshot = null;
+let lastInvoiceSnapshot = null;
+
+function renderPagination(containerId, type, total) {
+  const container = document.getElementById(containerId);
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  if (totalPages <= 1) {
+    container.innerHTML = "";
+    return;
+  }
+
+  currentPages[type] = Math.min(
+    currentPages[type],
+    totalPages
+  );
+
+  const page = currentPages[type];
+  const start = (page - 1) * PAGE_SIZE + 1;
+  const end = Math.min(page * PAGE_SIZE, total);
+
+  container.innerHTML = `
+    <span class="pagination-info">${start}–${end} dari ${total}</span>
+
+    <div class="pagination-actions">
+      <button type="button" data-page-dir="-1"
+        ${page === 1 ? "disabled" : ""}>
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+
+      <span class="pagination-info">${page}/${totalPages}</span>
+
+      <button type="button" data-page-dir="1"
+        ${page === totalPages ? "disabled" : ""}>
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+  `;
+
+  container.querySelectorAll("[data-page-dir]").forEach(button => {
+    button.addEventListener("click", () => {
+      currentPages[type] += Number(button.dataset.pageDir);
+
+      if (type === "reports") {
+        renderReports(lastRoyaltySnapshot);
+      } else {
+        renderInvoiceHistory(lastInvoiceSnapshot);
+      }
     });
   });
 }
