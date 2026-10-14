@@ -5,434 +5,165 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Song Catalog | Dynotic Distribution</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/favicon-android.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-iphone.png">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:"Outfit",sans-serif;
-}
-
-/* BODY */
-html, body{
-  min-height:100vh;
-  width:100%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  color:#111;
-  background:#f5f7fb;
-  overflow-x:hidden;
-  padding-top:70px;
-}
-.table-wrapper{
-  border:1px solid #e5e7eb;
-}
-
-/* ANIMATION */
-@keyframes fadeSlideUp{
-  0%{opacity:0; transform:translateY(30px);}
-  100%{opacity:1; transform:translateY(0);}
-}
-
-th:first-child{
-  color:#111;
-  letter-spacing:0.5px;
-}
-.song-id{
-  cursor:pointer;
-  font-weight:700;
-  font-size:12px;
-  color:#111;
-  background:#f3f4f6;
-  padding:6px 12px;
-  border-radius:999px;
-  display:inline-block;
-  letter-spacing:0.5px;
-  transition:all .25s ease;
-  border:1px solid #e5e7eb;
-}
-
-/* hover row -> Song ID nyala */
-tr{
-  transition:all .2s ease;
-}
-
-tr:hover{
-  transform:translateY(-2px) scale(1.01);
-  box-shadow:0 8px 20px rgba(0,0,0,.06);
-}
-
-/* klik effect */
-.song-id:active{
-  transform:scale(0.95);
-}
-/* MODAL */
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.4);
-  backdrop-filter:blur(6px);
-  z-index:999;
-  align-items:center;
-  justify-content:center;
-  animation:fadeIn .25s ease;
-}
-
-@keyframes fadeIn{
-  from{opacity:0;}
-  to{opacity:1;}
-}
-
-.modal-card{
-  width:90%;
-  max-width:420px;
-  background:#fff;
-  padding:22px;
-  border-radius:20px;
-  box-shadow:0 20px 50px rgba(0,0,0,.15);
-  animation:scaleUp .25s ease;
-}
-
-@keyframes scaleUp{
-  from{transform:scale(.9); opacity:0;}
-  to{transform:scale(1); opacity:1;}
-}
-
-.modal-card h3{
-  font-size:18px;
-  margin-bottom:12px;
-  font-weight:700;
-}
-
-.btn-group{
-  display:flex;
-  gap:10px;
-  margin-top:18px;
-}
-
-.btn-group button{
-  flex:1;
-  padding:12px;
-  border-radius:12px;
-  font-weight:700;
-  border:none;
-  cursor:pointer;
-  transition:.2s;
-}
-
-#submitBtn{
-  background:#111;
-  color:#fff;
-}
-
-#submitBtn:hover{
-  transform:translateY(-1px);
-  box-shadow:0 6px 15px rgba(0,0,0,.2);
-}
-
-.cancel{
-  background:#f3f4f6;
-  color:#111;
-}
-
-.cancel:hover{
-  background:#e5e7eb;
-}
-/* HEADER */
-header{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  background:#fff;
-  border-bottom:1px solid #e5e7eb;
-  padding:12px 5%;
-  z-index:100;
-  
-  display:flex;
-  justify-content:center;   /* tetap center */
-  align-items:center;
-
-  text-align:center;        /* 🔥 ini yang bikin teks ikut tengah */
-  
-  font-size:clamp(1.8rem,4vw,2.5rem);
-  font-weight:700;
-  backdrop-filter:blur(10px);
-  opacity:0;
-}
-.filter-box{
-  display:flex;
-  gap:10px;
-}
-
-.filter-box input,
-.filter-box select{
-  flex:1;
-  width:100%;
-  padding:12px 14px;
-  border-radius:12px;
-  border:1px solid #ddd;
-  background:#fff;
-  color:#111;
-  font-size:1rem;
-  outline:none;
-}
-
-.filter-box select{
-  max-width:250px;
-  cursor:pointer;
-}
-
-.filter-box input:focus,
-.filter-box select:focus{
-  border-color:#111;
-  box-shadow:0 0 0 3px rgba(0,0,0,0.05);
-}
-
-@media (max-width:576px){
-  .filter-box{
-    flex-direction:column;
-  }
-
-  .filter-box select{
-    max-width:none;
-  }
-}
-/* SEARCH */
-.filter-wrapper{
-  width:95%;
-  max-width:1200px;
-  margin:10px auto;
-  opacity:0;
-}
-
-.filter-box input{
-  width:100%;
-  padding:12px 14px;
-  border-radius:12px;
-  border:1px solid #ddd;
-  background:#fff;
-  color:#111;
-  font-size:1rem;
-  outline:none;
-}
-
-.filter-box input:focus{
-  border-color:#111;
-  box-shadow:0 0 0 3px rgba(0,0,0,0.05);
-}
-
-/* TABLE CARD */
-.table-wrapper{
-  width:95%;
-  max-width:1200px;
-  margin-top:15px;
-  display:flex;
-  flex-direction:column;
-  background:#fff;
-  border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.06);
-  padding:10px;
-  opacity:0;
-}
-
-.table-scroll{
-  overflow-x:auto;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:600px;
-}
-
-th, td{
-  padding:14px 10px;
-  border:1px solid #e5e7eb;
-  text-align:center;
-}
-
-th{
-  background:#f9fafb;
-  font-weight:700;
-}
-tr:hover{
-  transform:scale(1.01);
-  box-shadow:0 5px 15px rgba(0,0,0,.05);
-}
-tr:hover td{
-  background:#f3f4f6;
-}
-
-/* NO RESULT */
-.no-result{
-  text-align:center;
-  margin:15px;
-  color:#e11d48;
-  display:none;
-}
-
-/* PAGINATION */
-.pagination{
-  display:flex;
-  justify-content:center;
-  gap:12px;
-  margin:10px 0;
-  flex-wrap:wrap;
-  opacity:0;
-}
-
-.pagination button{
-  cursor:pointer;
-  padding:8px 18px;
-  border-radius:12px;
-  background:#fff;
-  color:#111;
-  font-weight:600;
-  border:1px solid #ddd;
-  transition:0.25s;
-}
-
-.pagination button:hover{
-  background:#111;
-  color:#fff;
-  transform:scale(1.05);
-}
-
-.pagination button:disabled{
-  opacity:0.4;
-  cursor:not-allowed;
-  background:#f3f4f6;
-}
-
-/* MOBILE */
-@media (max-width:992px){
-  th,td{font-size:0.9rem; padding:10px 6px;}
-}
-
-@media (max-width:576px){
-  th,td{font-size:0.8rem; padding:8px 4px;}
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",sans-serif}
+:root{--bg:#f1f2f7;--ink:#17181c;--muted:#858891;--border:#e8e8ed;--soft:#f8f8fa}
+body{background:var(--bg);min-height:100vh;color:var(--ink);padding-top:64px;padding-bottom:28px;-webkit-tap-highlight-color:transparent}
+header{height:64px;padding:0 18px;display:flex;align-items:center;background:#fff;border-bottom:1px solid var(--border);position:fixed;top:0;left:0;width:100%;z-index:100}
+header img{height:32px;width:auto;object-fit:contain}
+.container{width:calc(100% - 28px);max-width:760px;margin:0 auto}
+.card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:18px;margin-top:16px;animation:pageIn .4s ease both}
+.catalog-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.heading-title{font-size:16px;font-weight:700}
+.heading-desc{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}
+.catalog-icon{width:42px;height:42px;border-radius:12px;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toolbar{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.search-wrap{position:relative}
+.search-wrap i{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:13px;color:#999ca4;pointer-events:none}
+.search-wrap input,.publisher-select{width:100%;height:42px;padding:0 13px;border-radius:12px;border:1px solid var(--border);background:var(--soft);color:var(--ink);font-size:13px;outline:none;transition:.15s}
+.search-wrap input{padding-left:38px}
+.search-wrap input:focus,.publisher-select:focus{border-color:#d6d7dd;background:#fff}
+.search-wrap input::placeholder{color:#999ca4}
+.publisher-select{cursor:pointer}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.section-title{font-size:15px;font-weight:700}
+.result-count{font-size:10px;color:var(--muted);white-space:nowrap}
+.song-list{display:flex;flex-direction:column;gap:10px}
+.song-card{border:1px solid var(--border);border-radius:15px;padding:13px;background:#fff;transition:transform .15s,border-color .15s;animation:releaseIn .35s ease both}
+.song-card:active{transform:scale(.985)}
+.song-top{display:flex;align-items:flex-start;gap:11px}
+.song-icon{width:42px;height:42px;border-radius:10px;background:#f1f2f7;color:#34363d;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.song-main{flex:1;min-width:0}
+.song-title{font-size:13px;font-weight:700;line-height:1.4;overflow-wrap:anywhere}
+.song-performer{font-size:11px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+.song-id{display:inline-flex;align-items:center;gap:5px;margin-top:8px;border:1px solid #e5e7eb;background:#f8f8fa;color:#333;border-radius:8px;padding:5px 8px;font-size:10px;font-weight:700;max-width:100%;overflow-wrap:anywhere}
+.song-id i{font-size:9px}
+.song-meta{display:grid;grid-template-columns:1fr 1fr;gap:9px 12px;border-top:1px solid #f0f0f3;margin-top:12px;padding-top:11px}
+.meta-item{min-width:0}
+.meta-label{font-size:10px;color:#999ca4;margin-bottom:3px}
+.meta-value{font-size:11px;font-weight:500;overflow-wrap:anywhere;line-height:1.4}
+.song-actions{display:flex;gap:8px;margin-top:12px}
+.action-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:#f8f8fa;color:#222;text-decoration:none;font-size:11px;font-weight:600;cursor:pointer;flex:1}
+.action-btn.primary{background:#111;color:#fff;border-color:#111}
+.action-btn:active{transform:scale(.98)}
+.empty-state{text-align:center;color:var(--muted);font-size:12px;padding:28px 8px}
+.empty-state i{font-size:24px;margin-bottom:10px;display:block;color:#b4b6bf}
+.pagination{display:flex;justify-content:center;align-items:center;gap:10px;margin:16px auto 2px}
+.pagination button{width:36px;height:32px;border:1px solid #e1e2e7;background:var(--soft);color:#333;border-radius:10px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.pagination button:disabled{opacity:.4;cursor:default}
+.pagination button:not(:disabled):active{transform:scale(.92)}
+.pagination span{font-size:11px;font-weight:600;color:#777b84}
+.modal{display:none;position:fixed;inset:0;background:rgba(15,16,20,.42);backdrop-filter:blur(5px);z-index:2000;align-items:center;justify-content:center;padding:18px}
+.modal.show{display:flex}
+.modal-card{width:100%;max-width:430px;max-height:85vh;overflow-y:auto;background:#fff;border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,.16);animation:modalIn .2s ease}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:17px}
+.modal-title{font-size:17px;font-weight:700}
+.modal-subtitle{font-size:11px;color:var(--muted);margin-top:4px}
+.close-modal{width:32px;height:32px;border:0;border-radius:10px;background:#f3f4f6;color:#333;cursor:pointer;flex-shrink:0}
+.detail-list{display:flex;flex-direction:column;gap:13px}
+.detail-row{min-width:0}
+.detail-label{font-size:10px;color:#999ca4;margin-bottom:4px}
+.detail-value{font-size:13px;font-weight:600;line-height:1.45;overflow-wrap:anywhere}
+.modal-actions{display:flex;gap:9px;margin-top:20px}
+.modal-actions .action-btn{min-height:42px}
+.notice{font-size:10px;color:var(--muted);line-height:1.5;margin-top:12px}
+@keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes releaseIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes modalIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+@media(min-width:600px){.toolbar{display:grid;grid-template-columns:1.4fr 1fr}.song-card{padding:15px}.song-top{gap:13px}.song-icon{width:46px;height:46px}}
+@media(max-width:360px){.card{padding:14px}.song-meta{grid-template-columns:1fr}.catalog-heading{align-items:flex-start}}
 </style>
 </head>
 
 <body>
-
-<header id="header">
-  <div>
-    Song Catalog
-    <div style="font-size:12px;color:#666;font-weight:500;margin-top:2px">
-      Klik <span style="background:#111;color:#fff;padding:2px 8px;border-radius:6px;">Song ID</span> untuk ajukan permohonan
-    </div>
-  </div>
+<header>
+  <img src="../assets/dynotic-distribution.png" alt="Dynotic Distribution">
 </header>
-<div class="filter-wrapper" id="filterWrapper">
-  <div class="filter-box">
-    <input type="text" id="searchInput" placeholder="Search...">
 
-    <select id="publisherFilter">
-      <option value="">All Publishers</option>
-    </select>
-  </div>
-</div>
+<main class="container">
+  <section class="card">
+    <div class="catalog-heading">
+      <div>
+        <div class="heading-title">Song Catalog</div>
+        <div class="heading-desc">Cari katalog lagu dan ajukan permohonan cover dengan mudah.</div>
+      </div>
+      <div class="catalog-icon"><i class="fa-solid fa-music"></i></div>
+    </div>
 
-<div class="table-wrapper" id="tableWrapper">
+    <div class="toolbar">
+      <div class="search-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="search" id="searchInput" placeholder="Cari judul, artis, composer, Song ID..." autocomplete="off">
+      </div>
+      <select id="publisherFilter" class="publisher-select">
+        <option value="">All Publishers</option>
+      </select>
+    </div>
+  </section>
 
-  <div class="table-scroll">
-    <table>
-      <thead>
-        <tr>
-          <th>SONG ID</th>
-          <th>JUDUL LAGU</th>
-          <th>KOMPOSER</th>
-          <th>PUBLISHER</th>
-          <th>PERFORMER</th>
-          <th>LINK</th>          
-        </tr>
-      </thead>
-      <tbody id="transactionList"></tbody>
-    </table>
-  </div>
+  <section class="card">
+    <div class="section-head">
+      <div class="section-title">Daftar Katalog</div>
+      <div class="result-count" id="resultCount">Memuat katalog...</div>
+    </div>
+    <div id="songList" class="song-list">
+      <div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i>Memuat katalog...</div>
+    </div>
+    <div class="pagination" id="pagination" style="display:none">
+      <button id="prevBtn" aria-label="Halaman sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
+      <span id="pageInfo">Page 1/1</span>
+      <button id="nextBtn" aria-label="Halaman berikutnya"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+  </section>
+</main>
 
-  <p class="no-result" id="noResult">tidak ditemukan.</p>
-
-  <div class="pagination" id="pagination">
-    <button id="prevBtn">Previous</button>
-    <button id="nextBtn">Next</button>
-  </div>
-
-</div>
-
-<!-- MODAL -->
-<div id="modal" class="modal">
-
+<div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-card">
-
-    <h3>Detail Lagu</h3>
-
-    <div style="margin-bottom:8px;">
-      <small style="color:#888;">Song ID</small>
-      <div id="m_songId" style="font-weight:700;"></div>
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalTitle">Detail Lagu</div>
+        <div class="modal-subtitle">Informasi katalog yang dipilih</div>
+      </div>
+      <button class="close-modal" onclick="closeModal()" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
     </div>
-
-    <div style="margin-bottom:8px;">
-      <small style="color:#888;">Judul Lagu</small>
-      <div id="m_title" style="font-weight:600;"></div>
+    <div class="detail-list">
+      <div class="detail-row"><div class="detail-label">Song ID</div><div class="detail-value" id="m_songId">-</div></div>
+      <div class="detail-row"><div class="detail-label">Judul Lagu</div><div class="detail-value" id="m_title">-</div></div>
+      <div class="detail-row"><div class="detail-label">Composer</div><div class="detail-value" id="m_composer">-</div></div>
+      <div class="detail-row"><div class="detail-label">Publisher</div><div class="detail-value" id="m_publisher">-</div></div>
+      <div class="detail-row"><div class="detail-label">Performer</div><div class="detail-value" id="m_performer">-</div></div>
     </div>
-
-    <div style="margin-bottom:8px;">
-      <small style="color:#888;">Composer</small>
-      <div id="m_composer" style="font-weight:600;"></div>
+    <div class="modal-actions">
+      <button class="action-btn primary" id="submitBtn" onclick="submitRequest()"><i class="fa-solid fa-paper-plane"></i> Ajukan Cover</button>
+      <button class="action-btn" onclick="closeModal()">Tutup</button>
     </div>
-
-    <div style="margin-bottom:8px;">
-      <small style="color:#888;">Publisher</small>
-      <div id="m_publisher" style="font-weight:600;"></div>
-    </div>
-
-    <div style="margin-bottom:8px;">
-      <small style="color:#888;">Performer</small>
-      <div id="m_performer" style="font-weight:600;"></div>
-    </div>
-
-    <div class="btn-group">
-      <button id="submitBtn" onclick="submitRequest()">
-        Ajukan Cover
-      </button>
-
-      <button class="cancel" onclick="closeModal()">
-        Tutup
-      </button>
-    </div>
-
+    <div class="notice">Pengajuan cover akan dilanjutkan melalui akun Dynotic kamu.</div>
   </div>
 </div>
-  
+
 <script>
 const itemsPerPage = 50;
 let currentPage = 1;
 let transactions = [];
 let filteredTransactions = [];
+let selectedSong = null;
 
-const transactionList = document.getElementById('transactionList');
-const searchInput = document.getElementById('searchInput');
-const publisherFilter = document.getElementById('publisherFilter');
-const noResult = document.getElementById('noResult');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-const header = document.getElementById('header');
-const filterWrapper = document.getElementById('filterWrapper');
-const tableWrapper = document.getElementById('tableWrapper');
-const pagination = document.getElementById('pagination');
+const songList = document.getElementById("songList");
+const searchInput = document.getElementById("searchInput");
+const publisherFilter = document.getElementById("publisherFilter");
+const resultCount = document.getElementById("resultCount");
+const pagination = document.getElementById("pagination");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const pageInfo = document.getElementById("pageInfo");
 
-/* LOAD DATA */
-async function loadData(){
-  try{
-    const sources = [
+const sources = [
   "mahar-pustaka.json",
   "18musik.json",
   "nadaku-musik.json",
@@ -446,162 +177,178 @@ async function loadData(){
   "sony-music.json",
   "istana-publishing.json"
 ];
-    const results = await Promise.all(
-      sources.map(url => fetch(url).then(res => res.json()))
-    );
 
-    // gabung semua data
-    const merged = results.flat();
+function safeText(value, fallback = "-") {
+  if (value === undefined || value === null || String(value).trim() === "") return fallback;
+  return String(value);
+}
 
-    transactions = merged.map(item => ({
-  songId: item["SONG ID"] || item["No"] || "-",
-  title: item["JUDUL LAGU"] || item["Title"] || "-",
-  composer: item["KOMPOSER"] || item["Composer"] || "-",
-  publisher: item["PUBLISHER"] || "-",
-  performer: item["PERFORMER"] || item["Singer"] || "-",
-  youtube: item["LINK"] || item["YOUTUBE LINK REFERENCE"] || "-"
-}));
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  })[char]);
+}
 
-    filteredTransactions = [...transactions];
+function normalizeLink(value) {
+  const raw = safeText(value, "-").trim();
+  if (raw === "-") return "-";
+  try {
+    const url = new URL(raw);
+    if (url.protocol === "https:" || url.protocol === "http:") return url.href;
+  } catch (_) {}
+  return "-";
+}
 
-populatePublisherFilter();
-renderTransactions();
+async function loadData() {
+  songList.innerHTML = '<div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i>Memuat katalog...</div>';
+  try {
+    const results = await Promise.all(sources.map(async url => {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Gagal memuat ${url} (${response.status})`);
+      const data = await response.json();
+      if (!Array.isArray(data)) throw new Error(`Format data ${url} harus berupa array`);
+      return data;
+    }));
 
-  }catch(err){
-    console.error("Gagal load JSON:", err);
+    transactions = results.flat().map(item => ({
+      songId: safeText(item["SONG ID"] || item["No"]),
+      title: safeText(item["JUDUL LAGU"] || item["Title"]),
+      composer: safeText(item["KOMPOSER"] || item["Composer"]),
+      publisher: safeText(item["PUBLISHER"]),
+      performer: safeText(item["PERFORMER"] || item["Singer"]),
+      youtube: normalizeLink(item["LINK"] || item["YOUTUBE LINK REFERENCE"])
+    }));
+
+    populatePublisherFilter();
+    applyFilters();
+  } catch (error) {
+    console.error("Gagal load JSON:", error);
+    resultCount.textContent = "Katalog tidak tersedia";
+    songList.innerHTML = '<div class="empty-state"><i class="fa-solid fa-triangle-exclamation"></i>Gagal memuat katalog. Periksa file JSON dan koneksi, lalu muat ulang halaman.</div>';
+    pagination.style.display = "none";
   }
 }
 
-/* RENDER */
-function renderTransactions(){
-  transactionList.innerHTML = '';
-
-  const start = (currentPage-1)*itemsPerPage;
-  const end = start + itemsPerPage;
-  const pageItems = filteredTransactions.slice(start,end);
-
-  noResult.style.display = pageItems.length===0 ? 'block' : 'none';
-
-  pageItems.forEach((t,i)=>{
-    const tr = document.createElement('tr');
-    
-tr.onclick = () => openModal(t);
-
-    const yt = t.youtube === "-" 
-  ? "-" 
-  : `<a href="${t.youtube}" target="_blank" onclick="event.stopPropagation()" style="color:#2563eb;">Link</a>`;
-
-    tr.innerHTML = `
-<td>
-  <span class="song-id">${t.songId}</span>
-</td>
-  <td>${t.title}</td>
-  <td>${t.composer}</td>
-  <td>${t.publisher}</td>
-  <td>${t.performer}</td>
-  <td>${yt}</td>
-`;
-
-    tr.style.opacity = '0';
-    tr.style.transform = 'translateY(20px)';
-    tr.style.animation = `fadeSlideUp 0.5s ease ${(i*0.03)}s forwards`;
-
-    transactionList.appendChild(tr);
-  });
-
-  prevBtn.disabled = currentPage===1;
-  nextBtn.disabled = currentPage>=Math.ceil(filteredTransactions.length/itemsPerPage);
-}
-
-/* SEARCH */
-function applyFilters(){
-  const q = searchInput.value.toLowerCase().trim();
-  const selectedPublisher = publisherFilter.value;
-
-  filteredTransactions = transactions.filter(t => {
-
-    const matchesSearch =
-      t.title.toLowerCase().includes(q) ||
-      t.performer.toLowerCase().includes(q) ||
-      t.composer.toLowerCase().includes(q) ||
-      t.publisher.toLowerCase().includes(q) ||
-      t.songId.toLowerCase().includes(q);
-
-    const matchesPublisher =
-      !selectedPublisher ||
-      t.publisher === selectedPublisher;
-
-    return matchesSearch && matchesPublisher;
-  });
-
-  currentPage = 1;
-  renderTransactions();
-}
-
-searchInput.addEventListener('input', applyFilters);
-publisherFilter.addEventListener('change', applyFilters);
-
-/* PAGINATION */
-prevBtn.onclick = ()=>{
-  if(currentPage>1){
-    currentPage--;
-    renderTransactions();
-  }
-};
-
-nextBtn.onclick = ()=>{
-  if(currentPage < Math.ceil(filteredTransactions.length/itemsPerPage)){
-    currentPage++;
-    renderTransactions();
-  }
-};
-function openModal(t){
-  document.getElementById("modal").style.display = "flex";
-
-  document.getElementById("m_songId").textContent = t.songId;
-  document.getElementById("m_title").textContent = t.title;
-  document.getElementById("m_composer").textContent = t.composer;
-  document.getElementById("m_publisher").textContent = t.publisher;
-  document.getElementById("m_performer").textContent = t.performer;
-}
-function closeModal(){
-  document.getElementById("modal").style.display = "none";
-}
-function submitRequest(){
-  window.location.href = "https://dynotic.web.id/login";
-}
- function populatePublisherFilter(){
-  const publishers = [...new Set(
-    transactions
-      .map(t => t.publisher)
-      .filter(p => p && p !== "-")
-  )].sort();
-
-  publisherFilter.innerHTML = `
-    <option value="">All Publishers</option>
-  `;
-
+function populatePublisherFilter() {
+  const publishers = [...new Set(transactions.map(t => t.publisher).filter(p => p && p !== "-"))]
+    .sort((a, b) => a.localeCompare(b));
+  publisherFilter.innerHTML = '<option value="">All Publishers</option>';
   publishers.forEach(publisher => {
     const option = document.createElement("option");
     option.value = publisher;
     option.textContent = publisher;
     publisherFilter.appendChild(option);
   });
-} 
-/* PAGE ANIMATION */
-function triggerPageAnimation(){
-  [header, filterWrapper, tableWrapper, pagination].forEach((el,i)=>{
-    el.style.animation = 'none';
-    void el.offsetHeight;
-    el.style.animation = `fadeSlideUp 0.8s ease ${i*0.2}s forwards`;
-  });
 }
 
-window.addEventListener('pageshow', triggerPageAnimation);
+function applyFilters() {
+  const q = searchInput.value.toLowerCase().trim();
+  const selectedPublisher = publisherFilter.value;
+  filteredTransactions = transactions.filter(t => {
+    const matchesSearch = [t.songId, t.title, t.composer, t.publisher, t.performer]
+      .some(value => value.toLowerCase().includes(q));
+    return matchesSearch && (!selectedPublisher || t.publisher === selectedPublisher);
+  });
+  currentPage = 1;
+  renderTransactions();
+}
 
-/* INIT */
+function renderTransactions() {
+  songList.innerHTML = "";
+  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
+  resultCount.textContent = `${filteredTransactions.length.toLocaleString("id-ID")} lagu`;
+  pagination.style.display = filteredTransactions.length ? "flex" : "none";
+
+  if (!filteredTransactions.length) {
+    songList.innerHTML = `<div class="empty-state"><i class="fa-solid fa-magnifying-glass"></i>${transactions.length ? "Tidak ditemukan hasil yang cocok." : "Belum ada katalog."}</div>`;
+    return;
+  }
+
+  const start = (currentPage - 1) * itemsPerPage;
+  const pageItems = filteredTransactions.slice(start, start + itemsPerPage);
+
+  pageItems.forEach((song, index) => {
+    const card = document.createElement("article");
+    card.className = "song-card";
+    card.style.animationDelay = `${Math.min(index * 0.015, 0.3)}s`;
+
+    const link = song.youtube !== "-"
+      ? `<a class="action-btn" href="${escapeHTML(song.youtube)}" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square"></i> Referensi</a>`
+      : "";
+
+    card.innerHTML = `
+      <div class="song-top">
+        <div class="song-icon"><i class="fa-solid fa-music"></i></div>
+        <div class="song-main">
+          <div class="song-title">${escapeHTML(song.title)}</div>
+          <div class="song-performer">${escapeHTML(song.performer)}</div>
+          <div class="song-id"><i class="fa-solid fa-hashtag"></i> ${escapeHTML(song.songId)}</div>
+        </div>
+      </div>
+      <div class="song-meta">
+        <div class="meta-item"><div class="meta-label">Composer</div><div class="meta-value">${escapeHTML(song.composer)}</div></div>
+        <div class="meta-item"><div class="meta-label">Publisher</div><div class="meta-value">${escapeHTML(song.publisher)}</div></div>
+      </div>
+      <div class="song-actions">
+        <button type="button" class="action-btn primary detail-btn"><i class="fa-regular fa-rectangle-list"></i> Detail Lagu</button>
+        ${link}
+      </div>
+    `;
+
+    card.querySelector(".detail-btn").addEventListener("click", () => openModal(song));
+    songList.appendChild(card);
+  });
+
+  prevBtn.disabled = currentPage === 1;
+  nextBtn.disabled = currentPage >= totalPages;
+  pageInfo.textContent = `Page ${currentPage}/${totalPages}`;
+}
+
+function openModal(song) {
+  selectedSong = song;
+  document.getElementById("m_songId").textContent = song.songId;
+  document.getElementById("m_title").textContent = song.title;
+  document.getElementById("m_composer").textContent = song.composer;
+  document.getElementById("m_publisher").textContent = song.publisher;
+  document.getElementById("m_performer").textContent = song.performer;
+  document.getElementById("modal").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  document.getElementById("modal").classList.remove("show");
+  document.body.style.overflow = "";
+}
+
+function submitRequest() {
+  window.location.href = "https://dynotic.web.id/login";
+}
+
+searchInput.addEventListener("input", applyFilters);
+publisherFilter.addEventListener("change", applyFilters);
+prevBtn.addEventListener("click", () => {
+  if (currentPage > 1) {
+    currentPage--;
+    renderTransactions();
+    document.querySelector(".card:nth-of-type(2)")?.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+});
+nextBtn.addEventListener("click", () => {
+  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
+  if (currentPage < totalPages) {
+    currentPage++;
+    renderTransactions();
+    document.querySelector(".card:nth-of-type(2)")?.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+});
+document.getElementById("modal").addEventListener("click", event => {
+  if (event.target.id === "modal") closeModal();
+});
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closeModal();
+});
+
 loadData();
 </script>
-
 </body>
 </html>
