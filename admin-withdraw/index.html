@@ -4,427 +4,776 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Invoice | Dynotic</title>
+<title>Invoice Requests | Dynotic Admin</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/favicon-android.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-iphone.png">
+<meta name="theme-color" content="#667eea">
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <style>
-:root {
-  --bg: #f1f2f7;
-  --card: #fff;
-  --text: #17171c;
-  --muted: #858592;
-  --border: #e8e8ef;
-  --purple: #6655db;
-  --green: #16865b;
-  --red: #d84444;
-  --orange: #b87916;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Outfit", sans-serif;
 }
-
-* { box-sizing: border-box; }
 
 body {
-  margin: 0;
-  font-family: 'Outfit', sans-serif;
-  background: var(--bg);
-  color: var(--text);
+  background: #f1f2f7;
+  min-height: 100vh;
+  color: #17181c;
+  padding-top: 64px;
+  padding-bottom: 90px;
+  -webkit-tap-highlight-color: transparent;
 }
 
-button, input, select { font: inherit; }
-button { cursor: pointer; }
-
-.header {
-  height: 66px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  background: #fff;
-  border-bottom: 1px solid var(--border);
+button, input, select {
+  font: inherit;
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 800;
-  font-size: 17px;
+button {
+  cursor: pointer;
+  transition: .15s ease;
 }
 
-.brand img {
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
+button:active {
+  transform: scale(.97);
 }
 
-.admin-label {
-  background: #f0edff;
-  color: var(--purple);
-  font-size: 11px;
-  font-weight: 700;
-  padding: 7px 10px;
-  border-radius: 8px;
-}
-
-.container {
-  max-width: 1100px;
-  margin: auto;
-  padding: 26px 18px 45px;
-}
-
-.page-title {
-  margin: 0;
-  font-size: 25px;
-  font-weight: 800;
-  letter-spacing: -.5px;
-}
-
-.subtitle {
-  margin: 6px 0 22px;
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.stat {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 17px;
-}
-
-.stat-label {
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 10px;
-}
-
-.stat-value {
-  font-size: 25px;
-  font-weight: 800;
-}
-
-.toolbar {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 14px;
-  flex-wrap: wrap;
-}
-
-.search {
-  flex: 1;
-  min-width: 180px;
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: #fff;
-  outline: none;
-}
-
-.search:focus { border-color: var(--purple); }
-
-select {
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: #fff;
-  outline: none;
-}
-
-.refresh {
-  padding: 12px 15px;
-  border: 0;
-  border-radius: 12px;
-  background: #19191f;
-  color: white;
-  font-weight: 600;
-}
-
-.panel {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 17px;
-  overflow: hidden;
-}
-
-.panel-head {
-  padding: 17px 18px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
-
-.panel-head strong { font-size: 15px; }
-
-.count {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.request-list { padding: 0 16px; }
-
-.request {
-  padding: 18px 2px;
-  border-bottom: 1px solid var(--border);
-}
-
-.request:last-child { border-bottom: 0; }
-
-.request-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.request-title {
-  font-size: 14px;
-  font-weight: 700;
-  overflow-wrap: anywhere;
-}
-
-.request-email {
-  margin-top: 4px;
-  font-size: 12px;
-  color: var(--muted);
-  overflow-wrap: anywhere;
-}
-
-.amount {
-  margin-top: 15px;
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -.4px;
-}
-
-.details {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 13px;
-}
-
-.detail-label {
-  font-size: 11px;
-  color: var(--muted);
-  margin-bottom: 4px;
-}
-
-.detail-value {
-  font-size: 12px;
-  overflow-wrap: anywhere;
-}
-
-.status {
-  display: inline-block;
-  padding: 6px 9px;
-  border-radius: 8px;
-  font-size: 11px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.status-pending {
-  color: var(--orange);
-  background: #fff4dc;
-}
-
-.status-approved {
-  color: var(--green);
-  background: #e4f7ee;
-}
-
-.status-rejected {
-  color: var(--red);
-  background: #ffebeb;
-}
-
-.status-other {
-  color: #666;
-  background: #eeeef2;
-}
-
-.actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 17px;
-}
-
-.btn {
-  border: 0;
-  border-radius: 10px;
-  padding: 11px 15px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.btn-approve {
-  color: white;
-  background: var(--green);
-}
-
-.btn-reject {
-  color: white;
-  background: var(--red);
-}
-
-.btn:disabled {
+button:disabled {
   opacity: .5;
   cursor: not-allowed;
 }
 
-.note {
-  margin-top: 12px;
+/* HEADER */
+
+header {
+  height: 64px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-bottom: 1px solid #e8e8ed;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.header-logo {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}
+
+.admin-profile {
+  border: 0;
+  background: #f1f2f7;
+  border-radius: 12px;
+  padding: 9px 12px;
+  color: #25262b;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* PROFILE MENU */
+
+.profile-menu {
+  position: fixed;
+  top: 56px;
+  right: 16px;
+  width: 165px;
+  background: #fff;
+  border: 1px solid #e7e7eb;
+  border-radius: 14px;
+  padding: 6px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  display: none;
+  overflow: hidden;
+  z-index: 1500;
+}
+
+.profile-menu.show {
+  display: block;
+  animation: menuIn .18s ease both;
+}
+
+.profile-menu button {
+  width: 100%;
+  border: 0;
+  background: #fff;
   padding: 11px;
-  background: #fff6e5;
-  color: #855b17;
-  border-radius: 10px;
+  text-align: left;
+  border-radius: 9px;
+  font-size: 13px;
+  color: #25262b;
+}
+
+.profile-menu button:hover {
+  background: #f1f2f7;
+}
+
+.profile-menu .logout {
+  color: #ef4444;
+}
+
+/* MAIN */
+
+.container {
+  width: calc(100% - 28px);
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+/* PAGE TITLE */
+
+.page-heading {
+  margin-top: 22px;
+  animation: pageIn .4s ease both;
+}
+
+.page-small {
+  color: #777b84;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.page-title {
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: -.2px;
+}
+
+.page-desc {
+  margin-top: 6px;
+  color: #777b84;
   font-size: 12px;
   line-height: 1.5;
 }
 
-.empty {
-  padding: 45px 15px;
-  text-align: center;
-  color: var(--muted);
+/* SECTION */
+
+.section-title {
   font-size: 13px;
+  font-weight: 600;
+  color: #777b84;
+  margin: 24px 3px 10px;
 }
 
-.loading { text-align: center; padding: 35px; color: var(--muted); }
+/* OVERVIEW */
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 8px;
+}
+
+.stat-card {
+  background: #fff;
+  border: 1px solid #e8e8ed;
+  border-radius: 16px;
+  padding: 12px 10px;
+  min-width: 0;
+  animation: pageIn .45s ease both;
+}
+
+.stat-card:nth-child(1) { animation-delay: .08s; }
+.stat-card:nth-child(2) { animation-delay: .16s; }
+.stat-card:nth-child(3) { animation-delay: .24s; }
+
+.stat-icon {
+  width: 31px;
+  height: 31px;
+  border-radius: 10px;
+  background: #f1f2f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  margin-bottom: 9px;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #858891;
+}
+
+.stat-value {
+  font-size: 19px;
+  font-weight: 700;
+  margin-top: 3px;
+  line-height: 1.2;
+}
+
+/* FILTER */
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.search-wrap {
+  flex: 1;
+  min-width: 150px;
+}
+
+.toolbar input,
+.toolbar select {
+  width: 100%;
+  min-height: 43px;
+  padding: 11px 12px;
+  border: 1px solid #e8e8ed;
+  border-radius: 11px;
+  background: #fff;
+  color: #17181c;
+  font-size: 12px;
+  outline: none;
+}
+
+.toolbar input:focus,
+.toolbar select:focus {
+  border-color: #c7c7d4;
+}
+
+.filter-wrap {
+  width: 135px;
+}
+
+.btn {
+  border-radius: 9px;
+  padding: 10px 12px;
+  border: 1px solid #e8e8ed;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.primary {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+.stroked {
+  background: transparent;
+  color: #111;
+  border: 1px solid #111;
+}
+
+.approve {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+.reject {
+  background: #fff;
+  color: #d84444;
+  border-color: #efcaca;
+}
+
+.detail {
+  background: #f1f2f7;
+  color: #25262b;
+  border-color: #e8e8ed;
+}
+
+/* INVOICE PANEL */
+
+.panel {
+  background: #fff;
+  border: 1px solid #e8e8ed;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  animation: pageIn .4s ease both;
+}
+
+.panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.count {
+  font-size: 11px;
+  color: #858891;
+  font-weight: 400;
+}
+
+.request {
+  border-top: 1px solid #eeeef2;
+  padding: 16px 0;
+}
+
+.request:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.request:last-child {
+  padding-bottom: 0;
+}
+
+.request-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.request-name {
+  font-size: 13px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.request-email {
+  color: #858891;
+  font-size: 11px;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+.amount {
+  font-size: 21px;
+  font-weight: 700;
+  margin: 14px 0;
+  letter-spacing: -.3px;
+}
+
+.status {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 6px 8px;
+  border-radius: 7px;
+}
+
+.status-pending {
+  background: #fff3d7;
+  color: #a36d10;
+}
+
+.status-approved {
+  background: #e3f7ed;
+  color: #16865b;
+}
+
+.status-rejected {
+  background: #ffebeb;
+  color: #d84444;
+}
+
+.status-other {
+  background: #f1f2f7;
+  color: #666;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.info-label {
+  color: #858891;
+  font-size: 10px;
+  margin-bottom: 5px;
+}
+
+.info-value {
+  font-size: 11px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 14px;
+}
+
+.actions .btn {
+  flex: 1;
+}
+
+.rejection-note {
+  margin-top: 10px;
+  padding: 10px;
+  background: #fff4e2;
+  color: #805a19;
+  border-radius: 9px;
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.notice {
+  background: #fff;
+  border: 1px solid #e8e8ed;
+  border-radius: 13px;
+  padding: 13px;
+  color: #777b84;
+  font-size: 11px;
+  line-height: 1.6;
+  margin-top: 14px;
+}
+
+.empty {
+  text-align: center;
+  color: #858891;
+  padding: 30px 10px;
+  font-size: 12px;
+}
+
+/* BOTTOM NAV */
+
+.bottom-nav {
+  height: 72px;
+  background: #fff;
+  border-top: 1px solid #e6e6eb;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+}
+
+.nav-item {
+  width: 33.33%;
+  text-align: center;
+  font-size: 11px;
+  color: #999ca4;
+  padding: 7px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: .15s ease;
+}
+
+.nav-item i {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.nav-item:active {
+  transform: scale(.94);
+}
+
+.nav-item.active {
+  color: #17181c;
+  font-weight: 600;
+}
+
+/* LOADING & TOAST */
+
+.loading {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+}
+
+.loading.show {
+  display: flex;
+}
+
+.loader-box {
+  background: #fff;
+  padding: 18px 22px;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(0,0,0,.12);
+  font-size: 14px;
+  font-weight: 600;
+}
 
 .toast {
   position: fixed;
-  bottom: 22px;
+  bottom: 84px;
   left: 50%;
   transform: translateX(-50%);
-  width: max-content;
-  max-width: calc(100% - 32px);
   background: #202027;
-  color: white;
-  padding: 13px 17px;
-  border-radius: 12px;
-  font-size: 13px;
-  z-index: 30;
-  box-shadow: 0 8px 30px #0002;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 10px;
+  width: max-content;
+  max-width: calc(100% - 30px);
+  font-size: 12px;
+  z-index: 3000;
+  box-shadow: 0 5px 20px rgba(0,0,0,.1);
 }
 
-.hidden { display: none !important; }
+.hidden {
+  display: none !important;
+}
 
-@media (min-width: 700px) {
+/* ANIMATION */
+
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes menuIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px) scale(.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* MOBILE */
+
+@media(max-width:600px) {
+  .container {
+    width: calc(100% - 28px);
+  }
+
+  .overview-grid {
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding: 12px 10px;
+  }
+
+  .stat-value {
+    font-size: 19px;
+  }
+}
+
+@media(max-width:400px) {
+  .filter-wrap {
+    width: 100%;
+  }
+
+  .search-wrap {
+    flex-basis: 100%;
+  }
+
+  .stat-card {
+    padding: 10px 8px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+  }
+}
+
+/* DESKTOP */
+
+@media(min-width:700px) {
+  .container {
+    width: 100%;
+  }
+
   .request {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 20px;
-    align-items: start;
+    grid-template-columns: minmax(0,1fr) auto;
+    gap: 18px;
   }
-  .request-main { min-width: 0; }
-  .request-side { min-width: 180px; text-align: right; }
-  .request-side .actions { justify-content: flex-end; }
-  .request-side .amount { margin-top: 0; }
-}
 
-@media (max-width: 420px) {
-  .container { padding: 22px 12px 35px; }
-  .stats { gap: 7px; }
-  .stat { padding: 12px 10px; }
-  .stat-value { font-size: 20px; }
-  .stat-label { font-size: 11px; }
-  .header { padding: 0 13px; }
+  .request-main {
+    min-width: 0;
+  }
+
+  .request-side {
+    min-width: 190px;
+  }
+
+  .request-side .actions {
+    justify-content: flex-end;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<header class="header">
-  <div class="brand">
-    <img src="../assets/dynotic-distribution.png"
-         alt="Dynotic"
-         onerror="this.style.display='none'">
-    <span>Dynotic</span>
-  </div>
-  <span class="admin-label">ADMIN PANEL</span>
+<!-- HEADER -->
+<header>
+  <img src="../assets/dynotic-distribution.png"
+       class="header-logo"
+       alt="Dynotic Distribution">
+
+  <button class="admin-profile" onclick="toggleProfile()">
+    Admin <i class="fa-solid fa-chevron-down"></i>
+  </button>
 </header>
 
-<main class="container">
-  <h1 class="page-title">Invoice Requests</h1>
-  <p class="subtitle">Kelola dan tinjau pengajuan invoice artis Dynotic.</p>
+<!-- PROFILE MENU -->
+<div id="profileMenu" class="profile-menu">
+  <button onclick="goProfile()">
+    <i class="fa-regular fa-user"></i>
+    &nbsp; Profile
+  </button>
 
-  <section class="stats">
-    <div class="stat">
+  <button class="logout" onclick="logout()">
+    <i class="fa-solid fa-right-from-bracket"></i>
+    &nbsp; Logout
+  </button>
+</div>
+
+<main class="container">
+
+  <!-- PAGE HEADING -->
+  <section class="page-heading">
+    <div class="page-small">Dynotic Admin Panel</div>
+    <h1 class="page-title">Invoice Requests</h1>
+    <p class="page-desc">
+      Review dan kelola pengajuan invoice member Dynotic.
+    </p>
+  </section>
+
+  <!-- OVERVIEW -->
+  <div class="section-title">Invoice Overview</div>
+
+  <section class="overview-grid">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fa-regular fa-clock"></i>
+      </div>
       <div class="stat-label">Pending</div>
-      <div class="stat-value" id="pendingCount">0</div>
+      <div class="stat-value" id="pendingCount">—</div>
     </div>
-    <div class="stat">
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fa-solid fa-check"></i>
+      </div>
       <div class="stat-label">Approved</div>
-      <div class="stat-value" id="approvedCount">0</div>
+      <div class="stat-value" id="approvedCount">—</div>
     </div>
-    <div class="stat">
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fa-solid fa-xmark"></i>
+      </div>
       <div class="stat-label">Rejected</div>
-      <div class="stat-value" id="rejectedCount">0</div>
+      <div class="stat-value" id="rejectedCount">—</div>
     </div>
   </section>
 
-  <div class="toolbar">
-    <input class="search" id="searchInput"
-           placeholder="Cari email atau UID artis..."
-           autocomplete="off">
+  <!-- FILTER -->
+  <div class="section-title">Manage Invoices</div>
 
-    <select id="statusFilter">
-      <option value="All">Semua status</option>
-      <option value="Pending">Pending</option>
-      <option value="Approved">Approved</option>
-      <option value="Rejected">Rejected</option>
-    </select>
+  <section class="toolbar">
+    <div class="search-wrap">
+      <input id="searchInput"
+             type="search"
+             placeholder="Cari email atau UID artis..."
+             autocomplete="off">
+    </div>
 
-    <button class="refresh" id="refreshBtn" onclick="loadRequests()">
-      Refresh
+    <div class="filter-wrap">
+      <select id="statusFilter">
+        <option value="All">Semua status</option>
+        <option value="Pending">Pending</option>
+        <option value="Approved">Approved</option>
+        <option value="Rejected">Rejected</option>
+      </select>
+    </div>
+
+    <button class="btn primary" id="refreshBtn">
+      <i class="fa-solid fa-rotate"></i> Refresh
     </button>
-  </div>
+  </section>
 
+  <!-- INVOICE LIST -->
   <section class="panel">
-    <div class="panel-head">
-      <strong>Daftar Pengajuan</strong>
+    <div class="panel-heading">
+      <span><i class="fa-solid fa-file-invoice"></i> Daftar Pengajuan</span>
       <span class="count" id="requestCount">0 pengajuan</span>
     </div>
-    <div class="request-list" id="requestList">
-      <div class="loading">Memuat pengajuan...</div>
+
+    <div id="requestList">
+      <div class="empty">
+        <i class="fa-solid fa-circle-notch fa-spin"></i>
+        <p style="margin-top:8px">Memverifikasi akses admin...</p>
+      </div>
     </div>
   </section>
 
-  <div class="note">
-    Persetujuan di halaman ini hanya mengubah status invoice. Transfer uang
-    dan pemotongan saldo tidak dilakukan otomatis. Pastikan pembayaran
-    sudah diverifikasi sebelum menyetujui pengajuan.
+  <div class="notice">
+    <strong><i class="fa-solid fa-circle-info"></i> Informasi</strong><br>
+    Approve hanya mengubah status invoice menjadi Approved.
+    Transfer uang dan pemotongan saldo tidak dilakukan otomatis.
+    Pastikan pembayaran telah diverifikasi sebelum menyetujui pengajuan.
   </div>
+
 </main>
 
-<div class="toast hidden" id="toast"></div>
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <div class="nav-item" onclick="goHome()">
+    <i class="fa-solid fa-house"></i>
+    Home
+  </div>
+
+  <div class="nav-item active" onclick="goManage()">
+    <i class="fa-solid fa-grip"></i>
+    Manage
+  </div>
+
+  <div class="nav-item" onclick="goProfile()">
+    <i class="fa-regular fa-user"></i>
+    Profile
+  </div>
+</nav>
+
+<!-- LOADING -->
+<div id="loading" class="loading">
+  <div class="loader-box">Loading...</div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain: "dynopay-2513c.firebaseapp.com",
-  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
-};
+/* ================= FIREBASE ================= */
 
 if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp({
+    apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+    authDomain: "dynopay-2513c.firebaseapp.com",
+    databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+  });
 }
 
 const auth = firebase.auth();
@@ -432,8 +781,9 @@ const db = firebase.database();
 
 let currentAdmin = null;
 let requestsData = {};
-let requestListener = null;
 let toastTimer = null;
+
+/* ================= HELPERS ================= */
 
 const $ = id => document.getElementById(id);
 
@@ -457,8 +807,11 @@ function rupiah(value) {
 
 function formatDate(value) {
   if (!value) return "-";
+
   const date = new Date(Number(value));
+
   if (Number.isNaN(date.getTime())) return "-";
+
   return date.toLocaleString("id-ID", {
     day: "2-digit",
     month: "short",
@@ -469,17 +822,21 @@ function formatDate(value) {
 }
 
 function showToast(message) {
-  const el = $("toast");
-  el.textContent = message;
-  el.classList.remove("hidden");
+  const toast = $("toast");
+  toast.textContent = message;
+  toast.classList.remove("hidden");
+
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.add("hidden"), 3200);
+
+  toastTimer = setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 3200);
 }
 
 function normalizeStatus(status) {
   const value = String(status || "Pending").toLowerCase();
 
-  if (value === "pending") return "Pending";
+  if (value === "pending" || value === "process") return "Pending";
   if (value === "approved" || value === "approve") return "Approved";
   if (value === "rejected" || value === "reject") return "Rejected";
 
@@ -493,30 +850,106 @@ function statusClass(status) {
   return "status-other";
 }
 
+/* ================= ADMIN PROTECTION ================= */
+
+auth.onAuthStateChanged(async user => {
+  if (!user) {
+    location.href = "../admin";
+    return;
+  }
+
+  try {
+    // Mengikuti struktur akses halaman Detail User:
+    // admins/{UID admin yang sedang login}
+    const adminSnap = await db.ref("admins")
+      .child(user.uid)
+      .once("value");
+
+    if (!adminSnap.exists()) {
+      alert("Anda bukan admin Dynotic.");
+      await auth.signOut();
+      location.href = "../admin";
+      return;
+    }
+
+    currentAdmin = user;
+    await loadRequests();
+
+  } catch (error) {
+    console.error("Admin verification error:", error);
+
+    $("requestList").innerHTML = `
+      <div class="empty">
+        Gagal memverifikasi akses admin.
+        Periksa Firebase Rules pada path admins.
+      </div>`;
+  }
+});
+
+/* ================= OVERVIEW ================= */
+
 function updateStats() {
-  const values = Object.values(requestsData);
+  const items = Object.values(requestsData);
 
-  $("pendingCount").textContent =
-    values.filter(item => normalizeStatus(item.status) === "Pending").length;
+  $("pendingCount").textContent = items.filter(
+    item => normalizeStatus(item.status) === "Pending"
+  ).length;
 
-  $("approvedCount").textContent =
-    values.filter(item => normalizeStatus(item.status) === "Approved").length;
+  $("approvedCount").textContent = items.filter(
+    item => normalizeStatus(item.status) === "Approved"
+  ).length;
 
-  $("rejectedCount").textContent =
-    values.filter(item => normalizeStatus(item.status) === "Rejected").length;
+  $("rejectedCount").textContent = items.filter(
+    item => normalizeStatus(item.status) === "Rejected"
+  ).length;
 }
+
+/* ================= LOAD INVOICES ================= */
+
+async function loadRequests() {
+  if (!currentAdmin) return;
+
+  const refreshBtn = $("refreshBtn");
+  refreshBtn.disabled = true;
+
+  try {
+    const snapshot = await db.ref("invoice_requests").once("value");
+
+    requestsData = snapshot.val() || {};
+
+    updateStats();
+    renderRequests();
+
+  } catch (error) {
+    console.error("Load invoice error:", error);
+
+    $("requestList").innerHTML = `
+      <div class="empty">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <p style="margin-top:8px">Gagal memuat pengajuan invoice.</p>
+        <p style="margin-top:5px">Periksa Firebase Rules dan izin admin.</p>
+      </div>`;
+
+    showToast("Gagal memuat invoice: " + error.message);
+
+  } finally {
+    refreshBtn.disabled = false;
+  }
+}
+
+/* ================= RENDER ================= */
 
 function renderRequests() {
   updateStats();
 
   const query = $("searchInput").value.trim().toLowerCase();
   const filter = $("statusFilter").value;
-  const list = $("requestList");
 
   const items = Object.entries(requestsData)
-    .map(([id, item]) => ({ id, ...item }))
+    .map(([id, data]) => ({ id, ...data }))
     .filter(item => {
       const status = normalizeStatus(item.status);
+
       const searchable = [
         item.email,
         item.uid,
@@ -525,48 +958,71 @@ function renderRequests() {
       ].join(" ").toLowerCase();
 
       return (filter === "All" || status === filter) &&
-             searchable.includes(query);
+        searchable.includes(query);
     })
-    .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
+    .sort((a, b) =>
+      Number(b.createdAt || 0) - Number(a.createdAt || 0)
+    );
 
-  $("requestCount").textContent = `${items.length} pengajuan`;
+  $("requestCount").textContent = items.length + " pengajuan";
 
   if (!items.length) {
-    list.innerHTML = `
+    $("requestList").innerHTML = `
       <div class="empty">
-        Tidak ada pengajuan yang cocok dengan pencarian ini.
+        <i class="fa-regular fa-folder-open" style="font-size:24px"></i>
+        <p style="margin-top:10px">Tidak ada pengajuan invoice.</p>
       </div>`;
     return;
   }
 
-  list.innerHTML = items.map(item => {
+  $("requestList").innerHTML = items.map(item => {
     const status = normalizeStatus(item.status);
-    const canReview = status === "Pending";
-
-    const artist = item.artistName || item.nama || "Artis Dynotic";
-    const email = item.email || "Email tidak tersedia";
+    const uid = item.uid || "";
+    const artist = item.artistName || item.nama || "Member Dynotic";
+    const email = item.email || "-";
     const amount = rupiah(item.amount);
-    const uid = item.uid || "-";
     const date = formatDate(item.createdAt);
 
     const rejection = item.rejectionNote
-      ? `<div class="note">Alasan penolakan: ${escapeHTML(item.rejectionNote)}</div>`
+      ? `<div class="rejection-note">
+           <strong>Alasan penolakan:</strong>
+           ${escapeHTML(item.rejectionNote)}
+         </div>`
       : "";
 
     const reviewInfo = item.reviewedAt
-      ? `<div class="detail-label" style="margin-top:10px">
+      ? `<div class="info-label" style="margin-top:10px">
            Ditinjau: ${escapeHTML(formatDate(item.reviewedAt))}
          </div>`
+      : "";
+
+    const detailButton = uid
+      ? `<button class="btn detail" data-action="detail"
+           data-uid="${escapeHTML(uid)}">
+           <i class="fa-regular fa-user"></i> Detail User
+         </button>`
+      : "";
+
+    const actionButtons = status === "Pending"
+      ? `<button class="btn approve" data-action="approve"
+           data-id="${escapeHTML(item.id)}">
+           <i class="fa-solid fa-check"></i> Approve
+         </button>
+         <button class="btn reject" data-action="reject"
+           data-id="${escapeHTML(item.id)}">
+           <i class="fa-solid fa-xmark"></i> Reject
+         </button>`
       : "";
 
     return `
       <article class="request">
         <div class="request-main">
-          <div class="request-top">
+          <div class="request-header">
             <div>
-              <div class="request-title">${escapeHTML(artist)}</div>
+              <div class="request-name">${escapeHTML(artist)}</div>
               <div class="request-email">${escapeHTML(email)}</div>
             </div>
+
             <span class="status ${statusClass(status)}">
               ${escapeHTML(status)}
             </span>
@@ -574,14 +1030,15 @@ function renderRequests() {
 
           <div class="amount">${escapeHTML(amount)}</div>
 
-          <div class="details">
+          <div class="info-grid">
             <div>
-              <div class="detail-label">UID Artis</div>
-              <div class="detail-value">${escapeHTML(uid)}</div>
+              <div class="info-label">UID Artis</div>
+              <div class="info-value">${escapeHTML(uid || "-")}</div>
             </div>
+
             <div>
-              <div class="detail-label">Tanggal Pengajuan</div>
-              <div class="detail-value">${escapeHTML(date)}</div>
+              <div class="info-label">Tanggal Pengajuan</div>
+              <div class="info-value">${escapeHTML(date)}</div>
             </div>
           </div>
 
@@ -590,54 +1047,25 @@ function renderRequests() {
         </div>
 
         <div class="request-side">
-          ${canReview ? `
-            <div class="actions">
-              <button class="btn btn-approve"
-                data-action="approve"
-                data-id="${escapeHTML(item.id)}">
-                Approve
-              </button>
-              <button class="btn btn-reject"
-                data-action="reject"
-                data-id="${escapeHTML(item.id)}">
-                Reject
-              </button>
-            </div>
-          ` : ""}
+          <div class="actions">
+            ${detailButton}
+            ${actionButtons}
+          </div>
         </div>
       </article>`;
   }).join("");
 }
 
-async function loadRequests() {
-  if (!currentAdmin) return;
-
-  const button = $("refreshBtn");
-  button.disabled = true;
-  button.textContent = "Memuat...";
-
-  try {
-    const snapshot = await db.ref("invoice_requests").once("value");
-    requestsData = snapshot.val() || {};
-    renderRequests();
-  } catch (error) {
-    console.error(error);
-    showToast("Gagal memuat data. Periksa Firebase Rules.");
-    $("requestList").innerHTML = `
-      <div class="empty">
-        Data tidak dapat dimuat. Pastikan akun admin memiliki izin baca
-        pada invoice_requests.
-      </div>`;
-  } finally {
-    button.disabled = false;
-    button.textContent = "Refresh";
-  }
-}
+/* ================= APPROVE / REJECT ================= */
 
 async function reviewRequest(id, action) {
-  if (!currentAdmin) return;
+  if (!currentAdmin) {
+    showToast("Sesi admin tidak ditemukan.");
+    return;
+  }
 
   const item = requestsData[id];
+
   if (!item) {
     showToast("Pengajuan tidak ditemukan.");
     return;
@@ -645,6 +1073,7 @@ async function reviewRequest(id, action) {
 
   if (normalizeStatus(item.status) !== "Pending") {
     showToast("Pengajuan ini sudah diproses.");
+    await loadRequests();
     return;
   }
 
@@ -652,42 +1081,45 @@ async function reviewRequest(id, action) {
 
   if (action === "approve") {
     const confirmed = confirm(
-      `Setujui pengajuan sebesar ${rupiah(item.amount)}?\n\n` +
-      "Pastikan pembayaran sudah diverifikasi. Status akan diubah menjadi Approved."
+      "Setujui invoice sebesar " + rupiah(item.amount) +
+      "?\n\nPastikan pembayaran sudah diverifikasi."
     );
 
     if (!confirmed) return;
-  } else {
-    rejectionNote = prompt("Masukkan alasan penolakan pengajuan:");
-    if (rejectionNote === null) return;
 
-    rejectionNote = rejectionNote.trim();
+  } else if (action === "reject") {
+    const answer = prompt("Masukkan alasan penolakan invoice:");
+
+    if (answer === null) return;
+
+    rejectionNote = answer.trim();
 
     if (!rejectionNote) {
       showToast("Alasan penolakan wajib diisi.");
       return;
     }
 
-    if (!confirm("Yakin menolak pengajuan ini?")) return;
+    if (!confirm("Yakin ingin menolak pengajuan ini?")) return;
+
+  } else {
+    return;
   }
-
-  const button = document.querySelector(
-    `[data-action="${action}"][data-id="${CSS.escape(id)}"]`
-  );
-
-  if (button) button.disabled = true;
 
   try {
     const requestRef = db.ref("invoice_requests").child(id);
 
-    // Transaction membantu mencegah dua admin memproses
+    // Transaksi mencegah dua admin menyelesaikan
     // pengajuan Pending yang sama secara bersamaan.
     const result = await requestRef.transaction(current => {
-      if (!current || normalizeStatus(current.status) !== "Pending") {
+      if (!current ||
+          normalizeStatus(current.status) !== "Pending") {
         return;
       }
 
-      current.status = action === "approve" ? "Approved" : "Rejected";
+      current.status = action === "approve"
+        ? "Approved"
+        : "Rejected";
+
       current.reviewedAt = firebase.database.ServerValue.TIMESTAMP;
       current.reviewedBy = currentAdmin.uid;
 
@@ -699,61 +1131,97 @@ async function reviewRequest(id, action) {
     });
 
     if (!result.committed) {
-      showToast("Pengajuan sudah diproses oleh admin lain.");
+      showToast("Pengajuan sudah diproses atau tidak tersedia.");
       await loadRequests();
       return;
     }
 
     showToast(
       action === "approve"
-        ? "Pengajuan berhasil disetujui."
-        : "Pengajuan berhasil ditolak."
+        ? "Invoice berhasil disetujui."
+        : "Invoice berhasil ditolak."
     );
 
     await loadRequests();
+
   } catch (error) {
-    console.error(error);
-    showToast("Gagal memproses. Periksa Firebase Rules.");
-    if (button) button.disabled = false;
+    console.error("Review invoice error:", error);
+    showToast("Gagal memperbarui status: " + error.message);
   }
 }
+
+/* ================= CLICK ACTIONS ================= */
 
 $("requestList").addEventListener("click", event => {
   const button = event.target.closest("button[data-action]");
   if (!button) return;
 
-  reviewRequest(button.dataset.id, button.dataset.action);
-});
+  const action = button.dataset.action;
 
-$("searchInput").addEventListener("input", renderRequests);
-$("statusFilter").addEventListener("change", renderRequests);
+  if (action === "detail") {
+    const uid = button.dataset.uid;
 
-auth.onAuthStateChanged(async user => {
-  if (!user) {
-    location.href = "../login";
-    return;
-  }
-
-  try {
-    const adminSnapshot = await db.ref("admins")
-      .child(user.uid)
-      .once("value");
-
-    if (!adminSnapshot.exists()) {
-      alert("Akses ditolak. Halaman ini hanya untuk admin Dynotic.");
-      await auth.signOut();
-      location.href = "../login";
+    if (!uid) {
+      showToast("UID artis tidak ditemukan.");
       return;
     }
 
-    currentAdmin = user;
-    await loadRequests();
-  } catch (error) {
-    console.error(error);
-    $("requestList").innerHTML = `
-      <div class="empty">
-        Gagal memverifikasi admin. Periksa Firebase Rules untuk admins.
-      </div>`;
+    // UID di URL adalah UID ARTIS.
+    // UID ADMIN untuk hak akses tetap currentAdmin.uid.
+    location.href =
+      "../admin/detail-user.html?uid=" + encodeURIComponent(uid);
+
+    return;
+  }
+
+  if (action === "approve" || action === "reject") {
+    const id = button.dataset.id;
+    if (id) reviewRequest(id, action);
+  }
+});
+
+/* ================= FILTER ================= */
+
+$("searchInput").addEventListener("input", renderRequests);
+$("statusFilter").addEventListener("change", renderRequests);
+$("refreshBtn").addEventListener("click", loadRequests);
+
+/* ================= PROFILE MENU ================= */
+
+function toggleProfile() {
+  $("profileMenu").classList.toggle("show");
+}
+
+function goProfile() {
+  location.href = "../admin-profile";
+}
+
+function logout() {
+  if (!confirm("Logout dari admin panel?")) return;
+
+  auth.signOut().then(() => {
+    location.href = "../admin";
+  }).catch(error => {
+    showToast("Logout gagal: " + error.message);
+  });
+}
+
+/* ================= NAVIGATION ================= */
+
+function goHome() {
+  location.href = "../admin-home";
+}
+
+function goManage() {
+  location.href = "../admin-manage";
+}
+
+document.addEventListener("click", event => {
+  if (
+    !event.target.closest(".admin-profile") &&
+    !event.target.closest("#profileMenu")
+  ) {
+    $("profileMenu").classList.remove("show");
   }
 });
 </script>
