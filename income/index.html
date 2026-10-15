@@ -1370,9 +1370,13 @@ list.innerHTML = visibleReports.map(report => {
           <h3>${escapeHTML(title)}</h3>
           <p>${escapeHTML(dateText)}</p>
           ${amount}
-          <span class="report-status ${statusClass(status)}">
+          <span class="report-status ${statusClass(status === "pending" ? "accepted" : status)}">
             <i class="fa-solid fa-circle" style="font-size:6px"></i>
-            ${escapeHTML(statusLabel(report.status || "Pending"))}
+            ${escapeHTML(
+  normalizeStatus(report.status) === "pending"
+    ? "Accepted"
+    : statusLabel(report.status || "Pending")
+)}
           </span>
         </div>
 
