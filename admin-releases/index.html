@@ -601,15 +601,54 @@ async function changeReleaseAccount(uid, rid) {
 }
 
 
-function openApproveOptions(uid,rid){
-  const type = prompt("Pilih tipe approval:\n\n1 = Original\n2 = Publisher\n\nMasukkan angka:");
-  if(type === "1") confirmRelease(uid,rid,"approved");
-  else if(type === "2"){
-    const publishers = ["MAHAR PUSTAKA NUSANTARA","Pragita Prabawa Pustaka","Nadaku Musik","Royal Publikasi Indo","Alfa Pustaka Nada","Pustaka Jeka","Pustaka Cipta Kreasi","Star Cipta Musikindo","Sora Music Publisher","Proaktif Digital Kreasi","18 Musik","Sony Music Publishing Indonesia","NAGASWARA"];
-    const choice = prompt("Pilih Publisher:\n\n"+publishers.map((p,i)=>`${i+1} = ${p}`).join("\n")+"\n\nMasukkan angka:");
-    const publisher = publishers[parseInt(choice,10)-1];
-    if(!publisher){alert("Publisher tidak valid!");return;}
-    confirmPublisherRelease(uid,rid,publisher);
+
+function openApproveOptions(uid, rid) {
+  const type = prompt(
+    "Pilih tipe approval:\n\n" +
+    "1 = Original\n" +
+    "2 = Publisher\n" +
+    "3 = Approve Biasa\n" +
+    "4 = Approve · Dijadwalkan Ulang\n\n" +
+    "Masukkan angka:"
+  );
+
+  if (type === "1") {
+    confirmRelease(uid, rid, "approved");
+  } else if (type === "2") {
+    const publishers = [
+      "MAHAR PUSTAKA NUSANTARA",
+      "Pragita Prabawa Pustaka",
+      "Nadaku Musik",
+      "Royal Publikasi Indo",
+      "Alfa Pustaka Nada",
+      "Pustaka Jeka",
+      "Pustaka Cipta Kreasi",
+      "Star Cipta Musikindo",
+      "Sora Music Publisher",
+      "Proaktif Digital Kreasi",
+      "18 Musik",
+      "Sony Music Publishing Indonesia",
+      "NAGASWARA"
+    ];
+
+    const choice = prompt(
+      "Pilih Publisher:\n\n" +
+      publishers.map((p, i) => `${i + 1} = ${p}`).join("\n") +
+      "\n\nMasukkan angka:"
+    );
+
+    const publisher = publishers[parseInt(choice, 10) - 1];
+
+    if (!publisher) {
+      alert("Publisher tidak valid!");
+      return;
+    }
+
+    confirmPublisherRelease(uid, rid, publisher);
+  } else if (type === "3") {
+    confirmRelease(uid, rid, "approved", "normal");
+  } else if (type === "4") {
+    confirmRelease(uid, rid, "approved", "rescheduled");
   }
 }
 function openPublisherEmail(email,title,publisher){
@@ -626,36 +665,131 @@ function confirmPublisherRelease(uid,rid,publisher){
     renderTablePage(currentPage);
   }).catch(e=>alert("Gagal memperbarui status: "+e.message));
 }
-function confirmRelease(uid,rid,status){
-  let text = status==="approved" ? "Yakin APPROVE rilis ini?" : status==="rejected" ? "⚠ Yakin REJECT rilis ini?\nAksi ini tidak bisa dibatalkan!" : "Tandai rilisan ini sebagai PROSES?";
-  if(confirm(text)) setReleaseStatus(uid,rid,status);
-}
-function openPlatform(uid,rid){
-  localStorage.setItem("lastPage",currentPage);
-  location.href = `../admin-platform?uid=${encodeURIComponent(uid)}&rid=${encodeURIComponent(rid)}`;
-}
-function setReleaseStatus(uid,rid,status){
-  db.ref(`releases/${uid}/${rid}/status`).set(status).then(()=>{
-    const item = releasesData.find(r=>r.uid===uid&&r.rid===rid);
-    if(item){
-      item.status=status;
-      if(status==="approved"||status==="rejected") openEmailDraft(item.email||"",item.artist||"-",item.title||"-",status);
-    }
-    const f=filteredData.find(r=>r.uid===uid&&r.rid===rid);if(f)f.status=status;
-    renderTablePage(currentPage);
-  }).catch(e=>alert("Gagal memperbarui status: "+e.message));
-}
-function openEmailDraft(email,artist,title,status){
-  let subject="",body="";
-  if(status==="approved"){
-    subject=`Approved - Congrats! Your release has been sent to the store: ${title}`;
-    body=`Hello,\n\nGreat news!\n\nYour release has been approved and is now being processed for distribution to all platforms.\n\nRelease Details\nTitle  : ${title}\nArtist : ${artist}\n\nYour music will be delivered to digital stores shortly.\n\nIf you have any questions, feel free to contact our support team.\n\nBest regards,\nNazwa\nQC Team Dynotic`;
-  }else if(status==="rejected"){
-    subject=`Reject - Your release has been Rejected: ${title}`;
-    body=`Hello,\n\nWe regret to inform you that your release has been rejected.\n\nRelease Details\nTitle  : ${title}\nArtist : ${artist}\n\nReason:\nYour release has been rejected because it may contain content that infringes on another artist’s rights or lacks proper licensing.\n\nIf you believe this is a mistake, please contact our support team and provide valid proof of ownership or license.\n\nBest regards,\nNazwa\nQC Team Dynotic`;
+
+function confirmRelease(uid, rid, status, approvalType = "normal") {
+  let text = "";
+
+  if (status === "approved") {
+    text = approvalType === "rescheduled"
+      ? "Konfirmasi approval dengan jadwal rilis yang dijadwalkan ulang?\n\nEmail akan menginformasikan bahwa tanggal rilis berubah dari pihak pusat."
+      : "Yakin APPROVE rilis ini?";
+  } else if (status === "rejected") {
+    text = "Yakin REJECT rilis ini?\nAksi ini tidak bisa dibatalkan!";
+  } else {
+    text = "Tandai rilisan ini sebagai PROSES?";
   }
-  if(!email){alert("Status diperbarui. Akun ini tidak memiliki email tersimpan, jadi draft email tidak bisa dibuka.");return;}
-  location.href=`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g,"\r\n"))}`;
+
+  if (confirm(text)) {
+    setReleaseStatus(uid, rid, status, approvalType);
+  }
+}
+
+
+function setReleaseStatus(uid, rid, status, approvalType = "normal") {
+  db.ref(`releases/${uid}/${rid}/status`).set(status).then(() => {
+    const item = releasesData.find(r => r.uid === uid && r.rid === rid);
+
+    if (item) {
+      item.status = status;
+
+      if (status === "approved" || status === "rejected") {
+        openEmailDraft(
+  item.email || "",
+  item.artist || "-",
+  item.title || "-",
+  status,
+  approvalType,
+  uid,
+  rid
+        );
+      }
+    }
+
+    const f = filteredData.find(r => r.uid === uid && r.rid === rid);
+    if (f) f.status = status;
+
+    renderTablePage(currentPage);
+  }).catch(e => alert("Gagal memperbarui status: " + e.message));
+}
+
+
+async function openEmailDraft(email, artist, title, status, approvalType = "normal", uid = null, rid = null) {
+  let releaseDate = "-";
+  let upc = "-";
+
+  if (uid && rid) {
+    const snapshot = await get(ref(db, `releases/${uid}/${rid}`));
+    const release = snapshot.val() || {};
+
+    releaseDate = release.date || "-";
+    upc = release.upc || "-";
+  }
+
+  let subject = "";
+  let body = "";
+
+  if (status === "approved") {
+    if (approvalType === "rescheduled") {
+      subject = `Release Schedule Update - ${title}`;
+
+      body = `Hello,
+
+We would like to inform you that your release has been approved, with its release schedule updated by our distribution partner.
+
+Release Details
+Title        : ${title}
+Artist       : ${artist}
+Release Date : ${releaseDate}
+UPC          : ${upc}
+
+Please note that the release date listed above follows the latest schedule recorded in our system.
+
+We apologize for any inconvenience and appreciate your understanding.
+
+If you have any questions, please contact our support team.
+
+Best regards,
+Nazwa Patricia`;
+    } else {
+      subject = `Release Approved - ${title}`;
+
+      body = `Hello,
+
+Good news! Your release has been approved and processed for distribution.
+
+Release Details
+Title        : ${title}
+Artist       : ${artist}
+Release Date : ${releaseDate}
+UPC          : ${upc}
+
+Please wait while the release is processed by our distribution partner.
+
+If you have any questions, please contact our support team.
+
+Best regards,
+Nazwa Patricia`;
+    }
+  } else if (status === "rejected") {
+    subject = `Release Rejected - ${title}`;
+
+    body = `Hello,
+
+Unfortunately, your release has been rejected due to potential infringement or licensing issues.
+
+Release Details
+Title  : ${title}
+Artist : ${artist}
+UPC    : ${upc}
+
+Please review the release and contact our support team if you need further clarification.
+
+Best regards,
+Nazwa Patricia`;
+  }
+
+  const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.location.href = mailto;
 }
 function deleteRelease(uid,rid){
   if(confirm("Apakah yakin ingin menghapus rilisan ini?")){
