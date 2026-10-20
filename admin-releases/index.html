@@ -851,6 +851,36 @@ function loadReleases(){
     document.querySelector("#releaseTable tbody").innerHTML='<tr><td colspan="5" class="empty">Gagal memuat rilisan. Periksa koneksi atau izin Firebase.</td></tr>';
   });
 }
+
+function openPlatform(uid, rid) {
+  const item = releasesData.find(
+    r => r.uid === uid && r.rid === rid
+  );
+
+  if (!item) {
+    alert("Data rilisan tidak ditemukan. Coba muat ulang halaman.");
+    return;
+  }
+
+  const platforms = Array.isArray(item.platforms)
+    ? item.platforms.join(", ")
+    : "-";
+
+  const details =
+    "DETAIL RILISAN\n\n" +
+    "Judul: " + (item.title || "-") + "\n" +
+    "Artis: " + (item.artist || "-") + "\n" +
+    "Email: " + (item.email || "-") + "\n" +
+    "Tanggal rilis: " + (item.date || "-") + "\n" +
+    "UPC: " + (item.ean || item.upc || "-") + "\n" +
+    "Label: " + (item.label || "-") + "\n" +
+    "Status: " + (item.status || "-") + "\n" +
+    "Platform: " + platforms + "\n" +
+    "YouTube: " + (item.youtube || "-");
+
+  alert(details);
+}
+  
 function renderTablePage(page){
   const tbody=document.querySelector("#releaseTable tbody");
   tbody.innerHTML="";
