@@ -853,34 +853,11 @@ function loadReleases(){
 }
 
 function openPlatform(uid, rid) {
-  const item = releasesData.find(
-    r => r.uid === uid && r.rid === rid
-  );
+  localStorage.setItem("lastPage", currentPage);
 
-  if (!item) {
-    alert("Data rilisan tidak ditemukan. Coba muat ulang halaman.");
-    return;
-  }
-
-  const platforms = Array.isArray(item.platforms)
-    ? item.platforms.join(", ")
-    : "-";
-
-  const details =
-    "DETAIL RILISAN\n\n" +
-    "Judul: " + (item.title || "-") + "\n" +
-    "Artis: " + (item.artist || "-") + "\n" +
-    "Email: " + (item.email || "-") + "\n" +
-    "Tanggal rilis: " + (item.date || "-") + "\n" +
-    "UPC: " + (item.ean || item.upc || "-") + "\n" +
-    "Label: " + (item.label || "-") + "\n" +
-    "Status: " + (item.status || "-") + "\n" +
-    "Platform: " + platforms + "\n" +
-    "YouTube: " + (item.youtube || "-");
-
-  alert(details);
+  const url = `../admin-platform?uid=${encodeURIComponent(uid)}&rid=${encodeURIComponent(rid)}`;
+  window.location.href = url;
 }
-  
 function renderTablePage(page){
   const tbody=document.querySelector("#releaseTable tbody");
   tbody.innerHTML="";
@@ -913,7 +890,14 @@ function renderTablePage(page){
             </div>
           </div>
         </td>`;
-      tr.querySelector('[data-action="detail"]').addEventListener("click",()=>openPlatform(d.uid,d.rid));
+      tr.querySelector('[data-action="detail"]').addEventListener("click", function () {
+  if (!d.uid || !d.rid) {
+    alert("ID akun atau ID rilisan tidak ditemukan.");
+    return;
+  }
+
+  openPlatform(d.uid, d.rid);
+});
       tr.querySelector(".menu-btn").addEventListener("click",function(){toggleMenu(this);});
       tr.querySelector('[data-action="process"]').addEventListener("click",()=>confirmRelease(d.uid,d.rid,"proses"));
       tr.querySelector('[data-action="approve"]').addEventListener("click",()=>openApproveOptions(d.uid,d.rid));
