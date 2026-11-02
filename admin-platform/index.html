@@ -255,6 +255,37 @@ button:disabled {
   margin-bottom: 20px;
 }
 
+/* ===== STORAGE FILE ===== */
+.storage-status {
+  display: block;
+  font-size: 11px;
+  color: #858891;
+  margin-top: 8px;
+}
+
+.storage-actions {
+  display: flex;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.storage-actions button {
+  width: auto;
+  flex: 1;
+  padding: 9px 10px;
+  font-size: 11px;
+}
+
+.storage-check {
+  background: #e9edf5;
+  color: #252832;
+}
+
+.storage-delete {
+  background: #fff0f0;
+  color: #c62828;
+}
+
 /* ===== RESPONSIVE ===== */
 @media(max-width: 400px) {
   body {
@@ -512,6 +543,108 @@ function addInfoItem(container, label, value, full = false) {
   container.appendChild(div);
 }
 
+const STORAGE_WORKER =
+  "https://upload-assets.dynotic-bot.workers.dev";
+
+async function storageRequest(action, url) {
+  const response = await fetch(STORAGE_WORKER, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ action, url })
+  });
+
+  const result = await response.json();
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.error || "Permintaan gagal");
+  }
+
+  return result;
+}
+
+function addStorageControls(container, type, url) {
+  if (!url || !url.includes(".r2.dev/")) return;
+
+  const status = document.createElement("span");
+  status.className = "storage-status";
+  status.textContent = "Memeriksa file...";
+
+  const actions = document.createElement("div");
+  actions.className = "storage-actions";
+
+  const checkButton = document.createElement("button");
+  checkButton.className = "storage-check";
+  checkButton.textContent = "Cek File";
+
+  const deleteButton = document.createElement("button");
+  deleteButton.className = "storage-delete";
+  deleteButton.textContent = "Hapus File";
+
+  async function checkFile() {
+    checkButton.disabled = true;
+    status.textContent = "Memeriksa file...";
+
+    try {
+      const result = await storageRequest("check", url);
+
+      if (result.exists) {
+        status.textContent = "✓ File tersedia di Cloudflare R2";
+        status.style.color = "#16834a";
+      } else {
+        status.textContent = "✕ File sudah tidak ditemukan";
+        status.style.color = "#c62828";
+      }
+    } catch (error) {
+      status.textContent = "Gagal memeriksa: " + error.message;
+      status.style.color = "#c62828";
+    } finally {
+      checkButton.disabled = false;
+    }
+  }
+
+  checkButton.onclick = checkFile;
+
+  deleteButton.onclick = async () => {
+    const confirmed = confirm(
+      `Yakin ingin menghapus file ${type} ini dari Cloudflare R2?\n\nURL di Firebase tetap disimpan.`
+    );
+
+    if (!confirmed) return;
+
+    deleteButton.disabled = true;
+    deleteButton.textContent = "MENGHAPUS...";
+
+    try {
+      const result = await storageRequest("delete", url);
+
+      if (result.deleted) {
+        status.textContent = "✓ File berhasil dihapus dari R2";
+      } else {
+        status.textContent = "File memang sudah tidak tersedia";
+      }
+
+      status.style.color = "#c62828";
+
+    } catch (error) {
+      status.textContent = "Gagal menghapus: " + error.message;
+      status.style.color = "#c62828";
+    } finally {
+      deleteButton.disabled = false;
+      deleteButton.textContent = "Hapus File";
+    }
+  };
+
+  actions.appendChild(checkButton);
+  actions.appendChild(deleteButton);
+
+  container.appendChild(status);
+  container.appendChild(actions);
+
+  checkFile();
+}
+
 
 function renderReleaseInfo(d) {
   const infoDiv = document.getElementById("infoGrid");
@@ -538,6 +671,7 @@ function renderReleaseInfo(d) {
   });
 
 
+  
   // AUDIO
   const audioDiv = document.createElement("div");
   audioDiv.className = "full";
@@ -555,6 +689,8 @@ function renderReleaseInfo(d) {
     audioLink.textContent = "Preview Audio";
 
     audioDiv.appendChild(audioLink);
+
+    addStorageControls(audioDiv, "Audio", d.audio);
   } else {
     const empty = document.createElement("i");
     empty.textContent = "Kosong";
@@ -562,6 +698,7 @@ function renderReleaseInfo(d) {
   }
 
   infoDiv.appendChild(audioDiv);
+
 
 
   // COVER
@@ -591,6 +728,8 @@ function renderReleaseInfo(d) {
     coverLink.appendChild(coverImg);
     coverDiv.appendChild(coverLink);
 
+    addStorageControls(coverDiv, "Cover", d.cover);
+
   } else {
     const empty = document.createElement("i");
     empty.textContent = "Kosong";
@@ -598,8 +737,8 @@ function renderReleaseInfo(d) {
   }
 
   infoDiv.appendChild(coverDiv);
-}
 
+}
 
 /* ===== EXTRACT DRIVE ID ===== */
 function extractDriveId(url) {
