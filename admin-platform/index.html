@@ -1,288 +1,539 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta charset="UTF-8">
-<title>Platform Detail</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+<title>Platform Detail | Dynotic Distribution</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <style>
-body{
-  max-width:100vw;
-  overflow-x:hidden;
-  font-family:Outfit,sans-serif;
-  background:#f1f2f7;
-  padding:15px;
-}
-img{
-  max-width:100%;
-  height:auto;
-}
-.card{
-  background:#fff;
-  padding:15px;
-  border-radius:12px;
-  margin-bottom:15px;
+* {
+  box-sizing: border-box;
 }
 
-h3{
-  margin-bottom:6px;
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 15px;
+  font-family: 'Outfit', sans-serif;
+  background: #f1f2f7;
+  color: #17181c;
 }
 
-.platform{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:8px 0;
-  border-bottom:1px solid #eee;
+.card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 14px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 10px rgba(0,0,0,.035);
 }
 
-select{
-  padding:6px;
-  border-radius:6px;
+.header-card {
+  padding: 18px 16px;
 }
 
-button{
-  width:100%;
-  padding:12px;
-  border:none;
-  background:#111;
-  color:#fff;
-  border-radius:8px;
-  font-weight:600;
+h3 {
+  margin: 0 0 5px;
+  font-size: 18px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
-/* ===== INFO GRID ===== */
-@media (max-width: 600px){
-  .info-grid{
-    grid-template-columns:1fr;
-    display:grid;
-     gap:12px;
-  margin-top:12px;
-  font-size:13px;
+#artist {
+  font-size: 12px;
+  color: #858891;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 13px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #454852;
+  margin-bottom: 7px;
+}
+
+input,
+select {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid #e0e2e9;
+  border-radius: 9px;
+  background: #fff;
+  outline: none;
+  color: #17181c;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+input:focus,
+select:focus {
+  border-color: #999da9;
+}
+
+button {
+  width: 100%;
+  padding: 12px 14px;
+  border: none;
+  border-radius: 9px;
+  background: #111;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:active {
+  opacity: .85;
+}
+
+.platform {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.platform:last-child {
+  border-bottom: none;
+}
+
+.platform b {
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.platform select {
+  width: 135px;
+  flex-shrink: 0;
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 15px;
+}
+
+.info-grid div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  background: #f7f8fc;
+  padding: 11px;
+  border-radius: 9px;
+}
+
+.info-grid .full {
+  grid-column: 1 / -1;
+}
+
+.info-grid span {
+  display: block;
+  font-size: 11px;
+  color: #858891;
+  margin-bottom: 4px;
+}
+
+.info-grid b {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.info-grid img {
+  display: block;
+  width: 120px;
+  max-width: 100%;
+  border-radius: 8px;
+  margin-top: 7px;
+}
+
+.info-grid a {
+  color: #17181c;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.save-button {
+  margin-bottom: 20px;
+}
+
+@media(max-width: 560px) {
+  body {
+    padding: 10px;
   }
 
-  .info-grid .full{
-    grid-column:1;
+  .card {
+    padding: 14px;
+    border-radius: 13px;
   }
-}
 
-.info-grid div{
-  background:#f7f8fc;
-  padding:10px;
-  border-radius:8px;
-}
+  .header-card {
+    padding: 16px 14px;
+  }
 
-.info-grid span{
-  display:block;
-  font-size:11px;
-  color:#666;
-  margin-bottom:2px;
-}
+  .info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
 
-.info-grid b{
-  font-size:13px;
-  font-weight:600;
-}
+  .platform {
+    gap: 8px;
+  }
 
-.info-grid .full{
-  grid-column:1 / 3;
-}
-
-.info-grid img{
-  width:120px;
-  border-radius:8px;
-  margin-top:6px;
+  .platform select {
+    width: 125px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="card">
+<!-- HEADER -->
+<div class="card header-card">
   <h3 id="title">Loading...</h3>
   <small id="artist"></small>
 </div>
-<div class="card">
-  <label><b>Set Status Semua Platform</b></label>
-  <select id="globalPlatformStatus" style="margin-bottom:10px;">
-    <option value="process">Process</option>
-    <option value="approved">Approved</option>
-    <option value="unavailable">Unavailable</option>
-  </select>
-  <button onclick="applyToAllPlatforms()" style="margin-bottom:15px;">Apply ke Semua</button>
-</div>
-<div class="card" id="platformWrap"></div>
-<div class="card">
-  <label for="releaseDate"><b>Release Date</b></label>
-  <input type="date" id="releaseDate"
-    style="width:100%;padding:8px;border-radius:6px;margin-bottom:10px;">
 
-  <label for="smartlink"><b>Smartlink</b></label>
-  <input type="text" id="smartlink"
-    placeholder="https://..."
-    style="width:100%;padding:8px;border-radius:6px;margin-bottom:10px;">
+<!-- GLOBAL PLATFORM STATUS -->
+<div class="card">
+  <div class="section-title">Pengaturan Status Platform</div>
 
-  <!-- EAN -->
-  <label for="ean"><b>EAN Code</b></label>
-  <input type="text" id="ean"
-    placeholder="Masukkan EAN"
-    style="width:100%;padding:8px;border-radius:6px;">
+  <div class="form-group">
+    <label for="globalPlatformStatus">Set Status Semua Platform</label>
+    <select id="globalPlatformStatus">
+      <option value="process">Process</option>
+      <option value="approved">Approved</option>
+      <option value="unavailable">Unavailable</option>
+    </select>
+  </div>
+
+  <button onclick="applyToAllPlatforms()">
+    Apply ke Semua Platform
+  </button>
 </div>
-<button onclick="savePlatform()">SIMPAN STATUS</button>
+
+<!-- PLATFORM LIST -->
+<div class="card">
+  <div class="section-title">Platform Distribution</div>
+  <div id="platformWrap"></div>
+</div>
+
+<!-- RELEASE INFORMATION -->
+<div class="card">
+  <div class="section-title">Release Information</div>
+
+  <div class="form-group">
+    <label for="releaseDate">Release Date</label>
+    <input type="date" id="releaseDate">
+  </div>
+
+  <div class="form-group">
+    <label for="smartlink">Smartlink</label>
+    <input
+      type="text"
+      id="smartlink"
+      placeholder="https://..."
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="ean">EAN Code</label>
+    <input
+      type="text"
+      id="ean"
+      placeholder="Masukkan EAN"
+    >
+  </div>
+</div>
+
+<button class="save-button" onclick="savePlatform()">
+  SIMPAN STATUS
+</button>
 
 <script>
 firebase.initializeApp({
- apiKey:"AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
- authDomain:"dynopay-2513c.firebaseapp.com",
- databaseURL:"https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain: "dynopay-2513c.firebaseapp.com",
+  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 
-const auth=firebase.auth();
-const db=firebase.database();
+const auth = firebase.auth();
+const db = firebase.database();
 
-const params=new URLSearchParams(location.search);
-const uid=params.get("uid");
-const rid=params.get("rid");
+const params = new URLSearchParams(location.search);
+const uid = params.get("uid");
+const rid = params.get("rid");
 
-const platforms=[
- "Spotify","Tidal","Amazon","Apple Music",
- "Tiktok","YouTube Music","YouTube Content ID",
- "META","SoundCloud","Tencent"
+const platforms = [
+  "Spotify",
+  "Tidal",
+  "Amazon",
+  "Apple Music",
+  "Tiktok",
+  "YouTube Music",
+  "YouTube Content ID",
+  "META",
+  "SoundCloud",
+  "Tencent"
 ];
 
 /* ===== SECURITY CHECK ===== */
-auth.onAuthStateChanged(user=>{
- if(!user){
-   location.href="../admin"; // login admin
-   return;
- }
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    location.href = "../admin";
+    return;
+  }
 
- db.ref("admins/"+user.uid).once("value")
- .then(s=>{
-   if(!s.exists()){
-     alert("⚠ Bukan admin!");
-     auth.signOut().then(()=>location.href="../admin");
-   }else{
-     loadRelease(); // SAFE
-   }
- });
+  db.ref("admins/" + user.uid).once("value")
+    .then(s => {
+      if (!s.exists()) {
+        alert("⚠ Bukan admin!");
+        auth.signOut().then(() => {
+          location.href = "../admin";
+        });
+      } else {
+        if (!uid || !rid) {
+          alert("Data rilisan tidak valid!");
+          return;
+        }
+
+        loadRelease();
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      alert("Gagal memeriksa akses admin.");
+    });
 });
 
 /* ===== LOAD RELEASE ===== */
-function loadRelease(){
+function loadRelease() {
   db.ref(`releases/${uid}/${rid}`).once("value")
-  .then(s=>{
-    const d = s.val();
-    if(!d){ alert("Rilisan tidak ditemukan"); return; }
+    .then(s => {
+      const d = s.val();
 
-    // Tampilkan data lengkap keterangan
-// Tampilkan judul & nama artis tetap di atas
-document.getElementById("title").innerText = d.title || "";
-document.getElementById("artist").innerText = d.artist || "";
+      if (!d) {
+        alert("Rilisan tidak ditemukan");
+        return;
+      }
 
-let infoDiv = document.createElement("div");
-infoDiv.className = "info-grid";
-infoDiv.innerHTML = `
-<div><span>Song Title</span><b>${d.title || "-"}</b></div>
-<div><span>Version</span><b>${d.version || "-"}</b></div>
-<div><span>Genre</span><b>${d.genre || "-"}</b></div>
-<div><span>Release Type</span><b>${d.releaseType || "-"}</b></div>
-<div><span>Artist</span><b>${d.artist || "-"}</b></div>
-<div><span>Full Name</span><b>${d.fullname || "-"}</b></div>
-<div><span>Featuring</span><b>${d.featuring || "-"}</b></div>
-<div><span>Label</span><b>${d.label || "-"}</b></div>
+      document.getElementById("title").innerText = d.title || "-";
+      document.getElementById("artist").innerText = d.artist || "-";
 
-<div><span>Spotify URL</span><b>${d.spotifyUrl || "-"}</b></div>
-<div><span>Apple Music ID</span><b>${d.appleId || "-"}</b></div>
-<div><span>Producer</span><b>${d.producer || "-"}</b></div>
+      renderReleaseInfo(d);
+      renderPlatform(d.platformStatus || {});
 
-<div><span>Composer</span><b>${d.composer || "-"}</b></div>
-<div><span>Publisher</span><b>${d.publisher || "-"}</b></div>
+      document.getElementById("releaseDate").value = d.date || "";
+      document.getElementById("smartlink").value = d.smartlink || "";
+      document.getElementById("ean").value = d.ean || "";
+    })
+    .catch(error => {
+      console.error(error);
+      alert("Gagal memuat data rilisan.");
+    });
+}
 
-<div class="full">
-  <span>Audio</span>
-  ${d.audio ? `<a href="${d.audio}" target="_blank">Preview Audio</a>` : "<i>Kosong</i>"}
-</div>
+/* ===== RELEASE INFORMATION ===== */
+function addInfoItem(container, label, value, full = false) {
+  const div = document.createElement("div");
 
-<div class="full">
-  <span>Cover</span>
-  ${
-    d.cover
-    ? `
-      <a href="${d.cover}" target="_blank">
-        <img 
-          src="https://drive.google.com/thumbnail?id=${extractDriveId(d.cover)}&sz=w400"
-          style="cursor:pointer"
-        />
-      </a>
-    `
-    : "<i>Kosong</i>"
-  }
-</div>
-`;
+  if (full) div.className = "full";
 
-// tambahkan info lengkap di bawah element artist
-document.getElementById("artist").insertAdjacentElement("afterend", infoDiv);
+  const span = document.createElement("span");
+  span.textContent = label;
 
-    renderPlatform(d.platformStatus || {});
+  const bold = document.createElement("b");
+  bold.textContent = value || "-";
 
-    const releaseInput = document.getElementById("releaseDate");
-    releaseInput.value = d.date || "";  // kosong kalau belum ada / remix
+  div.appendChild(span);
+  div.appendChild(bold);
+  container.appendChild(div);
+}
 
-    const smartlinkInput = document.getElementById("smartlink");
-    smartlinkInput.value = d.smartlink || "";
-    const eanInput = document.getElementById("ean");
-eanInput.value = d.ean || "";
+function renderReleaseInfo(d) {
+  const old = document.querySelector(".info-grid");
+  if (old) old.remove();
+
+  const infoDiv = document.createElement("div");
+  infoDiv.className = "info-grid";
+
+  const fields = [
+    ["Song Title", d.title],
+    ["Version", d.version],
+    ["Genre", d.genre],
+    ["Release Type", d.releaseType],
+    ["Artist", d.artist],
+    ["Full Name", d.fullname],
+    ["Featuring", d.featuring],
+    ["Label", d.label],
+    ["Spotify URL", d.spotifyUrl],
+    ["Apple Music ID", d.appleId],
+    ["Producer", d.producer],
+    ["Composer", d.composer],
+    ["Publisher", d.publisher]
+  ];
+
+  fields.forEach(([label, value]) => {
+    addInfoItem(infoDiv, label, value);
   });
+
+  // AUDIO
+  const audioDiv = document.createElement("div");
+  audioDiv.className = "full";
+
+  const audioLabel = document.createElement("span");
+  audioLabel.textContent = "Audio";
+
+  audioDiv.appendChild(audioLabel);
+
+  if (d.audio) {
+    const audioLink = document.createElement("a");
+    audioLink.href = d.audio;
+    audioLink.target = "_blank";
+    audioLink.rel = "noopener noreferrer";
+    audioLink.textContent = "Preview Audio";
+    audioDiv.appendChild(audioLink);
+  } else {
+    const empty = document.createElement("i");
+    empty.textContent = "Kosong";
+    audioDiv.appendChild(empty);
+  }
+
+  infoDiv.appendChild(audioDiv);
+
+  // COVER
+  const coverDiv = document.createElement("div");
+  coverDiv.className = "full";
+
+  const coverLabel = document.createElement("span");
+  coverLabel.textContent = "Cover";
+  coverDiv.appendChild(coverLabel);
+
+  if (d.cover) {
+    const coverLink = document.createElement("a");
+    coverLink.href = d.cover;
+    coverLink.target = "_blank";
+    coverLink.rel = "noopener noreferrer";
+
+    const coverImg = document.createElement("img");
+    const driveId = extractDriveId(d.cover);
+
+    coverImg.src = driveId
+      ? `https://drive.google.com/thumbnail?id=${encodeURIComponent(driveId)}&sz=w400`
+      : d.cover;
+
+    coverImg.alt = "Cover rilisan";
+    coverImg.style.cursor = "pointer";
+
+    coverLink.appendChild(coverImg);
+    coverDiv.appendChild(coverLink);
+  } else {
+    const empty = document.createElement("i");
+    empty.textContent = "Kosong";
+    coverDiv.appendChild(empty);
+  }
+
+  infoDiv.appendChild(coverDiv);
+
+  document.getElementById("artist")
+    .insertAdjacentElement("afterend", infoDiv);
 }
 
-/* ===== RENDER ===== */
-function renderPlatform(data){
- const wrap=document.getElementById("platformWrap");
- wrap.innerHTML="";
+/* ===== EXTRACT DRIVE ID ===== */
+function extractDriveId(url) {
+  if (!url) return "";
 
- platforms.forEach(p=>{
-   wrap.innerHTML+=`
-   <div class="platform">
-     <b>${p}</b>
-     <select data-name="${p}">
-       <option value="process">Process</option>
-       <option value="approved">Approved</option>
-       <option value="unavailable">Unavailable</option>
-     </select>
-   </div>`;
- });
-
- document.querySelectorAll("select").forEach(s=>{
-   if(data[s.dataset.name])
-     s.value=data[s.dataset.name];
- });
-}
-function extractDriveId(url){
   const match = url.match(/\/d\/([^\/]+)/);
   return match ? match[1] : "";
 }
-function applyToAllPlatforms(){
+
+/* ===== RENDER PLATFORM ===== */
+function renderPlatform(data) {
+  const wrap = document.getElementById("platformWrap");
+  wrap.innerHTML = "";
+
+  platforms.forEach(p => {
+    const row = document.createElement("div");
+    row.className = "platform";
+
+    const name = document.createElement("b");
+    name.textContent = p;
+
+    const select = document.createElement("select");
+    select.dataset.name = p;
+
+    const options = [
+      ["process", "Process"],
+      ["approved", "Approved"],
+      ["unavailable", "Unavailable"]
+    ];
+
+    options.forEach(([value, label]) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = label;
+      select.appendChild(option);
+    });
+
+    if (data[p]) {
+      select.value = data[p];
+    }
+
+    row.appendChild(name);
+    row.appendChild(select);
+    wrap.appendChild(row);
+  });
+}
+
+/* ===== APPLY TO ALL ===== */
+function applyToAllPlatforms() {
   const status = document.getElementById("globalPlatformStatus").value;
-  document.querySelectorAll("#platformWrap select").forEach(s=>{
+
+  document.querySelectorAll("#platformWrap select").forEach(s => {
     s.value = status;
   });
 }
-function savePlatform(){
-  let result = {};
 
-  // AMBIL HANYA SELECT PLATFORM
-  document.querySelectorAll("#platformWrap select").forEach(s=>{
+/* ===== SAVE PLATFORM ===== */
+function savePlatform() {
+  const result = {};
+
+  document.querySelectorAll("#platformWrap select").forEach(s => {
     result[s.dataset.name] = s.value;
   });
 
   const releaseDate = document.getElementById("releaseDate").value;
-  const smartlink = document.getElementById("smartlink").value;
-  const ean = document.getElementById("ean").value;
+  const smartlink = document.getElementById("smartlink").value.trim();
+  const ean = document.getElementById("ean").value.trim();
 
   const updates = {
     platformStatus: result,
@@ -291,9 +542,24 @@ function savePlatform(){
     ean: ean || null
   };
 
+  const saveButton = document.querySelector(".save-button");
+  saveButton.disabled = true;
+  saveButton.textContent = "MENYIMPAN...";
+
   db.ref(`releases/${uid}/${rid}`).update(updates)
-    .then(()=>alert("✔ Data updated"));
+    .then(() => {
+      alert("✔ Data berhasil diperbarui");
+    })
+    .catch(error => {
+      console.error(error);
+      alert("Gagal menyimpan data: " + error.message);
+    })
+    .finally(() => {
+      saveButton.disabled = false;
+      saveButton.textContent = "SIMPAN STATUS";
+    });
 }
 </script>
+
 </body>
 </html>
