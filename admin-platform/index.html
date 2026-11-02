@@ -19,120 +19,100 @@
 }
 
 body {
+  margin: 0;
+  padding: 12px;
   max-width: 100%;
   overflow-x: hidden;
-  margin: 0;
-  padding: 15px;
   font-family: 'Outfit', sans-serif;
   background: #f1f2f7;
   color: #17181c;
 }
 
-.card {
+/* ===== ACCORDION ===== */
+.accordion {
   background: #fff;
-  padding: 16px;
-  border-radius: 14px;
-  margin-bottom: 15px;
-  box-shadow: 0 3px 10px rgba(0,0,0,.035);
+  border-radius: 13px;
+  margin-bottom: 11px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,.035);
 }
 
-.header-card {
-  padding: 18px 16px;
-}
-
-h3 {
-  margin: 0 0 5px;
-  font-size: 18px;
-  font-weight: 600;
-  overflow-wrap: anywhere;
-}
-
-#artist {
-  font-size: 12px;
-  color: #858891;
-}
-
-.section-title {
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0 0 13px;
-}
-
-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: #454852;
-  margin-bottom: 7px;
-}
-
-input,
-select {
-  width: 100%;
-  min-width: 0;
-  padding: 11px 12px;
-  border: 1px solid #e0e2e9;
-  border-radius: 9px;
-  background: #fff;
-  outline: none;
-  color: #17181c;
-  font-family: inherit;
-  font-size: 13px;
-}
-
-input:focus,
-select:focus {
-  border-color: #999da9;
-}
-
-button {
-  width: 100%;
-  padding: 12px 14px;
-  border: none;
-  border-radius: 9px;
-  background: #111;
-  color: #fff;
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-button:active {
-  opacity: .85;
-}
-
-.platform {
+.accordion-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  padding: 11px 0;
-  border-bottom: 1px solid #eee;
+  padding: 16px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
 }
 
-.platform:last-child {
-  border-bottom: none;
+.accordion-header::-webkit-details-marker {
+  display: none;
 }
 
-.platform b {
-  min-width: 0;
+.accordion-title {
   font-size: 13px;
   font-weight: 600;
 }
 
-.platform select {
-  width: 135px;
-  flex-shrink: 0;
-  padding: 8px 10px;
-  font-size: 12px;
+.accordion-subtitle {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: #888b95;
+  margin-top: 3px;
 }
 
+.arrow {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  background: #f3f4f8;
+  color: #555;
+  flex-shrink: 0;
+  transition: transform .2s;
+}
+
+.arrow svg {
+  width: 15px;
+  height: 15px;
+}
+
+details[open] .arrow {
+  transform: rotate(180deg);
+}
+
+.accordion-content {
+  padding: 0 15px 16px;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 15px;
+}
+
+/* ===== TITLE ===== */
+#title {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+#artist {
+  display: block;
+  font-size: 12px;
+  color: #888b95;
+  margin-top: 5px;
+}
+
+/* ===== INFO GRID ===== */
 .info-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 9px;
-  margin-top: 15px;
 }
 
 .info-grid div {
@@ -173,6 +153,7 @@ button:active {
   overflow-wrap: anywhere;
 }
 
+/* ===== FORM ===== */
 .form-group {
   margin-bottom: 14px;
 }
@@ -181,35 +162,115 @@ button:active {
   margin-bottom: 0;
 }
 
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #454852;
+  margin-bottom: 7px;
+}
+
+input,
+select {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid #e0e2e9;
+  border-radius: 9px;
+  background: #fff;
+  outline: none;
+  color: #17181c;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+input:focus,
+select:focus {
+  border-color: #999da9;
+}
+
+/* ===== PLATFORM ===== */
+.platform {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.platform:last-child {
+  border-bottom: none;
+}
+
+.platform b {
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.platform select {
+  width: 130px;
+  flex-shrink: 0;
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+.global-box {
+  padding: 12px;
+  background: #f7f8fc;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.global-box button {
+  margin-top: 9px;
+}
+
+/* ===== BUTTON ===== */
+button {
+  width: 100%;
+  padding: 12px 14px;
+  border: none;
+  border-radius: 9px;
+  background: #111;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:active {
+  opacity: .85;
+}
+
+button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
 .save-button {
+  margin-top: 5px;
   margin-bottom: 20px;
 }
 
-@media(max-width: 560px) {
+/* ===== RESPONSIVE ===== */
+@media(max-width: 400px) {
   body {
     padding: 10px;
   }
 
-  .card {
+  .accordion-header {
     padding: 14px;
-    border-radius: 13px;
   }
 
-  .header-card {
-    padding: 16px 14px;
-  }
-
-  .info-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-  }
-
-  .platform {
-    gap: 8px;
+  .accordion-content {
+    padding: 13px;
   }
 
   .platform select {
-    width: 125px;
+    width: 120px;
   }
 }
 </style>
@@ -217,67 +278,133 @@ button:active {
 
 <body>
 
-<!-- HEADER -->
-<div class="card header-card">
-  <h3 id="title">Loading...</h3>
-  <small id="artist"></small>
-</div>
+<!-- 1. JUDUL DAN INFORMASI UTAMA -->
+<details class="accordion">
+  <summary class="accordion-header">
+    <div>
+      <div class="accordion-title">Judul & Informasi Utama</div>
+      <span class="accordion-subtitle">Judul lagu dan nama artis</span>
+    </div>
+    <div class="arrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m6 9 6 6 6-6"/>
+      </svg>
+    </div>
+  </summary>
 
-<!-- GLOBAL PLATFORM STATUS -->
-<div class="card">
-  <div class="section-title">Pengaturan Status Platform</div>
-
-  <div class="form-group">
-    <label for="globalPlatformStatus">Set Status Semua Platform</label>
-    <select id="globalPlatformStatus">
-      <option value="process">Process</option>
-      <option value="approved">Approved</option>
-      <option value="unavailable">Unavailable</option>
-    </select>
+  <div class="accordion-content">
+    <h3 id="title">Loading...</h3>
+    <small id="artist"></small>
   </div>
+</details>
 
-  <button onclick="applyToAllPlatforms()">
-    Apply ke Semua Platform
-  </button>
-</div>
 
-<!-- PLATFORM LIST -->
-<div class="card">
-  <div class="section-title">Platform Distribution</div>
-  <div id="platformWrap"></div>
-</div>
+<!-- 2. INFORMASI RILISAN -->
+<details class="accordion">
+  <summary class="accordion-header">
+    <div>
+      <div class="accordion-title">Informasi Rilisan</div>
+      <span class="accordion-subtitle">Metadata, audio, cover, dan detail lainnya</span>
+    </div>
+    <div class="arrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m6 9 6 6 6-6"/>
+      </svg>
+    </div>
+  </summary>
 
-<!-- RELEASE INFORMATION -->
-<div class="card">
-  <div class="section-title">Release Information</div>
-
-  <div class="form-group">
-    <label for="releaseDate">Release Date</label>
-    <input type="date" id="releaseDate">
+  <div class="accordion-content">
+    <div id="infoGrid" class="info-grid">
+      <div class="full">Memuat informasi...</div>
+    </div>
   </div>
+</details>
 
-  <div class="form-group">
-    <label for="smartlink">Smartlink</label>
-    <input
-      type="text"
-      id="smartlink"
-      placeholder="https://..."
-    >
+
+<!-- 3. PLATFORM DISTRIBUTION -->
+<details class="accordion">
+  <summary class="accordion-header">
+    <div>
+      <div class="accordion-title">Platform Distribution</div>
+      <span class="accordion-subtitle">Atur status setiap platform musik</span>
+    </div>
+    <div class="arrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m6 9 6 6 6-6"/>
+      </svg>
+    </div>
+  </summary>
+
+  <div class="accordion-content">
+
+    <div class="global-box">
+      <label for="globalPlatformStatus">Set Status Semua Platform</label>
+
+      <select id="globalPlatformStatus">
+        <option value="process">Process</option>
+        <option value="approved">Approved</option>
+        <option value="unavailable">Unavailable</option>
+      </select>
+
+      <button onclick="applyToAllPlatforms()">
+        Apply ke Semua Platform
+      </button>
+    </div>
+
+    <div id="platformWrap"></div>
+
   </div>
+</details>
 
-  <div class="form-group">
-    <label for="ean">EAN Code</label>
-    <input
-      type="text"
-      id="ean"
-      placeholder="Masukkan EAN"
-    >
+
+<!-- 4. RELEASE INFORMATION -->
+<details class="accordion">
+  <summary class="accordion-header">
+    <div>
+      <div class="accordion-title">Release Information</div>
+      <span class="accordion-subtitle">Tanggal rilis, Smartlink, dan EAN</span>
+    </div>
+    <div class="arrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m6 9 6 6 6-6"/>
+      </svg>
+    </div>
+  </summary>
+
+  <div class="accordion-content">
+
+    <div class="form-group">
+      <label for="releaseDate">Release Date</label>
+      <input type="date" id="releaseDate">
+    </div>
+
+    <div class="form-group">
+      <label for="smartlink">Smartlink</label>
+      <input
+        type="text"
+        id="smartlink"
+        placeholder="https://..."
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="ean">EAN Code</label>
+      <input
+        type="text"
+        id="ean"
+        placeholder="Masukkan EAN"
+      >
+    </div>
+
   </div>
-</div>
+</details>
 
-<button class="save-button" onclick="savePlatform()">
+
+<!-- SAVE BUTTON -->
+<button class="save-button" id="saveButton" onclick="savePlatform()">
   SIMPAN STATUS
 </button>
+
 
 <script>
 firebase.initializeApp({
@@ -306,6 +433,7 @@ const platforms = [
   "Tencent"
 ];
 
+
 /* ===== SECURITY CHECK ===== */
 auth.onAuthStateChanged(user => {
   if (!user) {
@@ -317,9 +445,11 @@ auth.onAuthStateChanged(user => {
     .then(s => {
       if (!s.exists()) {
         alert("⚠ Bukan admin!");
+
         auth.signOut().then(() => {
           location.href = "../admin";
         });
+
       } else {
         if (!uid || !rid) {
           alert("Data rilisan tidak valid!");
@@ -335,6 +465,7 @@ auth.onAuthStateChanged(user => {
     });
 });
 
+
 /* ===== LOAD RELEASE ===== */
 function loadRelease() {
   db.ref(`releases/${uid}/${rid}`).once("value")
@@ -346,8 +477,8 @@ function loadRelease() {
         return;
       }
 
-      document.getElementById("title").innerText = d.title || "-";
-      document.getElementById("artist").innerText = d.artist || "-";
+      document.getElementById("title").textContent = d.title || "-";
+      document.getElementById("artist").textContent = d.artist || "-";
 
       renderReleaseInfo(d);
       renderPlatform(d.platformStatus || {});
@@ -361,6 +492,7 @@ function loadRelease() {
       alert("Gagal memuat data rilisan.");
     });
 }
+
 
 /* ===== RELEASE INFORMATION ===== */
 function addInfoItem(container, label, value, full = false) {
@@ -376,15 +508,14 @@ function addInfoItem(container, label, value, full = false) {
 
   div.appendChild(span);
   div.appendChild(bold);
+
   container.appendChild(div);
 }
 
-function renderReleaseInfo(d) {
-  const old = document.querySelector(".info-grid");
-  if (old) old.remove();
 
-  const infoDiv = document.createElement("div");
-  infoDiv.className = "info-grid";
+function renderReleaseInfo(d) {
+  const infoDiv = document.getElementById("infoGrid");
+  infoDiv.innerHTML = "";
 
   const fields = [
     ["Song Title", d.title],
@@ -406,6 +537,7 @@ function renderReleaseInfo(d) {
     addInfoItem(infoDiv, label, value);
   });
 
+
   // AUDIO
   const audioDiv = document.createElement("div");
   audioDiv.className = "full";
@@ -421,6 +553,7 @@ function renderReleaseInfo(d) {
     audioLink.target = "_blank";
     audioLink.rel = "noopener noreferrer";
     audioLink.textContent = "Preview Audio";
+
     audioDiv.appendChild(audioLink);
   } else {
     const empty = document.createElement("i");
@@ -430,12 +563,14 @@ function renderReleaseInfo(d) {
 
   infoDiv.appendChild(audioDiv);
 
+
   // COVER
   const coverDiv = document.createElement("div");
   coverDiv.className = "full";
 
   const coverLabel = document.createElement("span");
   coverLabel.textContent = "Cover";
+
   coverDiv.appendChild(coverLabel);
 
   if (d.cover) {
@@ -452,10 +587,10 @@ function renderReleaseInfo(d) {
       : d.cover;
 
     coverImg.alt = "Cover rilisan";
-    coverImg.style.cursor = "pointer";
 
     coverLink.appendChild(coverImg);
     coverDiv.appendChild(coverLink);
+
   } else {
     const empty = document.createElement("i");
     empty.textContent = "Kosong";
@@ -463,10 +598,8 @@ function renderReleaseInfo(d) {
   }
 
   infoDiv.appendChild(coverDiv);
-
-  document.getElementById("artist")
-    .insertAdjacentElement("afterend", infoDiv);
 }
+
 
 /* ===== EXTRACT DRIVE ID ===== */
 function extractDriveId(url) {
@@ -475,6 +608,7 @@ function extractDriveId(url) {
   const match = url.match(/\/d\/([^\/]+)/);
   return match ? match[1] : "";
 }
+
 
 /* ===== RENDER PLATFORM ===== */
 function renderPlatform(data) {
@@ -510,9 +644,11 @@ function renderPlatform(data) {
 
     row.appendChild(name);
     row.appendChild(select);
+
     wrap.appendChild(row);
   });
 }
+
 
 /* ===== APPLY TO ALL ===== */
 function applyToAllPlatforms() {
@@ -522,6 +658,7 @@ function applyToAllPlatforms() {
     s.value = status;
   });
 }
+
 
 /* ===== SAVE PLATFORM ===== */
 function savePlatform() {
@@ -542,7 +679,8 @@ function savePlatform() {
     ean: ean || null
   };
 
-  const saveButton = document.querySelector(".save-button");
+  const saveButton = document.getElementById("saveButton");
+
   saveButton.disabled = true;
   saveButton.textContent = "MENYIMPAN...";
 
