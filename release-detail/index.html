@@ -914,7 +914,13 @@ function loadRelease(uid,rid){
         color = "#3b82f6";
 
       }
+else if(statusLower === "schedule"){
 
+  text = "SCHEDULE";
+
+  color = "#8b5cf6";
+
+}
       else if(statusLower === "approved"){
 
         if(releaseDateObj && now >= releaseDateObj){
