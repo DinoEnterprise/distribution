@@ -998,9 +998,12 @@ else if(statusLower === "schedule"){
 
       }
 
-      else if(statusLower === "process"){
+      else if(
+  statusLower === "process" ||
+  statusLower === "schedule"
+){
 
-        /* LOCKED */
+  /* LOCKED */
 
       }
 
@@ -1097,9 +1100,10 @@ else if(statusLower === "schedule"){
       /* PLATFORMS */
 
       if(
-        statusLower === "approved" ||
-        statusLower === "live"
-      ){
+  statusLower === "approved" ||
+  statusLower === "schedule" ||
+  statusLower === "live"
+){
 
         renderPlatforms(
           d.platformStatus || {}
