@@ -151,11 +151,12 @@ tr:hover{background:#f8f8fa}
       <div class="field">
         <label for="manualStatus">Status rilisan *</label>
         <select id="manualStatus" required>
-          <option value="approved">Approved</option>
-          <option value="process">Process</option>
-          <option value="proposal">Proposal</option>
-          <option value="rejected">Rejected</option>
-        </select>
+  <option value="approved">Approved</option>
+  <option value="schedule">Schedule</option>
+  <option value="process">Process</option>
+  <option value="proposal">Proposal</option>
+  <option value="rejected">Rejected</option>
+</select>
       </div>
       <div class="field full">
         <label>Platform distribusi</label>
@@ -817,6 +818,7 @@ function deleteRelease(uid,rid){
 }
 function getStatusColor(status){
   if(status==="approved") return "#10b981";
+  if(status==="schedule") return "#8b5cf6";
   if(status==="rejected") return "#ef4444";
   if(status==="proses"||status==="process") return "#3b82f6";
   return "#f59e0b";
@@ -881,8 +883,8 @@ function renderTablePage(page){
             <button class="menu-btn" type="button" aria-label="Menu aksi">⋮</button>
             <div class="menu-dropdown">
               <button type="button" data-action="process">Proses</button>
-              <button type="button" data-action="approve">Approve</button>
-              
+<button type="button" data-action="approve">Approve</button>
+<button type="button" data-action="schedule">Schedule</button>
 <button type="button" data-action="reject">Reject</button>
 <button type="button" data-action="change-account">Ganti Akun Artist</button>
 <button type="button" data-action="delete">Delete</button>
@@ -901,6 +903,11 @@ function renderTablePage(page){
       tr.querySelector(".menu-btn").addEventListener("click",function(){toggleMenu(this);});
       tr.querySelector('[data-action="process"]').addEventListener("click",()=>confirmRelease(d.uid,d.rid,"proses"));
       tr.querySelector('[data-action="approve"]').addEventListener("click",()=>openApproveOptions(d.uid,d.rid));
+    tr.querySelector('[data-action="schedule"]').addEventListener("click",()=>{
+  if(!confirm("Tetapkan rilisan ini ke status SCHEDULE?\n\nRilisan sudah disetujui, tetapi masih menunggu jadwal rilis.")) return;
+
+  setReleaseStatus(d.uid,d.rid,"schedule");
+});
       
 tr.querySelector('[data-action="reject"]').addEventListener("click",()=>confirmRelease(d.uid,d.rid,"rejected"));
 tr.querySelector('[data-action="change-account"]').addEventListener("click",()=>changeReleaseAccount(d.uid,d.rid));
