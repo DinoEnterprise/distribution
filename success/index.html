@@ -1,97 +1,285 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Success</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify Your Email | Dynotic</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:"Outfit",sans-serif;
+  font-family:'Outfit',sans-serif;
 }
 
 body{
   min-height:100vh;
   display:flex;
-  justify-content:center;
   align-items:center;
-  background: linear-gradient(180deg, #e5e7eb, #d1d5db);
-  padding:15px;
+  justify-content:center;
+  padding:20px 16px;
+  background:#f1f2f7;
+  color:#171717;
 }
 
-/* CARD */
-.box{
+.container{
   width:100%;
-  max-width:380px;
+  max-width:420px;
+  padding:30px 24px;
   background:#fff;
-  border-radius:26px;
-  padding:36px 26px;
+  border:1px solid #e8e8ed;
+  border-radius:18px;
   text-align:center;
-  border:1px solid rgba(0,0,0,0.05);
-  box-shadow:0 10px 30px rgba(0,0,0,0.12), 0 30px 60px rgba(0,0,0,0.08);
-  animation:enter .6s ease;
+  animation:pageIn .4s ease;
 }
 
-@keyframes enter{
-  from{opacity:0; transform:translateY(40px)}
-  to{opacity:1; transform:none}
+@keyframes pageIn{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
 }
 
-/* ICON */
+.logo{
+  width:58px;
+  height:auto;
+  margin-bottom:24px;
+}
+
 .icon{
   width:70px;
-  margin-bottom:18px;
-  opacity:.9;
+  height:70px;
+  border-radius:50%;
+  background:#f1f2f7;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 20px;
+  font-size:30px;
 }
 
-/* TEXT */
-h1{
+h2{
   font-size:22px;
   font-weight:700;
-  color:#111;
-  margin-bottom:8px;
+  margin-bottom:10px;
 }
 
-p{
+.description{
   font-size:14px;
-  color:#555;
+  color:#777;
+  line-height:1.7;
+  margin-bottom:22px;
 }
 
-/* BUTTON */
-.btn{
-  margin-top:20px;
-  display:inline-block;
-  padding:12px 20px;
-  border-radius:12px;
-  background:#000;
-  color:#fff;
-  text-decoration:none;
+.email-box{
+  background:#f7f7f9;
+  border:1px solid #e8e8ed;
+  border-radius:11px;
+  padding:13px;
+  font-size:14px;
   font-weight:600;
-  transition:.2s;
+  color:#222;
+  overflow-wrap:anywhere;
+  margin-bottom:20px;
 }
 
-.btn:hover{
+.info{
+  background:#f7f7f9;
+  border-radius:11px;
+  padding:14px;
+  text-align:left;
+  margin-bottom:20px;
+}
+
+.info p{
+  font-size:13px;
+  color:#666;
+  line-height:1.7;
+}
+
+.info strong{
+  color:#222;
+}
+
+button{
+  width:100%;
+  height:48px;
+  border:0;
+  border-radius:11px;
   background:#111;
-  transform:translateY(-1px);
+  color:#fff;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.2s;
+  margin-top:9px;
+}
+
+button:hover{
+  background:#292929;
+}
+
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.secondary{
+  background:#fff;
+  color:#222;
+  border:1px solid #e5e5ea;
+}
+
+.secondary:hover{
+  background:#f7f7f9;
+}
+
+#message{
+  font-size:13px;
+  color:#777;
+  margin-top:15px;
+  min-height:18px;
+  line-height:1.5;
+}
+
+.footer{
+  margin-top:24px;
+  font-size:12px;
+  color:#aaa;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
-  <img src="../assets/email_icon_black.png" class="icon">
+<div class="container">
 
-  <h1>Submitted</h1>
-  <p>Please wait for our response via email.</p>
+  <img src="../assets/dynotic-distribution.png" class="logo" alt="Dynotic">
 
-  <a href="../register" class="btn">Back</a>
+  <div class="icon">✉</div>
+
+  <h2>Check Your Email</h2>
+
+  <p class="description">
+    We've sent a verification link to your email address.
+    Please verify your email to complete your Dynotic registration.
+  </p>
+
+  <div class="email-box" id="emailDisplay">
+    Loading email...
+  </div>
+
+  <div class="info">
+    <p>
+      <strong>What should you do?</strong><br>
+      1. Open your email inbox.<br>
+      2. Find the verification email from Firebase.<br>
+      3. Click the verification link.<br>
+      4. Return here and check your verification status.
+    </p>
+  </div>
+
+  <button onclick="checkVerification()" id="checkBtn">
+    I've Verified My Email
+  </button>
+
+  <button class="secondary" onclick="openGmail()">
+    Open Gmail
+  </button>
+
+  <div id="message"></div>
+
+  <div class="footer">
+    Dynotic Distribution
+  </div>
+
 </div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+<script>
+// Gunakan konfigurasi Firebase yang sama dengan halaman Registration
+const firebaseConfig = {
+  apiKey: "API_KEY_KAMU",
+  authDomain: "PROJECT_ID.firebaseapp.com",
+  databaseURL: "DATABASE_URL",
+  projectId: "PROJECT_ID",
+  storageBucket: "STORAGE_BUCKET",
+  messagingSenderId: "SENDER_ID",
+  appId: "APP_ID"
+};
+
+if(!firebase.apps.length){
+  firebase.initializeApp(firebaseConfig);
+}
+
+const auth = firebase.auth();
+
+const email = sessionStorage.getItem("registrationEmail");
+
+document.getElementById("emailDisplay").textContent =
+  email || "Your registered email";
+
+function openGmail(){
+  window.open("https://mail.google.com/mail/u/0/#inbox","_blank");
+}
+
+async function checkVerification(){
+
+  const message = document.getElementById("message");
+  const button = document.getElementById("checkBtn");
+
+  button.disabled = true;
+  button.textContent = "Checking...";
+  message.textContent = "";
+
+  try{
+
+    const user = auth.currentUser;
+
+    if(!user){
+      message.textContent =
+        "Your registration session has ended. Please log in to check verification.";
+      button.disabled = false;
+      button.textContent = "I've Verified My Email";
+      return;
+    }
+
+    await user.reload();
+
+    if(user.emailVerified){
+
+      message.textContent = "Email successfully verified! Redirecting...";
+
+      await auth.signOut();
+
+      setTimeout(()=>{
+        window.location.href = "../login";
+      },1200);
+
+    }else{
+
+      message.textContent =
+        "Your email is not verified yet. Please check your inbox.";
+
+      button.disabled = false;
+      button.textContent = "I've Verified My Email";
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+    message.textContent = "Unable to check verification. Please try again.";
+
+    button.disabled = false;
+    button.textContent = "I've Verified My Email";
+  }
+}
+</script>
 
 </body>
 </html>
