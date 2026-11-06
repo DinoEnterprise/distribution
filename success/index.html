@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -202,18 +201,13 @@ button:disabled{
 
 <script>
 // Gunakan konfigurasi Firebase yang sama dengan halaman Registration
-const firebaseConfig = {
-  apiKey: "API_KEY_KAMU",
-  authDomain: "PROJECT_ID.firebaseapp.com",
-  databaseURL: "DATABASE_URL",
-  projectId: "PROJECT_ID",
-  storageBucket: "STORAGE_BUCKET",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID"
-};
-
-if(!firebase.apps.length){
-  firebase.initializeApp(firebaseConfig);
+// FIREBASE CONFIGURATION
+if (!firebase.apps.length) {
+  firebase.initializeApp({
+    apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+    authDomain: "dynopay-2513c.firebaseapp.com",
+    databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+  });
 }
 
 const auth = firebase.auth();
