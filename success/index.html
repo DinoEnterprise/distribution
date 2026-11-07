@@ -200,18 +200,17 @@ button:disabled{
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
 <script>
+// Gunakan konfigurasi Firebase yang sama dengan halaman Registration
+// FIREBASE CONFIGURATION
 if (!firebase.apps.length) {
   firebase.initializeApp({
-    apiKey: "ISI_API_KEY_FIREBASE_YANG_SAMA",
+    apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
     authDomain: "dynopay-2513c.firebaseapp.com",
-    databaseURL: "https://dynopay-2513-default-rtdb.asia-southeast1.firebasedatabase.app"
+    databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
   });
 }
 
 const auth = firebase.auth();
-
-const WORKER_URL =
-  "https://dynotic-auth-admin.dynotic-bot.workers.dev";
 
 const email = sessionStorage.getItem("registrationEmail");
 
@@ -219,10 +218,7 @@ document.getElementById("emailDisplay").textContent =
   email || "Your registered email";
 
 function openGmail(){
-  window.open(
-    "https://mail.google.com/mail/u/0/#inbox",
-    "_blank"
-  );
+  window.open("https://mail.google.com/mail/u/0/#inbox","_blank");
 }
 
 async function checkVerification(){
@@ -241,78 +237,40 @@ async function checkVerification(){
     if(!user){
       message.textContent =
         "Your registration session has ended. Please log in to check verification.";
-
       button.disabled = false;
       button.textContent = "I've Verified My Email";
       return;
     }
 
-    // Refresh status verifikasi dari Firebase
     await user.reload();
 
-    if(!user.emailVerified){
+    if(user.emailVerified){
+
+      message.textContent = "Email successfully verified! Redirecting...";
+
+      await auth.signOut();
+
+      setTimeout(()=>{
+        window.location.href = "../login";
+      },1200);
+
+    }else{
 
       message.textContent =
         "Your email is not verified yet. Please check your inbox.";
 
       button.disabled = false;
       button.textContent = "I've Verified My Email";
-      return;
     }
-
-    message.textContent = "Email verified. Activating your account...";
-
-    // Ambil ID Token terbaru
-    const idToken = await user.getIdToken(true);
-
-    // Minta Worker mengaktifkan akun
-    const response = await fetch(WORKER_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + idToken
-      },
-      body: JSON.stringify({
-        action: "activateAccount"
-      })
-    });
-
-    const result = await response.json();
-
-    if(!response.ok){
-
-      if(response.status === 403){
-        message.textContent =
-          "Your account is inactive or disabled. Please contact the admin.";
-      }else{
-        message.textContent =
-          result.error || "Account activation failed. Please try again.";
-      }
-
-      button.disabled = false;
-      button.textContent = "Try Again";
-      return;
-    }
-
-    // Aktivasi berhasil
-    message.textContent =
-      "Your account is now active! Redirecting to login...";
-
-    await auth.signOut();
-
-    setTimeout(()=>{
-      window.location.replace("../login");
-    },1500);
 
   }catch(error){
 
-    console.error("Verification error:", error);
+    console.error(error);
 
-    message.textContent =
-      "Unable to activate your account. Please try again.";
+    message.textContent = "Unable to check verification. Please try again.";
 
     button.disabled = false;
-    button.textContent = "Try Again";
+    button.textContent = "I've Verified My Email";
   }
 }
 </script>
