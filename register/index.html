@@ -427,15 +427,15 @@ async function register(){
 
     // Simpan informasi profil ke Realtime Database
     await db.ref("users/" + user.uid).set({
-      uid: user.uid,
-      fullname: fullname,
-      email: email,
-      youtube: youtube,
-      instagram: instagram,
-      emailVerified: false,
-      status: "unverified",
-      timestamp: new Date().toISOString()
-    });
+  uid: user.uid,
+  nama: fullname,
+  email: email,
+  youtube: youtube,
+  instagram: instagram,
+  emailVerified: false,
+  status: "unverified",
+  timestamp: new Date().toISOString()
+});
 
     // Kirim email verifikasi Firebase
     await user.sendEmailVerification();
