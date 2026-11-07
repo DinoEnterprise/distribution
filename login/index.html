@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -15,11 +16,10 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
-  background: linear-gradient(180deg, #e5e7eb, #d1d5db);
+  background:linear-gradient(180deg,#e5e7eb,#d1d5db);
   padding:15px;
 }
 
-/* CARD */
 .container{
   width:100%;
   max-width:420px;
@@ -28,18 +28,22 @@ body{
   padding:32px 26px;
   text-align:center;
   border:1px solid rgba(0,0,0,0.05);
-  box-shadow:0 10px 30px rgba(0,0,0,0.12), 0 30px 60px rgba(0,0,0,0.08);
+  box-shadow:0 10px 30px rgba(0,0,0,0.12),0 30px 60px rgba(0,0,0,0.08);
   animation:enter .6s ease;
 }
-.container:hover{ transform:translateY(-3px); transition:.3s; }
-@keyframes enter{ from{opacity:0; transform:translateY(40px)} to{opacity:1; transform:none} }
 
-/* LOGO */
-.logo{ width:70px; margin-bottom:16px; }
-h2{ margin-bottom:20px; font-size:22px; font-weight:700; color:#222; }
+.container:hover{transform:translateY(-3px);transition:.3s}
 
-/* INPUT */
-.field{ position:relative; margin-bottom:15px; width:100%; }
+@keyframes enter{
+  from{opacity:0;transform:translateY(40px)}
+  to{opacity:1;transform:none}
+}
+
+.logo{width:70px;margin-bottom:16px}
+h2{margin-bottom:20px;font-size:22px;font-weight:700;color:#222}
+
+.field{position:relative;margin-bottom:15px;width:100%}
+
 input{
   width:100%;
   padding:14px 44px 14px 16px;
@@ -49,12 +53,12 @@ input{
   outline:none;
   transition:.2s;
 }
+
 input:focus{
   border:1px solid #111;
   box-shadow:0 0 0 3px rgba(0,0,0,0.08);
 }
 
-/* TOGGLE PASSWORD */
 .toggle{
   position:absolute;
   right:12px;
@@ -68,9 +72,9 @@ input:focus{
   transition:.2s;
   -webkit-tap-highlight-color:transparent;
 }
-.toggle:active, .toggle:focus{ outline:2px solid #111; }
 
-/* BUTTON */
+.toggle:active,.toggle:focus{outline:2px solid #111}
+
 button{
   letter-spacing:.3px;
   width:100%;
@@ -84,14 +88,20 @@ button{
   cursor:pointer;
   transition:.2s;
 }
-button:hover{ background:#111; }
-button:focus, button:active{ outline:2px solid #000; }
-button:active{ transform:scale(.96); }
 
-/* ERROR */
-#error{ margin-top:10px; font-size:14px; color:#e53e3e; min-height:20px; }
+button:hover{background:#111}
+button:focus,button:active{outline:2px solid #000}
+button:active{transform:scale(.96)}
+button:disabled{opacity:.6;cursor:not-allowed}
 
-/* LOADER */
+#error{
+  margin-top:10px;
+  font-size:14px;
+  color:#e53e3e;
+  min-height:20px;
+  line-height:1.5;
+}
+
 .loader{
   position:fixed;
   inset:0;
@@ -106,18 +116,23 @@ button:active{ transform:scale(.96); }
   pointer-events:none;
   transition:.3s;
 }
-.loader.active{ opacity:1; pointer-events:auto; }
 
-/* ANIMATION EXIT */
-.fade-out{ animation:exit .5s ease forwards; }
-@keyframes exit{ to{opacity:0; transform:scale(.95);} }
+.loader.active{opacity:1;pointer-events:auto}
+
+.fade-out{animation:exit .5s ease forwards}
+
+@keyframes exit{
+  to{opacity:0;transform:scale(.95)}
+}
 </style>
 </head>
 
 <body>
 
 <div class="container" id="card">
-  <img src="../assets/dynotic-distribution.png" class="logo">
+
+  <img src="../assets/dynotic-distribution.png" class="logo" alt="Dynotic">
+
   <h2>Login Dynotic</h2>
 
   <div class="field">
@@ -129,43 +144,56 @@ button:active{ transform:scale(.96); }
     <div class="toggle" id="eye" tabindex="0" onclick="togglePass()">𖠂</div>
   </div>
 
-  <div style="text-align:right; margin-bottom:15px;">
-<a href="../forgot-password" style="font-size:14px; color:#555; text-decoration:underline;">Forgot password?</a>
+  <div style="text-align:right;margin-bottom:15px;">
+    <a href="../forgot-password" style="font-size:14px;color:#555;text-decoration:underline;">
+      Forgot password?
+    </a>
   </div>
 
-  <button onclick="login()">Login</button>
+  <button id="loginBtn" onclick="login()">Login</button>
   <div id="error"></div>
+
 </div>
 
 <div class="loader" id="loader">Dynotic Distribution…</div>
 
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <script>
-// Initialize Firebase
-firebase.initializeApp({
-  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-  authDomain: "dynopay-2513c.firebaseapp.com",
-  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
 
+// FIREBASE CONFIGURATION
+if(!firebase.apps.length){
+  firebase.initializeApp({
+    apiKey: "ISI_API_KEY_FIREBASE_YANG_SAMA",
+    authDomain: "dynopay-2513c.firebaseapp.com",
+    databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
+  });
+}
+
+const auth = firebase.auth();
 const db = firebase.database();
+
 let loginInProgress = false;
-// Ambil elemen
+let sessionChecking = false;
+
 const errorEl = document.getElementById("error");
 const emailInput = document.getElementById("email");
 const passInput = document.getElementById("pass");
-const btn = document.querySelector("button");
+const btn = document.getElementById("loginBtn");
 
-// Pasang listener input sekali saja
-emailInput.addEventListener("input", () => { errorEl.textContent = ""; });
-passInput.addEventListener("input", () => { errorEl.textContent = ""; });
+emailInput.addEventListener("input",()=>{
+  errorEl.textContent="";
+});
+
+passInput.addEventListener("input",()=>{
+  errorEl.textContent="";
+});
 
 // Toggle password
 function togglePass(){
+
   if(passInput.type==="password"){
     passInput.type="text";
     document.getElementById("eye").textContent="⌒";
@@ -173,75 +201,214 @@ function togglePass(){
     passInput.type="password";
     document.getElementById("eye").textContent="𖠂";
   }
+
 }
 
-// Login
-function login(){
-  loginInProgress = true;
-  if(btn.disabled) return;
+// Tampilkan pesan dan reset tombol
+function showLoginError(message){
 
-  const email = emailInput.value.trim();
-  const pass = passInput.value.trim();
+  errorEl.textContent=message;
+
+  btn.disabled=false;
+  btn.textContent="Login";
+
+}
+
+// Pemeriksaan akun
+async function validateAccount(user){
+
+  // Refresh data Firebase Authentication
+  await user.reload();
+
+  // Pastikan email sudah diverifikasi
+  if(!user.emailVerified){
+
+    return {
+      allowed:false,
+      message:"Please verify your email before logging in."
+    };
+
+  }
+
+  // Periksa profil pengguna
+  const snapshot=await db.ref("users/"+user.uid).once("value");
+  const data=snapshot.val();
+
+  if(!data){
+
+    return {
+      allowed:false,
+      message:"Account profile not found. Please contact the admin."
+    };
+
+  }
+
+  // Akun belum diaktifkan
+  if(data.status==="unverified"){
+
+    return {
+      allowed:false,
+      message:"Email verified, but account activation is incomplete. Please return to the verification page."
+    };
+
+  }
+
+  // Akun dinonaktifkan admin
+  if(data.status!=="active"){
+
+    return {
+      allowed:false,
+      message:"Account is inactive or disabled. Please contact the admin."
+    };
+
+  }
+
+  return {
+    allowed:true,
+    data:data
+  };
+
+}
+
+// Proses login
+async function login(){
+
+  if(loginInProgress || btn.disabled) return;
+
+  const email=emailInput.value.trim();
+  const pass=passInput.value;
+
+  errorEl.textContent="";
 
   if(!email || !pass){
-    errorEl.textContent = "Email and password are required";
+    showLoginError("Email and password are required");
     return;
   }
 
-  btn.disabled = true;
-  btn.textContent = "Signing in...";
+  loginInProgress=true;
 
-  firebase.auth()
-    .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-    .then(() => firebase.auth().signInWithEmailAndPassword(email, pass))
-    .then(userCredential => {
-      const user = userCredential.user;
-      return db.ref("users/" + user.uid).once("value");
-    })
-    .then(snapshot => {
-      const data = snapshot.val();
-      if(!data || data.status !== "active"){
-        firebase.auth().signOut();
-        errorEl.textContent = "Account is inactive. Please contact the admin";
-        btn.disabled = false;
-        btn.textContent = "Login";
-        return;
-      }
+  btn.disabled=true;
+  btn.textContent="Signing in...";
 
-      const uid = firebase.auth().currentUser.uid;
-db.ref("users/" + uid + "/lastLogin").set(Date.now());
+  try{
 
-      document.getElementById("loader").classList.add("active");
-      document.getElementById("card").classList.add("fade-out");
+    await auth.setPersistence(
+      firebase.auth.Auth.Persistence.LOCAL
+    );
 
-      setTimeout(() => window.location.replace("../home"), 600);
-    })
-    .catch(error => {
-      switch(error.code){
-        case "auth/user-not-found":
-          errorEl.textContent="User not found"; break;
-        case "auth/wrong-password":
-          errorEl.textContent="Incorrect password"; break;
-        case "auth/invalid-email":
-          errorEl.textContent="Invalid email address"; break;
-        default:
-          errorEl.textContent="An error occurred. Please try again";
-      }
-      btn.disabled = false;
-      btn.textContent = "Login";
-    });
+    const credential=await auth.signInWithEmailAndPassword(
+      email,
+      pass
+    );
+
+    const user=credential.user;
+
+    const result=await validateAccount(user);
+
+    if(!result.allowed){
+
+      await auth.signOut();
+
+      loginInProgress=false;
+
+      showLoginError(result.message);
+      return;
+
+    }
+
+    // Catat waktu login
+    db.ref("users/"+user.uid+"/lastLogin")
+      .set(Date.now())
+      .catch(error=>{
+        console.error("Last login update failed:",error);
+      });
+
+    // Login berhasil
+    document.getElementById("loader").classList.add("active");
+    document.getElementById("card").classList.add("fade-out");
+
+    setTimeout(()=>{
+      window.location.replace("../home");
+    },600);
+
+  }catch(error){
+
+    console.error("Login error:",error);
+
+    if(error.code==="auth/user-not-found"){
+      showLoginError("User not found");
+    }else if(
+      error.code==="auth/wrong-password" ||
+      error.code==="auth/invalid-credential"
+    ){
+      showLoginError("Incorrect email or password");
+    }else if(error.code==="auth/invalid-email"){
+      showLoginError("Invalid email address");
+    }else if(error.code==="auth/user-disabled"){
+      showLoginError("This account has been disabled");
+    }else{
+      showLoginError("An error occurred. Please try again");
+    }
+
+    if(auth.currentUser){
+      await auth.signOut().catch(console.error);
+    }
+
+    loginInProgress=false;
+
+  }
+
 }
 
 // Enter key
-document.addEventListener("keydown", e => {
-  if(e.key === "Enter") login();
+document.addEventListener("keydown",e=>{
+  if(e.key==="Enter") login();
 });
 
-// Auto redirect
-firebase.auth().onAuthStateChanged(user => {
-  if (loginInProgress) return;
-  if (user) window.location.replace("../home");
+// Periksa sesi login yang masih tersimpan
+auth.onAuthStateChanged(async user=>{
+
+  if(loginInProgress || !user || sessionChecking) return;
+
+  sessionChecking=true;
+  loginInProgress=true;
+
+  try{
+
+    const result=await validateAccount(user);
+
+    if(result.allowed){
+
+      document.getElementById("loader").classList.add("active");
+      window.location.replace("../home");
+
+    }else{
+
+      await auth.signOut();
+
+      loginInProgress=false;
+      showLoginError(result.message);
+
+    }
+
+  }catch(error){
+
+    console.error("Session check error:",error);
+
+    await auth.signOut().catch(console.error);
+
+    loginInProgress=false;
+
+    showLoginError("Unable to verify your account. Please log in again.");
+
+  }finally{
+
+    sessionChecking=false;
+
+  }
+
 });
+
 </script>
 
 </body>
