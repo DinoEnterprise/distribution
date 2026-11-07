@@ -89,6 +89,79 @@ button.action-btn:hover {
 
 
 /* =====================================================
+   PENDING ACTIVATION
+===================================================== */
+
+.pending-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.pending-count {
+  background: #fff1d6;
+  color: #b7791f;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pending-item {
+  padding: 13px;
+  border: 1px solid #eee;
+  border-radius: 11px;
+  margin-top: 9px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.pending-info {
+  min-width: 0;
+}
+
+.pending-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #222;
+  overflow-wrap: anywhere;
+}
+
+.pending-email {
+  font-size: 12px;
+  color: #888;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+.pending-activate {
+  background: #111;
+  color: #fff;
+  border: 0;
+  padding: 9px 12px;
+  margin: 0;
+  width: auto;
+  flex-shrink: 0;
+  font-size: 12px;
+}
+
+.pending-activate:hover {
+  opacity: .85;
+}
+
+.pending-empty {
+  text-align: center;
+  padding: 18px;
+  font-size: 13px;
+  color: #999;
+}
+
+
+/* =====================================================
    SALDO MODAL
 ===================================================== */
 
@@ -491,6 +564,52 @@ tr:hover {
 
 
 <!-- =====================================================
+     PENDING ACTIVATION
+===================================================== -->
+
+<div
+  class="card"
+  id="pendingCard"
+  style="display:none;"
+>
+
+  <div class="pending-header">
+
+    <h3 style="margin:0;">
+      Pending Activation
+    </h3>
+
+    <span
+      id="pendingCount"
+      class="pending-count"
+    >
+      0 Pending
+    </span>
+
+  </div>
+
+  <p
+    style="
+      font-size:13px;
+      color:#888;
+      margin:8px 0 15px;
+    "
+  >
+    Akun baru yang menunggu persetujuan aktivasi admin.
+  </p>
+
+  <div id="pendingList">
+
+    <div class="pending-empty">
+      Memuat data...
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
      USERS TABLE
 ===================================================== -->
 
@@ -881,6 +1000,238 @@ let isRegistering =
 
 
 /* =====================================================
+   PENDING ACTIVATION LISTENER
+===================================================== */
+
+let pendingListenerAttached = false;
+
+
+function listenPendingUsers() {
+
+  if (pendingListenerAttached) {
+    return;
+  }
+
+  pendingListenerAttached = true;
+
+
+  db.ref("users").on(
+    "value",
+
+    snapshot => {
+
+      const pendingUsers = [];
+
+
+      snapshot.forEach(
+        userSnap => {
+
+          const data =
+            userSnap.val();
+
+
+          if (
+            data &&
+            data.status === "unverified"
+          ) {
+
+            pendingUsers.push({
+
+              uid:
+                userSnap.key,
+
+              nama:
+                data.nama || "Unknown User",
+
+              email:
+                data.email || "-"
+
+            });
+
+          }
+
+        }
+      );
+
+
+      renderPendingUsers(
+        pendingUsers
+      );
+
+    },
+
+    error => {
+
+      console.error(
+        "Pending users listener:",
+        error
+      );
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   RENDER PENDING ACTIVATION
+===================================================== */
+
+function renderPendingUsers(users) {
+
+  const card =
+    document.getElementById(
+      "pendingCard"
+    );
+
+
+  const count =
+    document.getElementById(
+      "pendingCount"
+    );
+
+
+  const list =
+    document.getElementById(
+      "pendingList"
+    );
+
+
+  card.style.display =
+    "block";
+
+
+  count.textContent =
+    users.length + " Pending";
+
+
+  list.innerHTML =
+    "";
+
+
+  if (users.length === 0) {
+
+    list.innerHTML = `
+      <div class="pending-empty">
+        Tidak ada akun yang menunggu aktivasi.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  users.forEach(
+    user => {
+
+      const item =
+        document.createElement(
+          "div"
+        );
+
+
+      item.className =
+        "pending-item";
+
+
+      const info =
+        document.createElement(
+          "div"
+        );
+
+
+      info.className =
+        "pending-info";
+
+
+      const name =
+        document.createElement(
+          "div"
+        );
+
+
+      name.className =
+        "pending-name";
+
+
+      name.textContent =
+        user.nama;
+
+
+      const email =
+        document.createElement(
+          "div"
+        );
+
+
+      email.className =
+        "pending-email";
+
+
+      email.textContent =
+        user.email;
+
+
+      info.appendChild(
+        name
+      );
+
+
+      info.appendChild(
+        email
+      );
+
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+
+      button.textContent =
+        "Activate";
+
+
+      button.className =
+        "pending-activate";
+
+
+      button.addEventListener(
+        "click",
+
+        () => {
+
+          toggleStatus(
+            user.uid,
+            "unverified"
+          );
+
+        }
+      );
+
+
+      item.appendChild(
+        info
+      );
+
+
+      item.appendChild(
+        button
+      );
+
+
+      list.appendChild(
+        item
+      );
+
+    }
+  );
+
+}
+
+
+/* =====================================================
    CUSTOM MODAL SYSTEM
 ===================================================== */
 
@@ -1153,6 +1504,11 @@ auth.onAuthStateChanged(
                 location.href =
                   "../admin"
             );
+
+        } else {
+
+          // Listener pending hanya aktif untuk admin.
+          listenPendingUsers();
 
         }
 
@@ -1440,6 +1796,61 @@ document
 
 
 /* =====================================================
+   STATUS LABEL
+===================================================== */
+
+function getStatusLabel(status) {
+
+  if (status === "active") {
+
+    return `
+      <span
+        class="status-badge"
+        style="
+          background:#34d399;
+          color:#fff
+        "
+      >
+        Active
+      </span>
+    `;
+
+  }
+
+
+  if (status === "unverified") {
+
+    return `
+      <span
+        class="status-badge"
+        style="
+          background:#fbbf24;
+          color:#78350f
+        "
+      >
+        Pending
+      </span>
+    `;
+
+  }
+
+
+  return `
+    <span
+      class="status-badge"
+      style="
+        background:#f87171;
+        color:#fff
+      "
+    >
+      Non-Active
+    </span>
+  `;
+
+}
+
+
+/* =====================================================
    LOAD MEMBERS
 ===================================================== */
 
@@ -1543,31 +1954,9 @@ function loadMembers(
 
 
                 const statusLabel =
-                  d.status === "active"
-
-                    ? `
-                      <span
-                        class="status-badge"
-                        style="
-                          background:#34d399;
-                          color:#fff
-                        "
-                      >
-                        Active
-                      </span>
-                    `
-
-                    : `
-                      <span
-                        class="status-badge"
-                        style="
-                          background:#f87171;
-                          color:#fff
-                        "
-                      >
-                        Non-Active
-                      </span>
-                    `;
+                  getStatusLabel(
+                    d.status
+                  );
 
 
                 const tr =
@@ -1886,31 +2275,9 @@ function loadMembers(
 
 
             const statusLabel =
-              d.status === "active"
-
-                ? `
-                  <span
-                    class="status-badge"
-                    style="
-                      background:#34d399;
-                      color:#fff
-                    "
-                  >
-                    Active
-                  </span>
-                `
-
-                : `
-                  <span
-                    class="status-badge"
-                    style="
-                      background:#f87171;
-                      color:#fff
-                    "
-                  >
-                    Non-Active
-                  </span>
-                `;
+              getStatusLabel(
+                d.status
+              );
 
 
             const tr =
@@ -2721,7 +3088,6 @@ function closeEmailModal() {
    SUBMIT EMAIL CHANGE
 ===================================================== */
 
-
 async function submitEmailChange() {
 
   const uid =
@@ -3109,8 +3475,7 @@ async function submitEmailChange() {
 
 }
 
-  
-          
+
 /* =====================================================
    INITIAL LOAD
 ===================================================== */
