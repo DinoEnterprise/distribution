@@ -301,21 +301,7 @@ function resetButton(){
 // VALIDATE ACCOUNT
 async function validateAccount(user){
 
-  // CHECK EMAIL VERIFICATION
-  if(!user.emailVerified){
-    await auth.signOut();
-
-    showNotification(
-      "info",
-      "Verifikasi Email",
-      "Email kamu belum diverifikasi. Silakan periksa kotak masuk email dan lakukan verifikasi terlebih dahulu.",
-      "i"
-    );
-
-    return false;
-  }
-
-  // CHECK DATABASE STATUS
+  // CHECK DATABASE STATUS FIRST
   const snapshot = await db.ref("users/" + user.uid).once("value");
   const data = snapshot.val();
 
@@ -332,6 +318,7 @@ async function validateAccount(user){
     return false;
   }
 
+  // WAITING FOR ADMIN ACTIVATION
   if(data.status === "unverified"){
     await auth.signOut();
 
@@ -345,6 +332,7 @@ async function validateAccount(user){
     return false;
   }
 
+  // DISABLED ACCOUNT
   if(data.status !== "active"){
     await auth.signOut();
 
@@ -358,6 +346,7 @@ async function validateAccount(user){
     return false;
   }
 
+  // ACTIVE ACCOUNT
   return true;
 }
 
