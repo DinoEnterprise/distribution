@@ -1,1037 +1,237 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Home | Dynotic Admin</title>
-
 <link rel="icon" type="image/png" href="../assets/favicon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../assets/favicon-android.png">
 <link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-iphone.png">
-
-<meta name="theme-color" content="#667eea">
+<meta name="theme-color" content="#f3f3f8">
 <meta name="robots" content="noindex, nofollow">
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link
-  href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap"
-  rel="stylesheet"
->
-
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
->
-
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <style>
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:"Outfit",sans-serif;
+:root{--bg:#f3f3f8;--paper:#fff;--ink:#14141a;--muted:#6f7280;--line:#e6e6ee;--dark:#0d0d12;--accent:#7772a8;--accent-2:#a9a3f2;--side:260px;--ease:cubic-bezier(.16,1,.3,1)}
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);min-height:100dvh;-webkit-font-smoothing:antialiased;padding-bottom:110px}
+a{color:inherit;text-decoration:none}
+button{font:inherit;border:0;background:none;color:inherit;cursor:pointer}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:10px}
+.i{width:1.15em;height:1.15em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+/* sidebar */
+.sidebar{display:none;position:fixed;inset:0 auto 0 0;width:var(--side);background:var(--dark);color:#fff;padding:26px 18px 20px;flex-direction:column;z-index:60;overflow-y:auto}
+.sidebar .logo img{height:32px;max-width:180px;object-fit:contain;filter:brightness(0) invert(1);display:block;margin:0 8px 30px}
+.side-nav{display:flex;flex-direction:column;gap:4px}
+.side-nav a{display:flex;align-items:center;gap:13px;padding:12px 14px;border-radius:14px;font-size:14px;font-weight:500;color:rgba(255,255,255,.62);transition:background .2s,color .2s}
+.side-nav a .i{width:19px;height:19px}
+.side-nav a:hover{background:rgba(255,255,255,.07);color:#fff}
+.side-nav a.active{background:rgba(255,255,255,.1);color:#fff;font-weight:700}
+.side-nav .lbl{padding:18px 14px 6px;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+/* topbar */
+.topbar{position:sticky;top:0;z-index:50;height:68px;padding:0 16px;display:flex;align-items:center;gap:12px;background:rgba(243,243,248,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid transparent;transition:border-color .2s}
+.topbar.scrolled{border-bottom-color:var(--line)}
+.logo-m img{height:30px;max-width:170px;object-fit:contain;display:block}
+.page-title{display:none;font-size:20px;font-weight:800;letter-spacing:-.03em}
+.top-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
+.avatar-btn{width:42px;height:42px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;border:2px solid var(--paper);box-shadow:0 0 0 1px var(--line);transition:transform .2s var(--ease)}
+.avatar-btn:active{transform:scale(.93)}
+/* layout */
+.wrap{width:100%;max-width:960px;margin:0 auto;padding:6px 16px 0}
+.head{padding:10px 2px 18px}
+.head small{display:block;font-size:13px;color:var(--muted);font-weight:500}
+.head h1{margin-top:2px;font-size:clamp(26px,5vw,36px);font-weight:800;letter-spacing:-.04em;line-height:1.1}
+/* hero */
+.hero{position:relative;overflow:hidden;isolation:isolate;background:var(--dark);color:#fff;border-radius:26px;padding:clamp(20px,3vw,28px);animation:up .6s var(--ease) both}
+.hero::after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-80px;top:-110px;background:radial-gradient(circle,rgba(119,114,168,.55),transparent 70%);z-index:-1}
+.hero small{display:block;font-size:13px;color:rgba(255,255,255,.6);font-weight:500}
+.hero strong{display:block;margin-top:10px;font-size:clamp(26px,5vw,38px);font-weight:800;letter-spacing:-.04em;line-height:1.1}
+.hero p{margin-top:10px;max-width:460px;font-size:13px;line-height:1.7;color:rgba(255,255,255,.55)}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.stat{padding:16px 16px 14px;background:var(--paper);border:1px solid var(--line);border-radius:20px;animation:up .6s var(--ease) .08s both}
+.stat small{display:block;font-size:12px;font-weight:500;color:var(--muted)}
+.stat strong{display:block;margin-top:6px;font-size:clamp(22px,4vw,30px);font-weight:800;letter-spacing:-.04em;line-height:1}
+/* quick access */
+.sec{margin:26px 2px 12px;font-size:14px;font-weight:700}
+.list{display:grid;grid-template-columns:1fr;gap:12px}
+.row{display:flex;gap:14px;align-items:center;padding:14px;background:#fff;border:1px solid var(--line);border-radius:20px;min-width:0;text-align:left;width:100%;transition:transform .3s var(--ease),box-shadow .3s,border-color .3s}
+.row:hover{border-color:#d3d1e6;box-shadow:0 16px 34px rgba(20,20,40,.08);transform:translateY(-2px)}
+.ico{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#ebeaf6,#dcdaee);color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ico .i{width:22px;height:22px}
+.rb{flex:1;min-width:0}
+.rt{font-size:15px;font-weight:700;letter-spacing:-.01em;line-height:1.3}
+.rs{margin-top:3px;font-size:13px;line-height:1.5;color:var(--muted);font-weight:500}
+.row>.i{color:var(--muted)}
+/* bottom nav */
+.bottom{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);width:calc(100% - 28px);max-width:540px;height:70px;padding:0 8px;background:rgba(13,13,18,.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:26px;box-shadow:0 18px 40px rgba(13,13,18,.3);display:flex;align-items:center;justify-content:space-around;z-index:70}
+.b-item{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;height:100%;font-size:10px;font-weight:500;color:rgba(255,255,255,.5);transition:color .2s,transform .15s}
+.b-item .i{width:20px;height:20px}
+.b-item:active{transform:scale(.92)}
+.b-item.active{color:#fff;font-weight:700}
+.b-item.active .i{color:var(--accent-2)}
+/* popup */
+.pop{position:fixed;top:70px;right:14px;width:230px;background:var(--paper);border:1px solid var(--line);border-radius:20px;box-shadow:0 20px 50px rgba(20,20,40,.16);padding:10px;z-index:200;opacity:0;visibility:hidden;transform:translateY(-8px) scale(.98);transform-origin:top right;transition:all .22s var(--ease)}
+.pop.show{opacity:1;visibility:visible;transform:none}
+.pop-info{display:flex;align-items:center;gap:12px;padding:10px 10px 14px}
+.pop-info .avatar{width:44px;height:44px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.pop-info strong{display:block;font-size:14px}
+.pop-info span{display:block;margin-top:2px;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px}
+.pop hr{border:0;height:1px;background:var(--line);margin:2px 4px 6px}
+.pop button.opt{display:flex;align-items:center;gap:12px;width:100%;padding:12px 10px;border-radius:12px;font-size:13px;font-weight:500;text-align:left}
+.pop button.opt:hover{background:var(--bg)}
+.pop .i{width:17px;height:17px;color:var(--muted)}
+.pop .logout,.pop .logout .i{color:#d83a3a}
+/* loading */
+.loading{position:fixed;inset:0;background:rgba(243,243,248,.8);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:500}
+.loading.show{display:flex}
+.loader-box{background:#fff;border:1px solid var(--line);padding:16px 22px;border-radius:16px;font-size:14px;font-weight:600}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@media(min-width:1000px){
+body{padding-bottom:40px;padding-left:var(--side)}
+.sidebar{display:flex}.bottom{display:none}
+.topbar{height:78px;padding:0 36px}.logo-m{display:none}.page-title{display:block}
+.wrap{padding:6px 36px 0}.pop{top:76px;right:34px}
+.list{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-
-body{
-  background:#f1f2f7;
-  min-height:100vh;
-  color:#17181c;
-  padding-top:64px;
-  padding-bottom:90px;
-  -webkit-tap-highlight-color:transparent;
+@media(max-width:700px){
+.wrap{padding:0 14px}.hero{border-radius:22px}
+.row{padding:12px;gap:12px}.ico{width:46px;height:46px;border-radius:14px}
+.stat{padding:14px 12px 12px;border-radius:18px}
+.pop{right:12px;top:66px}
 }
-
-/* ================= HEADER ================= */
-
-header{
-  height:64px;
-  padding:0 18px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  background:#fff;
-  border-bottom:1px solid #e8e8ed;
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  z-index:1000;
-}
-
-.header-logo{
-  height:32px;
-  width:auto;
-  object-fit:contain;
-}
-
-.admin-profile{
-  border:0;
-  background:#f1f2f7;
-  border-radius:12px;
-  padding:9px 12px;
-  color:#25262b;
-  font-size:13px;
-  font-weight:600;
-  cursor:pointer;
-  transition:.15s ease;
-}
-
-.admin-profile:active{
-  transform:scale(.95);
-}
-
-/* ================= PROFILE MENU ================= */
-
-.profile-menu{
-  position:fixed;
-  top:56px;
-  right:16px;
-  width:165px;
-  background:#fff;
-  border:1px solid #e7e7eb;
-  border-radius:14px;
-  padding:6px;
-  box-shadow:0 10px 30px rgba(0,0,0,.08);
-  display:none;
-  overflow:hidden;
-  z-index:1500;
-  animation:menuIn .18s ease both;
-}
-
-.profile-menu.show{
-  display:block;
-}
-
-.profile-menu button{
-  width:100%;
-  border:0;
-  background:#fff;
-  padding:11px;
-  text-align:left;
-  border-radius:9px;
-  font-size:13px;
-  color:#25262b;
-  cursor:pointer;
-}
-
-.profile-menu button:hover{
-  background:#f1f2f7;
-}
-
-.profile-menu .logout{
-  color:#ef4444;
-}
-
-/* ================= MAIN ================= */
-
-.container{
-  width:calc(100% - 32px);
-  max-width:760px;
-  margin:0 auto;
-}
-
-/* ================= WELCOME ================= */
-
-.welcome-card{
-  margin-top:22px;
-  background:#fff;
-  border:1px solid #e8e8ed;
-  border-radius:18px;
-  padding:20px;
-  animation:pageIn .45s ease both;
-}
-
-.welcome-small{
-  color:#777b84;
-  font-size:12px;
-  margin-bottom:5px;
-}
-
-.welcome-title{
-  font-size:23px;
-  font-weight:700;
-  letter-spacing:-.2px;
-}
-
-.welcome-desc{
-  margin-top:6px;
-  color:#777b84;
-  font-size:12px;
-  line-height:1.5;
-}
-
-/* ================= SECTION ================= */
-
-.section-title{
-  font-size:13px;
-  font-weight:600;
-  color:#777b84;
-  margin:24px 3px 10px;
-}
-
-/* ================= OVERVIEW ================= */
-
-.overview-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-}
-
-.stat-card{
-  background:#fff;
-  border:1px solid #e8e8ed;
-  border-radius:16px;
-  padding:14px;
-  min-width:0;
-  animation:pageIn .45s ease both;
-}
-
-.stat-card:nth-child(1){
-  animation-delay:.08s;
-}
-
-.stat-card:nth-child(2){
-  animation-delay:.16s;
-}
-
-.stat-card:nth-child(3){
-  animation-delay:.24s;
-}
-
-.stat-icon{
-  width:34px;
-  height:34px;
-  border-radius:10px;
-  background:#f1f2f7;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:15px;
-  margin-bottom:9px;
-}
-
-.stat-title{
-  font-size:11px;
-  color:#858891;
-}
-
-.stat-value{
-  font-size:21px;
-  font-weight:700;
-  margin-top:2px;
-  line-height:1.2;
-}
-
-/* ================= QUICK ACCESS ================= */
-
-.quick-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-}
-
-.quick-item{
-  background:#fff;
-  border:1px solid #e8e8ed;
-  border-radius:16px;
-  padding:14px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  cursor:pointer;
-  transition:.18s ease;
-  animation:pageIn .45s ease both;
-}
-
-.quick-item:nth-child(1){
-  animation-delay:.30s;
-}
-
-.quick-item:nth-child(2){
-  animation-delay:.36s;
-}
-
-.quick-item:nth-child(3){
-  animation-delay:.42s;
-}
-
-.quick-item:nth-child(4){
-  animation-delay:.48s;
-}
-
-.quick-item:nth-child(5){
-  animation-delay:.54s;
-}
-
-.quick-item:active{
-  transform:scale(.97);
-}
-
-.quick-item:hover{
-  border-color:#d9d9df;
-  box-shadow:0 5px 18px rgba(0,0,0,.04);
-}
-
-.quick-icon{
-  width:40px;
-  height:40px;
-  border-radius:11px;
-  background:#f1f2f7;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:15px;
-  flex-shrink:0;
-}
-
-.quick-text{
-  min-width:0;
-}
-
-.quick-title{
-  font-size:13px;
-  font-weight:600;
-}
-
-.quick-desc{
-  font-size:11px;
-  color:#858891;
-  margin-top:3px;
-  line-height:1.35;
-}
-
-/* ================= BOTTOM NAV ================= */
-
-.bottom-nav{
-  height:72px;
-  background:#fff;
-  border-top:1px solid #e6e6eb;
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  display:flex;
-  justify-content:space-around;
-  align-items:center;
-  z-index:1000;
-}
-
-.nav-item{
-  width:33.33%;
-  text-align:center;
-  font-size:11px;
-  color:#999ca4;
-  padding:7px 14px;
-  border-radius:12px;
-  cursor:pointer;
-  transition:.15s ease;
-}
-
-.nav-item i{
-  display:block;
-  font-size:18px;
-  margin-bottom:4px;
-}
-
-.nav-item:active{
-  transform:scale(.94);
-}
-
-.nav-item.active{
-  color:#17181c;
-  font-weight:600;
-}
-
-/* ================= ANIMATION ================= */
-
-@keyframes pageIn{
-
-  from{
-    opacity:0;
-    transform:translateY(12px);
-  }
-
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-
-}
-
-@keyframes menuIn{
-
-  from{
-    opacity:0;
-    transform:translateY(-5px) scale(.98);
-  }
-
-  to{
-    opacity:1;
-    transform:translateY(0) scale(1);
-  }
-
-}
-
-/* ================= LOADING ================= */
-
-.loading{
-  position:fixed;
-  inset:0;
-  background:rgba(255,255,255,.75);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:3000;
-}
-
-.loading.show{
-  display:flex;
-}
-
-.loader-box{
-  background:#fff;
-  padding:18px 22px;
-  border-radius:14px;
-  box-shadow:0 8px 25px rgba(0,0,0,.12);
-  font-size:14px;
-  font-weight:600;
-}
-
-/* ================= MOBILE ================= */
-
-@media(max-width:600px){
-
-  .container{
-    width:calc(100% - 28px);
-  }
-
-  .welcome-card{
-    padding:18px;
-  }
-
-  .welcome-title{
-    font-size:21px;
-  }
-
-  .overview-grid{
-    gap:8px;
-  }
-
-  .stat-card{
-    padding:12px 10px;
-  }
-
-  .stat-icon{
-    width:31px;
-    height:31px;
-    font-size:14px;
-  }
-
-  .stat-value{
-    font-size:19px;
-  }
-
-  .quick-grid{
-    grid-template-columns:1fr;
-  }
-
-}
-
-/* ================= DESKTOP ================= */
-
-@media(min-width:700px){
-
-  .container{
-    width:100%;
-  }
-
-  .quick-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-}
-
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
-
 <body>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10.5 9-7.5 9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+<symbol id="i-disc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-5.4A8 8 0 1 1 21 12z"/></symbol>
+<symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v3M3 5v14a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-3"/><path d="M21 12v4h-4a2 2 0 0 1 0-4z"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18M7 14l4-4 3 3 5-6"/></symbol>
+<symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+<symbol id="i-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+</svg>
 
-<!-- ================= HEADER ================= -->
+<aside class="sidebar">
+  <a href="../admin-home" class="logo"><img src="../assets/dynotic-distribution.png" alt="Dynotic Distribution"></a>
+  <nav class="side-nav" aria-label="Main navigation">
+    <a href="#" class="active"><svg class="i"><use href="#i-home"/></svg>Home</a>
+    <a href="../admin-manage"><svg class="i"><use href="#i-grid"/></svg>Manage</a>
+    <a href="../admin-profile"><svg class="i"><use href="#i-user"/></svg>Profile</a>
+    <div class="lbl">Quick access</div>
+    <a href="../admin-users"><svg class="i"><use href="#i-users"/></svg>Artists &amp; Accounts</a>
+    <a href="../admin-releases"><svg class="i"><use href="#i-disc"/></svg>Release Submissions</a>
+    <a href="../admin-message"><svg class="i"><use href="#i-chat"/></svg>Support Inbox</a>
+    <a href="../admin-withdraw"><svg class="i"><use href="#i-wallet"/></svg>Payout Requests</a>
+    <a href="../admin-income"><svg class="i"><use href="#i-chart"/></svg>Royalty Management</a>
+  </nav>
+</aside>
 
-<header>
-
-  <img
-    src="../assets/dynotic-distribution.png"
-    class="header-logo"
-  >
-
-  <button
-    class="admin-profile"
-    onclick="toggleProfile()"
-  >
-    Admin <i class="fa-solid fa-chevron-down"></i>
-  </button>
-
+<header class="topbar" id="topbar">
+  <a href="../admin-home" class="logo-m"><img src="../assets/dynotic-distribution.png" alt="Dynotic Distribution"></a>
+  <h2 class="page-title">Home</h2>
+  <div class="top-actions">
+    <button class="avatar-btn" id="profileBtn" type="button" aria-label="Menu admin" aria-expanded="false">A</button>
+  </div>
 </header>
 
-
-<!-- ================= PROFILE MENU ================= -->
-
-<div
-  id="profileMenu"
-  class="profile-menu"
->
-
-  <button onclick="goProfile()">
-    <i class="fa-regular fa-user"></i>
-    &nbsp; Profile
-  </button>
-
-  <button
-    class="logout"
-    onclick="logout()"
-  >
-    <i class="fa-solid fa-right-from-bracket"></i>
-    &nbsp; Logout
-  </button>
-
+<div class="pop" id="profileMenu" role="menu">
+  <div class="pop-info"><div class="avatar">A</div><div><strong>Admin</strong><span id="adminEmail">-</span></div></div>
+  <hr>
+  <button class="opt" type="button" onclick="goProfile()" role="menuitem"><svg class="i"><use href="#i-user"/></svg>Profile</button>
+  <button class="opt logout" type="button" onclick="logout()" role="menuitem"><svg class="i"><use href="#i-logout"/></svg>Logout</button>
 </div>
 
+<main class="wrap">
+  <div class="head"><small>Dynotic Admin Panel</small><h1>Home</h1></div>
 
-<!-- ================= MAIN ================= -->
-
-<main class="container">
-
-
-  <!-- WELCOME -->
-
-  <section class="welcome-card">
-
-    <div class="welcome-small">
-      Dynotic Admin Panel
-    </div>
-
-    <div class="welcome-title">
-      Hi, Admin 👋
-    </div>
-
-    <div class="welcome-desc">
-      Manage artists, releases, payouts, and royalty operations from one place.
-    </div>
-
+  <section class="hero">
+    <small>Selamat datang kembali</small>
+    <strong>Hi, Admin</strong>
+    <p>Kelola artis, rilisan, payout, dan royalti dari satu tempat.</p>
   </section>
 
-
-  <!-- OVERVIEW -->
-
-  <div class="section-title">
-    Overview
-  </div>
-
-
-  <section class="overview-grid">
-
-
-    <!-- ARTISTS -->
-
-    <div class="stat-card">
-
-      <div class="stat-icon">
-        <i class="fa-solid fa-users"></i>
-      </div>
-
-      <div class="stat-title">
-        Artists
-      </div>
-
-      <div
-        id="artistCount"
-        class="stat-value"
-      >
-        —
-      </div>
-
-    </div>
-
-
-    <!-- RELEASES -->
-
-    <div class="stat-card">
-
-      <div class="stat-icon">
-        <i class="fa-solid fa-music"></i>
-      </div>
-
-      <div class="stat-title">
-        Releases
-      </div>
-
-      <div
-        id="releaseCount"
-        class="stat-value"
-      >
-        —
-      </div>
-
-    </div>
-
-
-    <!-- PAYOUTS -->
-
-    <div class="stat-card">
-
-      <div class="stat-icon">
-        <i class="fa-solid fa-wallet"></i>
-      </div>
-
-      <div class="stat-title">
-        Payouts
-      </div>
-
-      <div
-        id="payoutCount"
-        class="stat-value"
-      >
-        —
-      </div>
-
-    </div>
-
-
+  <section class="stats" aria-label="Ringkasan">
+    <div class="stat"><small>Artists</small><strong id="artistCount">–</strong></div>
+    <div class="stat"><small>Releases</small><strong id="releaseCount">–</strong></div>
+    <div class="stat"><small>Payouts</small><strong id="payoutCount">–</strong></div>
   </section>
 
-
-  <!-- QUICK ACCESS -->
-
-  <div class="section-title">
-    Quick Access
-  </div>
-
-
-  <section class="quick-grid">
-
-
-    <!-- ARTISTS -->
-
-    <div
-      class="quick-item"
-      onclick="go('../admin-users')"
-    >
-
-      <div class="quick-icon">
-        <i class="fa-solid fa-users"></i>
-      </div>
-
-      <div class="quick-text">
-
-        <div class="quick-title">
-          Artists & Accounts
-        </div>
-
-        <div class="quick-desc">
-          Kelola akun artis, saldo, dan data pengguna.
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- RELEASES -->
-
-    <div
-      class="quick-item"
-      onclick="go('../admin-releases')"
-    >
-
-      <div class="quick-icon">
-        <i class="fa-solid fa-music"></i>
-      </div>
-
-      <div class="quick-text">
-
-        <div class="quick-title">
-          Release Submissions
-        </div>
-
-        <div class="quick-desc">
-          Review dan approve pengajuan rilis.
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- SUPPORT -->
-
-    <div
-      class="quick-item"
-      onclick="go('../admin-message')"
-    >
-
-      <div class="quick-icon">
-        <i class="fa-regular fa-comments"></i>
-      </div>
-
-      <div class="quick-text">
-
-        <div class="quick-title">
-          Support Inbox
-        </div>
-
-        <div class="quick-desc">
-          Pesan dan komunikasi admin dengan artis.
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- PAYOUT -->
-
-    <div
-      class="quick-item"
-      onclick="go('../admin-withdraw')"
-    >
-
-      <div class="quick-icon">
-        <i class="fa-solid fa-wallet"></i>
-      </div>
-
-      <div class="quick-text">
-
-        <div class="quick-title">
-          Payout Requests
-        </div>
-
-        <div class="quick-desc">
-          Kelola permintaan penarikan saldo.
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- ROYALTY -->
-
-    <div
-      class="quick-item"
-      onclick="go('../admin-income')"
-    >
-
-      <div class="quick-icon">
-        <i class="fa-solid fa-chart-line"></i>
-      </div>
-
-      <div class="quick-text">
-
-        <div class="quick-title">
-          Royalty Management
-        </div>
-
-        <div class="quick-desc">
-          Rekap dan distribusi royalti artis.
-        </div>
-
-      </div>
-
-    </div>
-
-
+  <div class="sec">Quick access</div>
+  <section class="list">
+    <a class="row" href="../admin-users"><div class="ico"><svg class="i"><use href="#i-users"/></svg></div><div class="rb"><div class="rt">Artists &amp; Accounts</div><div class="rs">Kelola akun artis, saldo, dan data pengguna.</div></div><svg class="i"><use href="#i-right"/></svg></a>
+    <a class="row" href="../admin-releases"><div class="ico"><svg class="i"><use href="#i-disc"/></svg></div><div class="rb"><div class="rt">Release Submissions</div><div class="rs">Review dan approve pengajuan rilis.</div></div><svg class="i"><use href="#i-right"/></svg></a>
+    <a class="row" href="../admin-message"><div class="ico"><svg class="i"><use href="#i-chat"/></svg></div><div class="rb"><div class="rt">Support Inbox</div><div class="rs">Pesan dan komunikasi admin dengan artis.</div></div><svg class="i"><use href="#i-right"/></svg></a>
+    <a class="row" href="../admin-withdraw"><div class="ico"><svg class="i"><use href="#i-wallet"/></svg></div><div class="rb"><div class="rt">Payout Requests</div><div class="rs">Kelola permintaan penarikan saldo.</div></div><svg class="i"><use href="#i-right"/></svg></a>
+    <a class="row" href="../admin-income"><div class="ico"><svg class="i"><use href="#i-chart"/></svg></div><div class="rb"><div class="rt">Royalty Management</div><div class="rs">Rekap dan distribusi royalti artis.</div></div><svg class="i"><use href="#i-right"/></svg></a>
   </section>
-
-
 </main>
 
-
-<!-- ================= BOTTOM NAV ================= -->
-
-<nav class="bottom-nav">
-
-
-  <div
-    class="nav-item active"
-    onclick="homeClick()"
-  >
-
-    <i class="fa-solid fa-house"></i>
-
-    Home
-
-  </div>
-
-
-  <div
-    class="nav-item"
-    onclick="goManage()"
-  >
-
-    <i class="fa-solid fa-grip"></i>
-
-    Manage
-
-  </div>
-
-
-  <div
-    class="nav-item"
-    onclick="goProfile()"
-  >
-
-    <i class="fa-regular fa-user"></i>
-
-    Profile
-
-  </div>
-
-
+<nav class="bottom" aria-label="Main navigation">
+  <a href="#" class="b-item active"><svg class="i"><use href="#i-home"/></svg>Home</a>
+  <a href="../admin-manage" class="b-item"><svg class="i"><use href="#i-grid"/></svg>Manage</a>
+  <a href="../admin-profile" class="b-item"><svg class="i"><use href="#i-user"/></svg>Profile</a>
 </nav>
 
-
-<!-- ================= LOADING ================= -->
-
-<div
-  id="loading"
-  class="loading"
->
-
-  <div class="loader-box">
-    Loading...
-  </div>
-
-</div>
-
+<div class="loading" id="loading"><div class="loader-box">Loading...</div></div>
 
 <script>
-
-/* ================= FIREBASE ================= */
-
 firebase.initializeApp({
-
-  apiKey:
-    "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
-
-  authDomain:
-    "dynopay-2513c.firebaseapp.com",
-
-  databaseURL:
-    "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
-
+  apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
+  authDomain: "dynopay-2513c.firebaseapp.com",
+  databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
+const auth = firebase.auth(), db = firebase.database();
+const $ = id => document.getElementById(id);
 
-
-const auth = firebase.auth();
-
-const db = firebase.database();
-
-
-/* ================= ADMIN PROTECTION ================= */
-
+/* ---------- proteksi admin ---------- */
 auth.onAuthStateChanged(user => {
-
-  if(!user){
-
-    location.href="../admin";
-
-    return;
-
-  }
-
-
-  db.ref("admins/" + user.uid)
-    .once("value")
-    .then(snap => {
-
-      if(!snap.exists()){
-
-        alert("⚠ Anda bukan admin");
-
-        auth.signOut();
-
-        return;
-
-      }
-
-      loadOverview();
-
-    })
-    .catch(error => {
-
-      console.error(
-        "Admin verification error:",
-        error
-      );
-
-    });
-
+  if(!user){ location.href = "../admin"; return; }
+  $("adminEmail").textContent = user.email || "-";
+  db.ref("admins/" + user.uid).once("value").then(snap => {
+    if(!snap.exists()){ alert("Anda bukan admin."); auth.signOut(); return; }
+    loadOverview();
+  }).catch(err => console.error("Admin verification error:", err));
 });
 
-
-/* ================= OVERVIEW ================= */
-
+/* ---------- overview ---------- */
+function count(path, id){
+  db.ref(path).once("value")
+    .then(s => { $(id).textContent = s.numChildren(); })
+    .catch(() => { $(id).textContent = "0"; });
+}
 function loadOverview(){
-
-
-  /* USERS */
-
-  db.ref("users")
-    .once("value")
-    .then(snap => {
-
-      document.getElementById(
-        "artistCount"
-      ).textContent = snap.numChildren();
-
-    });
-
-
-  /* RELEASES */
-
-  db.ref("releases")
-    .once("value")
-    .then(snap => {
-
-      document.getElementById(
-        "releaseCount"
-      ).textContent = snap.numChildren();
-
-    })
-    .catch(() => {
-
-      document.getElementById(
-        "releaseCount"
-      ).textContent = "0";
-
-    });
-
-
-  /* PAYOUTS */
-
-  db.ref("withdraws")
-    .once("value")
-    .then(snap => {
-
-      document.getElementById(
-        "payoutCount"
-      ).textContent = snap.numChildren();
-
-    })
-    .catch(() => {
-
-      document.getElementById(
-        "payoutCount"
-      ).textContent = "0";
-
-    });
-
+  count("users", "artistCount");
+  count("releases", "releaseCount");
+  count("withdraws", "payoutCount");
 }
 
-
-/* ================= PROFILE ================= */
-
-function toggleProfile(){
-
-  document
-    .getElementById("profileMenu")
-    .classList.toggle("show");
-
-}
-
-
-function goProfile(){
-
-  location.href="../admin-profile";
-
-}
-
-
+/* ---------- profil & logout ---------- */
+const menu = $("profileMenu"), btn = $("profileBtn");
+function setMenu(o){ menu.classList.toggle("show", o); btn.setAttribute("aria-expanded", String(o)); }
+btn.addEventListener("click", e => { e.stopPropagation(); setMenu(!menu.classList.contains("show")); });
+document.addEventListener("click", e => { if(!menu.contains(e.target) && !btn.contains(e.target)) setMenu(false); });
+document.addEventListener("keydown", e => { if(e.key === "Escape") setMenu(false); });
+function goProfile(){ location.href = "../admin-profile"; }
 function logout(){
-
-  if(
-    confirm(
-      "Logout dari admin panel?"
-    )
-  ){
-
-    auth
-      .signOut()
-      .then(() => {
-
-        location.href="../admin";
-
-      });
-
-  }
-
+  if(confirm("Logout dari admin panel?")) auth.signOut().then(() => { location.href = "../admin"; });
 }
 
-
-/* ================= NAVIGATION ================= */
-
-function go(page){
-
-  location.href=page;
-
-}
-
-
-function homeClick(){
-
-  console.log(
-    "Admin Home active"
-  );
-
-}
-
-
-function goManage(){
-
-  location.href="../admin-manage";
-
-}
-
-
-/* ================= CLOSE PROFILE ================= */
-
-document.addEventListener(
-  "click",
-  function(e){
-
-    if(
-      !e.target.closest(
-        ".admin-profile"
-      ) &&
-      !e.target.closest(
-        "#profileMenu"
-      )
-    ){
-
-      document
-        .getElementById(
-          "profileMenu"
-        )
-        .classList.remove(
-          "show"
-        );
-
-    }
-
-  }
-);
-
+/* ---------- topbar ---------- */
+const topbar = $("topbar");
+const onScroll = () => topbar.classList.toggle("scrolled", scrollY > 6);
+onScroll(); addEventListener("scroll", onScroll, { passive:true });
 </script>
-
 </body>
 </html>
