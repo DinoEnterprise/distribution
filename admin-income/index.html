@@ -221,7 +221,7 @@ body{padding-bottom:40px;padding-left:var(--side)}
   <section class="pane on" id="p-earn">
     <div class="card">
       <h2>Input royalty artis</h2>
-      <p class="sub">Isi nominal final hak artis (setelah bagi hasil), bukan pendapatan kotor. Data yang sudah ada bisa diubah atau dihapus selama belum masuk pembayaran.</p>
+      <p class="sub">Isi nominal final hak artis (setelah bagi hasil), bukan pendapatan kotor. Data yang sudah ada bisa diubah atau dihapus, termasuk yang sudah dibayar. Hanya data yang terkunci di pembayaran Pending yang tidak bisa diubah.</p>
       <label class="lb" for="pk">Periode royalty</label>
       <input type="month" id="pk">
       <div id="artistForm"><div class="empty">Pilih member untuk menampilkan artisnya.</div></div>
@@ -229,7 +229,7 @@ body{padding-bottom:40px;padding-left:var(--side)}
     </div>
     <div class="card">
       <h2>Riwayat input per periode</h2>
-      <p class="sub">Edit memuat periode ke form di atas. Hapus menghapus semua data periode itu (kecuali yang sudah dibayar atau terkunci).</p>
+      <p class="sub">Edit memuat periode ke form di atas. Hapus menghapus semua data periode itu (kecuali yang terkunci di pembayaran Pending).</p>
       <div id="hist"><div class="empty">Pilih member.</div></div>
     </div>
   </section>
@@ -439,11 +439,11 @@ function renderForm(){
   box.innerHTML = artists.map(a => {
     const ex = pk && earn[a.id] ? earn[a.id][pk] : null;
     const st = !ex ? "none" : ex.paymentId ? "paid" : ex.lock ? "lock" : "open";
-    const dis = (st === "paid" || st === "lock") ? " disabled" : "";
-    const hint = st === "paid" ? '<div class="h ok">Sudah dibayar, tidak bisa diubah atau dihapus.</div>'
+    const dis = st === "lock" ? " disabled" : "";
+    const hint = st === "paid" ? '<div class="h ok">Sudah dibayar (' + esc(lockTx(ex.paymentId)) + '). Perubahan di sini tidak mengubah statement pembayaran yang sudah dibuat.</div>'
       : st === "lock" ? '<div class="h warn">Terkunci di pembayaran ' + esc(lockTx(ex.lock)) + '. Batalkan atau hapus pembayarannya dulu untuk mengubah.</div>'
       : st === "open" ? '<div class="h">Terakhir diperbarui ' + esc(fdate(ex.updatedAt)) + '</div>' : '';
-    const del = st === "open" ? '<button type="button" class="btn sm red" data-delart="' + esc(a.id) + '">' + ic("trash") + 'Hapus</button>' : '';
+    const del = (st === "open" || st === "paid") ? '<button type="button" class="btn sm red" data-delart="' + esc(a.id) + '">' + ic("trash") + 'Hapus</button>' : '';
     return '<div class="arow" data-id="' + esc(a.id) + '"><div class="ah"><div class="n">' + esc(a.name) + '</div>' + del + '</div>' + hint +
       '<div class="pair"><input type="number" inputmode="numeric" min="0" step="1" class="amt" placeholder="Nominal (IDR)" aria-label="Nominal ' + esc(a.name) + '"' + dis + ' value="' + (ex ? esc(ex.amount) : "") + '">' +
       '<input type="text" class="note" placeholder="Catatan (opsional)" aria-label="Catatan ' + esc(a.name) + '"' + dis + ' value="' + (ex ? esc(ex.note || "") : "") + '"></div></div>';
@@ -466,12 +466,13 @@ $("saveEarn").addEventListener("click", async () => {
     if(!Number.isInteger(amount) || amount < 0){ bad = true; return; }
     const id = row.dataset.id, a = artists.find(x => x.id === id);
     const ex = earn[id] ? earn[id][pk] : null;
-    if(ex && Number(ex.amount) !== amount) over.push(a.name + ": " + rp(ex.amount) + " \u2192 " + rp(amount));
+    if(ex && Number(ex.amount) !== amount) over.push(a.name + ": " + rp(ex.amount) + " \u2192 " + rp(amount) + (ex.paymentId ? " (sudah dibayar)" : ""));
     const note = row.querySelector(".note").value.trim().slice(0, 200);
     const d = { artistName:a.name, periodKey:pk, periodLabel:plabel(pk), amount,
       createdAt: ex ? ex.createdAt : TS, updatedAt: TS, updatedBy: who(),
       createdBy: ex ? (ex.createdBy || who()) : who() };
     if(note) d.note = note;
+    if(ex && ex.paymentId) d.paymentId = ex.paymentId;
     upd["royalty_earnings/" + cur.uid + "/" + id + "/" + pk] = d;
   });
   if(bad) return toast("Nominal harus angka bulat, tidak negatif.");
@@ -495,8 +496,8 @@ $("artistForm").addEventListener("click", async e => {
   const pk = $("pk").value, id = b.dataset.delart, a = artists.find(x => x.id === id);
   const ex = earn[id] ? earn[id][pk] : null;
   if(!a || !ex) return;
-  if(ex.paymentId || ex.lock) return toast("Data ini sudah dibayar atau terkunci.");
-  if(!await ask("Hapus data royalty?", a.name + " \u2022 " + plabel(pk) + " \u2022 " + rp(ex.amount) + "\n\nTindakan ini tidak bisa dibatalkan.", "Hapus", true)) return;
+  if(ex.lock) return toast("Data ini terkunci di pembayaran Pending.");
+  if(!await ask("Hapus data royalty?", a.name + " \u2022 " + plabel(pk) + " \u2022 " + rp(ex.amount) + (ex.paymentId ? "\n\nData ini sudah berstatus dibayar. Statement pembayaran yang sudah dibuat tidak ikut berubah." : "") + "\n\nTindakan ini tidak bisa dibatalkan.", "Hapus", true)) return;
   try {
     await db.ref("royalty_earnings/" + cur.uid + "/" + id + "/" + pk).remove();
     toast("Data dihapus."); renderForm();
@@ -531,14 +532,15 @@ $("hist").addEventListener("click", async e => {
     return;
   }
   if(!dp || !cur) return;
-  const pk = dp.dataset.delp, upd = {}; let n = 0, skip = 0;
+  const pk = dp.dataset.delp, upd = {}; let n = 0, skip = 0, paidN = 0;
   Object.keys(earn).forEach(aid => {
     const x = (earn[aid] || {})[pk]; if(!x || typeof x !== "object") return;
-    if(x.paymentId || x.lock){ skip++; return; }
+    if(x.lock){ skip++; return; }
+    if(x.paymentId) paidN++;
     upd["royalty_earnings/" + cur.uid + "/" + aid + "/" + pk] = null; n++;
   });
-  if(!n) return toast("Semua data periode ini sudah dibayar atau terkunci.");
-  if(!await ask("Hapus data " + plabel(pk) + "?", n + " artis akan dihapus" + (skip ? ". " + skip + " artis dilewati karena sudah dibayar atau terkunci" : "") + ".\n\nTindakan ini tidak bisa dibatalkan.", "Hapus", true)) return;
+  if(!n) return toast("Semua data periode ini terkunci di pembayaran Pending.");
+  if(!await ask("Hapus data " + plabel(pk) + "?", n + " artis akan dihapus" + (skip ? ". " + skip + " artis dilewati karena terkunci di pembayaran Pending" : "") + (paidN ? ". " + paidN + " di antaranya sudah berstatus dibayar (statement pembayaran tidak ikut berubah)" : "") + ".\n\nTindakan ini tidak bisa dibatalkan.", "Hapus", true)) return;
   try { await db.ref().update(upd); toast("Data periode dihapus."); renderForm(); }
   catch(err){ console.error(err); toast("Gagal menghapus. Periksa Security Rules."); }
 });
@@ -790,4 +792,3 @@ onScroll(); addEventListener("scroll", onScroll, { passive:true });
 </script>
 </body>
 </html>
- 
