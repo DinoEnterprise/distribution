@@ -4,92 +4,233 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Royalty Management | Dynotic Admin</title>
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/favicon-android.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/favicon-iphone.png">
+<meta name="theme-color" content="#f3f3f8">
 <meta name="robots" content="noindex, nofollow">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif}
-body{background:#f1f2f7;padding:80px 16px 40px;color:#14141a}
-header{position:fixed;top:0;left:0;width:100%;background:#fff;display:flex;align-items:center;padding:16px 20px;z-index:100;border-bottom:1px solid #eee;box-shadow:0 2px 6px rgba(0,0,0,.06)}
-header h1{font-size:18px;font-weight:600}
-#adminName{margin-left:auto;font-size:13px;color:#555;max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-main{max-width:860px;margin:0 auto}
-.card{background:#fff;padding:18px;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.05);margin-bottom:16px}
-.card h2{font-size:16px;font-weight:600;margin-bottom:4px}
-.sub{font-size:12px;color:#777;margin-bottom:10px}
-label{display:block;font-size:13px;margin-top:12px;color:#333}
-input,select{width:100%;margin-top:6px;padding:10px 14px;border:1px solid #ccc;border-radius:8px;font-size:14px;background:#fff;outline:none}
-input:focus{border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,.12)}
-button{font-size:14px;cursor:pointer;border:0;transition:.2s}
-button:hover{filter:brightness(.92)}
-.btn{margin-top:16px;padding:10px 18px;background:#111;color:#fff;border-radius:12px}
-.btn.sm{margin:0;padding:6px 12px;font-size:13px;border-radius:8px;background:#667eea}
-.btn.red{background:#dc2626}
-.btn:disabled{opacity:.5;cursor:default}
-.tabs{display:flex;gap:6px;background:#fff;padding:4px;border-radius:14px;margin-bottom:16px;box-shadow:0 4px 12px rgba(0,0,0,.05)}
-.tab{flex:1;padding:10px;border-radius:10px;background:none;font-weight:600;color:#777}
-.tab.on{background:#111;color:#fff}
-.pane{display:none}.pane.on{display:block}
+:root{--bg:#f3f3f8;--paper:#fff;--ink:#14141a;--muted:#6f7280;--line:#e6e6ee;--dark:#0d0d12;--accent:#7772a8;--accent-2:#a9a3f2;--red:#dc2626;--side:260px;--ease:cubic-bezier(.16,1,.3,1)}
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Outfit",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:90px}
+body{background:var(--bg);color:var(--ink);min-height:100dvh;-webkit-font-smoothing:antialiased;padding-bottom:110px}
+body.lock{overflow:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;border:0;background:none;color:inherit;cursor:pointer}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:10px}
+.i{width:1.15em;height:1.15em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+/* sidebar */
+.sidebar{display:none;position:fixed;inset:0 auto 0 0;width:var(--side);background:var(--dark);color:#fff;padding:26px 18px 20px;flex-direction:column;z-index:60;overflow-y:auto}
+.sidebar .logo img{height:32px;max-width:180px;object-fit:contain;filter:brightness(0) invert(1);display:block;margin:0 8px 30px}
+.side-nav{display:flex;flex-direction:column;gap:4px}
+.side-nav a{display:flex;align-items:center;gap:13px;padding:12px 14px;border-radius:14px;font-size:14px;font-weight:500;color:rgba(255,255,255,.62);transition:background .2s,color .2s}
+.side-nav a .i{width:19px;height:19px}
+.side-nav a:hover{background:rgba(255,255,255,.07);color:#fff}
+.side-nav a.active{background:rgba(255,255,255,.1);color:#fff;font-weight:700}
+.side-nav .lbl{padding:18px 14px 6px;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+/* topbar */
+.topbar{position:sticky;top:0;z-index:50;height:68px;padding:0 16px;display:flex;align-items:center;gap:12px;background:rgba(243,243,248,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid transparent;transition:border-color .2s}
+.topbar.scrolled{border-bottom-color:var(--line)}
+.logo-m img{height:30px;max-width:170px;object-fit:contain;display:block}
+.page-title{display:none;font-size:20px;font-weight:800;letter-spacing:-.03em}
+.top-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
+.avatar-btn{width:42px;height:42px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;border:2px solid var(--paper);box-shadow:0 0 0 1px var(--line);transition:transform .2s var(--ease)}
+.avatar-btn:active{transform:scale(.93)}
+/* layout */
+.wrap{width:100%;max-width:900px;margin:0 auto;padding:6px 16px 0}
+.head{padding:10px 2px 18px}
+.head small{display:block;font-size:13px;color:var(--muted);font-weight:500}
+.head h1{margin-top:2px;font-size:clamp(26px,5vw,36px);font-weight:800;letter-spacing:-.04em;line-height:1.1}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:clamp(16px,2.4vw,24px);margin-bottom:14px}
+.card h2{font-size:16px;font-weight:800;letter-spacing:-.02em}
+.sub{margin-top:3px;font-size:12px;line-height:1.7;color:var(--muted)}
+label.lb{display:block;font-size:13px;font-weight:600;margin:14px 0 6px}
+input,select{width:100%;height:48px;padding:0 14px;border-radius:14px;border:1.5px solid var(--line);background:#fafafd;font-size:15px;font-weight:500;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus{border-color:var(--ink);background:#fff;box-shadow:0 0 0 4px rgba(119,114,168,.14)}
+input:disabled{opacity:.55;cursor:not-allowed}
+input[type=checkbox]{width:18px;height:18px;height:18px;padding:0;accent-color:var(--ink)}
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 22px;border-radius:999px;font-size:13px;font-weight:700;background:var(--ink);color:#fff;margin-top:16px;transition:transform .25s var(--ease),box-shadow .25s,opacity .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(20,20,26,.2)}
+.btn:disabled{opacity:.45;cursor:default;transform:none;box-shadow:none}
+.btn .i{width:15px;height:15px}
+.btn.line{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn.line:hover{box-shadow:none;border-color:#cfcfdb}
+.btn.sm{height:34px;padding:0 13px;margin:0;font-size:12px}
+.btn.sm:hover{box-shadow:none;transform:none}
+.btn.red{background:#fef2f2;color:var(--red);border:1.5px solid #fecaca}
+.btn.dng{background:var(--red)}
+.btn.soft{background:#eeedf7;color:var(--accent)}
+/* picker */
 .picker{position:relative}
-.dd{display:none;position:absolute;left:0;right:0;top:100%;margin-top:6px;max-height:240px;overflow-y:auto;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.1);z-index:50;padding:6px}
+.dd{display:none;position:absolute;left:0;right:0;top:100%;margin-top:6px;max-height:260px;overflow-y:auto;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 40px rgba(20,20,40,.14);z-index:50;padding:6px}
 .dd.show{display:block}
-.opt{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:9px;background:none}
-.opt:hover{background:#f4f5f9}
+.opt{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:11px}
+.opt:hover{background:var(--bg)}
 .opt b{display:block;font-size:14px}
-.opt span{font-size:12px;color:#888}
-.chip{display:inline-block;margin-top:10px;padding:6px 12px;border-radius:999px;background:#eef0ff;color:#4a55c9;font-size:13px;font-weight:600}
-.arow{padding:12px 0;border-bottom:1px solid #eee}
+.opt span{font-size:12px;color:var(--muted)}
+.chip{display:inline-flex;margin-top:12px;padding:7px 14px;border-radius:999px;background:#eeedf7;color:var(--accent);font-size:13px;font-weight:700;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* tabs */
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:4px;margin-bottom:14px;background:#e9e9f1;border-radius:18px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1 0 auto;height:42px;padding:0 18px;border-radius:14px;font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap;transition:background .2s,color .2s}
+.tab:hover{color:var(--ink)}
+.tab.on{background:var(--ink);color:#fff;box-shadow:0 6px 16px rgba(20,20,26,.2)}
+.pane{display:none}.pane.on{display:block}
+/* form artis */
+.arow{padding:14px 0;border-bottom:1px solid var(--line)}
 .arow:last-child{border-bottom:0}
-.arow .n{font-weight:600;font-size:14px}
-.arow .h{font-size:12px;color:#888;margin-top:2px}
-.arow .h.paid{color:#166534}
-.pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:14px}
-th,td{padding:10px 8px;text-align:left;border-bottom:1px solid #eee;white-space:nowrap}
-th{font-weight:600;background:#f9f9f9}
-tr.click{cursor:pointer}tr.click:hover{background:#f9fafb}
-.empty{padding:18px;text-align:center;color:#888;font-size:13px}
-.acts{display:flex;gap:6px}
-#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:200;max-width:90%;text-align:center}
-#toast.show{opacity:1}
+.ah{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.arow .n{font-weight:700;font-size:14px;overflow-wrap:anywhere}
+.arow .h{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.6}
+.arow .h.ok{color:#166534}.arow .h.warn{color:#b45309}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.cb{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+.cb input{margin-top:3px;flex-shrink:0}
+/* list item */
+.item{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:14px;border:1px solid var(--line);border-radius:18px;margin-top:10px;background:#fff}
+.item:first-of-type{margin-top:14px}
+.ib{flex:1 1 220px;min-width:0}
+.it{font-size:15px;font-weight:700;letter-spacing:-.01em;line-height:1.35;overflow-wrap:anywhere}
+.is{margin-top:3px;font-size:12px;line-height:1.6;color:var(--muted);overflow-wrap:anywhere}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--c);background:color-mix(in srgb,var(--c) 11%,#fff);border:1px solid color-mix(in srgb,var(--c) 28%,#fff);white-space:nowrap;vertical-align:middle}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--c)}
+.empty{padding:26px 12px;text-align:center;color:var(--muted);font-size:13px;line-height:1.7}
+/* bottom nav */
+.bottom{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);width:calc(100% - 28px);max-width:540px;height:70px;padding:0 8px;background:rgba(13,13,18,.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:26px;box-shadow:0 18px 40px rgba(13,13,18,.3);display:flex;align-items:center;justify-content:space-around;z-index:70}
+.b-item{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;height:100%;font-size:10px;font-weight:500;color:rgba(255,255,255,.5);transition:color .2s,transform .15s}
+.b-item .i{width:20px;height:20px}
+.b-item:active{transform:scale(.92)}
+.b-item.active{color:#fff;font-weight:700}
+.b-item.active .i{color:var(--accent-2)}
+/* popup */
+.pop{position:fixed;top:70px;right:14px;width:230px;background:var(--paper);border:1px solid var(--line);border-radius:20px;box-shadow:0 20px 50px rgba(20,20,40,.16);padding:10px;z-index:200;opacity:0;visibility:hidden;transform:translateY(-8px) scale(.98);transform-origin:top right;transition:all .22s var(--ease)}
+.pop.show{opacity:1;visibility:visible;transform:none}
+.pop-info{display:flex;align-items:center;gap:12px;padding:10px 10px 14px}
+.pop-info .avatar{width:44px;height:44px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.pop-info strong{display:block;font-size:14px}
+.pop-info span{display:block;margin-top:2px;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px}
+.pop hr{border:0;height:1px;background:var(--line);margin:2px 4px 6px}
+.pop button.opt2{display:flex;align-items:center;gap:12px;width:100%;padding:12px 10px;border-radius:12px;font-size:13px;font-weight:500;text-align:left}
+.pop button.opt2:hover{background:var(--bg)}
+.pop .i{width:17px;height:17px;color:var(--muted)}
+.pop .logout,.pop .logout .i{color:#d83a3a}
+/* modal */
+.modal{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(13,13,18,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.modal.show{display:flex}
+.sheet{width:100%;max-width:440px;max-height:90dvh;overflow-y:auto;background:var(--paper);border-radius:26px;padding:22px;animation:up .3s var(--ease)}
+.sh-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.sh-head h3{font-size:20px;font-weight:800;letter-spacing:-.03em}
+.d-x{width:38px;height:38px;border-radius:12px;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.d-x .i{width:17px;height:17px}
+.dp{font-size:14px;line-height:1.7;color:#3b3d49;white-space:pre-line}
+.sh-acts{display:flex;gap:10px;margin-top:20px}
+.sh-acts .btn{flex:1;margin-top:0}
+.err{display:none;margin-top:12px;padding:11px 13px;border-radius:12px;background:#fef2f2;color:#dc2626;font-size:12px;line-height:1.6}
+.err.show{display:block}
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%) translateY(10px);background:var(--ink);color:#fff;font-size:13px;font-weight:500;padding:11px 18px;border-radius:999px;opacity:0;pointer-events:none;transition:all .25s var(--ease);z-index:500;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@media(min-width:1000px){
+body{padding-bottom:40px;padding-left:var(--side)}
+.sidebar{display:flex}.bottom{display:none}
+.topbar{height:78px;padding:0 36px}.logo-m{display:none}.page-title{display:block}
+.wrap{padding:6px 36px 0}.pop{top:76px;right:34px}.toast{bottom:30px}
+}
+@media(max-width:700px){
+.wrap{padding:0 14px}.card{border-radius:22px}
+.pair{grid-template-columns:1fr}
+.modal{align-items:flex-end;padding:0}.sheet{max-width:none;border-radius:26px 26px 0 0}
+.pop{right:12px;top:66px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<header><h1>Royalty Management</h1><span id="adminName">Admin</span></header>
 
-<main>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10.5 9-7.5 9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+<symbol id="i-disc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-5.4A8 8 0 1 1 21 12z"/></symbol>
+<symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v3M3 5v14a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-3"/><path d="M21 12v4h-4a2 2 0 0 1 0-4z"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18M7 14l4-4 3 3 5-6"/></symbol>
+<symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 21h16"/></symbol>
+</svg>
+
+<aside class="sidebar">
+  <a href="../admin-home" class="logo"><img src="../assets/dynotic-distribution.png" alt="Dynotic Distribution"></a>
+  <nav class="side-nav" aria-label="Main navigation">
+    <a href="../admin-home"><svg class="i"><use href="#i-home"/></svg>Home</a>
+    <a href="../admin-manage"><svg class="i"><use href="#i-grid"/></svg>Manage</a>
+    <a href="../admin-profile"><svg class="i"><use href="#i-user"/></svg>Profile</a>
+    <div class="lbl">Quick access</div>
+    <a href="../admin-users"><svg class="i"><use href="#i-users"/></svg>Artists &amp; Accounts</a>
+    <a href="../admin-releases"><svg class="i"><use href="#i-disc"/></svg>Release Submissions</a>
+    <a href="../admin-message"><svg class="i"><use href="#i-chat"/></svg>Support Inbox</a>
+    <a href="../admin-withdraw"><svg class="i"><use href="#i-wallet"/></svg>Payout Requests</a>
+    <a href="../admin-income" class="active"><svg class="i"><use href="#i-chart"/></svg>Royalty Management</a>
+  </nav>
+</aside>
+
+<header class="topbar" id="topbar">
+  <a href="../admin-home" class="logo-m"><img src="../assets/dynotic-distribution.png" alt="Dynotic Distribution"></a>
+  <h2 class="page-title">Royalty Management</h2>
+  <div class="top-actions">
+    <button class="avatar-btn" id="profileBtn" type="button" aria-label="Menu admin" aria-expanded="false">A</button>
+  </div>
+</header>
+
+<div class="pop" id="profileMenu" role="menu">
+  <div class="pop-info"><div class="avatar">A</div><div><strong>Admin</strong><span id="adminEmail">-</span></div></div>
+  <hr>
+  <button class="opt2" type="button" id="goProfile" role="menuitem"><svg class="i"><use href="#i-user"/></svg>Profile</button>
+  <button class="opt2 logout" type="button" id="logoutBtn" role="menuitem"><svg class="i"><use href="#i-logout"/></svg>Logout</button>
+</div>
+
+<main class="wrap">
+  <div class="head"><small>Dynotic Admin</small><h1>Royalty Management</h1></div>
+
   <div class="card">
-    <h2>Akun Member</h2>
-    <p class="sub">Pilih member dulu. Berlaku untuk Revenue Recap dan Artist Earnings.</p>
-    <div class="picker" id="picker">
-      <input type="text" id="mSearch" placeholder="Cari nama atau email member..." autocomplete="off">
+    <h2>Akun member</h2>
+    <p class="sub">Pilih member dulu. Berlaku untuk Artist Earnings, Revenue Recap, dan Payment.</p>
+    <div class="picker" id="picker" style="margin-top:12px">
+      <input type="text" id="mSearch" placeholder="Cari nama atau email member..." autocomplete="off" aria-label="Cari member">
       <div class="dd" id="mDd"></div>
     </div>
     <span class="chip" id="mChip" style="display:none"></span>
   </div>
 
-  <div class="tabs">
-    <button class="tab on" data-t="earn">Artist Earnings</button>
-    <button class="tab" data-t="recap">Revenue Recap</button>
+  <div class="tabs" role="tablist">
+    <button class="tab on" role="tab" data-t="earn">Artist Earnings</button>
+    <button class="tab" role="tab" data-t="recap">Revenue Recap</button>
+    <button class="tab" role="tab" data-t="pay">Payment</button>
   </div>
 
   <!-- ARTIST EARNINGS -->
   <section class="pane on" id="p-earn">
     <div class="card">
       <h2>Input royalty artis</h2>
-      <p class="sub">Isi nominal final hak artis (setelah bagi hasil), bukan pendapatan kotor.</p>
-      <label for="pk">Periode royalty</label>
+      <p class="sub">Isi nominal final hak artis (setelah bagi hasil), bukan pendapatan kotor. Data yang sudah ada bisa diubah atau dihapus selama belum masuk pembayaran.</p>
+      <label class="lb" for="pk">Periode royalty</label>
       <input type="month" id="pk">
       <div id="artistForm"><div class="empty">Pilih member untuk menampilkan artisnya.</div></div>
-      <button class="btn" id="saveEarn" disabled>Simpan semua</button>
+      <button class="btn" id="saveEarn" type="button" disabled>Simpan semua</button>
     </div>
     <div class="card">
       <h2>Riwayat input per periode</h2>
-      <p class="sub">Ketuk periode untuk membuka dan mengedit.</p>
-      <div class="wrap"><table>
-        <thead><tr><th>Periode</th><th>Artis</th><th>Total</th><th>Dibayar</th><th>Diperbarui</th></tr></thead>
-        <tbody id="hist"><tr><td colspan="5" class="empty">Belum ada data.</td></tr></tbody>
-      </table></div>
+      <p class="sub">Edit memuat periode ke form di atas. Hapus menghapus semua data periode itu (kecuali yang sudah dibayar atau terkunci).</p>
+      <div id="hist"><div class="empty">Pilih member.</div></div>
     </div>
   </section>
 
@@ -98,31 +239,64 @@ tr.click{cursor:pointer}tr.click:hover{background:#f9fafb}
     <div class="card">
       <h2>Tambah rekap Excel</h2>
       <p class="sub">Upload file ke folder <b>report</b> di GitHub, tunggu deploy selesai, lalu tulis nama filenya di sini.</p>
-      <label for="rcTitle">Judul / keterangan</label>
-      <input type="text" id="rcTitle" placeholder="Contoh: Rekap pendapatan Juli 2026">
-      <label for="rcPk">Periode laporan</label>
+      <label class="lb" for="rcTitle">Judul / keterangan</label>
+      <input type="text" id="rcTitle" placeholder="Contoh: Rekap pendapatan Juli 2026" maxlength="120">
+      <label class="lb" for="rcPk">Periode laporan</label>
       <input type="month" id="rcPk">
-      <label for="rcFile">Nama file Excel</label>
+      <label class="lb" for="rcFile">Nama file Excel</label>
       <input type="text" id="rcFile" placeholder="Juli-2026-x7k2.xlsx" autocapitalize="off">
-      <p class="sub" style="margin-top:6px" id="rcPreview"></p>
-      <button class="btn" id="saveRecap" disabled>Simpan rekap</button>
+      <p class="sub" id="rcPreview" style="overflow-wrap:anywhere"></p>
+      <button class="btn" id="saveRecap" type="button" disabled>Simpan rekap</button>
     </div>
     <div class="card">
       <h2>Daftar rekap member ini</h2>
-      <div class="wrap"><table>
-        <thead><tr><th>Judul</th><th>Periode</th><th>Diunggah</th><th>Oleh</th><th></th></tr></thead>
-        <tbody id="recapList"><tr><td colspan="5" class="empty">Pilih member.</td></tr></tbody>
-      </table></div>
+      <div id="recapList"><div class="empty">Pilih member.</div></div>
+    </div>
+  </section>
+
+  <!-- PAYMENT -->
+  <section class="pane" id="p-pay">
+    <div class="card">
+      <h2>Minimum payout</h2>
+      <p class="sub">Berlaku untuk semua akun.</p>
+      <label class="lb" for="minPay">Nominal minimum (IDR)</label>
+      <input type="number" id="minPay" min="0" step="1000">
+      <button class="btn" id="saveMin" type="button">Simpan minimum</button>
+    </div>
+    <div class="card">
+      <h2>Buat pembayaran</h2>
+      <p class="sub" id="payHint">Pilih member di atas.</p>
+      <div id="payList"></div>
+      <button class="btn" id="mkPay" type="button" disabled>Buat pembayaran</button>
+    </div>
+    <div class="card">
+      <h2>Riwayat pembayaran</h2>
+      <p class="sub">Pembayaran berstatus Berhasil tidak bisa diubah atau dihapus. Hapus hanya untuk Pending dan Gagal.</p>
+      <div id="payHist"><div class="empty">Pilih member.</div></div>
     </div>
   </section>
 </main>
-<div id="toast" role="status"></div>
+
+<nav class="bottom" aria-label="Main navigation">
+  <a href="../admin-home" class="b-item"><svg class="i"><use href="#i-home"/></svg>Home</a>
+  <a href="../admin-manage" class="b-item active"><svg class="i"><use href="#i-grid"/></svg>Manage</a>
+  <a href="../admin-profile" class="b-item"><svg class="i"><use href="#i-user"/></svg>Profile</a>
+</nav>
+
+<div class="modal" id="dlg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dlgT">
+  <div class="sh-head"><h3 id="dlgT"></h3><button class="d-x" type="button" id="dlgX" aria-label="Tutup"><svg class="i"><use href="#i-x"/></svg></button></div>
+  <div id="dlgB"></div>
+  <div class="sh-acts" id="dlgA"></div>
+</div></div>
+
+<div class="toast" id="toast" role="status"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
 const BASE = "https://app.dynoticcollective.com/report/";
+const COMPANY = "Dynotic Distribution";
 firebase.initializeApp({
   apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
   authDomain: "dynopay-2513c.firebaseapp.com",
@@ -134,6 +308,8 @@ const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 const rp = v => "Rp" + Number(v || 0).toLocaleString("id-ID");
 const fdate = t => t ? new Date(t).toLocaleString("id-ID", {day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}) : "-";
 const plabel = pk => /^\d{4}-\d{2}$/.test(pk) ? new Date(pk + "-01T00:00:00").toLocaleDateString("id-ID", {month:"long", year:"numeric"}) : (pk || "-");
+const ic = n => '<svg class="i"><use href="#i-' + n + '"/></svg>';
+const pill = (t, c) => '<span class="pill" style="--c:' + c + '">' + esc(t) + '</span>';
 function toast(t){ const e = $("toast"); e.textContent = t; e.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(() => e.classList.remove("show"), 2600); }
 function slug(s){
   const x = String(s).toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
@@ -142,20 +318,48 @@ function slug(s){
   return "a" + Math.abs(h).toString(36);
 }
 
-let me = null, members = [], cur = null, artists = [], earn = {}, earnRef = null, recapRef = null, firstEarn = true;
+let me = null, members = [], cur = null, artists = [], earn = {}, recaps = [], payRows = [], minPay = 100000;
+let earnRef = null, recapRef = null, payRef = null, firstEarn = true;
+
+/* ---------- dialog ---------- */
+let dlgCancel = null;
+function openDlg(){ $("dlg").classList.add("show"); document.body.classList.add("lock"); }
+function closeDlg(){ $("dlg").classList.remove("show"); document.body.classList.remove("lock"); }
+function dismiss(){ const f = dlgCancel; dlgCancel = null; closeDlg(); if(f) f(); }
+$("dlgX").addEventListener("click", dismiss);
+$("dlg").addEventListener("click", e => { if(e.target === $("dlg")) dismiss(); });
+
+function ask(title, text, okText, danger){
+  return new Promise(res => {
+    $("dlgT").textContent = title;
+    $("dlgB").innerHTML = '<p class="dp">' + esc(text) + '</p>';
+    $("dlgA").innerHTML = '<button class="btn line" id="dNo" type="button">Batal</button><button class="btn' + (danger ? " dng" : "") + '" id="dYes" type="button">' + esc(okText || "Lanjutkan") + '</button>';
+    const done = v => { dlgCancel = null; closeDlg(); res(v); };
+    dlgCancel = () => res(false);
+    $("dNo").onclick = () => done(false);
+    $("dYes").onclick = () => done(true);
+    openDlg(); $("dYes").focus();
+  });
+}
 
 /* ---------- auth + cek admin ---------- */
 firebase.auth().onAuthStateChanged(async u => {
   if(!u){ location.href = "../login"; return; }
-  me = u; $("adminName").textContent = u.email || "";
+  if(me && me.uid === u.uid) return;
+  me = u; $("adminEmail").textContent = u.email || "-";
+  $("profileBtn").textContent = (u.email || "A").charAt(0).toUpperCase();
   try {
     const s = await db.ref("admins/" + u.uid).once("value");
     if(!s.exists()) throw new Error("bukan admin");
   } catch(e){
-    document.body.innerHTML = '<p style="padding:100px 20px;text-align:center">Halaman ini khusus admin.</p>';
+    document.body.innerHTML = '<p style="padding:100px 20px;text-align:center;font-family:Outfit,sans-serif">Halaman ini khusus admin.</p>';
     return;
   }
   loadMembers();
+  db.ref("royalty_settings/minPayout").on("value", s => {
+    if(s.val() != null) minPay = Number(s.val());
+    $("minPay").value = minPay; renderPay();
+  });
 });
 const who = () => ({ uid: me.uid, email: me.email || "" });
 
@@ -179,17 +383,16 @@ $("mSearch").addEventListener("input", e => showMembers(e.target.value));
 $("mDd").addEventListener("click", e => {
   const b = e.target.closest(".opt"); if(!b) return;
   const m = members.find(x => x.uid === b.dataset.uid); if(!m) return;
-  $("mDd").classList.remove("show");
-  $("mSearch").value = "";
+  $("mDd").classList.remove("show"); $("mSearch").value = "";
   setMember(m);
 });
 document.addEventListener("click", e => { if(!$("picker").contains(e.target)) $("mDd").classList.remove("show"); });
 
 async function setMember(m){
   cur = m;
-  if(earnRef) earnRef.off(); if(recapRef) recapRef.off();
-  earn = {}; artists = []; firstEarn = true;
-  $("mChip").style.display = "inline-block";
+  if(earnRef) earnRef.off(); if(recapRef) recapRef.off(); if(payRef) payRef.off();
+  earn = {}; artists = []; recaps = []; payRows = []; firstEarn = true;
+  $("mChip").style.display = "inline-flex";
   $("mChip").textContent = m.nama + " \u2022 " + m.email;
   $("saveRecap").disabled = false;
   $("artistForm").innerHTML = '<div class="empty">Memuat artis...</div>';
@@ -206,27 +409,44 @@ async function setMember(m){
   earnRef = db.ref("royalty_earnings/" + m.uid);
   earnRef.on("value", s => {
     earn = s.val() || {};
-    renderHist();
+    renderHist(); renderPay();
     if(firstEarn){ firstEarn = false; renderForm(); }
   }, () => toast("Data royalty gagal dimuat."));
 
   recapRef = db.ref("royalty_recaps/" + m.uid);
-  recapRef.on("value", renderRecaps, () => toast("Data rekap gagal dimuat."));
+  recapRef.on("value", s => {
+    recaps = []; s.forEach(c => { const r = c.val(); if(r) recaps.push({ ...r, k:c.key }); });
+    recaps.sort((a, b) => (b.uploadedAt || 0) - (a.uploadedAt || 0)); renderRecaps();
+  }, () => toast("Data rekap gagal dimuat."));
+
+  payRef = db.ref("royalty_payments").orderByChild("uid").equalTo(m.uid);
+  payRef.on("value", s => {
+    payRows = []; s.forEach(c => { const p = c.val(); if(p) payRows.push({ ...p, k:c.key }); });
+    payRows.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)); renderPayHist();
+  }, () => toast("Riwayat pembayaran gagal dimuat."));
 }
 
-/* ---------- artist earnings ---------- */
+/* =====================================================
+   ARTIST EARNINGS
+   ===================================================== */
+const lockTx = k => { const p = payRows.find(x => x.k === k); return p ? p.txNo : "lain"; };
+
 function renderForm(){
   const box = $("artistForm"), pk = $("pk").value;
   $("saveEarn").disabled = true;
   if(!cur){ box.innerHTML = '<div class="empty">Pilih member untuk menampilkan artisnya.</div>'; return; }
   if(!artists.length){ box.innerHTML = '<div class="empty">Member ini belum punya artis di data rilisan.</div>'; return; }
   box.innerHTML = artists.map(a => {
-    const ex = pk && earn[a.id] ? earn[a.id][pk] : null, paid = ex && ex.paymentId;
-    const hint = paid ? '<div class="h paid">Sudah dibayar, tidak bisa diubah</div>'
-      : ex ? '<div class="h">Terakhir diperbarui ' + esc(fdate(ex.updatedAt)) + '</div>' : '';
-    return '<div class="arow" data-id="' + esc(a.id) + '"><div class="n">' + esc(a.name) + '</div>' + hint +
-      '<div class="pair"><input type="number" inputmode="numeric" min="0" step="1" class="amt" placeholder="Nominal (IDR)"' + (paid ? " disabled" : "") + ' value="' + (ex ? esc(ex.amount) : "") + '">' +
-      '<input type="text" class="note" placeholder="Catatan (opsional)"' + (paid ? " disabled" : "") + ' value="' + (ex ? esc(ex.note || "") : "") + '"></div></div>';
+    const ex = pk && earn[a.id] ? earn[a.id][pk] : null;
+    const st = !ex ? "none" : ex.paymentId ? "paid" : ex.lock ? "lock" : "open";
+    const dis = (st === "paid" || st === "lock") ? " disabled" : "";
+    const hint = st === "paid" ? '<div class="h ok">Sudah dibayar, tidak bisa diubah atau dihapus.</div>'
+      : st === "lock" ? '<div class="h warn">Terkunci di pembayaran ' + esc(lockTx(ex.lock)) + '. Batalkan atau hapus pembayarannya dulu untuk mengubah.</div>'
+      : st === "open" ? '<div class="h">Terakhir diperbarui ' + esc(fdate(ex.updatedAt)) + '</div>' : '';
+    const del = st === "open" ? '<button type="button" class="btn sm red" data-delart="' + esc(a.id) + '">' + ic("trash") + 'Hapus</button>' : '';
+    return '<div class="arow" data-id="' + esc(a.id) + '"><div class="ah"><div class="n">' + esc(a.name) + '</div>' + del + '</div>' + hint +
+      '<div class="pair"><input type="number" inputmode="numeric" min="0" step="1" class="amt" placeholder="Nominal (IDR)" aria-label="Nominal ' + esc(a.name) + '"' + dis + ' value="' + (ex ? esc(ex.amount) : "") + '">' +
+      '<input type="text" class="note" placeholder="Catatan (opsional)" aria-label="Catatan ' + esc(a.name) + '"' + dis + ' value="' + (ex ? esc(ex.note || "") : "") + '"></div></div>';
   }).join("");
   $("saveEarn").disabled = !pk;
 }
@@ -246,17 +466,17 @@ $("saveEarn").addEventListener("click", async () => {
     if(!Number.isInteger(amount) || amount < 0){ bad = true; return; }
     const id = row.dataset.id, a = artists.find(x => x.id === id);
     const ex = earn[id] ? earn[id][pk] : null;
-    if(ex) over.push(a.name + " (" + rp(ex.amount) + " \u2192 " + rp(amount) + ")");
+    if(ex && Number(ex.amount) !== amount) over.push(a.name + ": " + rp(ex.amount) + " \u2192 " + rp(amount));
     const note = row.querySelector(".note").value.trim().slice(0, 200);
     const d = { artistName:a.name, periodKey:pk, periodLabel:plabel(pk), amount,
-      createdAt: ex ? ex.createdAt : TS, updatedAt: TS, updatedBy: who() };
-    if(ex) d.createdBy = ex.createdBy || who(); else d.createdBy = who();
+      createdAt: ex ? ex.createdAt : TS, updatedAt: TS, updatedBy: who(),
+      createdBy: ex ? (ex.createdBy || who()) : who() };
     if(note) d.note = note;
     upd["royalty_earnings/" + cur.uid + "/" + id + "/" + pk] = d;
   });
   if(bad) return toast("Nominal harus angka bulat, tidak negatif.");
   if(!Object.keys(upd).length) return toast("Belum ada nominal yang diisi.");
-  if(over.length && !confirm("Data periode " + plabel(pk) + " ini sudah ada dan akan ditimpa:\n\n" + over.join("\n") + "\n\nLanjutkan?")) return;
+  if(over.length && !await ask("Timpa data " + plabel(pk) + "?", "Nominal berikut akan diubah:\n\n" + over.join("\n"), "Simpan perubahan")) return;
 
   const btn = $("saveEarn"); btn.disabled = true; btn.textContent = "Menyimpan...";
   try {
@@ -269,32 +489,74 @@ $("saveEarn").addEventListener("click", async () => {
   }
 });
 
+/* hapus satu artis di periode terpilih */
+$("artistForm").addEventListener("click", async e => {
+  const b = e.target.closest("[data-delart]"); if(!b || !cur) return;
+  const pk = $("pk").value, id = b.dataset.delart, a = artists.find(x => x.id === id);
+  const ex = earn[id] ? earn[id][pk] : null;
+  if(!a || !ex) return;
+  if(ex.paymentId || ex.lock) return toast("Data ini sudah dibayar atau terkunci.");
+  if(!await ask("Hapus data royalty?", a.name + " \u2022 " + plabel(pk) + " \u2022 " + rp(ex.amount) + "\n\nTindakan ini tidak bisa dibatalkan.", "Hapus", true)) return;
+  try {
+    await db.ref("royalty_earnings/" + cur.uid + "/" + id + "/" + pk).remove();
+    toast("Data dihapus."); renderForm();
+  } catch(err){ console.error(err); toast("Gagal menghapus. Periksa Security Rules."); }
+});
+
+/* riwayat per periode */
 function renderHist(){
   const g = {};
   Object.keys(earn).forEach(aid => Object.keys(earn[aid] || {}).forEach(pk => {
     const e = earn[aid][pk]; if(!e || typeof e !== "object") return;
-    const x = g[pk] = g[pk] || { n:0, total:0, paid:0, up:0 };
+    const x = g[pk] = g[pk] || { n:0, total:0, paid:0, lock:0, up:0 };
     x.n++; x.total += Number(e.amount || 0);
-    if(e.paymentId) x.paid += Number(e.amount || 0);
+    if(e.paymentId) x.paid += Number(e.amount || 0); else if(e.lock) x.lock++;
     x.up = Math.max(x.up, Number(e.updatedAt || 0));
   }));
   const keys = Object.keys(g).sort().reverse();
-  $("hist").innerHTML = keys.length ? keys.map(pk =>
-    '<tr class="click" data-pk="' + esc(pk) + '"><td><b>' + esc(plabel(pk)) + '</b></td><td>' + g[pk].n + '</td><td>' + rp(g[pk].total) + '</td><td>' + rp(g[pk].paid) + '</td><td>' + esc(fdate(g[pk].up)) + '</td></tr>').join("")
-    : '<tr><td colspan="5" class="empty">Belum ada data.</td></tr>';
+  $("hist").innerHTML = keys.length ? keys.map(pk => {
+    const x = g[pk], full = x.paid === x.total && x.total > 0;
+    return '<div class="item"><div class="ib"><div class="it">' + esc(plabel(pk)) + ' ' + (full ? pill("LUNAS", "#22c55e") : x.lock ? pill("TERKUNCI", "#f59e0b") : "") + '</div><div class="is">' +
+      x.n + ' artis \u2022 Total ' + rp(x.total) + ' \u2022 Dibayar ' + rp(x.paid) + ' \u2022 Diperbarui ' + esc(fdate(x.up)) + '</div></div>' +
+      '<div class="acts"><button class="btn sm soft" type="button" data-edit="' + esc(pk) + '">' + ic("edit") + 'Edit</button>' +
+      '<button class="btn sm red" type="button" data-delp="' + esc(pk) + '">' + ic("trash") + 'Hapus</button></div></div>';
+  }).join("") : '<div class="empty">Belum ada data.</div>';
 }
-$("hist").addEventListener("click", e => {
-  const r = e.target.closest("tr[data-pk]"); if(!r) return;
-  $("pk").value = r.dataset.pk; renderForm();
-  $("pk").scrollIntoView({ behavior:"smooth", block:"center" });
+$("hist").addEventListener("click", async e => {
+  const ed = e.target.closest("[data-edit]"), dp = e.target.closest("[data-delp]");
+  if(ed){
+    $("pk").value = ed.dataset.edit; renderForm();
+    $("pk").scrollIntoView({ behavior:"smooth", block:"center" });
+    toast("Periode " + plabel(ed.dataset.edit) + " dimuat di form.");
+    return;
+  }
+  if(!dp || !cur) return;
+  const pk = dp.dataset.delp, upd = {}; let n = 0, skip = 0;
+  Object.keys(earn).forEach(aid => {
+    const x = (earn[aid] || {})[pk]; if(!x || typeof x !== "object") return;
+    if(x.paymentId || x.lock){ skip++; return; }
+    upd["royalty_earnings/" + cur.uid + "/" + aid + "/" + pk] = null; n++;
+  });
+  if(!n) return toast("Semua data periode ini sudah dibayar atau terkunci.");
+  if(!await ask("Hapus data " + plabel(pk) + "?", n + " artis akan dihapus" + (skip ? ". " + skip + " artis dilewati karena sudah dibayar atau terkunci" : "") + ".\n\nTindakan ini tidak bisa dibatalkan.", "Hapus", true)) return;
+  try { await db.ref().update(upd); toast("Data periode dihapus."); renderForm(); }
+  catch(err){ console.error(err); toast("Gagal menghapus. Periksa Security Rules."); }
 });
 
-/* ---------- revenue recap ---------- */
+/* =====================================================
+   REVENUE RECAP
+   ===================================================== */
 const fileOk = n => /^[^\/\\?#%]+\.(xlsx|xls)$/i.test(n);
 $("rcFile").addEventListener("input", () => {
   const n = $("rcFile").value.trim();
   $("rcPreview").textContent = n ? (fileOk(n) ? "Link: " + BASE + encodeURIComponent(n) : "Nama file harus berakhiran .xlsx atau .xls, tanpa folder.") : "";
 });
+
+/* true bila file jelas belum ada (404). Gagal cek lintas domain dianggap aman. */
+async function fileMissing(url){
+  try { const r = await fetch(url, { method:"HEAD", cache:"no-store" }); return r.status === 404; }
+  catch(e){ return false; }
+}
 
 $("saveRecap").addEventListener("click", async () => {
   if(!cur) return toast("Pilih member dulu.");
@@ -303,7 +565,7 @@ $("saveRecap").addEventListener("click", async () => {
   if(!/^\d{4}-\d{2}$/.test(pk)) return toast("Pilih periode laporan.");
   if(!fileOk(name)) return toast("Nama file tidak valid.");
   const url = BASE + encodeURIComponent(name);
-  if(!await fileReady(url)) return;
+  if(await fileMissing(url) && !await ask("File belum ditemukan", "File belum ada di folder report (404). Mungkin deploy belum selesai.", "Tetap simpan")) return;
   const key = db.ref("royalty_recaps/" + cur.uid).push().key;
   try {
     await db.ref("royalty_recaps/" + cur.uid + "/" + key).set({
@@ -315,90 +577,65 @@ $("saveRecap").addEventListener("click", async () => {
   } catch(e){ console.error(e); toast("Gagal menyimpan rekap."); }
 });
 
-async function fileReady(url){
-  try {
-    const r = await fetch(url, { method:"HEAD", cache:"no-store" });
-    if(r.status === 404) return confirm("File belum ditemukan di folder report (404). Mungkin deploy belum selesai. Tetap simpan?");
-  } catch(e){ /* lintas domain: tidak bisa dicek, lanjutkan */ }
-  return true;
-}
-
-function renderRecaps(s){
-  const rows = [];
-  s.forEach(c => { const r = c.val(); if(r) rows.push({ ...r, k:c.key }); });
-  rows.sort((a, b) => (b.uploadedAt || 0) - (a.uploadedAt || 0));
-  $("recapList").innerHTML = rows.length ? rows.map(r =>
-    '<tr><td><b>' + esc(r.title) + '</b><div class="sub" style="margin:0">' + esc(r.fileName) + '</div></td><td>' + esc(r.periodLabel || plabel(r.periodKey)) + '</td><td>' + esc(fdate(r.uploadedAt)) + '</td><td>' + esc((r.uploadedBy || {}).email || "-") + '</td>' +
-    '<td><div class="acts"><a class="btn sm" style="text-decoration:none;color:#fff;display:inline-block" href="' + esc(r.url) + '" target="_blank" rel="noopener noreferrer">Unduh</a>' +
-    '<button class="btn sm" data-rep="' + esc(r.k) + '">Ganti</button><button class="btn sm red" data-del="' + esc(r.k) + '">Hapus</button></div></td></tr>').join("")
-    : '<tr><td colspan="5" class="empty">Belum ada rekap untuk member ini.</td></tr>';
+function renderRecaps(){
+  $("recapList").innerHTML = recaps.length ? recaps.map(r =>
+    '<div class="item"><div class="ib"><div class="it">' + esc(r.title) + '</div><div class="is">' + esc(r.periodLabel || plabel(r.periodKey)) + ' \u2022 ' + esc(r.fileName) +
+    '<br>Diunggah ' + esc(fdate(r.uploadedAt)) + ' oleh ' + esc((r.uploadedBy || {}).email || "-") + (r.updatedAt ? ' \u2022 Diedit ' + esc(fdate(r.updatedAt)) : '') + '</div></div>' +
+    '<div class="acts"><a class="btn sm line" href="' + esc(r.url) + '" target="_blank" rel="noopener noreferrer">' + ic("down") + 'Unduh</a>' +
+    '<button class="btn sm soft" type="button" data-rcedit="' + esc(r.k) + '">' + ic("edit") + 'Edit</button>' +
+    '<button class="btn sm red" type="button" data-rcdel="' + esc(r.k) + '">' + ic("trash") + 'Hapus</button></div></div>').join("")
+    : '<div class="empty">' + (cur ? "Belum ada rekap untuk member ini." : "Pilih member.") + '</div>';
 }
 $("recapList").addEventListener("click", async e => {
-  const del = e.target.closest("[data-del]"), rep = e.target.closest("[data-rep]");
-  if(!cur || (!del && !rep)) return;
-  const base = "royalty_recaps/" + cur.uid + "/";
-  try {
-    if(del){
-      if(confirm("Hapus rekap ini? File di GitHub tidak ikut terhapus.")) await db.ref(base + del.dataset.del).remove();
-    } else {
-      const n = (prompt("Nama file Excel pengganti:") || "").trim();
-      if(!n) return;
-      if(!fileOk(n)) return toast("Nama file tidak valid.");
-      const url = BASE + encodeURIComponent(n);
-      if(!await fileReady(url)) return;
-      await db.ref(base + rep.dataset.rep).update({ fileName:n, url, updatedAt:TS, updatedBy:who() });
-      toast("File rekap diganti.");
+  const ed = e.target.closest("[data-rcedit]"), dl = e.target.closest("[data-rcdel]");
+  if(!cur || (!ed && !dl)) return;
+  if(ed){ const r = recaps.find(x => x.k === ed.dataset.rcedit); if(r) editRecap(r); return; }
+  const r = recaps.find(x => x.k === dl.dataset.rcdel); if(!r) return;
+  if(!await ask("Hapus rekap?", r.title + " \u2022 " + (r.periodLabel || plabel(r.periodKey)) + "\n\nFile di GitHub tidak ikut terhapus.", "Hapus", true)) return;
+  try { await db.ref("royalty_recaps/" + cur.uid + "/" + r.k).remove(); toast("Rekap dihapus."); }
+  catch(err){ console.error(err); toast("Gagal menghapus. Periksa Security Rules."); }
+});
+
+function editRecap(r){
+  let force = false;
+  $("dlgT").textContent = "Edit rekap";
+  $("dlgB").innerHTML =
+    '<label class="lb" for="eT">Judul / keterangan</label><input id="eT" type="text" maxlength="120" value="' + esc(r.title) + '">' +
+    '<label class="lb" for="ePk">Periode laporan</label><input id="ePk" type="month" value="' + esc(r.periodKey || "") + '">' +
+    '<label class="lb" for="eF">Nama file Excel</label><input id="eF" type="text" autocapitalize="off" value="' + esc(r.fileName || "") + '">' +
+    '<div class="err" id="eErr"></div>';
+  $("dlgA").innerHTML = '<button class="btn line" id="dCancel" type="button">Batal</button><button class="btn" id="dSave" type="button">Simpan</button>';
+  dlgCancel = null; openDlg();
+  const err = m => { $("eErr").textContent = m; $("eErr").classList.add("show"); };
+  $("dCancel").onclick = dismiss;
+  $("dSave").onclick = async () => {
+    const title = $("eT").value.trim(), pk = $("ePk").value, name = $("eF").value.trim();
+    if(!title) return err("Isi judul rekap.");
+    if(!/^\d{4}-\d{2}$/.test(pk)) return err("Pilih periode laporan.");
+    if(!fileOk(name)) return err("Nama file harus berakhiran .xlsx atau .xls, tanpa folder.");
+    const url = BASE + encodeURIComponent(name);
+    if(name !== r.fileName && !force && await fileMissing(url)){
+      force = true; return err("File belum ditemukan di folder report (404). Klik Simpan lagi untuk tetap menyimpan.");
     }
-  } catch(err){ console.error(err); toast("Aksi gagal. Periksa Security Rules."); }
-});
+    $("dSave").disabled = true;
+    try {
+      await db.ref("royalty_recaps/" + cur.uid + "/" + r.k).update({
+        title:title.slice(0, 120), periodKey:pk, periodLabel:plabel(pk), fileName:name, url, updatedAt:TS, updatedBy:who()
+      });
+      closeDlg(); toast("Rekap diperbarui.");
+    } catch(e){ console.error(e); err("Gagal menyimpan. Periksa Security Rules."); $("dSave").disabled = false; }
+  };
+}
 
-/* ---------- tabs ---------- */
-document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
-  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === t));
-  document.querySelectorAll(".pane").forEach(p => p.classList.toggle("on", p.id === "p-" + t.dataset.t));
-}));
-</script>
-  <!-- Tab Payment untuk halaman Admin Royalty Management.
-     Tempel blok <script> ini SETELAH script utama, tepat sebelum </body>. -->
-<script>
-(function(){
-const COMPANY = "Dynotic Distribution";
-let minPay = 100000, payRows = [], payUid = null, payRef = null;
-
-/* ---------- tab dan panel ---------- */
-const tabBtn = document.createElement("button");
-tabBtn.className = "tab"; tabBtn.dataset.t = "pay"; tabBtn.textContent = "Payment";
-document.querySelector(".tabs").appendChild(tabBtn);
-const pane = document.createElement("section");
-pane.className = "pane"; pane.id = "p-pay";
-pane.innerHTML =
- '<div class="card"><h2>Minimum payout</h2><p class="sub">Berlaku untuk semua akun.</p><input type="number" id="minPay" min="0" step="1000"><button class="btn" id="saveMin">Simpan minimum</button></div>' +
- '<div class="card"><h2>Buat pembayaran</h2><p class="sub" id="payHint">Pilih member di atas.</p><div id="payList"></div><button class="btn" id="mkPay" disabled>Buat pembayaran</button></div>' +
- '<div class="card"><h2>Riwayat pembayaran</h2><div id="payHist"><div class="empty">Pilih member.</div></div></div>';
-document.querySelector("main").appendChild(pane);
-tabBtn.addEventListener("click", () => {
-  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === tabBtn));
-  document.querySelectorAll(".pane").forEach(p => p.classList.toggle("on", p === pane));
-});
-
-/* ---------- pengaturan minimum ---------- */
-firebase.auth().onAuthStateChanged(u => {
-  if(!u) return;
-  db.ref("royalty_settings/minPayout").on("value", s => {
-    if(s.val() != null) minPay = Number(s.val());
-    $("minPay").value = minPay; renderPay();
-  });
-});
+/* =====================================================
+   PAYMENT
+   ===================================================== */
 $("saveMin").addEventListener("click", async () => {
   const v = Number($("minPay").value);
   if(!Number.isInteger(v) || v < 0) return toast("Minimum harus angka bulat.");
   try { await db.ref("royalty_settings/minPayout").set(v); toast("Minimum payout disimpan."); }
   catch(e){ console.error(e); toast("Gagal menyimpan."); }
 });
-
-/* ---------- ikut siklus data earnings milik halaman ---------- */
-const baseHist = renderHist;
-renderHist = function(){ baseHist(); renderPay(); };
 
 function unpaid(){
   const out = [];
@@ -416,28 +653,20 @@ function unpaid(){
 
 function renderPay(){
   if(!cur){ $("payList").innerHTML = ""; $("mkPay").disabled = true; return; }
-  if(payUid !== cur.uid){
-    payUid = cur.uid; if(payRef) payRef.off(); payRows = [];
-    payRef = db.ref("royalty_payments").orderByChild("uid").equalTo(cur.uid);
-    payRef.on("value", s => {
-      payRows = []; s.forEach(c => { const p = c.val(); if(p) payRows.push({ ...p, k:c.key }); });
-      payRows.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)); renderPayHist();
-    }, () => toast("Riwayat pembayaran gagal dimuat."));
-  }
   const rows = unpaid(), sum = rows.reduce((s, r) => s + r.total, 0);
+  const keep = new Set([...document.querySelectorAll("#payList .pk:checked")].map(x => x.dataset.aid));
   $("payHint").textContent = rows.length ? "Belum dibayar: " + rp(sum) + ". Minimum payout " + rp(minPay) + "." : "Tidak ada royalty yang belum dibayar.";
   $("payList").innerHTML = rows.map(r =>
-    '<label class="arow" style="display:block;cursor:pointer;margin:0"><div style="display:flex;gap:10px;align-items:flex-start"><input type="checkbox" class="pk" data-aid="' + esc(r.aid) + '" style="width:auto;margin-top:4px"><div><div class="n">' + esc(r.name) + ' \u2022 ' + rp(r.total) + '</div><div class="h">' +
-    Object.keys(r.per).sort().map(k => esc(plabel(k)) + " " + rp(r.per[k])).join(", ") + (r.total < minPay ? " (di bawah minimum)" : "") + '</div></div></div></label>').join("");
+    '<label class="arow cb"><input type="checkbox" class="pk" data-aid="' + esc(r.aid) + '"' + (keep.has(r.aid) ? " checked" : "") + '><div><div class="n">' + esc(r.name) + ' \u2022 ' + rp(r.total) + '</div><div class="h">' +
+    Object.keys(r.per).sort().map(k => esc(plabel(k)) + " " + rp(r.per[k])).join(", ") + (r.total < minPay ? " (di bawah minimum)" : "") + '</div></div></label>').join("");
   $("mkPay").disabled = !rows.length;
 }
 
-/* ---------- buat pembayaran (PENDING) ---------- */
 $("mkPay").addEventListener("click", async () => {
   const chosen = [...document.querySelectorAll("#payList .pk:checked")].map(x => x.dataset.aid);
   if(!chosen.length) return toast("Pilih minimal satu artis.");
   const src = unpaid().filter(r => chosen.includes(r.aid));
-  if(src.some(r => r.total < minPay) && !confirm("Ada artis di bawah minimum payout. Tetap buat pembayaran?")) return;
+  if(src.some(r => r.total < minPay) && !await ask("Di bawah minimum payout", "Ada artis dengan total di bawah " + rp(minPay) + ". Tetap buat pembayaran?", "Tetap buat")) return;
   const pid = db.ref("royalty_payments").push().key, upd = {}, items = {}; let total = 0, pks = [];
   src.forEach(r => {
     items[r.aid] = { artistName:r.name, total:r.total, periods:r.per }; total += r.total;
@@ -450,38 +679,54 @@ $("mkPay").addEventListener("click", async () => {
     txNo:"RP-" + ymd + "-" + pid.slice(-5).toUpperCase(), createdAt:TS, createdBy:who(), updatedAt:TS,
     total, periodFrom:pks[0], periodTo:pks[pks.length - 1], items
   };
-  try { await db.ref().update(upd); toast("Pembayaran dibuat (PENDING)."); }
+  try { await db.ref().update(upd); toast("Pembayaran dibuat (PENDING)."); renderForm(); }
   catch(e){ console.error(e); toast("Gagal. Mungkin ada royalty yang sudah masuk pembayaran lain."); }
 });
 
-/* ---------- riwayat dan perubahan status ---------- */
 const COL = { PENDING:"#f59e0b", PROCESSING:"#3b82f6", SUCCESS:"#16a34a", FAILED:"#dc2626" };
 function renderPayHist(){
   $("payHist").innerHTML = payRows.length ? payRows.map(p => {
-    const b = (a, t, c) => '<button class="btn sm' + (c ? " " + c : "") + '" data-pa="' + a + '" data-k="' + esc(p.k) + '">' + t + '</button>';
-    const acts = p.status === "PENDING" ? b("PROCESSING", "Proses") + b("FAILED", "Batalkan", "red")
+    const b = (a, t, c, i) => '<button class="btn sm' + (c ? " " + c : "") + '" type="button" data-pa="' + a + '" data-k="' + esc(p.k) + '">' + (i ? ic(i) : "") + t + '</button>';
+    const acts = p.status === "PENDING" ? b("PROCESSING", "Proses") + b("FAILED", "Batalkan", "line") + b("DEL", "Hapus", "red", "trash")
       : p.status === "PROCESSING" ? b("SUCCESS", "Konfirmasi berhasil") + b("FAILED", "Gagal", "red")
-      : p.status === "SUCCESS" ? b("PDF", "Download PDF") : "";
-    return '<div class="arow"><div class="n">' + esc(p.txNo) + ' \u2022 ' + rp(p.total) + '</div><div class="h"><b style="color:' + COL[p.status] + '">' + esc(p.status) + '</b> \u2022 ' +
-      Object.keys(p.items || {}).length + ' artis \u2022 ' + esc(fdate(p.paidAt || p.createdAt)) + '</div><div class="acts" style="margin-top:8px;flex-wrap:wrap">' + acts + '</div></div>';
-  }).join("") : '<div class="empty">Belum ada pembayaran.</div>';
+      : p.status === "SUCCESS" ? b("PDF", "Download PDF", "line", "down")
+      : p.status === "FAILED" ? b("DEL", "Hapus", "red", "trash") : "";
+    return '<div class="item"><div class="ib"><div class="it">' + esc(p.txNo) + ' \u2022 ' + rp(p.total) + ' ' + pill(p.status, COL[p.status] || "#858891") + '</div><div class="is">' +
+      Object.keys(p.items || {}).length + ' artis \u2022 ' + esc(fdate(p.paidAt || p.createdAt)) + '</div></div><div class="acts">' + acts + '</div></div>';
+  }).join("") : '<div class="empty">' + (cur ? "Belum ada pembayaran." : "Pilih member.") + '</div>';
 }
 
 $("payHist").addEventListener("click", async e => {
   const b = e.target.closest("[data-pa]"); if(!b) return;
   const p = payRows.find(x => x.k === b.dataset.k), to = b.dataset.pa; if(!p) return;
   if(to === "PDF"){ try { await statementPdf(p); } catch(err){ console.error(err); toast("PDF gagal dibuat."); } return; }
-  if(to === "SUCCESS" && !confirm("Pastikan transaksi " + p.txNo + " benar-benar berhasil dikirim. Setelah SUCCESS tidak bisa diubah. Lanjutkan?")) return;
-  if(to === "FAILED" && !confirm("Batalkan pembayaran ini? Royalty akan kembali menjadi belum dibayar.")) return;
+
+  const unlock = u => Object.keys(p.items || {}).forEach(aid => Object.keys(p.items[aid].periods).forEach(pk => {
+    u["royalty_earnings/" + p.uid + "/" + aid + "/" + pk + "/lock"] = null;
+  }));
+
+  if(to === "DEL"){
+    if(p.status !== "PENDING" && p.status !== "FAILED") return toast("Hanya pembayaran Pending atau Gagal yang bisa dihapus.");
+    const txt = p.status === "PENDING" ? "Pembayaran dihapus dan royalty di dalamnya kembali menjadi belum dibayar." : "Catatan pembayaran gagal ini dihapus permanen.";
+    if(!await ask("Hapus " + p.txNo + "?", txt, "Hapus", true)) return;
+    const u = {}; u["royalty_payments/" + p.k] = null;
+    if(p.status === "PENDING") unlock(u);
+    try { await db.ref().update(u); toast("Pembayaran dihapus."); renderForm(); }
+    catch(err){ console.error(err); toast("Gagal menghapus. Periksa Security Rules."); }
+    return;
+  }
+
+  if(to === "SUCCESS" && !await ask("Konfirmasi berhasil?", "Pastikan transaksi " + p.txNo + " benar-benar berhasil dikirim. Setelah SUCCESS tidak bisa diubah.", "Ya, berhasil")) return;
+  if(to === "FAILED" && !await ask("Batalkan pembayaran?", "Royalty di " + p.txNo + " akan kembali menjadi belum dibayar.", "Batalkan pembayaran", true)) return;
   b.disabled = true;
   const base = "royalty_payments/" + p.k + "/", u = {};
   u[base + "status"] = to; u[base + "updatedAt"] = TS; u[base + "updatedBy"] = who();
   if(to === "SUCCESS"){ u[base + "paidAt"] = TS; u[base + "processedBy"] = who(); }
-  if(to === "SUCCESS" || to === "FAILED") Object.keys(p.items || {}).forEach(aid => Object.keys(p.items[aid].periods).forEach(pk => {
-    const eb = "royalty_earnings/" + p.uid + "/" + aid + "/" + pk + "/";
-    if(to === "SUCCESS") u[eb + "paymentId"] = p.k; else u[eb + "lock"] = null;
+  if(to === "FAILED") unlock(u);
+  if(to === "SUCCESS") Object.keys(p.items || {}).forEach(aid => Object.keys(p.items[aid].periods).forEach(pk => {
+    u["royalty_earnings/" + p.uid + "/" + aid + "/" + pk + "/paymentId"] = p.k;
   }));
-  try { await db.ref().update(u); toast("Status: " + to); }
+  try { await db.ref().update(u); toast("Status: " + to); renderForm(); }
   catch(err){ console.error(err); toast("Gagal mengubah status. Mungkin sudah diproses."); b.disabled = false; }
 });
 
@@ -521,9 +766,28 @@ async function statementPdf(p){
   d.text("Dokumen dibuat " + day(Date.now()) + " dari data transaksi " + p.txNo + ". Nominal adalah hak final artis setelah pembagian royalty.", M, 288);
   d.save("Royalty-Statement-" + p.txNo + ".pdf");
 }
-window.statementPdf = statementPdf;
-})();
-  </script>
-  
+
+/* ---------- tabs ---------- */
+document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
+  document.querySelectorAll(".tab").forEach(x => { const on = x === t; x.classList.toggle("on", on); x.setAttribute("aria-selected", String(on)); });
+  document.querySelectorAll(".pane").forEach(p => p.classList.toggle("on", p.id === "p-" + t.dataset.t));
+  t.scrollIntoView({ inline:"center", block:"nearest", behavior:"smooth" });
+}));
+
+/* ---------- profil & topbar ---------- */
+const menu = $("profileMenu"), pbtn = $("profileBtn");
+function setMenu(o){ menu.classList.toggle("show", o); pbtn.setAttribute("aria-expanded", String(o)); }
+pbtn.addEventListener("click", e => { e.stopPropagation(); setMenu(!menu.classList.contains("show")); });
+document.addEventListener("click", e => { if(!menu.contains(e.target) && !pbtn.contains(e.target)) setMenu(false); });
+document.addEventListener("keydown", e => { if(e.key === "Escape"){ setMenu(false); if($("dlg").classList.contains("show")) dismiss(); } });
+$("goProfile").addEventListener("click", () => { location.href = "../admin-profile"; });
+$("logoutBtn").addEventListener("click", async () => {
+  if(await ask("Logout?", "Keluar dari admin panel.", "Logout", true)) firebase.auth().signOut().then(() => { location.href = "../admin"; });
+});
+const topbar = $("topbar");
+const onScroll = () => topbar.classList.toggle("scrolled", scrollY > 6);
+onScroll(); addEventListener("scroll", onScroll, { passive:true });
+</script>
 </body>
 </html>
+ 
