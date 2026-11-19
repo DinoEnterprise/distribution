@@ -51,6 +51,7 @@ label.lb{display:block;font-size:13px;font-weight:600;margin:14px 0 6px}
 input,select{width:100%;height:48px;padding:0 14px;border-radius:14px;border:1.5px solid var(--line);background:#fafafd;font-size:15px;font-weight:500;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s}
 input:focus{border-color:var(--ink);background:#fff;box-shadow:0 0 0 4px rgba(119,114,168,.14)}
 input:disabled{opacity:.55;cursor:not-allowed}
+input[type=file]{height:auto;padding:12px 14px}
 input[type=checkbox]{width:18px;height:18px;height:18px;padding:0;accent-color:var(--ink)}
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 22px;border-radius:999px;font-size:13px;font-weight:700;background:var(--ink);color:#fff;margin-top:16px;transition:transform .25s var(--ease),box-shadow .25s,opacity .2s}
@@ -221,7 +222,7 @@ body{padding-bottom:40px;padding-left:var(--side)}
   <section class="pane on" id="p-earn">
     <div class="card">
       <h2>Input royalty artis</h2>
-      <p class="sub">Isi nominal final hak artis (setelah bagi hasil), bukan pendapatan kotor. Data yang sudah ada bisa diubah atau dihapus, termasuk yang sudah dibayar. Hanya data yang terkunci di pembayaran Pending yang tidak bisa diubah.</p>
+      <p class="sub">Isi nominal final hak artis (setelah bagi hasil), bukan pendapatan kotor. Ketik angka saja, titik ribuan otomatis. Data yang sudah ada bisa diubah atau dihapus, termasuk yang sudah dibayar. Hanya data yang terkunci di pembayaran Pending yang tidak bisa diubah.</p>
       <label class="lb" for="pk">Periode royalty</label>
       <input type="month" id="pk">
       <div id="artistForm"><div class="empty">Pilih member untuk menampilkan artisnya.</div></div>
@@ -237,14 +238,14 @@ body{padding-bottom:40px;padding-left:var(--side)}
   <!-- REVENUE RECAP -->
   <section class="pane" id="p-recap">
     <div class="card">
-      <h2>Tambah rekap Excel</h2>
-      <p class="sub">Upload file ke folder <b>report</b> di GitHub, tunggu deploy selesai, lalu tulis nama filenya di sini.</p>
+      <h2>Tambah rekap</h2>
+      <p class="sub">Pilih file rekap dari perangkat kamu. Format: xlsx, xls, csv, zip, rar, 7z, atau pdf. Maksimal 25 MB. File otomatis dikirim ke folder report di GitHub. Link aktif setelah deploy selesai (biasanya 1-2 menit).</p>
       <label class="lb" for="rcTitle">Judul / keterangan</label>
       <input type="text" id="rcTitle" placeholder="Contoh: Rekap pendapatan Juli 2026" maxlength="120">
       <label class="lb" for="rcPk">Periode laporan</label>
       <input type="month" id="rcPk">
-      <label class="lb" for="rcFile">Nama file Excel</label>
-      <input type="text" id="rcFile" placeholder="Juli-2026-x7k2.xlsx" autocapitalize="off">
+      <label class="lb" for="rcFile">File rekap</label>
+      <input type="file" id="rcFile" accept=".xlsx,.xls,.csv,.zip,.rar,.7z,.pdf">
       <p class="sub" id="rcPreview" style="overflow-wrap:anywhere"></p>
       <button class="btn" id="saveRecap" type="button" disabled>Simpan rekap</button>
     </div>
@@ -431,6 +432,10 @@ async function setMember(m){
    ===================================================== */
 const lockTx = k => { const p = payRows.find(x => x.k === k); return p ? p.txNo : "lain"; };
 
+/* angka: ketik 2000 -> tampil 2.000, tersimpan 2000 */
+const digits = s => String(s).replace(/\D/g, "");
+const fmtNum = s => digits(s).replace(/^0+(?=\d)/, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
 function renderForm(){
   const box = $("artistForm"), pk = $("pk").value;
   $("saveEarn").disabled = true;
@@ -445,12 +450,21 @@ function renderForm(){
       : st === "open" ? '<div class="h">Terakhir diperbarui ' + esc(fdate(ex.updatedAt)) + '</div>' : '';
     const del = (st === "open" || st === "paid") ? '<button type="button" class="btn sm red" data-delart="' + esc(a.id) + '">' + ic("trash") + 'Hapus</button>' : '';
     return '<div class="arow" data-id="' + esc(a.id) + '"><div class="ah"><div class="n">' + esc(a.name) + '</div>' + del + '</div>' + hint +
-      '<div class="pair"><input type="number" inputmode="numeric" min="0" step="1" class="amt" placeholder="Nominal (IDR)" aria-label="Nominal ' + esc(a.name) + '"' + dis + ' value="' + (ex ? esc(ex.amount) : "") + '">' +
+      '<div class="pair"><input type="text" inputmode="numeric" autocomplete="off" class="amt" placeholder="Nominal (IDR)" aria-label="Nominal ' + esc(a.name) + '"' + dis + ' value="' + (ex ? esc(Number(ex.amount).toLocaleString("id-ID")) : "") + '">' +
       '<input type="text" class="note" placeholder="Catatan (opsional)" aria-label="Catatan ' + esc(a.name) + '"' + dis + ' value="' + (ex ? esc(ex.note || "") : "") + '"></div></div>';
   }).join("");
   $("saveEarn").disabled = !pk;
 }
 $("pk").addEventListener("change", renderForm);
+
+$("artistForm").addEventListener("input", e => {
+  const el = e.target;
+  if(!el.classList.contains("amt")) return;
+  const fromEnd = el.value.length - el.selectionStart;
+  el.value = fmtNum(el.value);
+  const p = Math.max(0, el.value.length - fromEnd);
+  el.setSelectionRange(p, p);
+});
 
 $("saveEarn").addEventListener("click", async () => {
   const pk = $("pk").value;
@@ -462,8 +476,10 @@ $("saveEarn").addEventListener("click", async () => {
   document.querySelectorAll("#artistForm .arow").forEach(row => {
     const amtEl = row.querySelector(".amt");
     if(!amtEl || amtEl.disabled || amtEl.value.trim() === "") return;
-    const amount = Number(amtEl.value);
-    if(!Number.isInteger(amount) || amount < 0){ bad = true; return; }
+    const raw = digits(amtEl.value);
+    if(!raw){ bad = true; return; }
+    const amount = Number(raw);
+    if(!Number.isSafeInteger(amount) || amount < 0){ bad = true; return; }
     const id = row.dataset.id, a = artists.find(x => x.id === id);
     const ex = earn[id] ? earn[id][pk] : null;
     if(ex && Number(ex.amount) !== amount) over.push(a.name + ": " + rp(ex.amount) + " \u2192 " + rp(amount) + (ex.paymentId ? " (sudah dibayar)" : ""));
@@ -475,7 +491,7 @@ $("saveEarn").addEventListener("click", async () => {
     if(ex && ex.paymentId) d.paymentId = ex.paymentId;
     upd["royalty_earnings/" + cur.uid + "/" + id + "/" + pk] = d;
   });
-  if(bad) return toast("Nominal harus angka bulat, tidak negatif.");
+  if(bad) return toast("Nominal harus angka, tidak negatif.");
   if(!Object.keys(upd).length) return toast("Belum ada nominal yang diisi.");
   if(over.length && !await ask("Timpa data " + plabel(pk) + "?", "Nominal berikut akan diubah:\n\n" + over.join("\n"), "Simpan perubahan")) return;
 
@@ -546,83 +562,130 @@ $("hist").addEventListener("click", async e => {
 });
 
 /* =====================================================
-   REVENUE RECAP
+   REVENUE RECAP (upload otomatis ke GitHub)
    ===================================================== */
-const fileOk = n => /^[^\/\\?#%]+\.(xlsx|xls)$/i.test(n);
-$("rcFile").addEventListener("input", () => {
-  const n = $("rcFile").value.trim();
-  $("rcPreview").textContent = n ? (fileOk(n) ? "Link: " + BASE + encodeURIComponent(n) : "Nama file harus berakhiran .xlsx atau .xls, tanpa folder.") : "";
+const MAXMB = 25;
+const fileOk = f => !!f && /\.(xlsx|xls|csv|zip|rar|7z|pdf)$/i.test(f.name) && f.size <= MAXMB * 1048576;
+const FILE_HINT = "File harus .xlsx, .xls, .csv, .zip, .rar, .7z, atau .pdf, maksimal " + MAXMB + " MB.";
+const toB64 = f => new Promise((ok, no) => {
+  const r = new FileReader();
+  r.onload = () => ok(String(r.result).split(",")[1]);
+  r.onerror = no; r.readAsDataURL(f);
 });
 
-/* true bila file jelas belum ada (404). Gagal cek lintas domain dianggap aman. */
-async function fileMissing(url){
-  try { const r = await fetch(url, { method:"HEAD", cache:"no-store" }); return r.status === 404; }
-  catch(e){ return false; }
+let gh = null;
+async function getGh(){
+  if(gh) return gh;
+  const s = await db.ref("admin_secrets/github").once("value");
+  const v = s.val();
+  if(!v || !v.token || !v.owner || !v.repo) throw new Error("Token GitHub belum diatur di admin_secrets/github.");
+  return gh = { branch:"main", folder:"report", ...v };
 }
+const ghUrl = (g, name) => "https://api.github.com/repos/" + g.owner + "/" + g.repo + "/contents/" + g.folder.replace(/^\/+|\/+$/g, "") + "/" + encodeURIComponent(name);
+const ghHead = g => ({ Authorization:"Bearer " + g.token, Accept:"application/vnd.github+json", "Content-Type":"application/json" });
+
+function safeName(orig){
+  const m = orig.match(/^(.*?)(\.[^.]+)$/), base = (m ? m[1] : orig), ext = (m ? m[2] : "").toLowerCase();
+  const rnd = Array.from(crypto.getRandomValues(new Uint8Array(5)), b => (b % 36).toString(36)).join("");
+  return (base.replace(/[^\w\-]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 60) || "rekap") + "-" + rnd + ext;
+}
+async function ghUpload(f, name){
+  const g = await getGh();
+  const r = await fetch(ghUrl(g, name), {
+    method:"PUT", headers:ghHead(g),
+    body: JSON.stringify({ message:"Upload rekap " + name, content: await toB64(f), branch:g.branch })
+  });
+  if(!r.ok){ const t = await r.json().catch(() => ({})); throw new Error(t.message || ("GitHub " + r.status)); }
+}
+async function ghDelete(name){
+  const g = await getGh();
+  const r = await fetch(ghUrl(g, name) + "?ref=" + encodeURIComponent(g.branch), { headers:ghHead(g) });
+  if(r.status === 404) return;
+  if(!r.ok) throw new Error("GitHub " + r.status);
+  const sha = (await r.json()).sha;
+  const d = await fetch(ghUrl(g, name), {
+    method:"DELETE", headers:ghHead(g),
+    body: JSON.stringify({ message:"Hapus rekap " + name, sha, branch:g.branch })
+  });
+  if(!d.ok) throw new Error("GitHub " + d.status);
+}
+
+$("rcFile").addEventListener("change", () => {
+  const f = $("rcFile").files[0];
+  $("rcPreview").textContent = f ? (fileOk(f) ? f.name + " \u2022 " + (f.size / 1048576).toFixed(2) + " MB" : FILE_HINT) : "";
+});
 
 $("saveRecap").addEventListener("click", async () => {
   if(!cur) return toast("Pilih member dulu.");
-  const title = $("rcTitle").value.trim(), pk = $("rcPk").value, name = $("rcFile").value.trim();
+  const title = $("rcTitle").value.trim(), pk = $("rcPk").value, f = $("rcFile").files[0];
   if(!title) return toast("Isi judul rekap.");
   if(!/^\d{4}-\d{2}$/.test(pk)) return toast("Pilih periode laporan.");
-  if(!fileOk(name)) return toast("Nama file tidak valid.");
-  const url = BASE + encodeURIComponent(name);
-  if(await fileMissing(url) && !await ask("File belum ditemukan", "File belum ada di folder report (404). Mungkin deploy belum selesai.", "Tetap simpan")) return;
-  const key = db.ref("royalty_recaps/" + cur.uid).push().key;
+  if(!fileOk(f)) return toast(FILE_HINT);
+
+  const btn = $("saveRecap"); btn.disabled = true; btn.textContent = "Mengunggah...";
+  const name = safeName(f.name), url = BASE + encodeURIComponent(name);
   try {
-    await db.ref("royalty_recaps/" + cur.uid + "/" + key).set({
-      title: title.slice(0, 120), periodKey: pk, periodLabel: plabel(pk), fileName: name, url,
-      uploadedAt: TS, uploadedBy: who()
-    });
-    toast("Rekap tersimpan.");
+    await ghUpload(f, name);
+    try {
+      const key = db.ref("royalty_recaps/" + cur.uid).push().key;
+      await db.ref("royalty_recaps/" + cur.uid + "/" + key).set({
+        title: title.slice(0, 120), periodKey: pk, periodLabel: plabel(pk),
+        fileName: name, url, size: f.size, uploadedAt: TS, uploadedBy: who()
+      });
+    } catch(e){ await ghDelete(name).catch(() => {}); throw e; }
+    toast("Rekap tersimpan. Link aktif setelah deploy selesai.");
     $("rcTitle").value = ""; $("rcFile").value = ""; $("rcPreview").textContent = "";
-  } catch(e){ console.error(e); toast("Gagal menyimpan rekap."); }
+  } catch(e){
+    console.error(e); toast("Gagal mengunggah: " + (e.message || "periksa pengaturan"));
+  } finally {
+    btn.textContent = "Simpan rekap"; btn.disabled = !cur;
+  }
 });
 
 function renderRecaps(){
   $("recapList").innerHTML = recaps.length ? recaps.map(r =>
     '<div class="item"><div class="ib"><div class="it">' + esc(r.title) + '</div><div class="is">' + esc(r.periodLabel || plabel(r.periodKey)) + ' \u2022 ' + esc(r.fileName) +
+    (r.size ? ' \u2022 ' + (r.size / 1048576).toFixed(2) + ' MB' : '') +
     '<br>Diunggah ' + esc(fdate(r.uploadedAt)) + ' oleh ' + esc((r.uploadedBy || {}).email || "-") + (r.updatedAt ? ' \u2022 Diedit ' + esc(fdate(r.updatedAt)) : '') + '</div></div>' +
     '<div class="acts"><a class="btn sm line" href="' + esc(r.url) + '" target="_blank" rel="noopener noreferrer">' + ic("down") + 'Unduh</a>' +
     '<button class="btn sm soft" type="button" data-rcedit="' + esc(r.k) + '">' + ic("edit") + 'Edit</button>' +
     '<button class="btn sm red" type="button" data-rcdel="' + esc(r.k) + '">' + ic("trash") + 'Hapus</button></div></div>').join("")
     : '<div class="empty">' + (cur ? "Belum ada rekap untuk member ini." : "Pilih member.") + '</div>';
 }
+
 $("recapList").addEventListener("click", async e => {
   const ed = e.target.closest("[data-rcedit]"), dl = e.target.closest("[data-rcdel]");
   if(!cur || (!ed && !dl)) return;
   if(ed){ const r = recaps.find(x => x.k === ed.dataset.rcedit); if(r) editRecap(r); return; }
   const r = recaps.find(x => x.k === dl.dataset.rcdel); if(!r) return;
-  if(!await ask("Hapus rekap?", r.title + " \u2022 " + (r.periodLabel || plabel(r.periodKey)) + "\n\nFile di GitHub tidak ikut terhapus.", "Hapus", true)) return;
-  try { await db.ref("royalty_recaps/" + cur.uid + "/" + r.k).remove(); toast("Rekap dihapus."); }
-  catch(err){ console.error(err); toast("Gagal menghapus. Periksa Security Rules."); }
+  if(!await ask("Hapus rekap?", r.title + " \u2022 " + (r.periodLabel || plabel(r.periodKey)) + "\n\nFile juga dihapus dari folder report di GitHub.", "Hapus", true)) return;
+  let ghOk = true;
+  try { await ghDelete(r.fileName); } catch(err){ console.error(err); ghOk = false; }
+  try {
+    await db.ref("royalty_recaps/" + cur.uid + "/" + r.k).remove();
+    toast(ghOk ? "Rekap dihapus." : "Rekap dihapus, tapi file di GitHub gagal dihapus. Hapus manual.");
+  } catch(err){ console.error(err); toast("Gagal menghapus. Periksa Security Rules."); }
 });
 
 function editRecap(r){
-  let force = false;
   $("dlgT").textContent = "Edit rekap";
   $("dlgB").innerHTML =
     '<label class="lb" for="eT">Judul / keterangan</label><input id="eT" type="text" maxlength="120" value="' + esc(r.title) + '">' +
     '<label class="lb" for="ePk">Periode laporan</label><input id="ePk" type="month" value="' + esc(r.periodKey || "") + '">' +
-    '<label class="lb" for="eF">Nama file Excel</label><input id="eF" type="text" autocapitalize="off" value="' + esc(r.fileName || "") + '">' +
+    '<p class="sub">Untuk mengganti file, hapus rekap ini lalu upload ulang.</p>' +
     '<div class="err" id="eErr"></div>';
   $("dlgA").innerHTML = '<button class="btn line" id="dCancel" type="button">Batal</button><button class="btn" id="dSave" type="button">Simpan</button>';
   dlgCancel = null; openDlg();
   const err = m => { $("eErr").textContent = m; $("eErr").classList.add("show"); };
   $("dCancel").onclick = dismiss;
   $("dSave").onclick = async () => {
-    const title = $("eT").value.trim(), pk = $("ePk").value, name = $("eF").value.trim();
+    const title = $("eT").value.trim(), pk = $("ePk").value;
     if(!title) return err("Isi judul rekap.");
     if(!/^\d{4}-\d{2}$/.test(pk)) return err("Pilih periode laporan.");
-    if(!fileOk(name)) return err("Nama file harus berakhiran .xlsx atau .xls, tanpa folder.");
-    const url = BASE + encodeURIComponent(name);
-    if(name !== r.fileName && !force && await fileMissing(url)){
-      force = true; return err("File belum ditemukan di folder report (404). Klik Simpan lagi untuk tetap menyimpan.");
-    }
     $("dSave").disabled = true;
     try {
       await db.ref("royalty_recaps/" + cur.uid + "/" + r.k).update({
-        title:title.slice(0, 120), periodKey:pk, periodLabel:plabel(pk), fileName:name, url, updatedAt:TS, updatedBy:who()
+        title: title.slice(0, 120), periodKey: pk, periodLabel: plabel(pk), updatedAt: TS, updatedBy: who()
       });
       closeDlg(); toast("Rekap diperbarui.");
     } catch(e){ console.error(e); err("Gagal menyimpan. Periksa Security Rules."); $("dSave").disabled = false; }
