@@ -109,6 +109,17 @@ input[type=checkbox]{width:18px;height:18px;height:18px;padding:0;accent-color:v
 .pager{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
 .pager .btn{margin-top:0}
 .pager span{font-size:12px;line-height:1.5;color:var(--muted);text-align:center}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+.sumbox{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.sumbox>div{padding:12px 14px;border-radius:16px;background:#f6f6fb;border:1px solid var(--line);min-width:0}
+.sumbox small{display:block;font-size:11px;font-weight:600;color:var(--muted)}
+.sumbox b{display:block;margin-top:2px;font-size:15px;font-weight:800;letter-spacing:-.02em;overflow-wrap:anywhere}
+.brk{margin-top:12px;padding:4px 0}
+.brk .bt{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px}
+.brk div.r{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.brk div.r:last-child{border-bottom:0}
+.brk div.r span:last-child{font-weight:700;white-space:nowrap}
+@media(min-width:700px){.fgrid{grid-template-columns:repeat(4,1fr)}.sumbox{grid-template-columns:repeat(4,1fr)}}
 /* bottom nav */
 .bottom{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);width:calc(100% - 28px);max-width:540px;height:70px;padding:0 8px;background:rgba(13,13,18,.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:26px;box-shadow:0 18px 40px rgba(13,13,18,.3);display:flex;align-items:center;justify-content:space-around;z-index:70}
 .b-item{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;height:100%;font-size:10px;font-weight:500;color:rgba(255,255,255,.5);transition:color .2s,transform .15s}
@@ -238,6 +249,18 @@ body{padding-bottom:40px;padding-left:var(--side)}
       <div id="artistForm"><div class="empty">Pilih member untuk menampilkan artisnya.</div></div>
       <div id="pager"></div>
       <button class="btn" id="saveEarn" type="button" disabled>Simpan semua</button>
+    </div>
+    <div class="card">
+      <h2>Filter &amp; rekap royalty</h2>
+      <p class="sub">Lihat artis siapa dapat berapa, di bulan apa. Setiap laporan ditampilkan sendiri dengan statusnya masing-masing, tidak digabung.</p>
+      <div class="fgrid">
+        <div><label class="lb" for="fArt">Artis</label><select id="fArt"></select></div>
+        <div><label class="lb" for="fMon">Bulan periode</label><select id="fMon"></select></div>
+        <div><label class="lb" for="fIn">Waktu input</label><select id="fIn"><option value="0">Semua</option><option value="7">7 hari terakhir</option><option value="30">30 hari terakhir</option><option value="90">90 hari terakhir</option><option value="180">6 bulan terakhir</option><option value="365">1 tahun terakhir</option></select></div>
+        <div><label class="lb" for="fSt">Status</label><select id="fSt"><option value="">Semua status</option><option value="open">Belum dibayar</option><option value="lock">Terkunci (Pending)</option><option value="paid">Dibayar</option></select></div>
+      </div>
+      <div id="fSum"></div>
+      <div id="fList"><div class="empty">Pilih member.</div></div>
     </div>
     <div class="card">
       <h2>Riwayat input per periode</h2>
@@ -425,7 +448,7 @@ async function setMember(m){
   cur = m;
   if(earnRef) earnRef.off(); if(recapRef) recapRef.off(); if(payRef) payRef.off();
   earn = {}; artists = []; recaps = []; payRows = []; firstEarn = true;
-  draft = {}; page = 0; aq = ""; $("aSearch").value = "";
+  draft = {}; page = 0; aq = ""; $("aSearch").value = ""; fLimit = 20; $("fArt").value = ""; $("fMon").value = ""; renderFilter();
   $("mChip").style.display = "inline-flex";
   $("mChip").textContent = m.nama + " \u2022 " + m.email;
   $("saveRecap").disabled = false;
@@ -443,7 +466,7 @@ async function setMember(m){
   earnRef = db.ref("royalty_earnings/" + m.uid);
   earnRef.on("value", s => {
     earn = s.val() || {};
-    renderHist(); renderPay();
+    renderHist(); renderPay(); renderFilter();
     if(firstEarn){ firstEarn = false; renderForm(); }
   }, () => toast("Data royalty gagal dimuat."));
 
@@ -456,7 +479,7 @@ async function setMember(m){
   payRef = db.ref("royalty_payments").orderByChild("uid").equalTo(m.uid);
   payRef.on("value", s => {
     payRows = []; s.forEach(c => { const p = c.val(); if(p) payRows.push({ ...p, k:c.key }); });
-    payRows.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)); renderPayHist();
+    payRows.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)); renderPayHist(); renderFilter();
   }, () => toast("Riwayat pembayaran gagal dimuat."));
 }
 
@@ -471,6 +494,7 @@ const fmtNum = s => digits(s).replace(/^0+(?=\d)/, "").replace(/\B(?=(\d{3})+(?!
 const periodOf = k => String(k).slice(0, 7);
 const isEntry = (k, v) => /^\d{4}-\d{2}(_\w+)?$/.test(k) && !!v && typeof v === "object";
 const byMonth = per => { const o = {}; Object.keys(per || {}).forEach(k => { o[periodOf(k)] = (o[periodOf(k)] || 0) + Number(per[k] || 0); }); return o; };
+const entLabel = (k, note) => plabel(periodOf(k)) + (note ? " \u2022 " + note : String(k).length > 7 ? " \u2022 entri tambahan" : "");
 function entriesOf(aid, pk){
   const m = earn[aid] || {};
   return Object.keys(m).filter(k => periodOf(k) === pk && isEntry(k, m[k]))
@@ -602,17 +626,19 @@ $("saveEarn").addEventListener("click", async () => {
 });
 
 /* hapus satu entri */
-$("artistForm").addEventListener("click", async e => {
-  const b = e.target.closest("[data-delent]"); if(!b || !cur) return;
-  const id = b.dataset.delent, parts = id.split("::"), aid = parts[0], key = parts[1];
-  const a = artists.find(x => x.id === aid), ex = earn[aid] ? earn[aid][key] : null;
-  if(!a || !ex) return;
+async function delEntry(aid, key){
+  const ex = earn[aid] ? earn[aid][key] : null;
+  if(!cur || !ex) return;
   if(ex.lock) return toast("Data ini terkunci di pembayaran Pending.");
-  if(!await ask("Hapus entri royalty?", a.name + " \u2022 " + plabel(periodOf(key)) + " \u2022 " + rp(ex.amount) + (ex.note ? " \u2022 " + ex.note : "") + (ex.paymentId ? "\n\nEntri ini sudah berstatus dibayar. Statement pembayaran yang sudah dibuat tidak ikut berubah." : "") + "\n\nTindakan ini tidak bisa dibatalkan.", "Hapus", true)) return;
+  if(!await ask("Hapus entri royalty?", (ex.artistName || "") + " \u2022 " + plabel(periodOf(key)) + " \u2022 " + rp(ex.amount) + (ex.note ? " \u2022 " + ex.note : "") + (ex.paymentId ? "\n\nEntri ini sudah berstatus dibayar. Statement pembayaran yang sudah dibuat tidak ikut berubah." : "") + "\n\nTindakan ini tidak bisa dibatalkan.", "Hapus", true)) return;
   try {
     await db.ref("royalty_earnings/" + cur.uid + "/" + aid + "/" + key).remove();
-    delete draft[id]; toast("Entri dihapus."); renderForm();
+    delete draft[aid + "::" + key]; toast("Entri dihapus."); renderForm();
   } catch(err){ console.error(err); toast("Gagal menghapus. Periksa Security Rules."); }
+}
+$("artistForm").addEventListener("click", e => {
+  const b = e.target.closest("[data-delent]"); if(!b) return;
+  const p = b.dataset.delent.split("::"); delEntry(p[0], p[1]);
 });
 
 /* riwayat per periode */
@@ -621,16 +647,16 @@ function renderHist(){
   Object.keys(earn).forEach(aid => Object.keys(earn[aid] || {}).forEach(k => {
     const e = earn[aid][k]; if(!isEntry(k, e)) return;
     const pk = periodOf(k);
-    const x = g[pk] = g[pk] || { arts:{}, n:0, total:0, paid:0, lock:0, up:0 };
+    const x = g[pk] = g[pk] || { arts:{}, n:0, pn:0, total:0, paid:0, lock:0, up:0 };
     x.arts[aid] = 1; x.n++; x.total += Number(e.amount || 0);
-    if(e.paymentId) x.paid += Number(e.amount || 0); else if(e.lock) x.lock++;
+    if(e.paymentId){ x.paid += Number(e.amount || 0); x.pn++; } else if(e.lock) x.lock++;
     x.up = Math.max(x.up, Number(e.updatedAt || 0));
   }));
   const keys = Object.keys(g).sort().reverse();
   $("hist").innerHTML = keys.length ? keys.map(pk => {
     const x = g[pk], full = x.paid === x.total && x.total > 0, na = Object.keys(x.arts).length;
-    return '<div class="item"><div class="ib"><div class="it">' + esc(plabel(pk)) + ' ' + (full ? pill("LUNAS", "#22c55e") : x.lock ? pill("TERKUNCI", "#f59e0b") : "") + '</div><div class="is">' +
-      na + ' artis \u2022 ' + x.n + ' entri \u2022 Total ' + rp(x.total) + ' \u2022 Dibayar ' + rp(x.paid) + ' \u2022 Diperbarui ' + esc(fdate(x.up)) + '</div></div>' +
+    return '<div class="item"><div class="ib"><div class="it">' + esc(plabel(pk)) + ' ' + (full ? pill("LUNAS", "#22c55e") : (x.pn ? pill("SEBAGIAN", "#3b82f6") : "") + (x.lock ? pill("TERKUNCI", "#f59e0b") : "")) + '</div><div class="is">' +
+      na + ' artis \u2022 ' + x.n + ' entri (' + x.pn + ' dibayar) \u2022 Total ' + rp(x.total) + ' \u2022 Dibayar ' + rp(x.paid) + ' \u2022 Diperbarui ' + esc(fdate(x.up)) + '</div></div>' +
       '<div class="acts"><button class="btn sm soft" type="button" data-edit="' + esc(pk) + '">' + ic("edit") + 'Edit</button>' +
       '<button class="btn sm red" type="button" data-delp="' + esc(pk) + '">' + ic("trash") + 'Hapus</button></div></div>';
   }).join("") : '<div class="empty">Belum ada data.</div>';
@@ -655,6 +681,82 @@ $("hist").addEventListener("click", async e => {
   if(!await ask("Hapus data " + plabel(pk) + "?", n + " entri akan dihapus" + (skip ? ". " + skip + " entri dilewati karena terkunci di pembayaran Pending" : "") + (paidN ? ". " + paidN + " di antaranya sudah berstatus dibayar (statement pembayaran tidak ikut berubah)" : "") + ".\n\nTindakan ini tidak bisa dibatalkan.", "Hapus", true)) return;
   try { await db.ref().update(upd); draft = {}; toast("Data periode dihapus."); renderForm(); }
   catch(err){ console.error(err); toast("Gagal menghapus. Periksa Security Rules."); }
+});
+
+/* =====================================================
+   FILTER & REKAP (setiap entri ditampilkan sendiri)
+   ===================================================== */
+let fLimit = 20;
+const ST = { open:["BELUM DIBAYAR", "#6f7280"], lock:["TERKUNCI", "#f59e0b"], paid:["DIBAYAR", "#16a34a"] };
+const stOf = e => e.paymentId ? "paid" : e.lock ? "lock" : "open";
+function fillSel(el, opts){
+  const v = el.value;
+  el.innerHTML = opts.map(o => '<option value="' + esc(o[0]) + '">' + esc(o[1]) + '</option>').join("");
+  el.value = opts.some(o => o[0] === v) ? v : opts[0][0];
+}
+function renderFilter(){
+  const all = [];
+  Object.keys(earn).forEach(aid => Object.keys(earn[aid] || {}).forEach(k => {
+    const e = earn[aid][k]; if(isEntry(k, e)) all.push({ ...e, aid, key:k, pk:periodOf(k) });
+  }));
+  const names = {}, mons = {};
+  all.forEach(e => { names[e.aid] = e.artistName || e.aid; mons[e.pk] = 1; });
+  fillSel($("fArt"), [["", "Semua artis"]].concat(Object.keys(names).sort((x, y) => names[x].localeCompare(names[y])).map(id => [id, names[id]])));
+  fillSel($("fMon"), [["", "Semua bulan"]].concat(Object.keys(mons).sort().reverse().map(mm => [mm, plabel(mm)])));
+  const fa = $("fArt").value, fm = $("fMon").value, days = Number($("fIn").value), fs = $("fSt").value, now = Date.now();
+
+  const grp = {};
+  all.forEach(e => { const g = e.aid + "|" + e.pk; (grp[g] = grp[g] || []).push(e); });
+  Object.keys(grp).forEach(g => {
+    grp[g].sort((x, y) => (x.createdAt || 0) - (y.createdAt || 0) || x.key.localeCompare(y.key));
+    grp[g].forEach((e, i) => { e.idx = i + 1; e.of = grp[g].length; });
+  });
+  const rows = all.filter(e => (!fa || e.aid === fa) && (!fm || e.pk === fm) &&
+      (!days || now - Number(e.createdAt || e.updatedAt || 0) <= days * 86400000) && (fs === "" || stOf(e) === fs))
+    .sort((x, y) => (x.artistName || "").localeCompare(y.artistName || "") || y.pk.localeCompare(x.pk) || x.idx - y.idx);
+
+  if(!cur){ $("fSum").innerHTML = ""; $("fList").innerHTML = '<div class="empty">Pilih member.</div>'; return; }
+  let total = 0, paid = 0, open = 0, pend = 0;
+  const brk = {};
+  rows.forEach(e => {
+    const v = Number(e.amount || 0), st = stOf(e); total += v;
+    if(st === "paid") paid += v; else { open += v; if(st === "lock") pend += v; }
+    const bk = fa ? e.pk : e.aid, b = brk[bk] = brk[bk] || { n:0, t:0 };
+    b.n++; b.t += v;
+  });
+  $("fSum").innerHTML = '<div class="sumbox">' +
+    '<div><small>Total</small><b>' + rp(total) + '</b></div>' +
+    '<div><small>Dibayar</small><b>' + rp(paid) + '</b></div>' +
+    '<div><small>Belum dibayar' + (pend ? ' (termasuk Pending ' + esc(rp(pend)) + ')' : '') + '</small><b>' + rp(open) + '</b></div>' +
+    '<div><small>Jumlah entri</small><b>' + rows.length + '</b></div></div>' +
+    (Object.keys(brk).length > 1 ? '<div class="brk"><div class="bt">' + (fa ? "Rincian per bulan" : "Rincian per artis") + '</div>' +
+      Object.keys(brk).sort((x, y) => fa ? y.localeCompare(x) : (names[x] || "").localeCompare(names[y] || "")).map(k =>
+        '<div class="r"><span>' + esc(fa ? plabel(k) : names[k]) + ' <span style="color:var(--muted);font-weight:500">(' + brk[k].n + ' entri)</span></span><span>' + rp(brk[k].t) + '</span></div>').join("") + '</div>' : '');
+
+  if(!rows.length){ $("fList").innerHTML = '<div class="empty">Tidak ada data untuk filter ini.</div>'; return; }
+  $("fList").innerHTML = rows.slice(0, fLimit).map(e => {
+    const st = stOf(e), tx = st === "paid" ? (payRows.find(x => x.k === e.paymentId) || {}).txNo : st === "lock" ? (payRows.find(x => x.k === e.lock) || {}).txNo : "";
+    const id = esc(e.aid + "::" + e.key);
+    return '<div class="item"><div class="ib"><div class="it">' + esc(e.artistName || "-") + ' \u2022 ' + rp(e.amount) + ' ' + pill(ST[st][0], ST[st][1]) + '</div><div class="is">' +
+      'Periode ' + esc(plabel(e.pk)) + (e.of > 1 ? ' \u2022 Entri ' + e.idx + ' dari ' + e.of : '') + (e.note ? ' \u2022 ' + esc(e.note) : '') +
+      '<br>Diinput ' + esc(fdate(e.createdAt)) + (tx ? ' \u2022 Pembayaran ' + esc(tx) : '') + '</div></div>' +
+      '<div class="acts"><button class="btn sm soft" type="button" data-fedit="' + id + '">' + ic("edit") + 'Edit</button>' +
+      (st === "lock" ? '' : '<button class="btn sm red" type="button" data-fdel="' + id + '">' + ic("trash") + 'Hapus</button>') + '</div></div>';
+  }).join("") + (rows.length > fLimit ? '<div style="text-align:center"><button class="btn line" type="button" data-fmore="1">Tampilkan lebih banyak (' + (rows.length - fLimit) + ' lagi)</button></div>' : '');
+}
+["fArt", "fMon", "fIn", "fSt"].forEach(id => $(id).addEventListener("change", () => { fLimit = 20; renderFilter(); }));
+$("fList").addEventListener("click", e => {
+  const more = e.target.closest("[data-fmore]"), ed = e.target.closest("[data-fedit]"), dl = e.target.closest("[data-fdel]");
+  if(more){ fLimit += 20; renderFilter(); return; }
+  if(ed){
+    const p = ed.dataset.fedit.split("::"), x = earn[p[0]] && earn[p[0]][p[1]]; if(!x) return;
+    $("pk").value = periodOf(p[1]); aq = String(x.artistName || "").toLowerCase(); $("aSearch").value = x.artistName || "";
+    draft = {}; page = 0; renderForm();
+    $("pk").scrollIntoView({ behavior:"smooth", block:"center" });
+    toast("Dimuat di form: " + (x.artistName || "") + " \u2022 " + plabel(periodOf(p[1])));
+    return;
+  }
+  if(dl){ const p = dl.dataset.fdel.split("::"); delEntry(p[0], p[1]); }
 });
 
 /* =====================================================
@@ -801,13 +903,13 @@ $("saveMin").addEventListener("click", async () => {
 function unpaid(){
   const out = [];
   Object.keys(earn || {}).forEach(aid => {
-    let name = "", t = 0; const per = {};
+    let name = "", t = 0; const per = {}, notes = {};
     Object.keys(earn[aid] || {}).forEach(k => {
       const e = earn[aid][k]; if(!isEntry(k, e)) return;
       name = e.artistName;
-      if(!e.paymentId && !e.lock){ per[k] = Number(e.amount || 0); t += per[k]; }
+      if(!e.paymentId && !e.lock){ per[k] = Number(e.amount || 0); t += per[k]; if(e.note) notes[k] = e.note; }
     });
-    if(t > 0) out.push({ aid, name, per, total:t });
+    if(t > 0) out.push({ aid, name, per, notes, total:t });
   });
   return out.sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -819,7 +921,7 @@ function renderPay(){
   $("payHint").textContent = rows.length ? "Belum dibayar: " + rp(sum) + ". Minimum payout " + rp(minPay) + "." : "Tidak ada royalty yang belum dibayar.";
   $("payList").innerHTML = rows.map(r =>
     '<label class="arow cb"><input type="checkbox" class="pk" data-aid="' + esc(r.aid) + '"' + (keep.has(r.aid) ? " checked" : "") + '><div><div class="n">' + esc(r.name) + ' \u2022 ' + rp(r.total) + '</div><div class="h">' +
-    (m => Object.keys(m).sort().map(k => esc(plabel(k)) + " " + rp(m[k])).join(", "))(byMonth(r.per)) + (r.total < minPay ? " (di bawah minimum)" : "") + '</div></div></label>').join("");
+    Object.keys(r.per).sort().map(k => esc(entLabel(k, r.notes[k])) + " " + rp(r.per[k])).join("<br>") + (r.total < minPay ? " (di bawah minimum)" : "") + '</div></div></label>').join("");
   $("mkPay").disabled = !rows.length;
 }
 
@@ -830,7 +932,7 @@ $("mkPay").addEventListener("click", async () => {
   if(src.some(r => r.total < minPay) && !await ask("Di bawah minimum payout", "Ada artis dengan total di bawah " + rp(minPay) + ". Tetap buat pembayaran?", "Tetap buat")) return;
   const pid = db.ref("royalty_payments").push().key, upd = {}, items = {}; let total = 0, pks = [];
   src.forEach(r => {
-    items[r.aid] = { artistName:r.name, total:r.total, periods:r.per }; total += r.total;
+    items[r.aid] = { artistName:r.name, total:r.total, periods:r.per }; if(Object.keys(r.notes).length) items[r.aid].notes = r.notes; total += r.total;
     Object.keys(r.per).forEach(pk => { pks.push(periodOf(pk)); upd["royalty_earnings/" + cur.uid + "/" + r.aid + "/" + pk + "/lock"] = pid; });
   });
   pks.sort();
@@ -915,12 +1017,12 @@ async function statementPdf(p){
   });
   y += 6;
   Object.values(p.items || {}).forEach(a => {
-    const agg = byMonth(a.periods), pk = Object.keys(agg).sort();
+    const pk = Object.keys(a.periods).sort(), nt = a.notes || {};
     if(y + 20 + pk.length * 6.5 > 275){ d.addPage(); y = 22; }
     d.setFont("helvetica", "bold"); d.setFontSize(12); d.setTextColor(20); d.text(a.artistName, M, y); y += 3;
     d.setDrawColor(210); d.setLineWidth(.2); d.line(M, y, R, y); y += 6.5; d.setFontSize(10);
     d.setFont("helvetica", "normal");
-    pk.forEach(k => { d.text(lab(k), M, y); d.text(money(agg[k]), R, y, { align:"right" }); y += 6.5; });
+    pk.forEach(k => { const t = lab(periodOf(k)) + (nt[k] ? " - " + nt[k] : k.length > 7 ? " (entri tambahan)" : ""); d.text(t.slice(0, 75), M, y); d.text(money(a.periods[k]), R, y, { align:"right" }); y += 6.5; });
     d.setFont("helvetica", "bold"); d.text("Total dibayarkan", M, y); d.text(money(a.total), R, y, { align:"right" }); y += 12;
   });
   d.setFont("helvetica", "normal"); d.setFontSize(8); d.setTextColor(130);
