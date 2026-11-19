@@ -3,715 +3,360 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Royalty Report | Dynotic Admin</title>
+<title>Royalty Management | Dynotic Admin</title>
+<meta name="robots" content="noindex, nofollow">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif;}
-body{background:#f1f2f7;padding:80px 20px 20px;}
-header{position:fixed;top:0;left:0;width:100%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.1);display:flex;align-items:center;padding:16px 20px;z-index:1000;border-bottom:1px solid #eee;}
-header h1{font-size:18px;font-weight:600;}
-header #adminName{margin-left:auto;font-size:14px;color:#555;}
-form{background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.05);margin-bottom:24px;}
-form label{font-size:14px;margin-top:12px;display:block;color:#333;}
-form input, form select{padding:10px 14px;margin-top:6px;width:100%;border:1px solid #ccc;border-radius:8px;font-size:14px;}
-form button{margin-top:16px;padding:10px 16px;background:#111;color:#fff;border:none;border-radius:12px;font-size:14px;cursor:pointer;transition:0.2s;}
-form button:hover{filter:brightness(0.9);}
-.status{
-  padding:4px 10px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:600;
-}
-
-.status.report{
-  background:#dcfce7;
-  color:#166534;
-}
-
-.status.payment{
-  background:#dbeafe;
-  color:#1e40af;
-}
-  /* =========================
-   CUSTOM MEMBER SEARCH
-========================= */
-
-.member-picker{
-  position:relative;
-  width:100%;
-}
-
-.member-input-wrap{
-  position:relative;
-}
-
-#memberSearch{
-  width:100%;
-  padding:11px 42px 11px 14px;
-  border:1px solid #d5d7df;
-  border-radius:10px;
-  font-size:14px;
-  outline:none;
-  background:#fff;
-  transition:.2s;
-}
-
-#memberSearch:focus{
-  border-color:#667eea;
-  box-shadow:0 0 0 3px rgba(102,126,234,.10);
-}
-
-#memberSearch.selected{
-  color:#111;
-  font-weight:500;
-}
-
-.clear-member{
-  display:none;
-  position:absolute;
-  right:10px;
-  top:50%;
-  transform:translateY(-50%);
-  border:0;
-  background:transparent;
-  color:#999;
-  font-size:20px;
-  cursor:pointer;
-  padding:0 5px;
-}
-
-.clear-member:hover{
-  color:#111;
-}
-
-.member-dropdown{
-  display:none;
-  position:absolute;
-  top:calc(100% + 6px);
-  left:0;
-  right:0;
-  max-height:260px;
-  overflow-y:auto;
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-  box-shadow:0 10px 30px rgba(0,0,0,.10);
-  z-index:100;
-  padding:6px;
-}
-
-.member-dropdown.show{
-  display:block;
-}
-
-.member-option{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:10px 12px;
-  border-radius:9px;
-  cursor:pointer;
-  transition:.15s;
-}
-
-.member-option:hover{
-  background:#f4f5f9;
-}
-
-.member-avatar{
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  background:#eef0ff;
-  color:#667eea;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:600;
-  font-size:14px;
-  flex-shrink:0;
-}
-
-.member-info{
-  min-width:0;
-}
-
-.member-name{
-  font-size:14px;
-  font-weight:600;
-  color:#222;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.member-email{
-  font-size:12px;
-  color:#888;
-  margin-top:2px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.member-empty{
-  padding:20px;
-  text-align:center;
-  color:#999;
-  font-size:13px;
-}
-table{
-  width:100%;
-  border-collapse:separate;
-  border-spacing:0;
-  background:#fff;
-  border-radius:16px;
-  overflow:hidden;
-  box-shadow:0 8px 25px rgba(0,0,0,.06);
-}
-
-tr{
-  transition:0.2s;
-}
-
-tr:hover{
-  background:#f9fafb;
-}
-
-td{
-  vertical-align:middle;
-}
-thead{background:#f9f9f9;}
-th, td{padding:12px;text-align:left;border-bottom:1px solid #eee;font-size:14px;}
-th{font-weight:600;}
-td button{padding:6px 12px;background:#667eea;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;transition:0.2s;}
-td button:hover{filter:brightness(0.9);}
-#adminRoyaltyList tr:nth-child(even){background:#fafafa;}
-#adminRoyaltyList td:last-child{text-align:center;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif}
+body{background:#f1f2f7;padding:80px 16px 40px;color:#14141a}
+header{position:fixed;top:0;left:0;width:100%;background:#fff;display:flex;align-items:center;padding:16px 20px;z-index:100;border-bottom:1px solid #eee;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+header h1{font-size:18px;font-weight:600}
+#adminName{margin-left:auto;font-size:13px;color:#555;max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+main{max-width:860px;margin:0 auto}
+.card{background:#fff;padding:18px;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.05);margin-bottom:16px}
+.card h2{font-size:16px;font-weight:600;margin-bottom:4px}
+.sub{font-size:12px;color:#777;margin-bottom:10px}
+label{display:block;font-size:13px;margin-top:12px;color:#333}
+input,select{width:100%;margin-top:6px;padding:10px 14px;border:1px solid #ccc;border-radius:8px;font-size:14px;background:#fff;outline:none}
+input:focus{border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,.12)}
+button{font-size:14px;cursor:pointer;border:0;transition:.2s}
+button:hover{filter:brightness(.92)}
+.btn{margin-top:16px;padding:10px 18px;background:#111;color:#fff;border-radius:12px}
+.btn.sm{margin:0;padding:6px 12px;font-size:13px;border-radius:8px;background:#667eea}
+.btn.red{background:#dc2626}
+.btn:disabled{opacity:.5;cursor:default}
+.tabs{display:flex;gap:6px;background:#fff;padding:4px;border-radius:14px;margin-bottom:16px;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.tab{flex:1;padding:10px;border-radius:10px;background:none;font-weight:600;color:#777}
+.tab.on{background:#111;color:#fff}
+.pane{display:none}.pane.on{display:block}
+.picker{position:relative}
+.dd{display:none;position:absolute;left:0;right:0;top:100%;margin-top:6px;max-height:240px;overflow-y:auto;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.1);z-index:50;padding:6px}
+.dd.show{display:block}
+.opt{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:9px;background:none}
+.opt:hover{background:#f4f5f9}
+.opt b{display:block;font-size:14px}
+.opt span{font-size:12px;color:#888}
+.chip{display:inline-block;margin-top:10px;padding:6px 12px;border-radius:999px;background:#eef0ff;color:#4a55c9;font-size:13px;font-weight:600}
+.arow{padding:12px 0;border-bottom:1px solid #eee}
+.arow:last-child{border-bottom:0}
+.arow .n{font-weight:600;font-size:14px}
+.arow .h{font-size:12px;color:#888;margin-top:2px}
+.arow .h.paid{color:#166534}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:10px 8px;text-align:left;border-bottom:1px solid #eee;white-space:nowrap}
+th{font-weight:600;background:#f9f9f9}
+tr.click{cursor:pointer}tr.click:hover{background:#f9fafb}
+.empty{padding:18px;text-align:center;color:#888;font-size:13px}
+.acts{display:flex;gap:6px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:200;max-width:90%;text-align:center}
+#toast.show{opacity:1}
 </style>
 </head>
 <body>
+<header><h1>Royalty Management</h1><span id="adminName">Admin</span></header>
 
-<header>
-  <h1>Admin Royalty Dashboard</h1>
-  <span id="adminName">Admin</span>
-</header>
-
-<form id="royaltyForm">
-  <label>Member</label>
-
-<div class="member-picker" id="memberPicker">
-
-  <div class="member-input-wrap">
-    <input
-      type="text"
-      id="memberSearch"
-      placeholder="Cari nama atau email..."
-      autocomplete="off"
-    >
-    <button type="button" id="clearMember" class="clear-member">×</button>
+<main>
+  <div class="card">
+    <h2>Akun Member</h2>
+    <p class="sub">Pilih member dulu. Berlaku untuk Revenue Recap dan Artist Earnings.</p>
+    <div class="picker" id="picker">
+      <input type="text" id="mSearch" placeholder="Cari nama atau email member..." autocomplete="off">
+      <div class="dd" id="mDd"></div>
+    </div>
+    <span class="chip" id="mChip" style="display:none"></span>
   </div>
 
-  <div class="member-dropdown" id="memberDropdown"></div>
+  <div class="tabs">
+    <button class="tab on" data-t="earn">Artist Earnings</button>
+    <button class="tab" data-t="recap">Revenue Recap</button>
+  </div>
 
-  <input type="hidden" id="memberSelect" required>
+  <!-- ARTIST EARNINGS -->
+  <section class="pane on" id="p-earn">
+    <div class="card">
+      <h2>Input royalty artis</h2>
+      <p class="sub">Isi nominal final hak artis (setelah bagi hasil), bukan pendapatan kotor.</p>
+      <label for="pk">Periode royalty</label>
+      <input type="month" id="pk">
+      <div id="artistForm"><div class="empty">Pilih member untuk menampilkan artisnya.</div></div>
+      <button class="btn" id="saveEarn" disabled>Simpan semua</button>
+    </div>
+    <div class="card">
+      <h2>Riwayat input per periode</h2>
+      <p class="sub">Ketuk periode untuk membuka dan mengedit.</p>
+      <div class="wrap"><table>
+        <thead><tr><th>Periode</th><th>Artis</th><th>Total</th><th>Dibayar</th><th>Diperbarui</th></tr></thead>
+        <tbody id="hist"><tr><td colspan="5" class="empty">Belum ada data.</td></tr></tbody>
+      </table></div>
+    </div>
+  </section>
 
-</div>
-  <label>Tanggal</label>
-  <input type="date" id="date" required>
-
-<label>Period</label>
-<input type="text" id="period" placeholder="Contoh: Feb 2025" required>
-  <label>Value</label>
-  <input type="number" id="value" placeholder="Value (contoh: 450000)" required>
-
-  <label>Type</label>
-  <select id="reportType" required>
-    <option value="">-- Pilih Type --</option>
-    <option value="Sales Report">Sales Report</option>
-    <option value="Payment">Payment</option>
-  </select>
-
-  <label>Link Download</label>
-  <input type="text" id="downloadUrl" placeholder="Link GitHub/PDF">
-
-  <button type="submit">Add Royalty</button>
-</form>
-
-<table>
-  <thead>
-    <tr>
-<th>Users</th>
-<th>Report</th>
-<th>Period</th>
-<th>Generated</th>
-<th>Value</th>
-<th>Status</th>
-<th>Download</th>
-    </tr>
-  </thead>
-  <tbody id="adminRoyaltyList">
-    <tr><td colspan="7" style="text-align:center;color:#777">Memuat data...</td></tr>
-  </tbody>
-</table>
+  <!-- REVENUE RECAP -->
+  <section class="pane" id="p-recap">
+    <div class="card">
+      <h2>Tambah rekap Excel</h2>
+      <p class="sub">Upload file ke folder <b>report</b> di GitHub, tunggu deploy selesai, lalu tulis nama filenya di sini.</p>
+      <label for="rcTitle">Judul / keterangan</label>
+      <input type="text" id="rcTitle" placeholder="Contoh: Rekap pendapatan Juli 2026">
+      <label for="rcPk">Periode laporan</label>
+      <input type="month" id="rcPk">
+      <label for="rcFile">Nama file Excel</label>
+      <input type="text" id="rcFile" placeholder="Juli-2026-x7k2.xlsx" autocapitalize="off">
+      <p class="sub" style="margin-top:6px" id="rcPreview"></p>
+      <button class="btn" id="saveRecap" disabled>Simpan rekap</button>
+    </div>
+    <div class="card">
+      <h2>Daftar rekap member ini</h2>
+      <div class="wrap"><table>
+        <thead><tr><th>Judul</th><th>Periode</th><th>Diunggah</th><th>Oleh</th><th></th></tr></thead>
+        <tbody id="recapList"><tr><td colspan="5" class="empty">Pilih member.</td></tr></tbody>
+      </table></div>
+    </div>
+  </section>
+</main>
+<div id="toast" role="status"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <script>
+const BASE = "https://app.dynoticcollective.com/report/";
 firebase.initializeApp({
   apiKey: "AIzaSyBRSkmZXbTPNupefSmjXvlKLDNsaeQ2zag",
   authDomain: "dynopay-2513c.firebaseapp.com",
   databaseURL: "https://dynopay-2513c-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
+const db = firebase.database(), TS = firebase.database.ServerValue.TIMESTAMP;
+const $ = id => document.getElementById(id);
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+const rp = v => "Rp" + Number(v || 0).toLocaleString("id-ID");
+const fdate = t => t ? new Date(t).toLocaleString("id-ID", {day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}) : "-";
+const plabel = pk => /^\d{4}-\d{2}$/.test(pk) ? new Date(pk + "-01T00:00:00").toLocaleDateString("id-ID", {month:"long", year:"numeric"}) : (pk || "-");
+function toast(t){ const e = $("toast"); e.textContent = t; e.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(() => e.classList.remove("show"), 2600); }
+function slug(s){
+  const x = String(s).toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  if(x) return x;
+  let h = 0; for(const c of String(s)) h = (h * 31 + c.charCodeAt(0)) | 0;
+  return "a" + Math.abs(h).toString(36);
+}
 
-const db = firebase.database();
+let me = null, members = [], cur = null, artists = [], earn = {}, earnRef = null, recapRef = null, firstEarn = true;
 
-firebase.auth().onAuthStateChanged(user=>{
-  if(!user) window.location.href="../login";
-  else {
-    document.getElementById("adminName").innerText = user.email;
-    loadMembers();
-    loadAdminRoyalty();
+/* ---------- auth + cek admin ---------- */
+firebase.auth().onAuthStateChanged(async u => {
+  if(!u){ location.href = "../login"; return; }
+  me = u; $("adminName").textContent = u.email || "";
+  try {
+    const s = await db.ref("admins/" + u.uid).once("value");
+    if(!s.exists()) throw new Error("bukan admin");
+  } catch(e){
+    document.body.innerHTML = '<p style="padding:100px 20px;text-align:center">Halaman ini khusus admin.</p>';
+    return;
   }
+  loadMembers();
 });
+const who = () => ({ uid: me.uid, email: me.email || "" });
 
-let allMembers = [];
-
+/* ---------- member picker ---------- */
 function loadMembers(){
+  db.ref("users").once("value").then(s => {
+    const u = s.val() || {};
+    members = Object.keys(u).map(id => ({ uid:id, nama:u[id].nama || "Tanpa nama", email:u[id].email || "" }));
+  }).catch(() => toast("Daftar member gagal dimuat."));
+}
+function showMembers(q){
+  q = (q || "").toLowerCase().trim();
+  const r = members.filter(m => m.nama.toLowerCase().includes(q) || m.email.toLowerCase().includes(q)).slice(0, 50);
+  $("mDd").innerHTML = r.length
+    ? r.map(m => '<button type="button" class="opt" data-uid="' + esc(m.uid) + '"><b>' + esc(m.nama) + '</b><span>' + esc(m.email) + '</span></button>').join("")
+    : '<div class="empty">Member tidak ditemukan</div>';
+  $("mDd").classList.add("show");
+}
+$("mSearch").addEventListener("focus", e => showMembers(e.target.value));
+$("mSearch").addEventListener("input", e => showMembers(e.target.value));
+$("mDd").addEventListener("click", e => {
+  const b = e.target.closest(".opt"); if(!b) return;
+  const m = members.find(x => x.uid === b.dataset.uid); if(!m) return;
+  $("mDd").classList.remove("show");
+  $("mSearch").value = "";
+  setMember(m);
+});
+document.addEventListener("click", e => { if(!$("picker").contains(e.target)) $("mDd").classList.remove("show"); });
 
-  db.ref("users").once("value").then(snap=>{
+async function setMember(m){
+  cur = m;
+  if(earnRef) earnRef.off(); if(recapRef) recapRef.off();
+  earn = {}; artists = []; firstEarn = true;
+  $("mChip").style.display = "inline-block";
+  $("mChip").textContent = m.nama + " \u2022 " + m.email;
+  $("saveRecap").disabled = false;
+  $("artistForm").innerHTML = '<div class="empty">Memuat artis...</div>';
+  try {
+    const s = await db.ref("releases/" + m.uid).once("value");
+    const map = {};
+    s.forEach(c => {
+      const name = String((c.val() || {}).artist || "").trim();
+      if(name && !map[slug(name)]) map[slug(name)] = name;
+    });
+    artists = Object.keys(map).map(id => ({ id, name: map[id] })).sort((a, b) => a.name.localeCompare(b.name));
+  } catch(e){ toast("Artis gagal dimuat."); }
 
-    const users = snap.val() || {};
+  earnRef = db.ref("royalty_earnings/" + m.uid);
+  earnRef.on("value", s => {
+    earn = s.val() || {};
+    renderHist();
+    if(firstEarn){ firstEarn = false; renderForm(); }
+  }, () => toast("Data royalty gagal dimuat."));
 
-    allMembers = Object.keys(users).map(uid => ({
-      uid: uid,
-      email: users[uid].email || "",
-      nama: users[uid].nama || "Unknown"
-    }));
-
-    renderMemberDropdown(allMembers);
-  });
+  recapRef = db.ref("royalty_recaps/" + m.uid);
+  recapRef.on("value", renderRecaps, () => toast("Data rekap gagal dimuat."));
 }
 
-
-function renderMemberDropdown(members){
-
-  const dropdown = document.getElementById("memberDropdown");
-
-  if(!members.length){
-
-    dropdown.innerHTML = `
-      <div class="member-empty">
-        Member tidak ditemukan
-      </div>
-    `;
-
-    return;
-  }
-
-  dropdown.innerHTML = members.map(user => {
-
-    const initial = (user.nama || user.email || "?")
-      .charAt(0)
-      .toUpperCase();
-
-    return `
-      <div
-        class="member-option"
-        data-uid="${user.uid}"
-        data-email="${user.email}"
-        data-name="${user.nama}"
-      >
-
-        <div class="member-avatar">
-          ${initial}
-        </div>
-
-        <div class="member-info">
-
-          <div class="member-name">
-            ${escapeHtml(user.nama)}
-          </div>
-
-          <div class="member-email">
-            ${escapeHtml(user.email)}
-          </div>
-
-        </div>
-
-      </div>
-    `;
-
+/* ---------- artist earnings ---------- */
+function renderForm(){
+  const box = $("artistForm"), pk = $("pk").value;
+  $("saveEarn").disabled = true;
+  if(!cur){ box.innerHTML = '<div class="empty">Pilih member untuk menampilkan artisnya.</div>'; return; }
+  if(!artists.length){ box.innerHTML = '<div class="empty">Member ini belum punya artis di data rilisan.</div>'; return; }
+  box.innerHTML = artists.map(a => {
+    const ex = pk && earn[a.id] ? earn[a.id][pk] : null, paid = ex && ex.paymentId;
+    const hint = paid ? '<div class="h paid">Sudah dibayar, tidak bisa diubah</div>'
+      : ex ? '<div class="h">Terakhir diperbarui ' + esc(fdate(ex.updatedAt)) + '</div>' : '';
+    return '<div class="arow" data-id="' + esc(a.id) + '"><div class="n">' + esc(a.name) + '</div>' + hint +
+      '<div class="pair"><input type="number" inputmode="numeric" min="0" step="1" class="amt" placeholder="Nominal (IDR)"' + (paid ? " disabled" : "") + ' value="' + (ex ? esc(ex.amount) : "") + '">' +
+      '<input type="text" class="note" placeholder="Catatan (opsional)"' + (paid ? " disabled" : "") + ' value="' + (ex ? esc(ex.note || "") : "") + '"></div></div>';
   }).join("");
+  $("saveEarn").disabled = !pk;
 }
+$("pk").addEventListener("change", renderForm);
 
+$("saveEarn").addEventListener("click", async () => {
+  const pk = $("pk").value;
+  if(!cur) return toast("Pilih member dulu.");
+  if(!/^\d{4}-\d{2}$/.test(pk)) return toast("Pilih periode royalty.");
 
-function escapeHtml(text){
-
-  return String(text || "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-}
-
-
-const memberSearch = document.getElementById("memberSearch");
-const memberDropdown = document.getElementById("memberDropdown");
-const clearMember = document.getElementById("clearMember");
-
-
-memberSearch.addEventListener("focus", function(){
-
-  memberDropdown.classList.add("show");
-
-  if(!this.value){
-    renderMemberDropdown(allMembers);
-  }
-
-});
-
-
-memberSearch.addEventListener("input", function(){
-
-  const keyword = this.value.toLowerCase().trim();
-
-  // Kalau sedang mengetik ulang pilihan
-  document.getElementById("memberSelect").value = "";
-
-  clearMember.style.display = keyword ? "block" : "none";
-
-  const filtered = allMembers.filter(user => {
-
-    const name = String(user.nama || "").toLowerCase();
-const email = String(user.email || "").toLowerCase();
-
-    return name.includes(keyword) || email.includes(keyword);
-
+  const upd = {}, over = [];
+  let bad = false;
+  document.querySelectorAll("#artistForm .arow").forEach(row => {
+    const amtEl = row.querySelector(".amt");
+    if(!amtEl || amtEl.disabled || amtEl.value.trim() === "") return;
+    const amount = Number(amtEl.value);
+    if(!Number.isInteger(amount) || amount < 0){ bad = true; return; }
+    const id = row.dataset.id, a = artists.find(x => x.id === id);
+    const ex = earn[id] ? earn[id][pk] : null;
+    if(ex) over.push(a.name + " (" + rp(ex.amount) + " \u2192 " + rp(amount) + ")");
+    const note = row.querySelector(".note").value.trim().slice(0, 200);
+    const d = { artistName:a.name, periodKey:pk, periodLabel:plabel(pk), amount,
+      createdAt: ex ? ex.createdAt : TS, updatedAt: TS, updatedBy: who() };
+    if(ex) d.createdBy = ex.createdBy || who(); else d.createdBy = who();
+    if(note) d.note = note;
+    upd["royalty_earnings/" + cur.uid + "/" + id + "/" + pk] = d;
   });
+  if(bad) return toast("Nominal harus angka bulat, tidak negatif.");
+  if(!Object.keys(upd).length) return toast("Belum ada nominal yang diisi.");
+  if(over.length && !confirm("Data periode " + plabel(pk) + " ini sudah ada dan akan ditimpa:\n\n" + over.join("\n") + "\n\nLanjutkan?")) return;
 
-  renderMemberDropdown(filtered);
-  memberDropdown.classList.add("show");
-
-});
-
-
-memberDropdown.addEventListener("click", function(e){
-
-  const option = e.target.closest(".member-option");
-
-  if(!option) return;
-
-  const uid = option.dataset.uid;
-  const email = option.dataset.email;
-  const name = option.dataset.name;
-
-  // Simpan UID ke hidden input
-  document.getElementById("memberSelect").value = uid;
-
-  // Tampilkan nama + email di input
-  memberSearch.value = `${name} • ${email}`;
-
-  memberSearch.classList.add("selected");
-
-  clearMember.style.display = "block";
-
-  memberDropdown.classList.remove("show");
-
-});
-
-
-clearMember.addEventListener("click", function(){
-
-  memberSearch.value = "";
-
-  memberSearch.classList.remove("selected");
-
-  document.getElementById("memberSelect").value = "";
-
-  clearMember.style.display = "none";
-
-  memberSearch.focus();
-
-  renderMemberDropdown(allMembers);
-
-  memberDropdown.classList.add("show");
-
-});
-
-
-document.addEventListener("click", function(e){
-
-  if(!document.getElementById("memberPicker").contains(e.target)){
-
-    memberDropdown.classList.remove("show");
-
+  const btn = $("saveEarn"); btn.disabled = true; btn.textContent = "Menyimpan...";
+  try {
+    await db.ref().update(upd);
+    toast("Tersimpan: " + Object.keys(upd).length + " artis.");
+  } catch(e){
+    console.error(e); toast("Gagal menyimpan. Periksa Security Rules.");
+  } finally {
+    btn.textContent = "Simpan semua"; renderForm();
   }
-
 });
-function sendEmailByType(key, type){
 
-  db.ref("royalties/" + key).once("value").then(snap=>{
-    const d = snap.val();
+function renderHist(){
+  const g = {};
+  Object.keys(earn).forEach(aid => Object.keys(earn[aid] || {}).forEach(pk => {
+    const e = earn[aid][pk]; if(!e || typeof e !== "object") return;
+    const x = g[pk] = g[pk] || { n:0, total:0, paid:0, up:0 };
+    x.n++; x.total += Number(e.amount || 0);
+    if(e.paymentId) x.paid += Number(e.amount || 0);
+    x.up = Math.max(x.up, Number(e.updatedAt || 0));
+  }));
+  const keys = Object.keys(g).sort().reverse();
+  $("hist").innerHTML = keys.length ? keys.map(pk =>
+    '<tr class="click" data-pk="' + esc(pk) + '"><td><b>' + esc(plabel(pk)) + '</b></td><td>' + g[pk].n + '</td><td>' + rp(g[pk].total) + '</td><td>' + rp(g[pk].paid) + '</td><td>' + esc(fdate(g[pk].up)) + '</td></tr>').join("")
+    : '<tr><td colspan="5" class="empty">Belum ada data.</td></tr>';
+}
+$("hist").addEventListener("click", e => {
+  const r = e.target.closest("tr[data-pk]"); if(!r) return;
+  $("pk").value = r.dataset.pk; renderForm();
+  $("pk").scrollIntoView({ behavior:"smooth", block:"center" });
+});
 
-    db.ref("users/" + d.uid).once("value").then(userSnap=>{
-      const user = userSnap.val() || {};
+/* ---------- revenue recap ---------- */
+const fileOk = n => /^[^\/\\?#%]+\.(xlsx|xls)$/i.test(n);
+$("rcFile").addEventListener("input", () => {
+  const n = $("rcFile").value.trim();
+  $("rcPreview").textContent = n ? (fileOk(n) ? "Link: " + BASE + encodeURIComponent(n) : "Nama file harus berakhiran .xlsx atau .xls, tanpa folder.") : "";
+});
 
-      const email = user.email || d.email;
-      const name = user.nama || "User";
-
-      sendRoyaltyEmail(
-        email,
-        name,
-        type,
-        d.period,
-        d.value
-      );
+$("saveRecap").addEventListener("click", async () => {
+  if(!cur) return toast("Pilih member dulu.");
+  const title = $("rcTitle").value.trim(), pk = $("rcPk").value, name = $("rcFile").value.trim();
+  if(!title) return toast("Isi judul rekap.");
+  if(!/^\d{4}-\d{2}$/.test(pk)) return toast("Pilih periode laporan.");
+  if(!fileOk(name)) return toast("Nama file tidak valid.");
+  const url = BASE + encodeURIComponent(name);
+  if(!await fileReady(url)) return;
+  const key = db.ref("royalty_recaps/" + cur.uid).push().key;
+  try {
+    await db.ref("royalty_recaps/" + cur.uid + "/" + key).set({
+      title: title.slice(0, 120), periodKey: pk, periodLabel: plabel(pk), fileName: name, url,
+      uploadedAt: TS, uploadedBy: who()
     });
-  });
-
-}
-function openEmailMenu(key){
-
-  const choice = confirm(
-    "Send Email?\n\nOK = Sales Report Email\nCancel = Payment Email"
-  );
-
-  if(choice){
-    sendEmailByType(key, "Sales Report");
-  } else {
-    sendEmailByType(key, "Payment");
-  }
-}
-function downloadFile(url){
-  if(url && url.startsWith("http")) window.open(url,"_blank");
-  else alert("Link download tidak valid");
-}
-function deleteRoyalty(key){
-  if(confirm("Yakin mau hapus data ini?")){
-    db.ref("royalties/"+key).remove()
-      .then(()=> loadAdminRoyalty())
-      .catch(err=> console.error("Gagal hapus:",err));
-  }
-}
-function sendRoyaltyEmail(email, name, type, period, value){
-
-  const dashboardLink = "https://dynotic.web.id/income";
-
-  let subject = "";
-  let body = "";
-
-  if(type === "Sales Report"){
-    subject = "Sales Report Available - Dynotic Distribution";
-
-    body =
-`Hello ${name},
-
-Your Sales Report is now available.
-
-Details:
-• Type   : Sales Report
-• Period : ${period}
-• Status : Accepted
-
-Minimum payout requirement:
-• Rp 50.000
-
-Note:
-Earnings will be eligible for withdrawal once total balance reaches the minimum threshold.
-
-View your report here:
-${dashboardLink}
-
-Best regards,
-Risna Wati
-Dynotic Distribution Team`;
-  }
-
-  else if(type === "Payment"){
-    subject = "Payment Processed - Dynotic Distribution";
-
-    body =
-`Hello ${name},
-
-Your payment has been successfully processed.
-
-Details:
-• Type   : Payment
-• Period : ${period}
-• Amount : Rp ${Number(value).toLocaleString("id-ID")}
-• Status : Paid
-
-Check your dashboard:
-${dashboardLink}
-
-Best regards,
-Risna Wati
-Dynotic Distribution`;
-  }
-
-  const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-  window.open(mailtoLink, "_blank");
-}
-function loadAdminRoyalty(){
-  const list = document.getElementById("adminRoyaltyList");
-  list.innerHTML = `<tr><td colspan="7"
-  style="text-align:center;color:#777">Memuat data...</td></tr>`;
-
-  // preload semua users
-  db.ref("users").once("value").then(userSnap=>{
-    const users = userSnap.val() || {};
-
-    // mapping email fallback
-    const emailMap = {};
-    Object.keys(users).forEach(uid=>{ emailMap[users[uid].email] = users[uid]; });
-
-    db.ref("royalties").once("value").then(snap=>{
-      if(!snap.exists()){
-        list.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#777">Belum ada data</td></tr>`;
-        return;
-      }
-
-      const rows = [];
-      snap.forEach(item=>{
-  const d = item.val();
-  const key = item.key;
-        // fallback: pakai UID dulu, kalau tidak ada pakai email
-        let user = users[d.uid] || {};
-        if(!user.email && d.email) user = emailMap[d.email] || {};
-
-        rows.push(`
-<tr>
-
-<td class="user-cell">
-  <div style="font-weight:600">
-    ${user.nama || 'Unknown'}
-  </div>
-  <div style="font-size:12px;color:#888">
-    ${user.email || d.email || '-'}
-  </div>
-</td>
-
-<td>
-  <span class="status ${d.type === 'Sales Report' ? 'report' : d.type === 'Payment' ? 'payment' : ''}">
-    ${d.type}
-  </span>
-</td>
-
-<td>${d.period || '-'}</td>
-
-<td style="font-size:12px;color:#666">
-${d.date ? new Date(d.date).toLocaleDateString("id-ID") : "-"}
-</td>
-
-<td style="font-weight:600;color:${d.value < 0 ? '#dc2626' : '#111'}">
-  Rp ${Number(d.value || 0).toLocaleString("id-ID")}
-</td>
-
-<td>
-  <span class="status ${d.type==='Payment' ? 'payment' : 'report'}">
-    ${d.type === 'Payment' ? 'Paid' : 'Accepted'}
-  </span>
-</td>
-
-<td>
-  ${d.downloadUrl ? `<button onclick="downloadFile('${d.downloadUrl}')">⬇</button>` : '-'}
-
-  <button onclick="openEmailMenu('${key}')">
-    ✉
-  </button>
-
-  <button onclick="deleteRoyalty('${key}')" style="background:#dc2626;margin-left:6px;">
-    🗑
-  </button>
-</td>
-
-</tr>
-`);
-      });
-
-      rows.reverse();
-list.innerHTML = rows.join('');
-    });
-  });
-}
-
-document.getElementById("royaltyForm").addEventListener("submit", function(e){
-
-  e.preventDefault();
-
-  const uid = document.getElementById("memberSelect").value;
-
-  if(!uid){
-    alert("Silakan pilih member terlebih dahulu.");
-    return;
-  }
-
-  const member = allMembers.find(user => user.uid === uid);
-
-  if(!member){
-    alert("Member tidak ditemukan.");
-    return;
-  }
-
-  const email = member.email;
-  const name = member.nama;
-
-  const period = document.getElementById("period").value;
-  const date = document.getElementById("date").value;
-  const type = document.getElementById("reportType").value;
-  const value = Number(document.getElementById("value").value);
-  const downloadUrl = document.getElementById("downloadUrl").value;
-
-  const newKey = db.ref("royalties").push().key;
-
-  let finalValue =
-    (type === "Payment")
-      ? -Math.abs(value)
-      : value;
-
-  db.ref("royalties/" + newKey).set({
-
-    uid,
-    email,
-    date,
-    period,
-    value: finalValue,
-    downloadUrl,
-    type
-
-  }).then(()=>{
-
-    sendRoyaltyEmail(
-      email,
-      name,
-      type,
-      period,
-      finalValue
-    );
-
-    loadAdminRoyalty();
-
-    this.reset();
-
-    // Reset member picker
-    document.getElementById("memberSelect").value = "";
-    document.getElementById("memberSearch").value = "";
-    document.getElementById("memberSearch").classList.remove("selected");
-    document.getElementById("clearMember").style.display = "none";
-
-  }).catch(err=>{
-
-    console.error("Gagal tambah royalty:", err);
-
-  });
-
+    toast("Rekap tersimpan.");
+    $("rcTitle").value = ""; $("rcFile").value = ""; $("rcPreview").textContent = "";
+  } catch(e){ console.error(e); toast("Gagal menyimpan rekap."); }
 });
+
+async function fileReady(url){
+  try {
+    const r = await fetch(url, { method:"HEAD", cache:"no-store" });
+    if(r.status === 404) return confirm("File belum ditemukan di folder report (404). Mungkin deploy belum selesai. Tetap simpan?");
+  } catch(e){ /* lintas domain: tidak bisa dicek, lanjutkan */ }
+  return true;
+}
+
+function renderRecaps(s){
+  const rows = [];
+  s.forEach(c => { const r = c.val(); if(r) rows.push({ ...r, k:c.key }); });
+  rows.sort((a, b) => (b.uploadedAt || 0) - (a.uploadedAt || 0));
+  $("recapList").innerHTML = rows.length ? rows.map(r =>
+    '<tr><td><b>' + esc(r.title) + '</b><div class="sub" style="margin:0">' + esc(r.fileName) + '</div></td><td>' + esc(r.periodLabel || plabel(r.periodKey)) + '</td><td>' + esc(fdate(r.uploadedAt)) + '</td><td>' + esc((r.uploadedBy || {}).email || "-") + '</td>' +
+    '<td><div class="acts"><a class="btn sm" style="text-decoration:none;color:#fff;display:inline-block" href="' + esc(r.url) + '" target="_blank" rel="noopener noreferrer">Unduh</a>' +
+    '<button class="btn sm" data-rep="' + esc(r.k) + '">Ganti</button><button class="btn sm red" data-del="' + esc(r.k) + '">Hapus</button></div></td></tr>').join("")
+    : '<tr><td colspan="5" class="empty">Belum ada rekap untuk member ini.</td></tr>';
+}
+$("recapList").addEventListener("click", async e => {
+  const del = e.target.closest("[data-del]"), rep = e.target.closest("[data-rep]");
+  if(!cur || (!del && !rep)) return;
+  const base = "royalty_recaps/" + cur.uid + "/";
+  try {
+    if(del){
+      if(confirm("Hapus rekap ini? File di GitHub tidak ikut terhapus.")) await db.ref(base + del.dataset.del).remove();
+    } else {
+      const n = (prompt("Nama file Excel pengganti:") || "").trim();
+      if(!n) return;
+      if(!fileOk(n)) return toast("Nama file tidak valid.");
+      const url = BASE + encodeURIComponent(n);
+      if(!await fileReady(url)) return;
+      await db.ref(base + rep.dataset.rep).update({ fileName:n, url, updatedAt:TS, updatedBy:who() });
+      toast("File rekap diganti.");
+    }
+  } catch(err){ console.error(err); toast("Aksi gagal. Periksa Security Rules."); }
+});
+
+/* ---------- tabs ---------- */
+document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
+  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === t));
+  document.querySelectorAll(".pane").forEach(p => p.classList.toggle("on", p.id === "p-" + t.dataset.t));
+}));
 </script>
-
 </body>
 </html>
