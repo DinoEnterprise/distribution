@@ -101,6 +101,14 @@ input[type=checkbox]{width:18px;height:18px;height:18px;padding:0;accent-color:v
 .pill{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--c);background:color-mix(in srgb,var(--c) 11%,#fff);border:1px solid color-mix(in srgb,var(--c) 28%,#fff);white-space:nowrap;vertical-align:middle}
 .pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--c)}
 .empty{padding:26px 12px;text-align:center;color:var(--muted);font-size:13px;line-height:1.7}
+.opt em{display:block;margin-top:2px;font-style:normal;font-size:12px;font-weight:600;color:var(--accent)}
+.ent{margin-top:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:#fafafd}
+.eh{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;font-weight:700}
+.tot{font-size:12px;font-weight:700;color:var(--accent);white-space:nowrap}
+.newl{margin-top:12px;font-size:12px;font-weight:700;color:var(--muted)}
+.pager{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.pager .btn{margin-top:0}
+.pager span{font-size:12px;line-height:1.5;color:var(--muted);text-align:center}
 /* bottom nav */
 .bottom{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);width:calc(100% - 28px);max-width:540px;height:70px;padding:0 8px;background:rgba(13,13,18,.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:26px;box-shadow:0 18px 40px rgba(13,13,18,.3);display:flex;align-items:center;justify-content:space-around;z-index:70}
 .b-item{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;height:100%;font-size:10px;font-weight:500;color:rgba(255,255,255,.5);transition:color .2s,transform .15s}
@@ -204,9 +212,9 @@ body{padding-bottom:40px;padding-left:var(--side)}
 
   <div class="card">
     <h2>Akun member</h2>
-    <p class="sub">Pilih member dulu. Berlaku untuk Artist Earnings, Revenue Recap, dan Payment.</p>
+    <p class="sub">Pilih member dulu (bisa dicari lewat email, nama, atau nama artis). Berlaku untuk Artist Earnings, Revenue Recap, dan Payment.</p>
     <div class="picker" id="picker" style="margin-top:12px">
-      <input type="text" id="mSearch" placeholder="Cari nama atau email member..." autocomplete="off" aria-label="Cari member">
+      <input type="text" id="mSearch" placeholder="Cari email, nama, atau nama artis..." autocomplete="off" aria-label="Cari member">
       <div class="dd" id="mDd"></div>
     </div>
     <span class="chip" id="mChip" style="display:none"></span>
@@ -222,10 +230,13 @@ body{padding-bottom:40px;padding-left:var(--side)}
   <section class="pane on" id="p-earn">
     <div class="card">
       <h2>Input royalty artis</h2>
-      <p class="sub">Isi nominal final hak artis (setelah bagi hasil), bukan pendapatan kotor. Ketik angka saja, titik ribuan otomatis. Data yang sudah ada bisa diubah atau dihapus, termasuk yang sudah dibayar. Hanya data yang terkunci di pembayaran Pending yang tidak bisa diubah.</p>
+      <p class="sub">Isi nominal final hak artis (setelah bagi hasil), bukan pendapatan kotor. Ketik angka saja, titik ribuan otomatis. Satu artis boleh punya beberapa entri di periode yang sama (misalnya dari agregator berbeda): isi kolom &quot;Tambah entri baru&quot; dan entri lama tidak berubah. Entri yang terkunci di pembayaran Pending tidak bisa diubah.</p>
       <label class="lb" for="pk">Periode royalty</label>
       <input type="month" id="pk">
+      <label class="lb" for="aSearch">Cari artis</label>
+      <input type="text" id="aSearch" placeholder="Ketik nama artis..." autocomplete="off">
       <div id="artistForm"><div class="empty">Pilih member untuk menampilkan artisnya.</div></div>
+      <div id="pager"></div>
       <button class="btn" id="saveEarn" type="button" disabled>Simpan semua</button>
     </div>
     <div class="card">
@@ -365,17 +376,38 @@ firebase.auth().onAuthStateChanged(async u => {
 const who = () => ({ uid: me.uid, email: me.email || "" });
 
 /* ---------- member picker ---------- */
+let memArt = {};
 function loadMembers(){
-  db.ref("users").once("value").then(s => {
-    const u = s.val() || {};
+  db.ref("users").once("value").then(sn => {
+    const u = sn.val() || {};
     members = Object.keys(u).map(id => ({ uid:id, nama:u[id].nama || "Tanpa nama", email:u[id].email || "" }));
   }).catch(() => toast("Daftar member gagal dimuat."));
+  db.ref("releases").once("value").then(sn => {
+    const m = {};
+    sn.forEach(u => {
+      const set = {};
+      u.forEach(r => { const n = String((r.val() || {}).artist || "").trim(); if(n) set[slug(n)] = n; });
+      const l = Object.values(set).sort((x, y) => x.localeCompare(y));
+      if(l.length) m[u.key] = l;
+    });
+    memArt = m;
+  }).catch(() => {});
 }
 function showMembers(q){
   q = (q || "").toLowerCase().trim();
-  const r = members.filter(m => m.nama.toLowerCase().includes(q) || m.email.toLowerCase().includes(q)).slice(0, 50);
+  const r = [];
+  members.forEach(m => {
+    const arts = memArt[m.uid] || [];
+    const hit = q ? arts.filter(n => n.toLowerCase().includes(q)) : [];
+    if(!q || m.nama.toLowerCase().includes(q) || m.email.toLowerCase().includes(q) || hit.length) r.push({ m, arts, hit });
+  });
   $("mDd").innerHTML = r.length
-    ? r.map(m => '<button type="button" class="opt" data-uid="' + esc(m.uid) + '"><b>' + esc(m.nama) + '</b><span>' + esc(m.email) + '</span></button>').join("")
+    ? r.slice(0, 100).map(x => {
+        const shown = x.hit.length ? x.hit : x.arts.slice(0, 3);
+        const more = x.hit.length ? "" : (x.arts.length > 3 ? " +" + (x.arts.length - 3) : "");
+        return '<button type="button" class="opt" data-uid="' + esc(x.m.uid) + '"><b>' + esc(x.m.nama) + '</b><span>' + esc(x.m.email) + '</span>' +
+          (shown.length ? '<em>Artis: ' + esc(shown.join(", ")) + more + '</em>' : '') + '</button>';
+      }).join("")
     : '<div class="empty">Member tidak ditemukan</div>';
   $("mDd").classList.add("show");
 }
@@ -393,6 +425,7 @@ async function setMember(m){
   cur = m;
   if(earnRef) earnRef.off(); if(recapRef) recapRef.off(); if(payRef) payRef.off();
   earn = {}; artists = []; recaps = []; payRows = []; firstEarn = true;
+  draft = {}; page = 0; aq = ""; $("aSearch").value = "";
   $("mChip").style.display = "inline-flex";
   $("mChip").textContent = m.nama + " \u2022 " + m.email;
   $("saveRecap").disabled = false;
@@ -429,76 +462,138 @@ async function setMember(m){
 
 /* =====================================================
    ARTIST EARNINGS
+   Satu artis boleh punya banyak entri per periode.
+   Kunci entri: "YYYY-MM" (entri pertama / data lama) atau "YYYY-MM_xxxxx".
    ===================================================== */
 const lockTx = k => { const p = payRows.find(x => x.k === k); return p ? p.txNo : "lain"; };
-
-/* angka: ketik 2000 -> tampil 2.000, tersimpan 2000 */
 const digits = s => String(s).replace(/\D/g, "");
 const fmtNum = s => digits(s).replace(/^0+(?=\d)/, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+const periodOf = k => String(k).slice(0, 7);
+const isEntry = (k, v) => /^\d{4}-\d{2}(_\w+)?$/.test(k) && !!v && typeof v === "object";
+const byMonth = per => { const o = {}; Object.keys(per || {}).forEach(k => { o[periodOf(k)] = (o[periodOf(k)] || 0) + Number(per[k] || 0); }); return o; };
+function entriesOf(aid, pk){
+  const m = earn[aid] || {};
+  return Object.keys(m).filter(k => periodOf(k) === pk && isEntry(k, m[k]))
+    .sort((x, y) => (m[x].createdAt || 0) - (m[y].createdAt || 0) || x.localeCompare(y))
+    .map(k => ({ ...m[k], key:k }));
+}
+
+let draft = {}, page = 0, aq = "";
+const dget = (id, f, def) => (draft[id] && draft[id][f] !== undefined) ? draft[id][f] : def;
+const mqDesk = window.matchMedia("(min-width:1000px)");
+const perPage = () => mqDesk.matches ? 10 : 5;
+mqDesk.addEventListener("change", () => renderForm());
+
+function artistRow(a, pk){
+  const ents = pk ? entriesOf(a.id, pk) : [];
+  const total = ents.reduce((s, e) => s + Number(e.amount || 0), 0);
+  const eh = ents.map((e, i) => {
+    const st = e.paymentId ? "paid" : e.lock ? "lock" : "open";
+    const dis = st === "lock" ? " disabled" : "";
+    const id = a.id + "::" + e.key;
+    const hint = st === "paid" ? '<div class="h ok">Sudah dibayar (' + esc(lockTx(e.paymentId)) + '). Perubahan di sini tidak mengubah statement pembayaran yang sudah dibuat.</div>'
+      : st === "lock" ? '<div class="h warn">Terkunci di pembayaran ' + esc(lockTx(e.lock)) + '. Batalkan atau hapus pembayarannya dulu untuk mengubah.</div>'
+      : '<div class="h">Terakhir diperbarui ' + esc(fdate(e.updatedAt)) + '</div>';
+    const del = st === "lock" ? "" : '<button type="button" class="btn sm red" data-delent="' + esc(id) + '">' + ic("trash") + 'Hapus</button>';
+    return '<div class="ent"><div class="eh"><span>Entri ' + (i + 1) + '</span>' + del + '</div>' + hint +
+      '<div class="pair"><input type="text" inputmode="numeric" autocomplete="off" class="amt" data-d="' + esc(id) + '" data-f="amt" placeholder="Nominal (IDR)" aria-label="Nominal entri ' + (i + 1) + ' ' + esc(a.name) + '"' + dis + ' value="' + esc(dget(id, "amt", Number(e.amount).toLocaleString("id-ID"))) + '">' +
+      '<input type="text" class="note" data-d="' + esc(id) + '" data-f="note" placeholder="Sumber / catatan" aria-label="Catatan entri ' + (i + 1) + ' ' + esc(a.name) + '"' + dis + ' value="' + esc(dget(id, "note", e.note || "")) + '"></div></div>';
+  }).join("");
+  const nid = a.id + "::new";
+  return '<div class="arow" data-id="' + esc(a.id) + '"><div class="ah"><div class="n">' + esc(a.name) + '</div>' + (ents.length ? '<span class="tot">Total ' + rp(total) + '</span>' : '') + '</div>' + eh +
+    '<div class="newl">' + (ents.length ? "Tambah entri baru (misalnya agregator lain)" : "Nominal") + '</div>' +
+    '<div class="pair"><input type="text" inputmode="numeric" autocomplete="off" class="amt" data-d="' + esc(nid) + '" data-f="amt" placeholder="Nominal (IDR)" aria-label="Nominal baru ' + esc(a.name) + '" value="' + esc(dget(nid, "amt", "")) + '">' +
+    '<input type="text" class="note" data-d="' + esc(nid) + '" data-f="note" placeholder="Sumber / catatan (opsional)" aria-label="Catatan baru ' + esc(a.name) + '" value="' + esc(dget(nid, "note", "")) + '"></div></div>';
+}
 
 function renderForm(){
-  const box = $("artistForm"), pk = $("pk").value;
-  $("saveEarn").disabled = true;
+  const box = $("artistForm"), pg = $("pager"), pk = $("pk").value;
+  $("saveEarn").disabled = true; pg.innerHTML = "";
   if(!cur){ box.innerHTML = '<div class="empty">Pilih member untuk menampilkan artisnya.</div>'; return; }
   if(!artists.length){ box.innerHTML = '<div class="empty">Member ini belum punya artis di data rilisan.</div>'; return; }
-  box.innerHTML = artists.map(a => {
-    const ex = pk && earn[a.id] ? earn[a.id][pk] : null;
-    const st = !ex ? "none" : ex.paymentId ? "paid" : ex.lock ? "lock" : "open";
-    const dis = st === "lock" ? " disabled" : "";
-    const hint = st === "paid" ? '<div class="h ok">Sudah dibayar (' + esc(lockTx(ex.paymentId)) + '). Perubahan di sini tidak mengubah statement pembayaran yang sudah dibuat.</div>'
-      : st === "lock" ? '<div class="h warn">Terkunci di pembayaran ' + esc(lockTx(ex.lock)) + '. Batalkan atau hapus pembayarannya dulu untuk mengubah.</div>'
-      : st === "open" ? '<div class="h">Terakhir diperbarui ' + esc(fdate(ex.updatedAt)) + '</div>' : '';
-    const del = (st === "open" || st === "paid") ? '<button type="button" class="btn sm red" data-delart="' + esc(a.id) + '">' + ic("trash") + 'Hapus</button>' : '';
-    return '<div class="arow" data-id="' + esc(a.id) + '"><div class="ah"><div class="n">' + esc(a.name) + '</div>' + del + '</div>' + hint +
-      '<div class="pair"><input type="text" inputmode="numeric" autocomplete="off" class="amt" placeholder="Nominal (IDR)" aria-label="Nominal ' + esc(a.name) + '"' + dis + ' value="' + (ex ? esc(Number(ex.amount).toLocaleString("id-ID")) : "") + '">' +
-      '<input type="text" class="note" placeholder="Catatan (opsional)" aria-label="Catatan ' + esc(a.name) + '"' + dis + ' value="' + (ex ? esc(ex.note || "") : "") + '"></div></div>';
-  }).join("");
+  const list = artists.filter(a => !aq || a.name.toLowerCase().includes(aq));
+  if(!list.length){ box.innerHTML = '<div class="empty">Artis tidak ditemukan.</div>'; $("saveEarn").disabled = !pk; return; }
+  const per = perPage(), pages = Math.ceil(list.length / per);
+  if(page >= pages) page = pages - 1;
+  if(page < 0) page = 0;
+  box.innerHTML = list.slice(page * per, page * per + per).map(a => artistRow(a, pk)).join("");
+  if(pages > 1){
+    pg.innerHTML = '<div class="pager"><button type="button" class="btn sm line" data-pg="-1"' + (page === 0 ? " disabled" : "") + '>\u2039 Sebelumnya</button>' +
+      '<span>Halaman ' + (page + 1) + ' dari ' + pages + '<br>' + list.length + ' artis</span>' +
+      '<button type="button" class="btn sm line" data-pg="1"' + (page >= pages - 1 ? " disabled" : "") + '>Berikutnya \u203A</button></div>';
+  }
   $("saveEarn").disabled = !pk;
 }
-$("pk").addEventListener("change", renderForm);
-
-$("artistForm").addEventListener("input", e => {
-  const el = e.target;
-  if(!el.classList.contains("amt")) return;
-  const fromEnd = el.value.length - el.selectionStart;
-  el.value = fmtNum(el.value);
-  const p = Math.max(0, el.value.length - fromEnd);
-  el.setSelectionRange(p, p);
+const resetPeriod = () => { draft = {}; page = 0; renderForm(); };
+$("pk").addEventListener("change", resetPeriod);
+$("aSearch").addEventListener("input", e => { aq = e.target.value.toLowerCase().trim(); page = 0; renderForm(); });
+$("pager").addEventListener("click", e => {
+  const b = e.target.closest("[data-pg]"); if(!b) return;
+  page += Number(b.dataset.pg); renderForm();
+  $("artistForm").scrollIntoView({ behavior:"smooth", block:"start" });
 });
+
+/* simpan ketikan (termasuk di halaman lain) + format titik otomatis */
+$("artistForm").addEventListener("input", e => {
+  const el = e.target, id = el.dataset.d; if(!id) return;
+  if(el.dataset.f === "amt"){
+    const fromEnd = el.value.length - el.selectionStart;
+    el.value = fmtNum(el.value);
+    const p = Math.max(0, el.value.length - fromEnd);
+    el.setSelectionRange(p, p);
+  }
+  (draft[id] = draft[id] || {})[el.dataset.f] = el.value;
+});
+
+const newKey = (aid, pk) => (earn[aid] && earn[aid][pk]) ? pk + "_" + Array.from(crypto.getRandomValues(new Uint8Array(5)), b => (b % 36).toString(36)).join("") : pk;
 
 $("saveEarn").addEventListener("click", async () => {
   const pk = $("pk").value;
   if(!cur) return toast("Pilih member dulu.");
   if(!/^\d{4}-\d{2}$/.test(pk)) return toast("Pilih periode royalty.");
 
-  const upd = {}, over = [];
-  let bad = false;
-  document.querySelectorAll("#artistForm .arow").forEach(row => {
-    const amtEl = row.querySelector(".amt");
-    if(!amtEl || amtEl.disabled || amtEl.value.trim() === "") return;
-    const raw = digits(amtEl.value);
-    if(!raw){ bad = true; return; }
-    const amount = Number(raw);
-    if(!Number.isSafeInteger(amount) || amount < 0){ bad = true; return; }
-    const id = row.dataset.id, a = artists.find(x => x.id === id);
-    const ex = earn[id] ? earn[id][pk] : null;
-    if(ex && Number(ex.amount) !== amount) over.push(a.name + ": " + rp(ex.amount) + " \u2192 " + rp(amount) + (ex.paymentId ? " (sudah dibayar)" : ""));
-    const note = row.querySelector(".note").value.trim().slice(0, 200);
-    const d = { artistName:a.name, periodKey:pk, periodLabel:plabel(pk), amount,
-      createdAt: ex ? ex.createdAt : TS, updatedAt: TS, updatedBy: who(),
-      createdBy: ex ? (ex.createdBy || who()) : who() };
-    if(note) d.note = note;
-    if(ex && ex.paymentId) d.paymentId = ex.paymentId;
-    upd["royalty_earnings/" + cur.uid + "/" + id + "/" + pk] = d;
+  const upd = {}, over = [], adds = [];
+  let bad = "", cnt = 0;
+  artists.forEach(a => {
+    entriesOf(a.id, pk).forEach(e => {
+      const d = draft[a.id + "::" + e.key];
+      if(!d || e.lock) return;
+      const amtStr = d.amt !== undefined ? d.amt : String(e.amount);
+      const raw = digits(amtStr);
+      if(!raw){ bad = "Nominal entri " + a.name + " kosong. Pakai tombol Hapus untuk menghapus entri."; return; }
+      const amount = Number(raw);
+      if(!Number.isSafeInteger(amount)){ bad = "Nominal terlalu besar."; return; }
+      const note = (d.note !== undefined ? d.note : (e.note || "")).trim().slice(0, 200);
+      if(amount === Number(e.amount) && note === (e.note || "")) return;
+      if(amount !== Number(e.amount)) over.push(a.name + ": " + rp(e.amount) + " \u2192 " + rp(amount) + (e.paymentId ? " (sudah dibayar)" : ""));
+      const rec = { artistName:a.name, periodKey:pk, periodLabel:plabel(pk), amount,
+        createdAt: e.createdAt || TS, updatedAt: TS, updatedBy: who(), createdBy: e.createdBy || who() };
+      if(note) rec.note = note;
+      if(e.paymentId) rec.paymentId = e.paymentId;
+      upd["royalty_earnings/" + cur.uid + "/" + a.id + "/" + e.key] = rec; cnt++;
+    });
+    const nd = draft[a.id + "::new"];
+    if(nd && digits(nd.amt || "")){
+      const amount = Number(digits(nd.amt));
+      if(!Number.isSafeInteger(amount)){ bad = "Nominal terlalu besar."; return; }
+      const note = (nd.note || "").trim().slice(0, 200);
+      const rec = { artistName:a.name, periodKey:pk, periodLabel:plabel(pk), amount,
+        createdAt: TS, updatedAt: TS, updatedBy: who(), createdBy: who() };
+      if(note) rec.note = note;
+      upd["royalty_earnings/" + cur.uid + "/" + a.id + "/" + newKey(a.id, pk)] = rec; cnt++;
+      adds.push(a.name + ": +" + rp(amount));
+    }
   });
-  if(bad) return toast("Nominal harus angka, tidak negatif.");
-  if(!Object.keys(upd).length) return toast("Belum ada nominal yang diisi.");
-  if(over.length && !await ask("Timpa data " + plabel(pk) + "?", "Nominal berikut akan diubah:\n\n" + over.join("\n"), "Simpan perubahan")) return;
+  if(bad) return toast(bad);
+  if(!cnt) return toast("Belum ada nominal baru atau perubahan.");
+  const lines = [].concat(adds.length ? ["Entri baru:"].concat(adds) : [], over.length ? ["Nominal diubah:"].concat(over) : []);
+  if(over.length && !await ask("Simpan perubahan " + plabel(pk) + "?", lines.join("\n"), "Simpan")) return;
 
   const btn = $("saveEarn"); btn.disabled = true; btn.textContent = "Menyimpan...";
   try {
     await db.ref().update(upd);
-    toast("Tersimpan: " + Object.keys(upd).length + " artis.");
+    draft = {};
+    toast("Tersimpan: " + cnt + " entri.");
   } catch(e){
     console.error(e); toast("Gagal menyimpan. Periksa Security Rules.");
   } finally {
@@ -506,35 +601,36 @@ $("saveEarn").addEventListener("click", async () => {
   }
 });
 
-/* hapus satu artis di periode terpilih */
+/* hapus satu entri */
 $("artistForm").addEventListener("click", async e => {
-  const b = e.target.closest("[data-delart]"); if(!b || !cur) return;
-  const pk = $("pk").value, id = b.dataset.delart, a = artists.find(x => x.id === id);
-  const ex = earn[id] ? earn[id][pk] : null;
+  const b = e.target.closest("[data-delent]"); if(!b || !cur) return;
+  const id = b.dataset.delent, parts = id.split("::"), aid = parts[0], key = parts[1];
+  const a = artists.find(x => x.id === aid), ex = earn[aid] ? earn[aid][key] : null;
   if(!a || !ex) return;
   if(ex.lock) return toast("Data ini terkunci di pembayaran Pending.");
-  if(!await ask("Hapus data royalty?", a.name + " \u2022 " + plabel(pk) + " \u2022 " + rp(ex.amount) + (ex.paymentId ? "\n\nData ini sudah berstatus dibayar. Statement pembayaran yang sudah dibuat tidak ikut berubah." : "") + "\n\nTindakan ini tidak bisa dibatalkan.", "Hapus", true)) return;
+  if(!await ask("Hapus entri royalty?", a.name + " \u2022 " + plabel(periodOf(key)) + " \u2022 " + rp(ex.amount) + (ex.note ? " \u2022 " + ex.note : "") + (ex.paymentId ? "\n\nEntri ini sudah berstatus dibayar. Statement pembayaran yang sudah dibuat tidak ikut berubah." : "") + "\n\nTindakan ini tidak bisa dibatalkan.", "Hapus", true)) return;
   try {
-    await db.ref("royalty_earnings/" + cur.uid + "/" + id + "/" + pk).remove();
-    toast("Data dihapus."); renderForm();
+    await db.ref("royalty_earnings/" + cur.uid + "/" + aid + "/" + key).remove();
+    delete draft[id]; toast("Entri dihapus."); renderForm();
   } catch(err){ console.error(err); toast("Gagal menghapus. Periksa Security Rules."); }
 });
 
 /* riwayat per periode */
 function renderHist(){
   const g = {};
-  Object.keys(earn).forEach(aid => Object.keys(earn[aid] || {}).forEach(pk => {
-    const e = earn[aid][pk]; if(!e || typeof e !== "object") return;
-    const x = g[pk] = g[pk] || { n:0, total:0, paid:0, lock:0, up:0 };
-    x.n++; x.total += Number(e.amount || 0);
+  Object.keys(earn).forEach(aid => Object.keys(earn[aid] || {}).forEach(k => {
+    const e = earn[aid][k]; if(!isEntry(k, e)) return;
+    const pk = periodOf(k);
+    const x = g[pk] = g[pk] || { arts:{}, n:0, total:0, paid:0, lock:0, up:0 };
+    x.arts[aid] = 1; x.n++; x.total += Number(e.amount || 0);
     if(e.paymentId) x.paid += Number(e.amount || 0); else if(e.lock) x.lock++;
     x.up = Math.max(x.up, Number(e.updatedAt || 0));
   }));
   const keys = Object.keys(g).sort().reverse();
   $("hist").innerHTML = keys.length ? keys.map(pk => {
-    const x = g[pk], full = x.paid === x.total && x.total > 0;
+    const x = g[pk], full = x.paid === x.total && x.total > 0, na = Object.keys(x.arts).length;
     return '<div class="item"><div class="ib"><div class="it">' + esc(plabel(pk)) + ' ' + (full ? pill("LUNAS", "#22c55e") : x.lock ? pill("TERKUNCI", "#f59e0b") : "") + '</div><div class="is">' +
-      x.n + ' artis \u2022 Total ' + rp(x.total) + ' \u2022 Dibayar ' + rp(x.paid) + ' \u2022 Diperbarui ' + esc(fdate(x.up)) + '</div></div>' +
+      na + ' artis \u2022 ' + x.n + ' entri \u2022 Total ' + rp(x.total) + ' \u2022 Dibayar ' + rp(x.paid) + ' \u2022 Diperbarui ' + esc(fdate(x.up)) + '</div></div>' +
       '<div class="acts"><button class="btn sm soft" type="button" data-edit="' + esc(pk) + '">' + ic("edit") + 'Edit</button>' +
       '<button class="btn sm red" type="button" data-delp="' + esc(pk) + '">' + ic("trash") + 'Hapus</button></div></div>';
   }).join("") : '<div class="empty">Belum ada data.</div>';
@@ -542,22 +638,22 @@ function renderHist(){
 $("hist").addEventListener("click", async e => {
   const ed = e.target.closest("[data-edit]"), dp = e.target.closest("[data-delp]");
   if(ed){
-    $("pk").value = ed.dataset.edit; renderForm();
+    $("pk").value = ed.dataset.edit; resetPeriod();
     $("pk").scrollIntoView({ behavior:"smooth", block:"center" });
     toast("Periode " + plabel(ed.dataset.edit) + " dimuat di form.");
     return;
   }
   if(!dp || !cur) return;
   const pk = dp.dataset.delp, upd = {}; let n = 0, skip = 0, paidN = 0;
-  Object.keys(earn).forEach(aid => {
-    const x = (earn[aid] || {})[pk]; if(!x || typeof x !== "object") return;
+  Object.keys(earn).forEach(aid => Object.keys(earn[aid] || {}).forEach(k => {
+    const x = earn[aid][k]; if(!isEntry(k, x) || periodOf(k) !== pk) return;
     if(x.lock){ skip++; return; }
     if(x.paymentId) paidN++;
-    upd["royalty_earnings/" + cur.uid + "/" + aid + "/" + pk] = null; n++;
-  });
+    upd["royalty_earnings/" + cur.uid + "/" + aid + "/" + k] = null; n++;
+  }));
   if(!n) return toast("Semua data periode ini terkunci di pembayaran Pending.");
-  if(!await ask("Hapus data " + plabel(pk) + "?", n + " artis akan dihapus" + (skip ? ". " + skip + " artis dilewati karena terkunci di pembayaran Pending" : "") + (paidN ? ". " + paidN + " di antaranya sudah berstatus dibayar (statement pembayaran tidak ikut berubah)" : "") + ".\n\nTindakan ini tidak bisa dibatalkan.", "Hapus", true)) return;
-  try { await db.ref().update(upd); toast("Data periode dihapus."); renderForm(); }
+  if(!await ask("Hapus data " + plabel(pk) + "?", n + " entri akan dihapus" + (skip ? ". " + skip + " entri dilewati karena terkunci di pembayaran Pending" : "") + (paidN ? ". " + paidN + " di antaranya sudah berstatus dibayar (statement pembayaran tidak ikut berubah)" : "") + ".\n\nTindakan ini tidak bisa dibatalkan.", "Hapus", true)) return;
+  try { await db.ref().update(upd); draft = {}; toast("Data periode dihapus."); renderForm(); }
   catch(err){ console.error(err); toast("Gagal menghapus. Periksa Security Rules."); }
 });
 
@@ -706,10 +802,10 @@ function unpaid(){
   const out = [];
   Object.keys(earn || {}).forEach(aid => {
     let name = "", t = 0; const per = {};
-    Object.keys(earn[aid] || {}).forEach(pk => {
-      const e = earn[aid][pk]; if(!e || typeof e !== "object") return;
+    Object.keys(earn[aid] || {}).forEach(k => {
+      const e = earn[aid][k]; if(!isEntry(k, e)) return;
       name = e.artistName;
-      if(!e.paymentId && !e.lock){ per[pk] = Number(e.amount || 0); t += per[pk]; }
+      if(!e.paymentId && !e.lock){ per[k] = Number(e.amount || 0); t += per[k]; }
     });
     if(t > 0) out.push({ aid, name, per, total:t });
   });
@@ -723,7 +819,7 @@ function renderPay(){
   $("payHint").textContent = rows.length ? "Belum dibayar: " + rp(sum) + ". Minimum payout " + rp(minPay) + "." : "Tidak ada royalty yang belum dibayar.";
   $("payList").innerHTML = rows.map(r =>
     '<label class="arow cb"><input type="checkbox" class="pk" data-aid="' + esc(r.aid) + '"' + (keep.has(r.aid) ? " checked" : "") + '><div><div class="n">' + esc(r.name) + ' \u2022 ' + rp(r.total) + '</div><div class="h">' +
-    Object.keys(r.per).sort().map(k => esc(plabel(k)) + " " + rp(r.per[k])).join(", ") + (r.total < minPay ? " (di bawah minimum)" : "") + '</div></div></label>').join("");
+    (m => Object.keys(m).sort().map(k => esc(plabel(k)) + " " + rp(m[k])).join(", "))(byMonth(r.per)) + (r.total < minPay ? " (di bawah minimum)" : "") + '</div></div></label>').join("");
   $("mkPay").disabled = !rows.length;
 }
 
@@ -735,7 +831,7 @@ $("mkPay").addEventListener("click", async () => {
   const pid = db.ref("royalty_payments").push().key, upd = {}, items = {}; let total = 0, pks = [];
   src.forEach(r => {
     items[r.aid] = { artistName:r.name, total:r.total, periods:r.per }; total += r.total;
-    Object.keys(r.per).forEach(pk => { pks.push(pk); upd["royalty_earnings/" + cur.uid + "/" + r.aid + "/" + pk + "/lock"] = pid; });
+    Object.keys(r.per).forEach(pk => { pks.push(periodOf(pk)); upd["royalty_earnings/" + cur.uid + "/" + r.aid + "/" + pk + "/lock"] = pid; });
   });
   pks.sort();
   const d = new Date(), ymd = d.getFullYear() + String(d.getMonth() + 1).padStart(2, "0") + String(d.getDate()).padStart(2, "0");
@@ -819,12 +915,12 @@ async function statementPdf(p){
   });
   y += 6;
   Object.values(p.items || {}).forEach(a => {
-    const pk = Object.keys(a.periods).sort();
+    const agg = byMonth(a.periods), pk = Object.keys(agg).sort();
     if(y + 20 + pk.length * 6.5 > 275){ d.addPage(); y = 22; }
     d.setFont("helvetica", "bold"); d.setFontSize(12); d.setTextColor(20); d.text(a.artistName, M, y); y += 3;
     d.setDrawColor(210); d.setLineWidth(.2); d.line(M, y, R, y); y += 6.5; d.setFontSize(10);
     d.setFont("helvetica", "normal");
-    pk.forEach(k => { d.text(lab(k), M, y); d.text(money(a.periods[k]), R, y, { align:"right" }); y += 6.5; });
+    pk.forEach(k => { d.text(lab(k), M, y); d.text(money(agg[k]), R, y, { align:"right" }); y += 6.5; });
     d.setFont("helvetica", "bold"); d.text("Total dibayarkan", M, y); d.text(money(a.total), R, y, { align:"right" }); y += 12;
   });
   d.setFont("helvetica", "normal"); d.setFontSize(8); d.setTextColor(130);
