@@ -358,5 +358,172 @@ document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () =>
   document.querySelectorAll(".pane").forEach(p => p.classList.toggle("on", p.id === "p-" + t.dataset.t));
 }));
 </script>
+  <!-- Tab Payment untuk halaman Admin Royalty Management.
+     Tempel blok <script> ini SETELAH script utama, tepat sebelum </body>. -->
+<script>
+(function(){
+const COMPANY = "Dynotic Distribution";
+let minPay = 100000, payRows = [], payUid = null, payRef = null;
+
+/* ---------- tab dan panel ---------- */
+const tabBtn = document.createElement("button");
+tabBtn.className = "tab"; tabBtn.dataset.t = "pay"; tabBtn.textContent = "Payment";
+document.querySelector(".tabs").appendChild(tabBtn);
+const pane = document.createElement("section");
+pane.className = "pane"; pane.id = "p-pay";
+pane.innerHTML =
+ '<div class="card"><h2>Minimum payout</h2><p class="sub">Berlaku untuk semua akun.</p><input type="number" id="minPay" min="0" step="1000"><button class="btn" id="saveMin">Simpan minimum</button></div>' +
+ '<div class="card"><h2>Buat pembayaran</h2><p class="sub" id="payHint">Pilih member di atas.</p><div id="payList"></div><button class="btn" id="mkPay" disabled>Buat pembayaran</button></div>' +
+ '<div class="card"><h2>Riwayat pembayaran</h2><div id="payHist"><div class="empty">Pilih member.</div></div></div>';
+document.querySelector("main").appendChild(pane);
+tabBtn.addEventListener("click", () => {
+  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === tabBtn));
+  document.querySelectorAll(".pane").forEach(p => p.classList.toggle("on", p === pane));
+});
+
+/* ---------- pengaturan minimum ---------- */
+firebase.auth().onAuthStateChanged(u => {
+  if(!u) return;
+  db.ref("royalty_settings/minPayout").on("value", s => {
+    if(s.val() != null) minPay = Number(s.val());
+    $("minPay").value = minPay; renderPay();
+  });
+});
+$("saveMin").addEventListener("click", async () => {
+  const v = Number($("minPay").value);
+  if(!Number.isInteger(v) || v < 0) return toast("Minimum harus angka bulat.");
+  try { await db.ref("royalty_settings/minPayout").set(v); toast("Minimum payout disimpan."); }
+  catch(e){ console.error(e); toast("Gagal menyimpan."); }
+});
+
+/* ---------- ikut siklus data earnings milik halaman ---------- */
+const baseHist = renderHist;
+renderHist = function(){ baseHist(); renderPay(); };
+
+function unpaid(){
+  const out = [];
+  Object.keys(earn || {}).forEach(aid => {
+    let name = "", t = 0; const per = {};
+    Object.keys(earn[aid] || {}).forEach(pk => {
+      const e = earn[aid][pk]; if(!e || typeof e !== "object") return;
+      name = e.artistName;
+      if(!e.paymentId && !e.lock){ per[pk] = Number(e.amount || 0); t += per[pk]; }
+    });
+    if(t > 0) out.push({ aid, name, per, total:t });
+  });
+  return out.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function renderPay(){
+  if(!cur){ $("payList").innerHTML = ""; $("mkPay").disabled = true; return; }
+  if(payUid !== cur.uid){
+    payUid = cur.uid; if(payRef) payRef.off(); payRows = [];
+    payRef = db.ref("royalty_payments").orderByChild("uid").equalTo(cur.uid);
+    payRef.on("value", s => {
+      payRows = []; s.forEach(c => { const p = c.val(); if(p) payRows.push({ ...p, k:c.key }); });
+      payRows.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)); renderPayHist();
+    }, () => toast("Riwayat pembayaran gagal dimuat."));
+  }
+  const rows = unpaid(), sum = rows.reduce((s, r) => s + r.total, 0);
+  $("payHint").textContent = rows.length ? "Belum dibayar: " + rp(sum) + ". Minimum payout " + rp(minPay) + "." : "Tidak ada royalty yang belum dibayar.";
+  $("payList").innerHTML = rows.map(r =>
+    '<label class="arow" style="display:block;cursor:pointer;margin:0"><div style="display:flex;gap:10px;align-items:flex-start"><input type="checkbox" class="pk" data-aid="' + esc(r.aid) + '" style="width:auto;margin-top:4px"><div><div class="n">' + esc(r.name) + ' \u2022 ' + rp(r.total) + '</div><div class="h">' +
+    Object.keys(r.per).sort().map(k => esc(plabel(k)) + " " + rp(r.per[k])).join(", ") + (r.total < minPay ? " (di bawah minimum)" : "") + '</div></div></div></label>').join("");
+  $("mkPay").disabled = !rows.length;
+}
+
+/* ---------- buat pembayaran (PENDING) ---------- */
+$("mkPay").addEventListener("click", async () => {
+  const chosen = [...document.querySelectorAll("#payList .pk:checked")].map(x => x.dataset.aid);
+  if(!chosen.length) return toast("Pilih minimal satu artis.");
+  const src = unpaid().filter(r => chosen.includes(r.aid));
+  if(src.some(r => r.total < minPay) && !confirm("Ada artis di bawah minimum payout. Tetap buat pembayaran?")) return;
+  const pid = db.ref("royalty_payments").push().key, upd = {}, items = {}; let total = 0, pks = [];
+  src.forEach(r => {
+    items[r.aid] = { artistName:r.name, total:r.total, periods:r.per }; total += r.total;
+    Object.keys(r.per).forEach(pk => { pks.push(pk); upd["royalty_earnings/" + cur.uid + "/" + r.aid + "/" + pk + "/lock"] = pid; });
+  });
+  pks.sort();
+  const d = new Date(), ymd = d.getFullYear() + String(d.getMonth() + 1).padStart(2, "0") + String(d.getDate()).padStart(2, "0");
+  upd["royalty_payments/" + pid] = {
+    uid:cur.uid, memberName:cur.nama, memberEmail:cur.email, status:"PENDING", company:COMPANY,
+    txNo:"RP-" + ymd + "-" + pid.slice(-5).toUpperCase(), createdAt:TS, createdBy:who(), updatedAt:TS,
+    total, periodFrom:pks[0], periodTo:pks[pks.length - 1], items
+  };
+  try { await db.ref().update(upd); toast("Pembayaran dibuat (PENDING)."); }
+  catch(e){ console.error(e); toast("Gagal. Mungkin ada royalty yang sudah masuk pembayaran lain."); }
+});
+
+/* ---------- riwayat dan perubahan status ---------- */
+const COL = { PENDING:"#f59e0b", PROCESSING:"#3b82f6", SUCCESS:"#16a34a", FAILED:"#dc2626" };
+function renderPayHist(){
+  $("payHist").innerHTML = payRows.length ? payRows.map(p => {
+    const b = (a, t, c) => '<button class="btn sm' + (c ? " " + c : "") + '" data-pa="' + a + '" data-k="' + esc(p.k) + '">' + t + '</button>';
+    const acts = p.status === "PENDING" ? b("PROCESSING", "Proses") + b("FAILED", "Batalkan", "red")
+      : p.status === "PROCESSING" ? b("SUCCESS", "Konfirmasi berhasil") + b("FAILED", "Gagal", "red")
+      : p.status === "SUCCESS" ? b("PDF", "Download PDF") : "";
+    return '<div class="arow"><div class="n">' + esc(p.txNo) + ' \u2022 ' + rp(p.total) + '</div><div class="h"><b style="color:' + COL[p.status] + '">' + esc(p.status) + '</b> \u2022 ' +
+      Object.keys(p.items || {}).length + ' artis \u2022 ' + esc(fdate(p.paidAt || p.createdAt)) + '</div><div class="acts" style="margin-top:8px;flex-wrap:wrap">' + acts + '</div></div>';
+  }).join("") : '<div class="empty">Belum ada pembayaran.</div>';
+}
+
+$("payHist").addEventListener("click", async e => {
+  const b = e.target.closest("[data-pa]"); if(!b) return;
+  const p = payRows.find(x => x.k === b.dataset.k), to = b.dataset.pa; if(!p) return;
+  if(to === "PDF"){ try { await statementPdf(p); } catch(err){ console.error(err); toast("PDF gagal dibuat."); } return; }
+  if(to === "SUCCESS" && !confirm("Pastikan transaksi " + p.txNo + " benar-benar berhasil dikirim. Setelah SUCCESS tidak bisa diubah. Lanjutkan?")) return;
+  if(to === "FAILED" && !confirm("Batalkan pembayaran ini? Royalty akan kembali menjadi belum dibayar.")) return;
+  b.disabled = true;
+  const base = "royalty_payments/" + p.k + "/", u = {};
+  u[base + "status"] = to; u[base + "updatedAt"] = TS; u[base + "updatedBy"] = who();
+  if(to === "SUCCESS"){ u[base + "paidAt"] = TS; u[base + "processedBy"] = who(); }
+  if(to === "SUCCESS" || to === "FAILED") Object.keys(p.items || {}).forEach(aid => Object.keys(p.items[aid].periods).forEach(pk => {
+    const eb = "royalty_earnings/" + p.uid + "/" + aid + "/" + pk + "/";
+    if(to === "SUCCESS") u[eb + "paymentId"] = p.k; else u[eb + "lock"] = null;
+  }));
+  try { await db.ref().update(u); toast("Status: " + to); }
+  catch(err){ console.error(err); toast("Gagal mengubah status. Mungkin sudah diproses."); b.disabled = false; }
+});
+
+/* ---------- PDF dari snapshot pembayaran ---------- */
+function pdfLib(){
+  return window.jspdf ? Promise.resolve() : new Promise((ok, no) => {
+    const s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"; s.onload = ok; s.onerror = no; document.head.appendChild(s);
+  });
+}
+async function statementPdf(p){
+  await pdfLib();
+  const d = new window.jspdf.jsPDF({ unit:"mm", format:"a4" }), M = 18, R = 192; let y = 22;
+  const money = v => "Rp" + Number(v || 0).toLocaleString("id-ID");
+  const lab = pk => new Date(pk + "-01T00:00:00").toLocaleDateString("id-ID", { month:"long", year:"numeric" });
+  const day = t => new Date(t).toLocaleDateString("id-ID", { day:"numeric", month:"long", year:"numeric" });
+  d.setFont("helvetica", "bold"); d.setFontSize(18); d.text("Royalty Payment Statement", M, y);
+  d.setFont("helvetica", "normal"); d.setFontSize(10); d.setTextColor(110); d.text(p.company || COMPANY, R, y, { align:"right" });
+  y += 6; d.setDrawColor(20); d.setLineWidth(.6); d.line(M, y, R, y); y += 9;
+  [["Akun member", p.memberName], ["Nomor transaksi", p.txNo], ["Tanggal pembayaran", day(p.paidAt)],
+   ["Periode pembayaran", lab(p.periodFrom) + (p.periodFrom === p.periodTo ? "" : " - " + lab(p.periodTo))],
+   ["Status pembayaran", "SUCCESS"], ["Total pembayaran", money(p.total)]].forEach(r => {
+    d.setFont("helvetica", "normal"); d.setTextColor(110); d.text(r[0], M, y);
+    d.setFont("helvetica", "bold"); d.setTextColor(20); d.text(String(r[1] || "-"), M + 55, y); y += 6.5;
+  });
+  y += 6;
+  Object.values(p.items || {}).forEach(a => {
+    const pk = Object.keys(a.periods).sort();
+    if(y + 20 + pk.length * 6.5 > 275){ d.addPage(); y = 22; }
+    d.setFont("helvetica", "bold"); d.setFontSize(12); d.setTextColor(20); d.text(a.artistName, M, y); y += 3;
+    d.setDrawColor(210); d.setLineWidth(.2); d.line(M, y, R, y); y += 6.5; d.setFontSize(10);
+    d.setFont("helvetica", "normal");
+    pk.forEach(k => { d.text(lab(k), M, y); d.text(money(a.periods[k]), R, y, { align:"right" }); y += 6.5; });
+    d.setFont("helvetica", "bold"); d.text("Total dibayarkan", M, y); d.text(money(a.total), R, y, { align:"right" }); y += 12;
+  });
+  d.setFont("helvetica", "normal"); d.setFontSize(8); d.setTextColor(130);
+  d.text("Dokumen dibuat " + day(Date.now()) + " dari data transaksi " + p.txNo + ". Nominal adalah hak final artis setelah pembagian royalty.", M, 288);
+  d.save("Royalty-Statement-" + p.txNo + ".pdf");
+}
+window.statementPdf = statementPdf;
+})();
+  </script>
+  
 </body>
 </html>
