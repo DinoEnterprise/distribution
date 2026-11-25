@@ -124,18 +124,32 @@ details[open] .arrow{transform:rotate(180deg)}
 .count .p b{color:var(--amber)}
 .count .u b{color:var(--red)}
 
-/* platforms */
-.plats{margin-top:6px}
-.plat{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--line)}
-.plat:last-child{border-bottom:0;padding-bottom:0}
+/* platforms (ringkas, bisa di-scroll) */
+.plats{margin-top:14px}
+.plist{position:relative;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff}
+.plist .scroller{max-height:236px;overflow:hidden;transition:max-height .35s var(--ease)}
+.plist.open .scroller{max-height:min(420px,58dvh);overflow-y:auto;overscroll-behavior:contain}
+.plist:not(.open)::after{content:"";position:absolute;left:0;right:0;bottom:44px;height:40px;background:linear-gradient(180deg,rgba(255,255,255,0),#fff);pointer-events:none}
+.plat{display:flex;align-items:center;justify-content:space-between;gap:10px;height:59px;padding:0 12px 0 14px;border-bottom:1px solid var(--line)}
 .pn{display:flex;align-items:center;gap:11px;min-width:0}
-.pn img{width:34px;height:34px;object-fit:contain;border-radius:10px;background:var(--bg);flex-shrink:0}
-.pn b{font-size:14px;font-weight:600}
-.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:13px;background:var(--bg);width:100%}
-.seg button{height:34px;border-radius:10px;font-size:12px;font-weight:700;color:var(--muted);transition:background .2s,color .2s,box-shadow .2s}
-.seg button.on.process{background:#fff4dc;color:#9a6700;box-shadow:0 1px 3px rgba(154,103,0,.18)}
-.seg button.on.approved{background:#e3f5ec;color:#1f7a50;box-shadow:0 1px 3px rgba(31,122,80,.18)}
-.seg button.on.unavailable{background:#fdeaea;color:#c62828;box-shadow:0 1px 3px rgba(198,40,40,.18)}
+.pn img{width:30px;height:30px;object-fit:contain;border-radius:9px;background:var(--bg);flex-shrink:0}
+.pn div{min-width:0}
+.pn b{display:block;font-size:14px;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pn em{display:block;margin-top:2px;font-style:normal;font-size:11px;font-weight:700;letter-spacing:.02em;color:var(--muted)}
+.pn em.approved{color:var(--green)}
+.pn em.process{color:var(--amber)}
+.pn em.unavailable{color:var(--red)}
+.seg{display:flex;gap:3px;padding:3px;border-radius:12px;background:var(--bg);flex-shrink:0}
+.seg button{width:36px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#a3a5b0;transition:background .2s,color .2s,box-shadow .2s,transform .15s var(--ease)}
+.seg button:active{transform:scale(.9)}
+.seg button .i{width:16px;height:16px;stroke-width:2.4}
+.seg button.on.process{background:#fff4dc;color:#9a6700;box-shadow:0 1px 3px rgba(154,103,0,.2)}
+.seg button.on.approved{background:#e3f5ec;color:#1f7a50;box-shadow:0 1px 3px rgba(31,122,80,.2)}
+.seg button.on.unavailable{background:#fdeaea;color:#c62828;box-shadow:0 1px 3px rgba(198,40,40,.2)}
+.plist-more{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:44px;font-size:13px;font-weight:700;color:var(--accent);background:#fff;border-top:1px solid var(--line);transition:background .2s}
+.plist-more:hover{background:var(--soft)}
+.plist-more .i{width:15px;height:15px;transition:transform .25s var(--ease)}
+.plist.open .plist-more .i{transform:rotate(180deg)}
 
 /* form */
 label{display:block;font-size:12px;font-weight:600;color:#454852;margin-bottom:7px}
@@ -165,7 +179,7 @@ input.err{border-color:var(--red);background:#fff8f8}
 
 @keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media(max-width:420px){.cover{width:78px;height:78px;border-radius:16px}.hero h1{font-size:19px}.hero{padding:16px}}
-@media(min-width:560px){.tpls{grid-template-columns:repeat(2,1fr)}.seg{width:280px}}
+@media(min-width:560px){.tpls{grid-template-columns:repeat(2,1fr)}}
 @media(min-width:760px){.g{grid-template-columns:repeat(3,minmax(0,1fr))}.hero{padding:26px;gap:22px}.cover{width:132px;height:132px}.hero h1{font-size:30px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
@@ -182,6 +196,8 @@ input.err{border-color:var(--red);background:#fff8f8}
   <symbol id="i-text" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></symbol>
   <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></symbol>
   <symbol id="i-store" viewBox="0 0 24 24"><path d="M3 9l1.5-5h15L21 9M3 9h18M3 9v11h18V9M9 20v-6h6v6"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
   <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
 </svg>
 
@@ -207,53 +223,8 @@ input.err{border-color:var(--red);background:#fff8f8}
     </div>
   </section>
 
-  <!-- PLATFORM -->
-  <details class="card" id="secPlat" open hidden>
-    <summary>
-      <div class="ic"><svg class="i"><use href="#i-store"/></svg></div>
-      <div class="st"><div class="t">Platform Distribution</div><span class="s">Atur status tiap platform atau pakai template</span></div>
-      <div class="arrow"><svg class="i"><use href="#i-chev"/></svg></div>
-    </summary>
-    <div class="body">
-      <div class="tpl-t">Template cepat</div>
-      <div class="tpls" id="tpls"></div>
-      <div class="count">
-        <div class="a"><b id="cApproved">0</b><span>Approved</span></div>
-        <div class="p"><b id="cProcess">0</b><span>Process</span></div>
-        <div class="u"><b id="cUnavail">0</b><span>Unavailable</span></div>
-      </div>
-      <div class="plats" id="platformWrap"></div>
-    </div>
-  </details>
-
-  <!-- RELEASE INFORMATION -->
-  <details class="card" id="secRel" open hidden>
-    <summary>
-      <div class="ic"><svg class="i"><use href="#i-cal"/></svg></div>
-      <div class="st"><div class="t">Release Information</div><span class="s">UPC (EAN), tanggal rilis, dan Smartlink</span></div>
-      <div class="arrow"><svg class="i"><use href="#i-chev"/></svg></div>
-    </summary>
-    <div class="body">
-      <div class="fg">
-        <label for="ean">UPC (EAN)</label>
-        <div class="ean-row"><input type="text" id="ean" inputmode="numeric" placeholder="12 atau 13 angka" autocomplete="off"><button type="button" id="copyEan" aria-label="Salin kode"><svg class="i"><use href="#i-copy"/></svg></button></div>
-        <small id="eanMsg">Kode ini tampil sebagai UPC di halaman user.</small>
-      </div>
-      <div class="fg">
-        <label for="releaseDate">Release Date</label>
-        <input type="date" id="releaseDate">
-        <small id="reqDate"></small>
-      </div>
-      <div class="fg">
-        <label for="smartlink">Smartlink</label>
-        <input type="url" id="smartlink" inputmode="url" placeholder="https://..." autocomplete="off">
-        <small id="slMsg"></small>
-      </div>
-    </div>
-  </details>
-
   <!-- INFORMASI -->
-  <details class="card" id="secInfo" hidden>
+  <details class="card" id="secInfo" open hidden>
     <summary>
       <div class="ic"><svg class="i"><use href="#i-info"/></svg></div>
       <div class="st"><div class="t">Informasi Rilisan</div><span class="s">Data dari user: rilis, audio, kredit, hak cipta</span></div>
@@ -285,6 +256,51 @@ input.err{border-color:var(--red);background:#fff8f8}
       <div class="arrow"><svg class="i"><use href="#i-chev"/></svg></div>
     </summary>
     <div class="body" id="files"></div>
+  </details>
+
+  <!-- RELEASE INFORMATION -->
+  <details class="card" id="secRel" open hidden>
+    <summary>
+      <div class="ic"><svg class="i"><use href="#i-cal"/></svg></div>
+      <div class="st"><div class="t">Release Information</div><span class="s">UPC (EAN), tanggal rilis, dan Smartlink</span></div>
+      <div class="arrow"><svg class="i"><use href="#i-chev"/></svg></div>
+    </summary>
+    <div class="body">
+      <div class="fg">
+        <label for="ean">UPC (EAN)</label>
+        <div class="ean-row"><input type="text" id="ean" inputmode="numeric" placeholder="12 atau 13 angka" autocomplete="off"><button type="button" id="copyEan" aria-label="Salin kode"><svg class="i"><use href="#i-copy"/></svg></button></div>
+        <small id="eanMsg">Kode ini tampil sebagai UPC di halaman user.</small>
+      </div>
+      <div class="fg">
+        <label for="releaseDate">Release Date</label>
+        <input type="date" id="releaseDate">
+        <small id="reqDate"></small>
+      </div>
+      <div class="fg">
+        <label for="smartlink">Smartlink</label>
+        <input type="url" id="smartlink" inputmode="url" placeholder="https://..." autocomplete="off">
+        <small id="slMsg"></small>
+      </div>
+    </div>
+  </details>
+
+  <!-- PLATFORM -->
+  <details class="card" id="secPlat" open hidden>
+    <summary>
+      <div class="ic"><svg class="i"><use href="#i-store"/></svg></div>
+      <div class="st"><div class="t">Platform Distribution</div><span class="s">Atur status tiap platform atau pakai template</span></div>
+      <div class="arrow"><svg class="i"><use href="#i-chev"/></svg></div>
+    </summary>
+    <div class="body">
+      <div class="tpl-t">Template cepat</div>
+      <div class="tpls" id="tpls"></div>
+      <div class="count">
+        <div class="a"><b id="cApproved">0</b><span>Approved</span></div>
+        <div class="p"><b id="cProcess">0</b><span>Process</span></div>
+        <div class="u"><b id="cUnavail">0</b><span>Unavailable</span></div>
+      </div>
+      <div class="plats" id="platformWrap"></div>
+    </div>
   </details>
 </div>
 
@@ -593,9 +609,28 @@ function buildTemplates(){
 }
 
 /* ===== platform ===== */
+const STATE_ICON = { process:"i-clock", approved:"i-check", unavailable:"i-x" };
+const STATE_LABEL = { process:"Process", approved:"Approved", unavailable:"Unavailable" };
+const VISIBLE_ROWS = 4;
+
+function svgI(id){
+  const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  s.setAttribute("class", "i");
+  const u = document.createElementNS("http://www.w3.org/2000/svg", "use");
+  u.setAttribute("href", "#" + id);
+  s.appendChild(u);
+  return s;
+}
+
 function buildPlatforms(){
   const wrap = $("platformWrap");
   wrap.innerHTML = "";
+
+  const list = document.createElement("div");
+  list.className = "plist"; list.id = "plist";
+  const scroller = document.createElement("div");
+  scroller.className = "scroller";
+
   PLAT_NAMES.forEach(p => {
     const row = document.createElement("div");
     row.className = "plat"; row.dataset.name = p;
@@ -605,22 +640,42 @@ function buildPlatforms(){
     const im = document.createElement("img");
     im.src = ASSETS + PLATFORMS[p]; im.alt = ""; im.loading = "lazy";
     im.onerror = () => { im.style.visibility = "hidden"; };
-    const nm = document.createElement("b");
-    nm.textContent = p;
-    pn.appendChild(im); pn.appendChild(nm);
+    const tx = document.createElement("div");
+    const nm = document.createElement("b"); nm.textContent = p;
+    const st = document.createElement("em"); st.className = "stt";
+    tx.appendChild(nm); tx.appendChild(st);
+    pn.appendChild(im); pn.appendChild(tx);
 
     const seg = document.createElement("div");
     seg.className = "seg"; seg.setAttribute("role", "group"); seg.setAttribute("aria-label", "Status " + p);
     STATES.forEach(([v, l]) => {
       const b = document.createElement("button");
-      b.type = "button"; b.dataset.v = v; b.textContent = l;
+      b.type = "button"; b.dataset.v = v; b.title = l; b.setAttribute("aria-label", l);
+      b.appendChild(svgI(STATE_ICON[v]));
       b.addEventListener("click", () => { plat[p] = v; refreshPlat(); updateDirty(); });
       seg.appendChild(b);
     });
 
     row.appendChild(pn); row.appendChild(seg);
-    wrap.appendChild(row);
+    scroller.appendChild(row);
   });
+  list.appendChild(scroller);
+
+  if(PLAT_NAMES.length > VISIBLE_ROWS){
+    const more = document.createElement("button");
+    more.type = "button"; more.className = "plist-more";
+    const lbl = document.createElement("span");
+    const setLabel = () => { lbl.textContent = list.classList.contains("open") ? "Sembunyikan" : "Tampilkan semua (" + PLAT_NAMES.length + ")"; };
+    more.appendChild(lbl); more.appendChild(svgI("i-chev"));
+    setLabel();
+    more.addEventListener("click", () => {
+      list.classList.toggle("open");
+      if(!list.classList.contains("open")) scroller.scrollTop = 0;
+      setLabel();
+    });
+    list.appendChild(more);
+  }
+  wrap.appendChild(list);
 }
 
 function refreshPlat(){
@@ -631,6 +686,9 @@ function refreshPlat(){
       b.className = on ? "on " + b.dataset.v : "";
       b.setAttribute("aria-pressed", String(on));
     });
+    const st = row.querySelector(".stt");
+    st.textContent = STATE_LABEL[cur];
+    st.className = "stt " + cur;
   });
   let a = 0, pr = 0, u = 0;
   PLAT_NAMES.forEach(p => { if(plat[p] === "approved") a++; else if(plat[p] === "unavailable") u++; else pr++; });
